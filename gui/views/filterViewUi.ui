@@ -124,13 +124,6 @@ font: 11pt &quot;OpenSans-Light&quot;;
            </layout>
           </widget>
          </item>
-         <item>
-          <widget class="QPushButton" name="pb_settings">
-           <property name="text">
-            <string>Computer, Send settings</string>
-           </property>
-          </widget>
-         </item>
         </layout>
        </widget>
       </item>

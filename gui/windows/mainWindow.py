@@ -1,6 +1,6 @@
 from gui.dialog.helpDialog import HelpDialog
-from gui.views.lensView import ParametersView
-from gui.views.filterView import SimulationView
+from gui.views.filterView import FilterView
+from gui.views.lensView import LensView
 from PyQt5.QtWidgets import QMainWindow, QWidget, QLabel, QVBoxLayout, QTabWidget, QAction
 from PyQt5.QtCore import Qt, pyqtSlot
 import logging
@@ -32,7 +32,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def setup_window_tabs(self):
         self.tabWidget = QTabWidget()
         self.setCentralWidget(self.tabWidget)
-        self.tabWidget.addTab(self.simulationView, "Simulation")
+        self.tabWidget.addTab(self.filterView, "Filter ID")
+        self.tabWidget.addTab(self.filterView, "Lens ID")
 
     def setup_menuBar(self):
         self.helpAction = QAction(self)
@@ -45,7 +46,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def create_views_and_dialogs(self):
         self.helpDialog = HelpDialog()
-        self.simulationView = SimulationView(model=self.model)
+        self.filterView = FilterView(model=self.model)
+        self.lensView = LensView(model=self.model)
 
     def connect_buttons(self):
         self.helpAction.triggered.connect(self.show_helpDialog)
@@ -57,3 +59,4 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         log.info('Help Dialog Opened')
         self.setEnabled(False)
         self.helpDialog.exec_()
+

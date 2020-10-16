@@ -700,3 +700,18 @@ Traceback (most recent call last):
   File "C:\Users\marc-\Documents\Github\DCC\Optics-ID\gui\views\simulationView.py", line 45, in initialize_device
     self.spec.integration_time_micros(int(self.le_acqTime.text())*1000)
 AttributeError: 'NoneType' object has no attribute 'integration_time_micros'
+2020-10-16 11:06:19,970		 (__main__                 ) (thread:2704) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:/Users/marc-/Documents/Github/Optics-ID/main.py", line 82, in <module>
+    main()
+  File "C:/Users/marc-/Documents/Github/Optics-ID/main.py", line 76, in main
+    app = App(sys.argv)
+  File "C:/Users/marc-/Documents/Github/Optics-ID/main.py", line 38, in __init__
+    self.mainWindow = MainWindow(model=self.mainModel)
+  File "C:\Users\marc-\Documents\Github\Optics-ID\gui\windows\mainWindow.py", line 25, in __init__
+    self.create_views_and_dialogs()
+  File "C:\Users\marc-\Documents\Github\Optics-ID\gui\windows\mainWindow.py", line 50, in create_views_and_dialogs
+    self.lensView = LensView(model=self.model)
+  File "C:\Users\marc-\Documents\Github\Optics-ID\gui\views\lensView.py", line 26, in __init__
+    with open(self.model.defaultFilePath, 'r') as fp:
+AttributeError: 'MainModel' object has no attribute 'defaultFilePath'

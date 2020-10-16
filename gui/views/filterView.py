@@ -12,15 +12,15 @@ import logging
 
 log = logging.getLogger(__name__)
 
-simulationViewUiPath = os.path.dirname(os.path.realpath(__file__)) + "\\filterViewUi.ui"
-Ui_simulationView, QtBaseClass = uic.loadUiType(simulationViewUiPath)
+filterViewUiPath = os.path.dirname(os.path.realpath(__file__)) + "\\filterViewUi.ui"
+Ui_filterView, QtBaseClass = uic.loadUiType(filterViewUiPath)
 
 
-class SimulationView(QWidget, Ui_simulationView):
+class FilterView(QWidget, Ui_filterView):
     s_data_changed = pyqtSignal(dict)
 
     def __init__(self, model=None, controller=None):
-        super(SimulationView, self).__init__()
+        super(FilterView, self).__init__()
         self.model = model
         self.plotDict = {}
         self.setupUi(self)
