@@ -1,0 +1,447 @@
+2020-10-15 12:53:43,913		 (__main__                 ) (thread:9364) (line:   68)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:/Users/marc-/Documents/Github/MilkOptics/software/main.py", line 81, in <module>
+    main()
+  File "C:/Users/marc-/Documents/Github/MilkOptics/software/main.py", line 75, in main
+    app = App(sys.argv)
+  File "C:/Users/marc-/Documents/Github/MilkOptics/software/main.py", line 37, in __init__
+    self.mainWindow = MainWindow(model=self.mainModel)
+  File "C:\Users\marc-\Documents\Github\MilkOptics\software\gui\windows\mainWindow.py", line 25, in __init__
+    self.create_views_and_dialogs()
+  File "C:\Users\marc-\Documents\Github\MilkOptics\software\gui\windows\mainWindow.py", line 49, in create_views_and_dialogs
+    self.parametersView = ParametersView(model=self.model)
+  File "C:\Users\marc-\Documents\Github\MilkOptics\software\gui\views\paramsView.py", line 26, in __init__
+    with open(self.model.defaultFilePath, 'r') as fp:
+AttributeError: 'MainModel' object has no attribute 'defaultFilePath'
+2020-10-15 12:54:32,018		 (__main__                 ) (thread:6308) (line:   68)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:/Users/marc-/Documents/Github/MilkOptics/software/main.py", line 81, in <module>
+    main()
+  File "C:/Users/marc-/Documents/Github/MilkOptics/software/main.py", line 75, in main
+    app = App(sys.argv)
+  File "C:/Users/marc-/Documents/Github/MilkOptics/software/main.py", line 37, in __init__
+    self.mainWindow = MainWindow(model=self.mainModel)
+  File "C:\Users\marc-\Documents\Github\MilkOptics\software\gui\windows\mainWindow.py", line 25, in __init__
+    self.create_views_and_dialogs()
+  File "C:\Users\marc-\Documents\Github\MilkOptics\software\gui\windows\mainWindow.py", line 48, in create_views_and_dialogs
+    self.simulationView = SimulationView(model=self.model)
+  File "C:\Users\marc-\Documents\Github\MilkOptics\software\gui\views\simulationView.py", line 31, in __init__
+    self.connect_signals()
+  File "C:\Users\marc-\Documents\Github\MilkOptics\software\gui\views\simulationView.py", line 54, in connect_signals
+    self.model.simulatorObject.s_data_changed.connect(self.update_graph)
+AttributeError: 'MainModel' object has no attribute 'simulatorObject'
+2020-10-15 12:54:48,727		 (__main__                 ) (thread:9056) (line:   68)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\MilkOptics\software\gui\views\simulationView.py", line 44, in <lambda>
+    self.cb_isInfected.stateChanged.connect(lambda: self.toggle_plot("isInfected", caller=self.cb_isInfected))
+AttributeError: 'SimulationView' object has no attribute 'toggle_plot'
+2020-10-15 13:01:49,644		 (__main__                 ) (thread:9056) (line:   68)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:/Users/marc-/Documents/Github/MilkOptics/software/main.py", line 81, in <module>
+    main()
+  File "C:/Users/marc-/Documents/Github/MilkOptics/software/main.py", line 75, in main
+    app = App(sys.argv)
+  File "C:/Users/marc-/Documents/Github/MilkOptics/software/main.py", line 37, in __init__
+    self.mainWindow = MainWindow(model=self.mainModel)
+  File "C:\Users\marc-\Documents\Github\MilkOptics\software\gui\windows\mainWindow.py", line 25, in __init__
+    self.create_views_and_dialogs()
+  File "C:\Users\marc-\Documents\Github\MilkOptics\software\gui\windows\mainWindow.py", line 48, in create_views_and_dialogs
+    self.simulationView = SimulationView(model=self.model)
+  File "C:\Users\marc-\Documents\Github\MilkOptics\software\gui\views\simulationView.py", line 32, in __init__
+    self.connect_checkbox()
+  File "C:\Users\marc-\Documents\Github\MilkOptics\software\gui\views\simulationView.py", line 44, in connect_checkbox
+    self.cb_isInfected.stateChanged.connect(lambda: self.toggle_plot("isInfected", caller=self.cb_isInfected))
+AttributeError: 'SimulationView' object has no attribute 'cb_isInfected'
+2020-10-15 13:02:17,509		 (__main__                 ) (thread:3404) (line:   68)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:/Users/marc-/Documents/Github/MilkOptics/software/main.py", line 81, in <module>
+    main()
+  File "C:/Users/marc-/Documents/Github/MilkOptics/software/main.py", line 75, in main
+    app = App(sys.argv)
+  File "C:/Users/marc-/Documents/Github/MilkOptics/software/main.py", line 37, in __init__
+    self.mainWindow = MainWindow(model=self.mainModel)
+  File "C:\Users\marc-\Documents\Github\MilkOptics\software\gui\windows\mainWindow.py", line 25, in __init__
+    self.create_views_and_dialogs()
+  File "C:\Users\marc-\Documents\Github\MilkOptics\software\gui\windows\mainWindow.py", line 48, in create_views_and_dialogs
+    self.simulationView = SimulationView(model=self.model)
+  File "C:\Users\marc-\Documents\Github\MilkOptics\software\gui\views\simulationView.py", line 34, in __init__
+    self.initialize_view()
+  File "C:\Users\marc-\Documents\Github\MilkOptics\software\gui\views\simulationView.py", line 37, in initialize_view
+    self.cb_isInfected.setChecked(True)
+AttributeError: 'SimulationView' object has no attribute 'cb_isInfected'
+2020-10-15 13:07:26,714		 (__main__                 ) (thread:6708) (line:   68)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:/Users/marc-/Documents/Github/MilkOptics/software/main.py", line 81, in <module>
+    main()
+  File "C:/Users/marc-/Documents/Github/MilkOptics/software/main.py", line 75, in main
+    app = App(sys.argv)
+  File "C:/Users/marc-/Documents/Github/MilkOptics/software/main.py", line 37, in __init__
+    self.mainWindow = MainWindow(model=self.mainModel)
+  File "C:\Users\marc-\Documents\Github\MilkOptics\software\gui\windows\mainWindow.py", line 25, in __init__
+    self.create_views_and_dialogs()
+  File "C:\Users\marc-\Documents\Github\MilkOptics\software\gui\windows\mainWindow.py", line 48, in create_views_and_dialogs
+    self.simulationView = SimulationView(model=self.model)
+  File "C:\Users\marc-\Documents\Github\MilkOptics\software\gui\views\simulationView.py", line 30, in __init__
+    self.connect_buttons()
+  File "C:\Users\marc-\Documents\Github\MilkOptics\software\gui\views\simulationView.py", line 40, in connect_buttons
+    self.pb_simulate.clicked.connect(self.launch_simulation)
+AttributeError: 'SimulationView' object has no attribute 'pb_simulate'
+2020-10-15 13:24:19,089		 (__main__                 ) (thread:6708) (line:   68)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:/Users/marc-/Documents/Github/MilkOptics/software/main.py", line 81, in <module>
+    main()
+  File "C:/Users/marc-/Documents/Github/MilkOptics/software/main.py", line 75, in main
+    app = App(sys.argv)
+  File "C:/Users/marc-/Documents/Github/MilkOptics/software/main.py", line 37, in __init__
+    self.mainWindow = MainWindow(model=self.mainModel)
+  File "C:\Users\marc-\Documents\Github\MilkOptics\software\gui\windows\mainWindow.py", line 25, in __init__
+    self.create_views_and_dialogs()
+  File "C:\Users\marc-\Documents\Github\MilkOptics\software\gui\windows\mainWindow.py", line 48, in create_views_and_dialogs
+    self.simulationView = SimulationView(model=self.model)
+  File "C:\Users\marc-\Documents\Github\MilkOptics\software\gui\views\simulationView.py", line 33, in __init__
+    self.initialize_device()
+  File "C:\Users\marc-\Documents\Github\MilkOptics\software\gui\views\simulationView.py", line 38, in initialize_device
+    self.spec.integration_time_micros(int(self.le_acqTime*1000))
+TypeError: unsupported operand type(s) for *: 'QLineEdit' and 'int'
+2020-10-15 13:25:40,360		 (__main__                 ) (thread:6368) (line:   68)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:/Users/marc-/Documents/Github/MilkOptics/software/main.py", line 81, in <module>
+    main()
+  File "C:/Users/marc-/Documents/Github/MilkOptics/software/main.py", line 75, in main
+    app = App(sys.argv)
+  File "C:/Users/marc-/Documents/Github/MilkOptics/software/main.py", line 37, in __init__
+    self.mainWindow = MainWindow(model=self.mainModel)
+  File "C:\Users\marc-\Documents\Github\MilkOptics\software\gui\windows\mainWindow.py", line 25, in __init__
+    self.create_views_and_dialogs()
+  File "C:\Users\marc-\Documents\Github\MilkOptics\software\gui\windows\mainWindow.py", line 48, in create_views_and_dialogs
+    self.simulationView = SimulationView(model=self.model)
+  File "C:\Users\marc-\Documents\Github\MilkOptics\software\gui\views\simulationView.py", line 33, in __init__
+    self.initialize_device()
+  File "C:\Users\marc-\Documents\Github\MilkOptics\software\gui\views\simulationView.py", line 38, in initialize_device
+    self.spec.integration_time_micros(int(self.le_acqTime)*1000)
+TypeError: int() argument must be a string, a bytes-like object or a number, not 'QLineEdit'
+2020-10-15 13:32:23,732		 (__main__                 ) (thread:9540) (line:   68)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\MilkOptics\software\gui\views\simulationView.py", line 75, in start_data_acquisition
+    self.acqWorker = Worker(self.update_spectrum_plot, *args)
+NameError: name 'args' is not defined
+2020-10-15 13:40:23,337		 (__main__                 ) (thread:9300) (line:   68)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:/Users/marc-/Documents/Github/MilkOptics/software/main.py", line 81, in <module>
+    main()
+  File "C:/Users/marc-/Documents/Github/MilkOptics/software/main.py", line 75, in main
+    app = App(sys.argv)
+  File "C:/Users/marc-/Documents/Github/MilkOptics/software/main.py", line 37, in __init__
+    self.mainWindow = MainWindow(model=self.mainModel)
+  File "C:\Users\marc-\Documents\Github\MilkOptics\software\gui\windows\mainWindow.py", line 25, in __init__
+    self.create_views_and_dialogs()
+  File "C:\Users\marc-\Documents\Github\MilkOptics\software\gui\windows\mainWindow.py", line 48, in create_views_and_dialogs
+    self.simulationView = SimulationView(model=self.model)
+  File "C:\Users\marc-\Documents\Github\MilkOptics\software\gui\views\simulationView.py", line 30, in __init__
+    self.create_plots()
+  File "C:\Users\marc-\Documents\Github\MilkOptics\software\gui\views\simulationView.py", line 61, in create_plots
+    self.pyqtgraphWidget.addItem(self.allPlotsDict["plotDataItem"][0])
+  File "C:\Users\marc-\Documents\Github\MilkOptics\venv\lib\site-packages\pyqtgraph\graphicsItems\GraphicsLayout.py", line 134, in addItem
+    item.geometryChanged.connect(self._updateItemBorder)
+AttributeError: 'PlotDataItem' object has no attribute 'geometryChanged'
+2020-10-15 13:42:01,939		 (__main__                 ) (thread:10684) (line:   68)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\MilkOptics\venv\lib\site-packages\pyqtgraph\graphicsItems\PlotCurveItem.py", line 207, in boundingRect
+    px, py = self.pixelVectors()
+  File "C:\Users\marc-\Documents\Github\MilkOptics\venv\lib\site-packages\pyqtgraph\graphicsItems\GraphicsItem.py", line 184, in pixelVectors
+    dt = self.deviceTransform()
+  File "C:\Users\marc-\Documents\Github\MilkOptics\venv\lib\site-packages\pyqtgraph\graphicsItems\GraphicsItem.py", line 109, in deviceTransform
+    view = self.getViewWidget()
+  File "C:\Users\marc-\Documents\Github\MilkOptics\venv\lib\site-packages\pyqtgraph\graphicsItems\GraphicsItem.py", line 53, in getViewWidget
+    scene = self.scene()
+RuntimeError: wrapped C/C++ object of type PlotCurveItem has been deleted
+2020-10-15 13:42:01,953		 (__main__                 ) (thread:10684) (line:   68)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\MilkOptics\software\tools\threadWorker.py", line 29, in run
+    self.signals.finished.emit()
+RuntimeError: wrapped C/C++ object of type WorkerSignals has been deleted
+2020-10-15 13:47:12,414		 (__main__                 ) (thread:7596) (line:   68)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\MilkOptics\software\tools\threadWorker.py", line 29, in run
+    self.signals.finished.emit()
+RuntimeError: wrapped C/C++ object of type WorkerSignals has been deleted
+2020-10-15 13:47:56,315		 (__main__                 ) (thread:4988) (line:   68)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\MilkOptics\software\tools\threadWorker.py", line 29, in run
+    self.signals.finished.emit()
+RuntimeError: wrapped C/C++ object of type WorkerSignals has been deleted
+2020-10-15 14:28:47,080		 (__main__                 ) (thread:352) (line:   68)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\MilkOptics\software\tools\threadWorker.py", line 29, in run
+    self.signals.finished.emit()
+RuntimeError: wrapped C/C++ object of type WorkerSignals has been deleted
+2020-10-15 15:22:16,863		 (__main__                 ) (thread:9976) (line:   68)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\MilkOptics\software\gui\views\simulationView.py", line 69, in update_graph
+    self.dataPlotItem.setData(x=x, y=y)
+AttributeError: 'SimulationView' object has no attribute 'dataPlotItem'
+2020-10-15 15:22:16,965		 (__main__                 ) (thread:9976) (line:   68)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\MilkOptics\software\gui\views\simulationView.py", line 69, in update_graph
+    self.dataPlotItem.setData(x=x, y=y)
+AttributeError: 'SimulationView' object has no attribute 'dataPlotItem'
+2020-10-15 15:22:17,067		 (__main__                 ) (thread:9976) (line:   68)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\MilkOptics\software\gui\views\simulationView.py", line 69, in update_graph
+    self.dataPlotItem.setData(x=x, y=y)
+AttributeError: 'SimulationView' object has no attribute 'dataPlotItem'
+2020-10-15 15:22:17,170		 (__main__                 ) (thread:9976) (line:   68)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\MilkOptics\software\gui\views\simulationView.py", line 69, in update_graph
+    self.dataPlotItem.setData(x=x, y=y)
+AttributeError: 'SimulationView' object has no attribute 'dataPlotItem'
+2020-10-15 15:22:17,272		 (__main__                 ) (thread:9976) (line:   68)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\MilkOptics\software\gui\views\simulationView.py", line 69, in update_graph
+    self.dataPlotItem.setData(x=x, y=y)
+AttributeError: 'SimulationView' object has no attribute 'dataPlotItem'
+2020-10-15 15:22:17,375		 (__main__                 ) (thread:9976) (line:   68)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\MilkOptics\software\gui\views\simulationView.py", line 69, in update_graph
+    self.dataPlotItem.setData(x=x, y=y)
+AttributeError: 'SimulationView' object has no attribute 'dataPlotItem'
+2020-10-15 15:22:17,477		 (__main__                 ) (thread:9976) (line:   68)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\MilkOptics\software\gui\views\simulationView.py", line 69, in update_graph
+    self.dataPlotItem.setData(x=x, y=y)
+AttributeError: 'SimulationView' object has no attribute 'dataPlotItem'
+2020-10-15 15:22:17,579		 (__main__                 ) (thread:9976) (line:   68)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\MilkOptics\software\gui\views\simulationView.py", line 69, in update_graph
+    self.dataPlotItem.setData(x=x, y=y)
+AttributeError: 'SimulationView' object has no attribute 'dataPlotItem'
+2020-10-15 15:22:17,681		 (__main__                 ) (thread:9976) (line:   68)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\MilkOptics\software\gui\views\simulationView.py", line 69, in update_graph
+    self.dataPlotItem.setData(x=x, y=y)
+AttributeError: 'SimulationView' object has no attribute 'dataPlotItem'
+2020-10-15 15:22:17,784		 (__main__                 ) (thread:9976) (line:   68)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\MilkOptics\software\gui\views\simulationView.py", line 69, in update_graph
+    self.dataPlotItem.setData(x=x, y=y)
+AttributeError: 'SimulationView' object has no attribute 'dataPlotItem'
+2020-10-15 15:22:17,886		 (__main__                 ) (thread:9976) (line:   68)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\MilkOptics\software\gui\views\simulationView.py", line 69, in update_graph
+    self.dataPlotItem.setData(x=x, y=y)
+AttributeError: 'SimulationView' object has no attribute 'dataPlotItem'
+2020-10-15 15:22:17,988		 (__main__                 ) (thread:9976) (line:   68)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\MilkOptics\software\gui\views\simulationView.py", line 69, in update_graph
+    self.dataPlotItem.setData(x=x, y=y)
+AttributeError: 'SimulationView' object has no attribute 'dataPlotItem'
+2020-10-15 15:22:18,091		 (__main__                 ) (thread:9976) (line:   68)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\MilkOptics\software\gui\views\simulationView.py", line 69, in update_graph
+    self.dataPlotItem.setData(x=x, y=y)
+AttributeError: 'SimulationView' object has no attribute 'dataPlotItem'
+2020-10-15 15:22:18,193		 (__main__                 ) (thread:9976) (line:   68)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\MilkOptics\software\gui\views\simulationView.py", line 69, in update_graph
+    self.dataPlotItem.setData(x=x, y=y)
+AttributeError: 'SimulationView' object has no attribute 'dataPlotItem'
+2020-10-15 15:22:18,296		 (__main__                 ) (thread:9976) (line:   68)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\MilkOptics\software\gui\views\simulationView.py", line 69, in update_graph
+    self.dataPlotItem.setData(x=x, y=y)
+AttributeError: 'SimulationView' object has no attribute 'dataPlotItem'
+2020-10-15 15:22:18,398		 (__main__                 ) (thread:9976) (line:   68)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\MilkOptics\software\gui\views\simulationView.py", line 69, in update_graph
+    self.dataPlotItem.setData(x=x, y=y)
+AttributeError: 'SimulationView' object has no attribute 'dataPlotItem'
+2020-10-15 15:22:18,501		 (__main__                 ) (thread:9976) (line:   68)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\MilkOptics\software\gui\views\simulationView.py", line 69, in update_graph
+    self.dataPlotItem.setData(x=x, y=y)
+AttributeError: 'SimulationView' object has no attribute 'dataPlotItem'
+2020-10-15 15:22:18,603		 (__main__                 ) (thread:9976) (line:   68)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\MilkOptics\software\gui\views\simulationView.py", line 69, in update_graph
+    self.dataPlotItem.setData(x=x, y=y)
+AttributeError: 'SimulationView' object has no attribute 'dataPlotItem'
+2020-10-15 15:22:18,706		 (__main__                 ) (thread:9976) (line:   68)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\MilkOptics\software\gui\views\simulationView.py", line 69, in update_graph
+    self.dataPlotItem.setData(x=x, y=y)
+AttributeError: 'SimulationView' object has no attribute 'dataPlotItem'
+2020-10-15 15:22:18,808		 (__main__                 ) (thread:9976) (line:   68)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\MilkOptics\software\gui\views\simulationView.py", line 69, in update_graph
+    self.dataPlotItem.setData(x=x, y=y)
+AttributeError: 'SimulationView' object has no attribute 'dataPlotItem'
+2020-10-15 15:22:18,910		 (__main__                 ) (thread:9976) (line:   68)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\MilkOptics\software\gui\views\simulationView.py", line 69, in update_graph
+    self.dataPlotItem.setData(x=x, y=y)
+AttributeError: 'SimulationView' object has no attribute 'dataPlotItem'
+2020-10-15 15:22:19,013		 (__main__                 ) (thread:9976) (line:   68)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\MilkOptics\software\gui\views\simulationView.py", line 69, in update_graph
+    self.dataPlotItem.setData(x=x, y=y)
+AttributeError: 'SimulationView' object has no attribute 'dataPlotItem'
+2020-10-15 15:22:19,115		 (__main__                 ) (thread:9976) (line:   68)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\MilkOptics\software\gui\views\simulationView.py", line 69, in update_graph
+    self.dataPlotItem.setData(x=x, y=y)
+AttributeError: 'SimulationView' object has no attribute 'dataPlotItem'
+2020-10-15 15:22:19,218		 (__main__                 ) (thread:9976) (line:   68)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\MilkOptics\software\gui\views\simulationView.py", line 69, in update_graph
+    self.dataPlotItem.setData(x=x, y=y)
+AttributeError: 'SimulationView' object has no attribute 'dataPlotItem'
+2020-10-15 15:22:19,320		 (__main__                 ) (thread:9976) (line:   68)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\MilkOptics\software\gui\views\simulationView.py", line 69, in update_graph
+    self.dataPlotItem.setData(x=x, y=y)
+AttributeError: 'SimulationView' object has no attribute 'dataPlotItem'
+2020-10-15 15:22:19,423		 (__main__                 ) (thread:9976) (line:   68)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\MilkOptics\software\gui\views\simulationView.py", line 69, in update_graph
+    self.dataPlotItem.setData(x=x, y=y)
+AttributeError: 'SimulationView' object has no attribute 'dataPlotItem'
+2020-10-15 15:22:19,525		 (__main__                 ) (thread:9976) (line:   68)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\MilkOptics\software\gui\views\simulationView.py", line 69, in update_graph
+    self.dataPlotItem.setData(x=x, y=y)
+AttributeError: 'SimulationView' object has no attribute 'dataPlotItem'
+2020-10-15 15:22:19,626		 (__main__                 ) (thread:9976) (line:   68)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\MilkOptics\software\gui\views\simulationView.py", line 69, in update_graph
+    self.dataPlotItem.setData(x=x, y=y)
+AttributeError: 'SimulationView' object has no attribute 'dataPlotItem'
+2020-10-15 15:22:19,729		 (__main__                 ) (thread:9976) (line:   68)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\MilkOptics\software\gui\views\simulationView.py", line 69, in update_graph
+    self.dataPlotItem.setData(x=x, y=y)
+AttributeError: 'SimulationView' object has no attribute 'dataPlotItem'
+2020-10-15 15:22:19,831		 (__main__                 ) (thread:9976) (line:   68)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\MilkOptics\software\gui\views\simulationView.py", line 69, in update_graph
+    self.dataPlotItem.setData(x=x, y=y)
+AttributeError: 'SimulationView' object has no attribute 'dataPlotItem'
+2020-10-15 15:22:19,934		 (__main__                 ) (thread:9976) (line:   68)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\MilkOptics\software\gui\views\simulationView.py", line 69, in update_graph
+    self.dataPlotItem.setData(x=x, y=y)
+AttributeError: 'SimulationView' object has no attribute 'dataPlotItem'
+2020-10-15 15:22:20,037		 (__main__                 ) (thread:9976) (line:   68)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\MilkOptics\software\gui\views\simulationView.py", line 69, in update_graph
+    self.dataPlotItem.setData(x=x, y=y)
+AttributeError: 'SimulationView' object has no attribute 'dataPlotItem'
+2020-10-15 15:22:20,139		 (__main__                 ) (thread:9976) (line:   68)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\MilkOptics\software\gui\views\simulationView.py", line 69, in update_graph
+    self.dataPlotItem.setData(x=x, y=y)
+AttributeError: 'SimulationView' object has no attribute 'dataPlotItem'
+2020-10-15 15:22:20,241		 (__main__                 ) (thread:9976) (line:   68)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\MilkOptics\software\gui\views\simulationView.py", line 69, in update_graph
+    self.dataPlotItem.setData(x=x, y=y)
+AttributeError: 'SimulationView' object has no attribute 'dataPlotItem'
+2020-10-15 15:22:20,345		 (__main__                 ) (thread:9976) (line:   68)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\MilkOptics\software\gui\views\simulationView.py", line 69, in update_graph
+    self.dataPlotItem.setData(x=x, y=y)
+AttributeError: 'SimulationView' object has no attribute 'dataPlotItem'
+2020-10-15 15:22:20,446		 (__main__                 ) (thread:9976) (line:   68)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\MilkOptics\software\gui\views\simulationView.py", line 69, in update_graph
+    self.dataPlotItem.setData(x=x, y=y)
+AttributeError: 'SimulationView' object has no attribute 'dataPlotItem'
+2020-10-15 15:22:20,549		 (__main__                 ) (thread:9976) (line:   68)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\MilkOptics\software\gui\views\simulationView.py", line 69, in update_graph
+    self.dataPlotItem.setData(x=x, y=y)
+AttributeError: 'SimulationView' object has no attribute 'dataPlotItem'
+2020-10-15 15:22:20,651		 (__main__                 ) (thread:9976) (line:   68)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\MilkOptics\software\gui\views\simulationView.py", line 69, in update_graph
+    self.dataPlotItem.setData(x=x, y=y)
+AttributeError: 'SimulationView' object has no attribute 'dataPlotItem'
+2020-10-15 15:22:20,753		 (__main__                 ) (thread:9976) (line:   68)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\MilkOptics\software\gui\views\simulationView.py", line 69, in update_graph
+    self.dataPlotItem.setData(x=x, y=y)
+AttributeError: 'SimulationView' object has no attribute 'dataPlotItem'
+2020-10-15 15:22:20,855		 (__main__                 ) (thread:9976) (line:   68)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\MilkOptics\software\gui\views\simulationView.py", line 69, in update_graph
+    self.dataPlotItem.setData(x=x, y=y)
+AttributeError: 'SimulationView' object has no attribute 'dataPlotItem'
+2020-10-15 15:22:20,958		 (__main__                 ) (thread:9976) (line:   68)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\MilkOptics\software\gui\views\simulationView.py", line 69, in update_graph
+    self.dataPlotItem.setData(x=x, y=y)
+AttributeError: 'SimulationView' object has no attribute 'dataPlotItem'
+2020-10-15 15:22:21,060		 (__main__                 ) (thread:9976) (line:   68)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\MilkOptics\software\gui\views\simulationView.py", line 69, in update_graph
+    self.dataPlotItem.setData(x=x, y=y)
+AttributeError: 'SimulationView' object has no attribute 'dataPlotItem'
+2020-10-15 15:22:21,162		 (__main__                 ) (thread:9976) (line:   68)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\MilkOptics\software\gui\views\simulationView.py", line 69, in update_graph
+    self.dataPlotItem.setData(x=x, y=y)
+AttributeError: 'SimulationView' object has no attribute 'dataPlotItem'
+2020-10-15 15:22:21,265		 (__main__                 ) (thread:9976) (line:   68)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\MilkOptics\software\gui\views\simulationView.py", line 69, in update_graph
+    self.dataPlotItem.setData(x=x, y=y)
+AttributeError: 'SimulationView' object has no attribute 'dataPlotItem'
+2020-10-15 15:22:21,367		 (__main__                 ) (thread:9976) (line:   68)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\MilkOptics\software\gui\views\simulationView.py", line 69, in update_graph
+    self.dataPlotItem.setData(x=x, y=y)
+AttributeError: 'SimulationView' object has no attribute 'dataPlotItem'
+2020-10-15 15:22:21,469		 (__main__                 ) (thread:9976) (line:   68)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\MilkOptics\software\gui\views\simulationView.py", line 69, in update_graph
+    self.dataPlotItem.setData(x=x, y=y)
+AttributeError: 'SimulationView' object has no attribute 'dataPlotItem'
+2020-10-15 15:22:21,572		 (__main__                 ) (thread:9976) (line:   68)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\MilkOptics\software\gui\views\simulationView.py", line 69, in update_graph
+    self.dataPlotItem.setData(x=x, y=y)
+AttributeError: 'SimulationView' object has no attribute 'dataPlotItem'
+2020-10-15 15:22:21,674		 (__main__                 ) (thread:9976) (line:   68)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\MilkOptics\software\gui\views\simulationView.py", line 69, in update_graph
+    self.dataPlotItem.setData(x=x, y=y)
+AttributeError: 'SimulationView' object has no attribute 'dataPlotItem'
+2020-10-15 15:22:21,777		 (__main__                 ) (thread:9976) (line:   68)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\MilkOptics\software\gui\views\simulationView.py", line 69, in update_graph
+    self.dataPlotItem.setData(x=x, y=y)
+AttributeError: 'SimulationView' object has no attribute 'dataPlotItem'
+2020-10-15 15:22:21,880		 (__main__                 ) (thread:9976) (line:   68)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\MilkOptics\software\gui\views\simulationView.py", line 69, in update_graph
+    self.dataPlotItem.setData(x=x, y=y)
+AttributeError: 'SimulationView' object has no attribute 'dataPlotItem'
+2020-10-15 15:22:21,982		 (__main__                 ) (thread:9976) (line:   68)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\MilkOptics\software\gui\views\simulationView.py", line 69, in update_graph
+    self.dataPlotItem.setData(x=x, y=y)
+AttributeError: 'SimulationView' object has no attribute 'dataPlotItem'
+2020-10-15 15:22:22,085		 (__main__                 ) (thread:9976) (line:   68)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\MilkOptics\software\gui\views\simulationView.py", line 69, in update_graph
+    self.dataPlotItem.setData(x=x, y=y)
+AttributeError: 'SimulationView' object has no attribute 'dataPlotItem'
+2020-10-15 15:22:22,187		 (__main__                 ) (thread:9976) (line:   68)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\MilkOptics\software\gui\views\simulationView.py", line 69, in update_graph
+    self.dataPlotItem.setData(x=x, y=y)
+AttributeError: 'SimulationView' object has no attribute 'dataPlotItem'
+2020-10-15 15:22:22,305		 (__main__                 ) (thread:9976) (line:   68)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\MilkOptics\software\gui\views\simulationView.py", line 69, in update_graph
+    self.dataPlotItem.setData(x=x, y=y)
+AttributeError: 'SimulationView' object has no attribute 'dataPlotItem'
