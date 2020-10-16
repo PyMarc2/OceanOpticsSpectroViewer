@@ -60,6 +60,13 @@ font: 11pt &quot;OpenSans-Light&quot;;
           </widget>
          </item>
          <item>
+          <widget class="QPushButton" name="pb_rmBackground">
+           <property name="text">
+            <string>Remove Background</string>
+           </property>
+          </widget>
+         </item>
+         <item>
           <widget class="QPushButton" name="pb_normalize">
            <property name="styleSheet">
             <string notr="true"/>
@@ -121,7 +128,7 @@ font: 11pt &quot;OpenSans-Light&quot;;
              </spacer>
             </item>
             <item>
-             <widget class="QLineEdit" name="le_acqTime">
+             <widget class="QLineEdit" name="le_exposure">
               <property name="text">
                <string>100</string>
               </property>
@@ -154,7 +161,7 @@ font: 11pt &quot;OpenSans-Light&quot;;
              </spacer>
             </item>
             <item>
-             <widget class="QLineEdit" name="le_acqTime_2">
+             <widget class="QLineEdit" name="le_viewTime">
               <property name="text">
                <string>100</string>
               </property>
@@ -187,7 +194,7 @@ font: 11pt &quot;OpenSans-Light&quot;;
              </spacer>
             </item>
             <item>
-             <widget class="QLineEdit" name="le_acqTime_3">
+             <widget class="QLineEdit" name="le_acqTime">
               <property name="text">
                <string>100</string>
               </property>

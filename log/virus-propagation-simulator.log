@@ -4498,3 +4498,790 @@ Traceback (most recent call last):
   File "C:\Users\marc-\Documents\Github\Optics-ID\gui\views\filterView.py", line 86, in make_threads
     self.acqWorker.moveToThread(self.acqThread)
 AttributeError: 'FilterView' object has no attribute 'acqThread'
+2020-10-16 16:02:32,080		 (__main__                 ) (thread:10208) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:/Users/marc-/Documents/Github/Optics-ID/main.py", line 82, in <module>
+    main()
+  File "C:/Users/marc-/Documents/Github/Optics-ID/main.py", line 76, in main
+    app = App(sys.argv)
+  File "C:/Users/marc-/Documents/Github/Optics-ID/main.py", line 38, in __init__
+    self.mainWindow = MainWindow(model=self.mainModel)
+  File "C:\Users\marc-\Documents\Github\Optics-ID\gui\windows\mainWindow.py", line 25, in __init__
+    self.create_views_and_dialogs()
+  File "C:\Users\marc-\Documents\Github\Optics-ID\gui\windows\mainWindow.py", line 49, in create_views_and_dialogs
+    self.filterView = FilterView(model=self.model)
+  File "C:\Users\marc-\Documents\Github\Optics-ID\gui\views\filterView.py", line 27, in __init__
+    self.connect_buttons()
+  File "C:\Users\marc-\Documents\Github\Optics-ID\gui\views\filterView.py", line 58, in connect_buttons
+    self.le_exposure.textChanged.connect(lambda:self.spec.integration_time_micros(int(self.le_acqTime.text()) * 1000))
+AttributeError: 'FilterView' object has no attribute 'le_exposure'
+2020-10-16 16:03:43,134		 (__main__                 ) (thread:7268) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\Optics-ID\gui\views\filterView.py", line 58, in <lambda>
+    self.le_exposure.textChanged.connect(lambda: self.spec.integration_time_micros(int(self.le_exposure.text()) * 1000))
+  File "C:\Users\marc-\AppData\Local\Programs\Python\Python37\lib\site-packages\seabreeze\spectrometers.py", line 266, in integration_time_micros
+    raise e
+  File "C:\Users\marc-\AppData\Local\Programs\Python\Python37\lib\site-packages\seabreeze\spectrometers.py", line 253, in integration_time_micros
+    integration_time_micros
+  File "src\seabreeze\cseabreeze\c_seabreeze_wrapper.pyx", line 701, in seabreeze.cseabreeze._wrapper.SeaBreezeSpectrometerFeature.set_integration_time_micros
+seabreeze.cseabreeze._wrapper.SeaBreezeError: Error: Input was out of bounds
+2020-10-16 16:03:43,285		 (__main__                 ) (thread:7268) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\Optics-ID\gui\views\filterView.py", line 58, in <lambda>
+    self.le_exposure.textChanged.connect(lambda: self.spec.integration_time_micros(int(self.le_exposure.text()) * 1000))
+ValueError: invalid literal for int() with base 10: ''
+2020-10-16 16:05:53,125		 (__main__                 ) (thread:11256) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\Optics-ID\gui\views\filterView.py", line 58, in <lambda>
+    self.le_exposure.textChanged.connect(lambda: self.spec.integration_time_micros(int(self.le_exposure.text()) * 1000))
+  File "C:\Users\marc-\AppData\Local\Programs\Python\Python37\lib\site-packages\seabreeze\spectrometers.py", line 266, in integration_time_micros
+    raise e
+  File "C:\Users\marc-\AppData\Local\Programs\Python\Python37\lib\site-packages\seabreeze\spectrometers.py", line 253, in integration_time_micros
+    integration_time_micros
+  File "src\seabreeze\cseabreeze\c_seabreeze_wrapper.pyx", line 701, in seabreeze.cseabreeze._wrapper.SeaBreezeSpectrometerFeature.set_integration_time_micros
+seabreeze.cseabreeze._wrapper.SeaBreezeError: Error: Input was out of bounds
+2020-10-16 16:07:05,668		 (__main__                 ) (thread:5916) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\Optics-ID\gui\views\filterView.py", line 58, in <lambda>
+    self.le_exposure.textChanged.connect(lambda: self.spec.integration_time_micros(int(self.le_exposure.text()) * 1000))
+  File "C:\Users\marc-\AppData\Local\Programs\Python\Python37\lib\site-packages\seabreeze\spectrometers.py", line 266, in integration_time_micros
+    raise e
+  File "C:\Users\marc-\AppData\Local\Programs\Python\Python37\lib\site-packages\seabreeze\spectrometers.py", line 253, in integration_time_micros
+    integration_time_micros
+  File "src\seabreeze\cseabreeze\c_seabreeze_wrapper.pyx", line 701, in seabreeze.cseabreeze._wrapper.SeaBreezeSpectrometerFeature.set_integration_time_micros
+seabreeze.cseabreeze._wrapper.SeaBreezeError: Error: Input was out of bounds
+2020-10-16 16:07:08,999		 (__main__                 ) (thread:5916) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\Optics-ID\gui\views\filterView.py", line 58, in <lambda>
+    self.le_exposure.textChanged.connect(lambda: self.spec.integration_time_micros(int(self.le_exposure.text()) * 1000))
+  File "C:\Users\marc-\AppData\Local\Programs\Python\Python37\lib\site-packages\seabreeze\spectrometers.py", line 266, in integration_time_micros
+    raise e
+  File "C:\Users\marc-\AppData\Local\Programs\Python\Python37\lib\site-packages\seabreeze\spectrometers.py", line 253, in integration_time_micros
+    integration_time_micros
+  File "src\seabreeze\cseabreeze\c_seabreeze_wrapper.pyx", line 701, in seabreeze.cseabreeze._wrapper.SeaBreezeSpectrometerFeature.set_integration_time_micros
+seabreeze.cseabreeze._wrapper.SeaBreezeError: Error: Input was out of bounds
+2020-10-16 16:07:13,109		 (__main__                 ) (thread:5916) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\Optics-ID\gui\views\filterView.py", line 58, in <lambda>
+    self.le_exposure.textChanged.connect(lambda: self.spec.integration_time_micros(int(self.le_exposure.text()) * 1000))
+  File "C:\Users\marc-\AppData\Local\Programs\Python\Python37\lib\site-packages\seabreeze\spectrometers.py", line 266, in integration_time_micros
+    raise e
+  File "C:\Users\marc-\AppData\Local\Programs\Python\Python37\lib\site-packages\seabreeze\spectrometers.py", line 253, in integration_time_micros
+    integration_time_micros
+  File "src\seabreeze\cseabreeze\c_seabreeze_wrapper.pyx", line 701, in seabreeze.cseabreeze._wrapper.SeaBreezeSpectrometerFeature.set_integration_time_micros
+seabreeze.cseabreeze._wrapper.SeaBreezeError: Error: Input was out of bounds
+2020-10-16 16:07:16,237		 (__main__                 ) (thread:5916) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\Optics-ID\gui\views\filterView.py", line 58, in <lambda>
+    self.le_exposure.textChanged.connect(lambda: self.spec.integration_time_micros(int(self.le_exposure.text()) * 1000))
+  File "C:\Users\marc-\AppData\Local\Programs\Python\Python37\lib\site-packages\seabreeze\spectrometers.py", line 266, in integration_time_micros
+    raise e
+  File "C:\Users\marc-\AppData\Local\Programs\Python\Python37\lib\site-packages\seabreeze\spectrometers.py", line 253, in integration_time_micros
+    integration_time_micros
+  File "src\seabreeze\cseabreeze\c_seabreeze_wrapper.pyx", line 701, in seabreeze.cseabreeze._wrapper.SeaBreezeSpectrometerFeature.set_integration_time_micros
+seabreeze.cseabreeze._wrapper.SeaBreezeError: Error: Input was out of bounds
+2020-10-16 16:07:19,098		 (__main__                 ) (thread:5916) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\Optics-ID\gui\views\filterView.py", line 58, in <lambda>
+    self.le_exposure.textChanged.connect(lambda: self.spec.integration_time_micros(int(self.le_exposure.text()) * 1000))
+  File "C:\Users\marc-\AppData\Local\Programs\Python\Python37\lib\site-packages\seabreeze\spectrometers.py", line 266, in integration_time_micros
+    raise e
+  File "C:\Users\marc-\AppData\Local\Programs\Python\Python37\lib\site-packages\seabreeze\spectrometers.py", line 253, in integration_time_micros
+    integration_time_micros
+  File "src\seabreeze\cseabreeze\c_seabreeze_wrapper.pyx", line 701, in seabreeze.cseabreeze._wrapper.SeaBreezeSpectrometerFeature.set_integration_time_micros
+seabreeze.cseabreeze._wrapper.SeaBreezeError: Error: Input was out of bounds
+2020-10-16 16:08:13,167		 (__main__                 ) (thread:5916) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\Optics-ID\gui\views\filterView.py", line 58, in <lambda>
+    self.le_exposure.textChanged.connect(lambda: self.spec.integration_time_micros(int(self.le_exposure.text()) * 1000))
+  File "C:\Users\marc-\AppData\Local\Programs\Python\Python37\lib\site-packages\seabreeze\spectrometers.py", line 266, in integration_time_micros
+    raise e
+  File "C:\Users\marc-\AppData\Local\Programs\Python\Python37\lib\site-packages\seabreeze\spectrometers.py", line 253, in integration_time_micros
+    integration_time_micros
+  File "src\seabreeze\cseabreeze\c_seabreeze_wrapper.pyx", line 701, in seabreeze.cseabreeze._wrapper.SeaBreezeSpectrometerFeature.set_integration_time_micros
+seabreeze.cseabreeze._wrapper.SeaBreezeError: Error: Input was out of bounds
+2020-10-16 16:08:24,717		 (__main__                 ) (thread:5916) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\Optics-ID\gui\views\filterView.py", line 58, in <lambda>
+    self.le_exposure.textChanged.connect(lambda: self.spec.integration_time_micros(int(self.le_exposure.text()) * 1000))
+ValueError: invalid literal for int() with base 10: ''
+2020-10-16 16:08:26,095		 (__main__                 ) (thread:5916) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\Optics-ID\gui\views\filterView.py", line 58, in <lambda>
+    self.le_exposure.textChanged.connect(lambda: self.spec.integration_time_micros(int(self.le_exposure.text()) * 1000))
+ValueError: invalid literal for int() with base 10: ''
+2020-10-16 16:08:26,784		 (__main__                 ) (thread:5916) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\Optics-ID\gui\views\filterView.py", line 58, in <lambda>
+    self.le_exposure.textChanged.connect(lambda: self.spec.integration_time_micros(int(self.le_exposure.text()) * 1000))
+ValueError: invalid literal for int() with base 10: ''
+2020-10-16 16:08:27,464		 (__main__                 ) (thread:5916) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\Optics-ID\gui\views\filterView.py", line 58, in <lambda>
+    self.le_exposure.textChanged.connect(lambda: self.spec.integration_time_micros(int(self.le_exposure.text()) * 1000))
+ValueError: invalid literal for int() with base 10: ''
+2020-10-16 16:08:28,746		 (__main__                 ) (thread:5916) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\Optics-ID\gui\views\filterView.py", line 58, in <lambda>
+    self.le_exposure.textChanged.connect(lambda: self.spec.integration_time_micros(int(self.le_exposure.text()) * 1000))
+ValueError: invalid literal for int() with base 10: ''
+2020-10-16 16:08:28,814		 (__main__                 ) (thread:5916) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\Optics-ID\gui\views\filterView.py", line 58, in <lambda>
+    self.le_exposure.textChanged.connect(lambda: self.spec.integration_time_micros(int(self.le_exposure.text()) * 1000))
+  File "C:\Users\marc-\AppData\Local\Programs\Python\Python37\lib\site-packages\seabreeze\spectrometers.py", line 266, in integration_time_micros
+    raise e
+  File "C:\Users\marc-\AppData\Local\Programs\Python\Python37\lib\site-packages\seabreeze\spectrometers.py", line 253, in integration_time_micros
+    integration_time_micros
+  File "src\seabreeze\cseabreeze\c_seabreeze_wrapper.pyx", line 701, in seabreeze.cseabreeze._wrapper.SeaBreezeSpectrometerFeature.set_integration_time_micros
+seabreeze.cseabreeze._wrapper.SeaBreezeError: Error: Input was out of bounds
+2020-10-16 16:08:29,789		 (__main__                 ) (thread:5916) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\Optics-ID\gui\views\filterView.py", line 58, in <lambda>
+    self.le_exposure.textChanged.connect(lambda: self.spec.integration_time_micros(int(self.le_exposure.text()) * 1000))
+  File "C:\Users\marc-\AppData\Local\Programs\Python\Python37\lib\site-packages\seabreeze\spectrometers.py", line 266, in integration_time_micros
+    raise e
+  File "C:\Users\marc-\AppData\Local\Programs\Python\Python37\lib\site-packages\seabreeze\spectrometers.py", line 253, in integration_time_micros
+    integration_time_micros
+  File "src\seabreeze\cseabreeze\c_seabreeze_wrapper.pyx", line 701, in seabreeze.cseabreeze._wrapper.SeaBreezeSpectrometerFeature.set_integration_time_micros
+seabreeze.cseabreeze._wrapper.SeaBreezeError: Error: Input was out of bounds
+2020-10-16 16:08:30,808		 (__main__                 ) (thread:5916) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\Optics-ID\gui\views\filterView.py", line 58, in <lambda>
+    self.le_exposure.textChanged.connect(lambda: self.spec.integration_time_micros(int(self.le_exposure.text()) * 1000))
+  File "C:\Users\marc-\AppData\Local\Programs\Python\Python37\lib\site-packages\seabreeze\spectrometers.py", line 266, in integration_time_micros
+    raise e
+  File "C:\Users\marc-\AppData\Local\Programs\Python\Python37\lib\site-packages\seabreeze\spectrometers.py", line 253, in integration_time_micros
+    integration_time_micros
+  File "src\seabreeze\cseabreeze\c_seabreeze_wrapper.pyx", line 701, in seabreeze.cseabreeze._wrapper.SeaBreezeSpectrometerFeature.set_integration_time_micros
+seabreeze.cseabreeze._wrapper.SeaBreezeError: Error: Input was out of bounds
+2020-10-16 16:08:32,178		 (__main__                 ) (thread:5916) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\Optics-ID\gui\views\filterView.py", line 58, in <lambda>
+    self.le_exposure.textChanged.connect(lambda: self.spec.integration_time_micros(int(self.le_exposure.text()) * 1000))
+ValueError: invalid literal for int() with base 10: ''
+2020-10-16 16:08:32,213		 (__main__                 ) (thread:5916) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\Optics-ID\gui\views\filterView.py", line 58, in <lambda>
+    self.le_exposure.textChanged.connect(lambda: self.spec.integration_time_micros(int(self.le_exposure.text()) * 1000))
+  File "C:\Users\marc-\AppData\Local\Programs\Python\Python37\lib\site-packages\seabreeze\spectrometers.py", line 266, in integration_time_micros
+    raise e
+  File "C:\Users\marc-\AppData\Local\Programs\Python\Python37\lib\site-packages\seabreeze\spectrometers.py", line 253, in integration_time_micros
+    integration_time_micros
+  File "src\seabreeze\cseabreeze\c_seabreeze_wrapper.pyx", line 701, in seabreeze.cseabreeze._wrapper.SeaBreezeSpectrometerFeature.set_integration_time_micros
+seabreeze.cseabreeze._wrapper.SeaBreezeError: Error: Input was out of bounds
+2020-10-16 16:08:32,811		 (__main__                 ) (thread:5916) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\Optics-ID\gui\views\filterView.py", line 58, in <lambda>
+    self.le_exposure.textChanged.connect(lambda: self.spec.integration_time_micros(int(self.le_exposure.text()) * 1000))
+ValueError: invalid literal for int() with base 10: ''
+2020-10-16 16:08:34,206		 (__main__                 ) (thread:5916) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\Optics-ID\gui\views\filterView.py", line 58, in <lambda>
+    self.le_exposure.textChanged.connect(lambda: self.spec.integration_time_micros(int(self.le_exposure.text()) * 1000))
+ValueError: invalid literal for int() with base 10: ''
+2020-10-16 16:08:34,259		 (__main__                 ) (thread:5916) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\Optics-ID\gui\views\filterView.py", line 58, in <lambda>
+    self.le_exposure.textChanged.connect(lambda: self.spec.integration_time_micros(int(self.le_exposure.text()) * 1000))
+  File "C:\Users\marc-\AppData\Local\Programs\Python\Python37\lib\site-packages\seabreeze\spectrometers.py", line 266, in integration_time_micros
+    raise e
+  File "C:\Users\marc-\AppData\Local\Programs\Python\Python37\lib\site-packages\seabreeze\spectrometers.py", line 253, in integration_time_micros
+    integration_time_micros
+  File "src\seabreeze\cseabreeze\c_seabreeze_wrapper.pyx", line 701, in seabreeze.cseabreeze._wrapper.SeaBreezeSpectrometerFeature.set_integration_time_micros
+seabreeze.cseabreeze._wrapper.SeaBreezeError: Error: Input was out of bounds
+2020-10-16 16:08:34,778		 (__main__                 ) (thread:5916) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\Optics-ID\gui\views\filterView.py", line 58, in <lambda>
+    self.le_exposure.textChanged.connect(lambda: self.spec.integration_time_micros(int(self.le_exposure.text()) * 1000))
+ValueError: invalid literal for int() with base 10: ''
+2020-10-16 16:09:06,891		 (__main__                 ) (thread:5916) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\Optics-ID\gui\views\filterView.py", line 58, in <lambda>
+    self.le_exposure.textChanged.connect(lambda: self.spec.integration_time_micros(int(self.le_exposure.text()) * 1000))
+ValueError: invalid literal for int() with base 10: ''
+2020-10-16 16:09:08,185		 (__main__                 ) (thread:5916) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\Optics-ID\gui\views\filterView.py", line 58, in <lambda>
+    self.le_exposure.textChanged.connect(lambda: self.spec.integration_time_micros(int(self.le_exposure.text()) * 1000))
+  File "C:\Users\marc-\AppData\Local\Programs\Python\Python37\lib\site-packages\seabreeze\spectrometers.py", line 266, in integration_time_micros
+    raise e
+  File "C:\Users\marc-\AppData\Local\Programs\Python\Python37\lib\site-packages\seabreeze\spectrometers.py", line 253, in integration_time_micros
+    integration_time_micros
+  File "src\seabreeze\cseabreeze\c_seabreeze_wrapper.pyx", line 701, in seabreeze.cseabreeze._wrapper.SeaBreezeSpectrometerFeature.set_integration_time_micros
+seabreeze.cseabreeze._wrapper.SeaBreezeError: Error: Input was out of bounds
+2020-10-16 16:09:12,595		 (__main__                 ) (thread:5916) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\Optics-ID\gui\views\filterView.py", line 58, in <lambda>
+    self.le_exposure.textChanged.connect(lambda: self.spec.integration_time_micros(int(self.le_exposure.text()) * 1000))
+  File "C:\Users\marc-\AppData\Local\Programs\Python\Python37\lib\site-packages\seabreeze\spectrometers.py", line 266, in integration_time_micros
+    raise e
+  File "C:\Users\marc-\AppData\Local\Programs\Python\Python37\lib\site-packages\seabreeze\spectrometers.py", line 253, in integration_time_micros
+    integration_time_micros
+  File "src\seabreeze\cseabreeze\c_seabreeze_wrapper.pyx", line 701, in seabreeze.cseabreeze._wrapper.SeaBreezeSpectrometerFeature.set_integration_time_micros
+seabreeze.cseabreeze._wrapper.SeaBreezeError: Error: Input was out of bounds
+2020-10-16 16:09:12,727		 (__main__                 ) (thread:5916) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\Optics-ID\gui\views\filterView.py", line 58, in <lambda>
+    self.le_exposure.textChanged.connect(lambda: self.spec.integration_time_micros(int(self.le_exposure.text()) * 1000))
+ValueError: invalid literal for int() with base 10: ''
+2020-10-16 16:09:13,418		 (__main__                 ) (thread:5916) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\Optics-ID\gui\views\filterView.py", line 58, in <lambda>
+    self.le_exposure.textChanged.connect(lambda: self.spec.integration_time_micros(int(self.le_exposure.text()) * 1000))
+  File "C:\Users\marc-\AppData\Local\Programs\Python\Python37\lib\site-packages\seabreeze\spectrometers.py", line 266, in integration_time_micros
+    raise e
+  File "C:\Users\marc-\AppData\Local\Programs\Python\Python37\lib\site-packages\seabreeze\spectrometers.py", line 253, in integration_time_micros
+    integration_time_micros
+  File "src\seabreeze\cseabreeze\c_seabreeze_wrapper.pyx", line 701, in seabreeze.cseabreeze._wrapper.SeaBreezeSpectrometerFeature.set_integration_time_micros
+seabreeze.cseabreeze._wrapper.SeaBreezeError: Error: Input was out of bounds
+2020-10-16 16:12:13,689		 (__main__                 ) (thread:5916) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\Optics-ID\gui\views\filterView.py", line 58, in <lambda>
+    self.le_exposure.textChanged.connect(lambda: self.spec.integration_time_micros(int(self.le_exposure.text()) * 1000))
+  File "C:\Users\marc-\AppData\Local\Programs\Python\Python37\lib\site-packages\seabreeze\spectrometers.py", line 266, in integration_time_micros
+    raise e
+  File "C:\Users\marc-\AppData\Local\Programs\Python\Python37\lib\site-packages\seabreeze\spectrometers.py", line 253, in integration_time_micros
+    integration_time_micros
+  File "src\seabreeze\cseabreeze\c_seabreeze_wrapper.pyx", line 701, in seabreeze.cseabreeze._wrapper.SeaBreezeSpectrometerFeature.set_integration_time_micros
+seabreeze.cseabreeze._wrapper.SeaBreezeError: Error: Input was out of bounds
+2020-10-16 16:12:14,909		 (__main__                 ) (thread:5916) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\Optics-ID\gui\views\filterView.py", line 58, in <lambda>
+    self.le_exposure.textChanged.connect(lambda: self.spec.integration_time_micros(int(self.le_exposure.text()) * 1000))
+ValueError: invalid literal for int() with base 10: ''
+2020-10-16 16:12:17,193		 (__main__                 ) (thread:5916) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\Optics-ID\gui\views\filterView.py", line 58, in <lambda>
+    self.le_exposure.textChanged.connect(lambda: self.spec.integration_time_micros(int(self.le_exposure.text()) * 1000))
+ValueError: invalid literal for int() with base 10: ''
+2020-10-16 16:12:17,262		 (__main__                 ) (thread:5916) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\Optics-ID\gui\views\filterView.py", line 58, in <lambda>
+    self.le_exposure.textChanged.connect(lambda: self.spec.integration_time_micros(int(self.le_exposure.text()) * 1000))
+  File "C:\Users\marc-\AppData\Local\Programs\Python\Python37\lib\site-packages\seabreeze\spectrometers.py", line 266, in integration_time_micros
+    raise e
+  File "C:\Users\marc-\AppData\Local\Programs\Python\Python37\lib\site-packages\seabreeze\spectrometers.py", line 253, in integration_time_micros
+    integration_time_micros
+  File "src\seabreeze\cseabreeze\c_seabreeze_wrapper.pyx", line 701, in seabreeze.cseabreeze._wrapper.SeaBreezeSpectrometerFeature.set_integration_time_micros
+seabreeze.cseabreeze._wrapper.SeaBreezeError: Error: Input was out of bounds
+2020-10-16 16:12:17,740		 (__main__                 ) (thread:5916) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\Optics-ID\gui\views\filterView.py", line 58, in <lambda>
+    self.le_exposure.textChanged.connect(lambda: self.spec.integration_time_micros(int(self.le_exposure.text()) * 1000))
+ValueError: invalid literal for int() with base 10: ''
+2020-10-16 16:12:18,937		 (__main__                 ) (thread:5916) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\Optics-ID\gui\views\filterView.py", line 58, in <lambda>
+    self.le_exposure.textChanged.connect(lambda: self.spec.integration_time_micros(int(self.le_exposure.text()) * 1000))
+  File "C:\Users\marc-\AppData\Local\Programs\Python\Python37\lib\site-packages\seabreeze\spectrometers.py", line 266, in integration_time_micros
+    raise e
+  File "C:\Users\marc-\AppData\Local\Programs\Python\Python37\lib\site-packages\seabreeze\spectrometers.py", line 253, in integration_time_micros
+    integration_time_micros
+  File "src\seabreeze\cseabreeze\c_seabreeze_wrapper.pyx", line 701, in seabreeze.cseabreeze._wrapper.SeaBreezeSpectrometerFeature.set_integration_time_micros
+seabreeze.cseabreeze._wrapper.SeaBreezeError: Error: Input was out of bounds
+2020-10-16 16:12:19,542		 (__main__                 ) (thread:5916) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\Optics-ID\gui\views\filterView.py", line 58, in <lambda>
+    self.le_exposure.textChanged.connect(lambda: self.spec.integration_time_micros(int(self.le_exposure.text()) * 1000))
+ValueError: invalid literal for int() with base 10: ''
+2020-10-16 16:12:19,714		 (__main__                 ) (thread:5916) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\Optics-ID\gui\views\filterView.py", line 58, in <lambda>
+    self.le_exposure.textChanged.connect(lambda: self.spec.integration_time_micros(int(self.le_exposure.text()) * 1000))
+  File "C:\Users\marc-\AppData\Local\Programs\Python\Python37\lib\site-packages\seabreeze\spectrometers.py", line 266, in integration_time_micros
+    raise e
+  File "C:\Users\marc-\AppData\Local\Programs\Python\Python37\lib\site-packages\seabreeze\spectrometers.py", line 253, in integration_time_micros
+    integration_time_micros
+  File "src\seabreeze\cseabreeze\c_seabreeze_wrapper.pyx", line 701, in seabreeze.cseabreeze._wrapper.SeaBreezeSpectrometerFeature.set_integration_time_micros
+seabreeze.cseabreeze._wrapper.SeaBreezeError: Error: Input was out of bounds
+2020-10-16 16:12:20,104		 (__main__                 ) (thread:5916) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\Optics-ID\gui\views\filterView.py", line 58, in <lambda>
+    self.le_exposure.textChanged.connect(lambda: self.spec.integration_time_micros(int(self.le_exposure.text()) * 1000))
+ValueError: invalid literal for int() with base 10: ''
+2020-10-16 16:12:21,016		 (__main__                 ) (thread:5916) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\Optics-ID\gui\views\filterView.py", line 58, in <lambda>
+    self.le_exposure.textChanged.connect(lambda: self.spec.integration_time_micros(int(self.le_exposure.text()) * 1000))
+ValueError: invalid literal for int() with base 10: ''
+2020-10-16 16:12:21,697		 (__main__                 ) (thread:5916) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\Optics-ID\gui\views\filterView.py", line 58, in <lambda>
+    self.le_exposure.textChanged.connect(lambda: self.spec.integration_time_micros(int(self.le_exposure.text()) * 1000))
+ValueError: invalid literal for int() with base 10: ''
+2020-10-16 16:12:22,147		 (__main__                 ) (thread:5916) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\Optics-ID\gui\views\filterView.py", line 58, in <lambda>
+    self.le_exposure.textChanged.connect(lambda: self.spec.integration_time_micros(int(self.le_exposure.text()) * 1000))
+ValueError: invalid literal for int() with base 10: ''
+2020-10-16 16:12:23,131		 (__main__                 ) (thread:5916) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\Optics-ID\gui\views\filterView.py", line 58, in <lambda>
+    self.le_exposure.textChanged.connect(lambda: self.spec.integration_time_micros(int(self.le_exposure.text()) * 1000))
+ValueError: invalid literal for int() with base 10: ''
+2020-10-16 16:12:23,658		 (__main__                 ) (thread:5916) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\Optics-ID\gui\views\filterView.py", line 58, in <lambda>
+    self.le_exposure.textChanged.connect(lambda: self.spec.integration_time_micros(int(self.le_exposure.text()) * 1000))
+  File "C:\Users\marc-\AppData\Local\Programs\Python\Python37\lib\site-packages\seabreeze\spectrometers.py", line 266, in integration_time_micros
+    raise e
+  File "C:\Users\marc-\AppData\Local\Programs\Python\Python37\lib\site-packages\seabreeze\spectrometers.py", line 253, in integration_time_micros
+    integration_time_micros
+  File "src\seabreeze\cseabreeze\c_seabreeze_wrapper.pyx", line 701, in seabreeze.cseabreeze._wrapper.SeaBreezeSpectrometerFeature.set_integration_time_micros
+seabreeze.cseabreeze._wrapper.SeaBreezeError: Error: Input was out of bounds
+2020-10-16 16:12:24,863		 (__main__                 ) (thread:5916) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\Optics-ID\gui\views\filterView.py", line 58, in <lambda>
+    self.le_exposure.textChanged.connect(lambda: self.spec.integration_time_micros(int(self.le_exposure.text()) * 1000))
+  File "C:\Users\marc-\AppData\Local\Programs\Python\Python37\lib\site-packages\seabreeze\spectrometers.py", line 266, in integration_time_micros
+    raise e
+  File "C:\Users\marc-\AppData\Local\Programs\Python\Python37\lib\site-packages\seabreeze\spectrometers.py", line 253, in integration_time_micros
+    integration_time_micros
+  File "src\seabreeze\cseabreeze\c_seabreeze_wrapper.pyx", line 701, in seabreeze.cseabreeze._wrapper.SeaBreezeSpectrometerFeature.set_integration_time_micros
+seabreeze.cseabreeze._wrapper.SeaBreezeError: Error: Input was out of bounds
+2020-10-16 16:12:25,660		 (__main__                 ) (thread:5916) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\Optics-ID\gui\views\filterView.py", line 58, in <lambda>
+    self.le_exposure.textChanged.connect(lambda: self.spec.integration_time_micros(int(self.le_exposure.text()) * 1000))
+ValueError: invalid literal for int() with base 10: ''
+2020-10-16 16:12:27,686		 (__main__                 ) (thread:5916) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\Optics-ID\gui\views\filterView.py", line 58, in <lambda>
+    self.le_exposure.textChanged.connect(lambda: self.spec.integration_time_micros(int(self.le_exposure.text()) * 1000))
+ValueError: invalid literal for int() with base 10: ''
+2020-10-16 16:12:28,427		 (__main__                 ) (thread:5916) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\Optics-ID\gui\views\filterView.py", line 58, in <lambda>
+    self.le_exposure.textChanged.connect(lambda: self.spec.integration_time_micros(int(self.le_exposure.text()) * 1000))
+  File "C:\Users\marc-\AppData\Local\Programs\Python\Python37\lib\site-packages\seabreeze\spectrometers.py", line 266, in integration_time_micros
+    raise e
+  File "C:\Users\marc-\AppData\Local\Programs\Python\Python37\lib\site-packages\seabreeze\spectrometers.py", line 253, in integration_time_micros
+    integration_time_micros
+  File "src\seabreeze\cseabreeze\c_seabreeze_wrapper.pyx", line 701, in seabreeze.cseabreeze._wrapper.SeaBreezeSpectrometerFeature.set_integration_time_micros
+seabreeze.cseabreeze._wrapper.SeaBreezeError: Error: Input was out of bounds
+2020-10-16 16:12:42,153		 (__main__                 ) (thread:5916) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\Optics-ID\gui\views\filterView.py", line 58, in <lambda>
+    self.le_exposure.textChanged.connect(lambda: self.spec.integration_time_micros(int(self.le_exposure.text()) * 1000))
+  File "C:\Users\marc-\AppData\Local\Programs\Python\Python37\lib\site-packages\seabreeze\spectrometers.py", line 266, in integration_time_micros
+    raise e
+  File "C:\Users\marc-\AppData\Local\Programs\Python\Python37\lib\site-packages\seabreeze\spectrometers.py", line 253, in integration_time_micros
+    integration_time_micros
+  File "src\seabreeze\cseabreeze\c_seabreeze_wrapper.pyx", line 701, in seabreeze.cseabreeze._wrapper.SeaBreezeSpectrometerFeature.set_integration_time_micros
+seabreeze.cseabreeze._wrapper.SeaBreezeError: Error: Input was out of bounds
+2020-10-16 16:12:42,276		 (__main__                 ) (thread:5916) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\Optics-ID\gui\views\filterView.py", line 58, in <lambda>
+    self.le_exposure.textChanged.connect(lambda: self.spec.integration_time_micros(int(self.le_exposure.text()) * 1000))
+ValueError: invalid literal for int() with base 10: ''
+2020-10-16 16:12:43,110		 (__main__                 ) (thread:5916) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\Optics-ID\gui\views\filterView.py", line 58, in <lambda>
+    self.le_exposure.textChanged.connect(lambda: self.spec.integration_time_micros(int(self.le_exposure.text()) * 1000))
+  File "C:\Users\marc-\AppData\Local\Programs\Python\Python37\lib\site-packages\seabreeze\spectrometers.py", line 266, in integration_time_micros
+    raise e
+  File "C:\Users\marc-\AppData\Local\Programs\Python\Python37\lib\site-packages\seabreeze\spectrometers.py", line 253, in integration_time_micros
+    integration_time_micros
+  File "src\seabreeze\cseabreeze\c_seabreeze_wrapper.pyx", line 701, in seabreeze.cseabreeze._wrapper.SeaBreezeSpectrometerFeature.set_integration_time_micros
+seabreeze.cseabreeze._wrapper.SeaBreezeError: Error: Input was out of bounds
+2020-10-16 16:12:43,179		 (__main__                 ) (thread:5916) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\Optics-ID\gui\views\filterView.py", line 58, in <lambda>
+    self.le_exposure.textChanged.connect(lambda: self.spec.integration_time_micros(int(self.le_exposure.text()) * 1000))
+ValueError: invalid literal for int() with base 10: '0.'
+2020-10-16 16:12:43,442		 (__main__                 ) (thread:5916) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\Optics-ID\gui\views\filterView.py", line 58, in <lambda>
+    self.le_exposure.textChanged.connect(lambda: self.spec.integration_time_micros(int(self.le_exposure.text()) * 1000))
+ValueError: invalid literal for int() with base 10: '0.1'
+2020-10-16 16:12:44,224		 (__main__                 ) (thread:5916) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\Optics-ID\gui\views\filterView.py", line 58, in <lambda>
+    self.le_exposure.textChanged.connect(lambda: self.spec.integration_time_micros(int(self.le_exposure.text()) * 1000))
+ValueError: invalid literal for int() with base 10: '0.10'
+2020-10-16 16:12:44,317		 (__main__                 ) (thread:5916) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\Optics-ID\gui\views\filterView.py", line 58, in <lambda>
+    self.le_exposure.textChanged.connect(lambda: self.spec.integration_time_micros(int(self.le_exposure.text()) * 1000))
+ValueError: invalid literal for int() with base 10: '0.10.'
+2020-10-16 16:12:44,435		 (__main__                 ) (thread:5916) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\Optics-ID\gui\views\filterView.py", line 58, in <lambda>
+    self.le_exposure.textChanged.connect(lambda: self.spec.integration_time_micros(int(self.le_exposure.text()) * 1000))
+ValueError: invalid literal for int() with base 10: '0.10.2'
+2020-10-16 16:12:45,227		 (__main__                 ) (thread:5916) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\Optics-ID\gui\views\filterView.py", line 58, in <lambda>
+    self.le_exposure.textChanged.connect(lambda: self.spec.integration_time_micros(int(self.le_exposure.text()) * 1000))
+ValueError: invalid literal for int() with base 10: '0.10.'
+2020-10-16 16:12:45,374		 (__main__                 ) (thread:5916) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\Optics-ID\gui\views\filterView.py", line 58, in <lambda>
+    self.le_exposure.textChanged.connect(lambda: self.spec.integration_time_micros(int(self.le_exposure.text()) * 1000))
+ValueError: invalid literal for int() with base 10: '0.10'
+2020-10-16 16:12:45,673		 (__main__                 ) (thread:5916) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\Optics-ID\gui\views\filterView.py", line 58, in <lambda>
+    self.le_exposure.textChanged.connect(lambda: self.spec.integration_time_micros(int(self.le_exposure.text()) * 1000))
+ValueError: invalid literal for int() with base 10: '0.1'
+2020-10-16 16:12:46,436		 (__main__                 ) (thread:5916) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\Optics-ID\gui\views\filterView.py", line 58, in <lambda>
+    self.le_exposure.textChanged.connect(lambda: self.spec.integration_time_micros(int(self.le_exposure.text()) * 1000))
+ValueError: invalid literal for int() with base 10: '0.10'
+2020-10-16 16:12:46,501		 (__main__                 ) (thread:5916) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\Optics-ID\gui\views\filterView.py", line 58, in <lambda>
+    self.le_exposure.textChanged.connect(lambda: self.spec.integration_time_micros(int(self.le_exposure.text()) * 1000))
+ValueError: invalid literal for int() with base 10: '0.102'
+2020-10-16 16:13:30,277		 (__main__                 ) (thread:11516) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\Optics-ID\gui\views\filterView.py", line 58, in <lambda>
+    self.le_exposure.textChanged.connect(lambda: self.spec.integration_time_micros(float(self.le_exposure.text()) * 1000))
+  File "C:\Users\marc-\AppData\Local\Programs\Python\Python37\lib\site-packages\seabreeze\spectrometers.py", line 266, in integration_time_micros
+    raise e
+  File "C:\Users\marc-\AppData\Local\Programs\Python\Python37\lib\site-packages\seabreeze\spectrometers.py", line 253, in integration_time_micros
+    integration_time_micros
+  File "src\seabreeze\cseabreeze\c_seabreeze_wrapper.pyx", line 701, in seabreeze.cseabreeze._wrapper.SeaBreezeSpectrometerFeature.set_integration_time_micros
+seabreeze.cseabreeze._wrapper.SeaBreezeError: Error: Input was out of bounds
+2020-10-16 16:13:37,500		 (__main__                 ) (thread:11516) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\Optics-ID\gui\views\filterView.py", line 58, in <lambda>
+    self.le_exposure.textChanged.connect(lambda: self.spec.integration_time_micros(float(self.le_exposure.text()) * 1000))
+ValueError: could not convert string to float: 
+2020-10-16 16:13:37,955		 (__main__                 ) (thread:11516) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\Optics-ID\gui\views\filterView.py", line 58, in <lambda>
+    self.le_exposure.textChanged.connect(lambda: self.spec.integration_time_micros(float(self.le_exposure.text()) * 1000))
+  File "C:\Users\marc-\AppData\Local\Programs\Python\Python37\lib\site-packages\seabreeze\spectrometers.py", line 266, in integration_time_micros
+    raise e
+  File "C:\Users\marc-\AppData\Local\Programs\Python\Python37\lib\site-packages\seabreeze\spectrometers.py", line 253, in integration_time_micros
+    integration_time_micros
+  File "src\seabreeze\cseabreeze\c_seabreeze_wrapper.pyx", line 701, in seabreeze.cseabreeze._wrapper.SeaBreezeSpectrometerFeature.set_integration_time_micros
+seabreeze.cseabreeze._wrapper.SeaBreezeError: Error: Input was out of bounds
+2020-10-16 16:13:39,547		 (__main__                 ) (thread:11516) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\Optics-ID\gui\views\filterView.py", line 58, in <lambda>
+    self.le_exposure.textChanged.connect(lambda: self.spec.integration_time_micros(float(self.le_exposure.text()) * 1000))
+ValueError: could not convert string to float: 
+2020-10-16 16:13:42,030		 (__main__                 ) (thread:11516) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\Optics-ID\gui\views\filterView.py", line 58, in <lambda>
+    self.le_exposure.textChanged.connect(lambda: self.spec.integration_time_micros(float(self.le_exposure.text()) * 1000))
+ValueError: could not convert string to float: 
+2020-10-16 16:13:42,747		 (__main__                 ) (thread:11516) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\Optics-ID\gui\views\filterView.py", line 58, in <lambda>
+    self.le_exposure.textChanged.connect(lambda: self.spec.integration_time_micros(float(self.le_exposure.text()) * 1000))
+ValueError: could not convert string to float: 
+2020-10-16 16:13:44,663		 (__main__                 ) (thread:11516) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\Optics-ID\gui\views\filterView.py", line 58, in <lambda>
+    self.le_exposure.textChanged.connect(lambda: self.spec.integration_time_micros(float(self.le_exposure.text()) * 1000))
+ValueError: could not convert string to float: 
+2020-10-16 16:13:48,259		 (__main__                 ) (thread:11516) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\Optics-ID\gui\views\filterView.py", line 58, in <lambda>
+    self.le_exposure.textChanged.connect(lambda: self.spec.integration_time_micros(float(self.le_exposure.text()) * 1000))
+ValueError: could not convert string to float: 
+2020-10-16 16:13:48,858		 (__main__                 ) (thread:11516) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\Optics-ID\gui\views\filterView.py", line 58, in <lambda>
+    self.le_exposure.textChanged.connect(lambda: self.spec.integration_time_micros(float(self.le_exposure.text()) * 1000))
+  File "C:\Users\marc-\AppData\Local\Programs\Python\Python37\lib\site-packages\seabreeze\spectrometers.py", line 266, in integration_time_micros
+    raise e
+  File "C:\Users\marc-\AppData\Local\Programs\Python\Python37\lib\site-packages\seabreeze\spectrometers.py", line 253, in integration_time_micros
+    integration_time_micros
+  File "src\seabreeze\cseabreeze\c_seabreeze_wrapper.pyx", line 701, in seabreeze.cseabreeze._wrapper.SeaBreezeSpectrometerFeature.set_integration_time_micros
+seabreeze.cseabreeze._wrapper.SeaBreezeError: Error: Input was out of bounds
+2020-10-16 16:13:52,767		 (__main__                 ) (thread:11516) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\Optics-ID\gui\views\filterView.py", line 58, in <lambda>
+    self.le_exposure.textChanged.connect(lambda: self.spec.integration_time_micros(float(self.le_exposure.text()) * 1000))
+  File "C:\Users\marc-\AppData\Local\Programs\Python\Python37\lib\site-packages\seabreeze\spectrometers.py", line 266, in integration_time_micros
+    raise e
+  File "C:\Users\marc-\AppData\Local\Programs\Python\Python37\lib\site-packages\seabreeze\spectrometers.py", line 253, in integration_time_micros
+    integration_time_micros
+  File "src\seabreeze\cseabreeze\c_seabreeze_wrapper.pyx", line 701, in seabreeze.cseabreeze._wrapper.SeaBreezeSpectrometerFeature.set_integration_time_micros
+seabreeze.cseabreeze._wrapper.SeaBreezeError: Error: Input was out of bounds
+2020-10-16 16:13:52,989		 (__main__                 ) (thread:11516) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\Optics-ID\gui\views\filterView.py", line 58, in <lambda>
+    self.le_exposure.textChanged.connect(lambda: self.spec.integration_time_micros(float(self.le_exposure.text()) * 1000))
+ValueError: could not convert string to float: 
+2020-10-16 16:13:53,626		 (__main__                 ) (thread:11516) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\Optics-ID\gui\views\filterView.py", line 58, in <lambda>
+    self.le_exposure.textChanged.connect(lambda: self.spec.integration_time_micros(float(self.le_exposure.text()) * 1000))
+  File "C:\Users\marc-\AppData\Local\Programs\Python\Python37\lib\site-packages\seabreeze\spectrometers.py", line 266, in integration_time_micros
+    raise e
+  File "C:\Users\marc-\AppData\Local\Programs\Python\Python37\lib\site-packages\seabreeze\spectrometers.py", line 253, in integration_time_micros
+    integration_time_micros
+  File "src\seabreeze\cseabreeze\c_seabreeze_wrapper.pyx", line 701, in seabreeze.cseabreeze._wrapper.SeaBreezeSpectrometerFeature.set_integration_time_micros
+seabreeze.cseabreeze._wrapper.SeaBreezeError: Error: Input was out of bounds
+2020-10-16 16:13:53,829		 (__main__                 ) (thread:11516) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\Optics-ID\gui\views\filterView.py", line 58, in <lambda>
+    self.le_exposure.textChanged.connect(lambda: self.spec.integration_time_micros(float(self.le_exposure.text()) * 1000))
+  File "C:\Users\marc-\AppData\Local\Programs\Python\Python37\lib\site-packages\seabreeze\spectrometers.py", line 266, in integration_time_micros
+    raise e
+  File "C:\Users\marc-\AppData\Local\Programs\Python\Python37\lib\site-packages\seabreeze\spectrometers.py", line 253, in integration_time_micros
+    integration_time_micros
+  File "src\seabreeze\cseabreeze\c_seabreeze_wrapper.pyx", line 701, in seabreeze.cseabreeze._wrapper.SeaBreezeSpectrometerFeature.set_integration_time_micros
+seabreeze.cseabreeze._wrapper.SeaBreezeError: Error: Input was out of bounds
+2020-10-16 16:13:54,022		 (__main__                 ) (thread:11516) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\Optics-ID\gui\views\filterView.py", line 58, in <lambda>
+    self.le_exposure.textChanged.connect(lambda: self.spec.integration_time_micros(float(self.le_exposure.text()) * 1000))
+  File "C:\Users\marc-\AppData\Local\Programs\Python\Python37\lib\site-packages\seabreeze\spectrometers.py", line 266, in integration_time_micros
+    raise e
+  File "C:\Users\marc-\AppData\Local\Programs\Python\Python37\lib\site-packages\seabreeze\spectrometers.py", line 253, in integration_time_micros
+    integration_time_micros
+  File "src\seabreeze\cseabreeze\c_seabreeze_wrapper.pyx", line 701, in seabreeze.cseabreeze._wrapper.SeaBreezeSpectrometerFeature.set_integration_time_micros
+seabreeze.cseabreeze._wrapper.SeaBreezeError: Error: Input was out of bounds
+2020-10-16 16:13:58,580		 (__main__                 ) (thread:11516) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\Optics-ID\gui\views\filterView.py", line 58, in <lambda>
+    self.le_exposure.textChanged.connect(lambda: self.spec.integration_time_micros(float(self.le_exposure.text()) * 1000))
+  File "C:\Users\marc-\AppData\Local\Programs\Python\Python37\lib\site-packages\seabreeze\spectrometers.py", line 266, in integration_time_micros
+    raise e
+  File "C:\Users\marc-\AppData\Local\Programs\Python\Python37\lib\site-packages\seabreeze\spectrometers.py", line 253, in integration_time_micros
+    integration_time_micros
+  File "src\seabreeze\cseabreeze\c_seabreeze_wrapper.pyx", line 701, in seabreeze.cseabreeze._wrapper.SeaBreezeSpectrometerFeature.set_integration_time_micros
+seabreeze.cseabreeze._wrapper.SeaBreezeError: Error: Input was out of bounds
+2020-10-16 16:13:58,758		 (__main__                 ) (thread:11516) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\Optics-ID\gui\views\filterView.py", line 58, in <lambda>
+    self.le_exposure.textChanged.connect(lambda: self.spec.integration_time_micros(float(self.le_exposure.text()) * 1000))
+  File "C:\Users\marc-\AppData\Local\Programs\Python\Python37\lib\site-packages\seabreeze\spectrometers.py", line 266, in integration_time_micros
+    raise e
+  File "C:\Users\marc-\AppData\Local\Programs\Python\Python37\lib\site-packages\seabreeze\spectrometers.py", line 253, in integration_time_micros
+    integration_time_micros
+  File "src\seabreeze\cseabreeze\c_seabreeze_wrapper.pyx", line 701, in seabreeze.cseabreeze._wrapper.SeaBreezeSpectrometerFeature.set_integration_time_micros
+seabreeze.cseabreeze._wrapper.SeaBreezeError: Error: Input was out of bounds
+2020-10-16 16:13:59,111		 (__main__                 ) (thread:11516) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\Optics-ID\gui\views\filterView.py", line 58, in <lambda>
+    self.le_exposure.textChanged.connect(lambda: self.spec.integration_time_micros(float(self.le_exposure.text()) * 1000))
+ValueError: could not convert string to float: 
+2020-10-16 16:13:59,725		 (__main__                 ) (thread:11516) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\Optics-ID\gui\views\filterView.py", line 58, in <lambda>
+    self.le_exposure.textChanged.connect(lambda: self.spec.integration_time_micros(float(self.le_exposure.text()) * 1000))
+  File "C:\Users\marc-\AppData\Local\Programs\Python\Python37\lib\site-packages\seabreeze\spectrometers.py", line 266, in integration_time_micros
+    raise e
+  File "C:\Users\marc-\AppData\Local\Programs\Python\Python37\lib\site-packages\seabreeze\spectrometers.py", line 253, in integration_time_micros
+    integration_time_micros
+  File "src\seabreeze\cseabreeze\c_seabreeze_wrapper.pyx", line 701, in seabreeze.cseabreeze._wrapper.SeaBreezeSpectrometerFeature.set_integration_time_micros
+seabreeze.cseabreeze._wrapper.SeaBreezeError: Error: Input was out of bounds
+2020-10-16 16:13:59,798		 (__main__                 ) (thread:11516) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\Optics-ID\gui\views\filterView.py", line 58, in <lambda>
+    self.le_exposure.textChanged.connect(lambda: self.spec.integration_time_micros(float(self.le_exposure.text()) * 1000))
+  File "C:\Users\marc-\AppData\Local\Programs\Python\Python37\lib\site-packages\seabreeze\spectrometers.py", line 266, in integration_time_micros
+    raise e
+  File "C:\Users\marc-\AppData\Local\Programs\Python\Python37\lib\site-packages\seabreeze\spectrometers.py", line 253, in integration_time_micros
+    integration_time_micros
+  File "src\seabreeze\cseabreeze\c_seabreeze_wrapper.pyx", line 701, in seabreeze.cseabreeze._wrapper.SeaBreezeSpectrometerFeature.set_integration_time_micros
+seabreeze.cseabreeze._wrapper.SeaBreezeError: Error: Input was out of bounds
+2020-10-16 16:13:59,881		 (__main__                 ) (thread:11516) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\Optics-ID\gui\views\filterView.py", line 58, in <lambda>
+    self.le_exposure.textChanged.connect(lambda: self.spec.integration_time_micros(float(self.le_exposure.text()) * 1000))
+  File "C:\Users\marc-\AppData\Local\Programs\Python\Python37\lib\site-packages\seabreeze\spectrometers.py", line 266, in integration_time_micros
+    raise e
+  File "C:\Users\marc-\AppData\Local\Programs\Python\Python37\lib\site-packages\seabreeze\spectrometers.py", line 253, in integration_time_micros
+    integration_time_micros
+  File "src\seabreeze\cseabreeze\c_seabreeze_wrapper.pyx", line 701, in seabreeze.cseabreeze._wrapper.SeaBreezeSpectrometerFeature.set_integration_time_micros
+seabreeze.cseabreeze._wrapper.SeaBreezeError: Error: Input was out of bounds
+2020-10-16 16:14:01,058		 (__main__                 ) (thread:11516) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\Optics-ID\gui\views\filterView.py", line 58, in <lambda>
+    self.le_exposure.textChanged.connect(lambda: self.spec.integration_time_micros(float(self.le_exposure.text()) * 1000))
+  File "C:\Users\marc-\AppData\Local\Programs\Python\Python37\lib\site-packages\seabreeze\spectrometers.py", line 266, in integration_time_micros
+    raise e
+  File "C:\Users\marc-\AppData\Local\Programs\Python\Python37\lib\site-packages\seabreeze\spectrometers.py", line 253, in integration_time_micros
+    integration_time_micros
+  File "src\seabreeze\cseabreeze\c_seabreeze_wrapper.pyx", line 701, in seabreeze.cseabreeze._wrapper.SeaBreezeSpectrometerFeature.set_integration_time_micros
+seabreeze.cseabreeze._wrapper.SeaBreezeError: Error: Input was out of bounds
+2020-10-16 16:14:01,221		 (__main__                 ) (thread:11516) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\Optics-ID\gui\views\filterView.py", line 58, in <lambda>
+    self.le_exposure.textChanged.connect(lambda: self.spec.integration_time_micros(float(self.le_exposure.text()) * 1000))
+  File "C:\Users\marc-\AppData\Local\Programs\Python\Python37\lib\site-packages\seabreeze\spectrometers.py", line 266, in integration_time_micros
+    raise e
+  File "C:\Users\marc-\AppData\Local\Programs\Python\Python37\lib\site-packages\seabreeze\spectrometers.py", line 253, in integration_time_micros
+    integration_time_micros
+  File "src\seabreeze\cseabreeze\c_seabreeze_wrapper.pyx", line 701, in seabreeze.cseabreeze._wrapper.SeaBreezeSpectrometerFeature.set_integration_time_micros
+seabreeze.cseabreeze._wrapper.SeaBreezeError: Error: Input was out of bounds
+2020-10-16 16:14:01,390		 (__main__                 ) (thread:11516) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\Optics-ID\gui\views\filterView.py", line 58, in <lambda>
+    self.le_exposure.textChanged.connect(lambda: self.spec.integration_time_micros(float(self.le_exposure.text()) * 1000))
+ValueError: could not convert string to float: 
+2020-10-16 16:18:24,171		 (__main__                 ) (thread:460) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\Optics-ID\gui\views\filterView.py", line 77, in update_graph
+    print(min(x), max(x), type(x[0]), type(y[0]))
+UnboundLocalError: local variable 'y' referenced before assignment
+2020-10-16 16:18:24,195		 (__main__                 ) (thread:460) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\Optics-ID\gui\views\filterView.py", line 77, in update_graph
+    print(min(x), max(x), type(x[0]), type(y[0]))
+UnboundLocalError: local variable 'y' referenced before assignment
+2020-10-16 16:18:24,297		 (__main__                 ) (thread:460) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\Optics-ID\gui\views\filterView.py", line 77, in update_graph
+    print(min(x), max(x), type(x[0]), type(y[0]))
+UnboundLocalError: local variable 'y' referenced before assignment
+2020-10-16 16:18:24,400		 (__main__                 ) (thread:460) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\Optics-ID\gui\views\filterView.py", line 77, in update_graph
+    print(min(x), max(x), type(x[0]), type(y[0]))
+UnboundLocalError: local variable 'y' referenced before assignment
+2020-10-16 16:18:24,502		 (__main__                 ) (thread:460) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\Optics-ID\gui\views\filterView.py", line 77, in update_graph
+    print(min(x), max(x), type(x[0]), type(y[0]))
+UnboundLocalError: local variable 'y' referenced before assignment
+2020-10-16 16:18:24,604		 (__main__                 ) (thread:460) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\Optics-ID\gui\views\filterView.py", line 77, in update_graph
+    print(min(x), max(x), type(x[0]), type(y[0]))
+UnboundLocalError: local variable 'y' referenced before assignment
+2020-10-16 16:18:24,708		 (__main__                 ) (thread:460) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\Optics-ID\gui\views\filterView.py", line 77, in update_graph
+    print(min(x), max(x), type(x[0]), type(y[0]))
+UnboundLocalError: local variable 'y' referenced before assignment
+2020-10-16 16:18:24,809		 (__main__                 ) (thread:460) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\Optics-ID\gui\views\filterView.py", line 77, in update_graph
+    print(min(x), max(x), type(x[0]), type(y[0]))
+UnboundLocalError: local variable 'y' referenced before assignment
+2020-10-16 16:18:24,911		 (__main__                 ) (thread:460) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\Optics-ID\gui\views\filterView.py", line 77, in update_graph
+    print(min(x), max(x), type(x[0]), type(y[0]))
+UnboundLocalError: local variable 'y' referenced before assignment
+2020-10-16 16:18:25,014		 (__main__                 ) (thread:460) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\Optics-ID\gui\views\filterView.py", line 77, in update_graph
+    print(min(x), max(x), type(x[0]), type(y[0]))
+UnboundLocalError: local variable 'y' referenced before assignment
+2020-10-16 16:18:25,116		 (__main__                 ) (thread:460) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\Optics-ID\gui\views\filterView.py", line 77, in update_graph
+    print(min(x), max(x), type(x[0]), type(y[0]))
+UnboundLocalError: local variable 'y' referenced before assignment
+2020-10-16 16:18:25,219		 (__main__                 ) (thread:460) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\Optics-ID\gui\views\filterView.py", line 77, in update_graph
+    print(min(x), max(x), type(x[0]), type(y[0]))
+UnboundLocalError: local variable 'y' referenced before assignment
+2020-10-16 16:18:25,322		 (__main__                 ) (thread:460) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\Optics-ID\gui\views\filterView.py", line 77, in update_graph
+    print(min(x), max(x), type(x[0]), type(y[0]))
+UnboundLocalError: local variable 'y' referenced before assignment
+2020-10-16 16:18:25,423		 (__main__                 ) (thread:460) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\Optics-ID\gui\views\filterView.py", line 77, in update_graph
+    print(min(x), max(x), type(x[0]), type(y[0]))
+UnboundLocalError: local variable 'y' referenced before assignment
+2020-10-16 16:18:25,526		 (__main__                 ) (thread:460) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\Optics-ID\gui\views\filterView.py", line 77, in update_graph
+    print(min(x), max(x), type(x[0]), type(y[0]))
+UnboundLocalError: local variable 'y' referenced before assignment
+2020-10-16 16:18:25,629		 (__main__                 ) (thread:460) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\Optics-ID\gui\views\filterView.py", line 77, in update_graph
+    print(min(x), max(x), type(x[0]), type(y[0]))
+UnboundLocalError: local variable 'y' referenced before assignment
+2020-10-16 16:18:25,731		 (__main__                 ) (thread:460) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\Optics-ID\gui\views\filterView.py", line 77, in update_graph
+    print(min(x), max(x), type(x[0]), type(y[0]))
+UnboundLocalError: local variable 'y' referenced before assignment
+2020-10-16 16:18:25,833		 (__main__                 ) (thread:460) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\Optics-ID\gui\views\filterView.py", line 77, in update_graph
+    print(min(x), max(x), type(x[0]), type(y[0]))
+UnboundLocalError: local variable 'y' referenced before assignment
+2020-10-16 16:18:25,963		 (__main__                 ) (thread:460) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\Optics-ID\gui\views\filterView.py", line 77, in update_graph
+    print(min(x), max(x), type(x[0]), type(y[0]))
+UnboundLocalError: local variable 'y' referenced before assignment
+2020-10-16 16:18:26,140		 (__main__                 ) (thread:6296) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\Optics-ID\tools\threadWorker.py", line 29, in run
+    self.signals.finished.emit()
+RuntimeError: wrapped C/C++ object of type WorkerSignals has been deleted
+2020-10-16 16:20:36,577		 (__main__                 ) (thread:10728) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\Optics-ID\gui\views\filterView.py", line 78, in update_graph
+    print(min(x), max(x), type(x[0]), type(y[0]), type(x), x.shape())
+TypeError: 'tuple' object is not callable
+2020-10-16 16:20:36,680		 (__main__                 ) (thread:10728) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\Optics-ID\gui\views\filterView.py", line 78, in update_graph
+    print(min(x), max(x), type(x[0]), type(y[0]), type(x), x.shape())
+TypeError: 'tuple' object is not callable
+2020-10-16 16:20:36,782		 (__main__                 ) (thread:10728) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\Optics-ID\gui\views\filterView.py", line 78, in update_graph
+    print(min(x), max(x), type(x[0]), type(y[0]), type(x), x.shape())
+TypeError: 'tuple' object is not callable
+2020-10-16 16:20:36,885		 (__main__                 ) (thread:10728) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\Optics-ID\gui\views\filterView.py", line 78, in update_graph
+    print(min(x), max(x), type(x[0]), type(y[0]), type(x), x.shape())
+TypeError: 'tuple' object is not callable
+2020-10-16 16:20:36,986		 (__main__                 ) (thread:10728) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\Optics-ID\gui\views\filterView.py", line 78, in update_graph
+    print(min(x), max(x), type(x[0]), type(y[0]), type(x), x.shape())
+TypeError: 'tuple' object is not callable
+2020-10-16 16:20:37,090		 (__main__                 ) (thread:10728) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\Optics-ID\gui\views\filterView.py", line 78, in update_graph
+    print(min(x), max(x), type(x[0]), type(y[0]), type(x), x.shape())
+TypeError: 'tuple' object is not callable
+2020-10-16 16:20:37,192		 (__main__                 ) (thread:10728) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\Optics-ID\gui\views\filterView.py", line 78, in update_graph
+    print(min(x), max(x), type(x[0]), type(y[0]), type(x), x.shape())
+TypeError: 'tuple' object is not callable
+2020-10-16 16:20:37,293		 (__main__                 ) (thread:10728) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\Optics-ID\gui\views\filterView.py", line 78, in update_graph
+    print(min(x), max(x), type(x[0]), type(y[0]), type(x), x.shape())
+TypeError: 'tuple' object is not callable
+2020-10-16 16:20:37,398		 (__main__                 ) (thread:10728) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\Optics-ID\gui\views\filterView.py", line 78, in update_graph
+    print(min(x), max(x), type(x[0]), type(y[0]), type(x), x.shape())
+TypeError: 'tuple' object is not callable
+2020-10-16 16:20:37,498		 (__main__                 ) (thread:10728) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\Optics-ID\gui\views\filterView.py", line 78, in update_graph
+    print(min(x), max(x), type(x[0]), type(y[0]), type(x), x.shape())
+TypeError: 'tuple' object is not callable
+2020-10-16 16:20:37,601		 (__main__                 ) (thread:10728) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\Optics-ID\gui\views\filterView.py", line 78, in update_graph
+    print(min(x), max(x), type(x[0]), type(y[0]), type(x), x.shape())
+TypeError: 'tuple' object is not callable
+2020-10-16 16:20:37,703		 (__main__                 ) (thread:10728) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\Optics-ID\gui\views\filterView.py", line 78, in update_graph
+    print(min(x), max(x), type(x[0]), type(y[0]), type(x), x.shape())
+TypeError: 'tuple' object is not callable
+2020-10-16 16:20:37,805		 (__main__                 ) (thread:10728) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\Optics-ID\gui\views\filterView.py", line 78, in update_graph
+    print(min(x), max(x), type(x[0]), type(y[0]), type(x), x.shape())
+TypeError: 'tuple' object is not callable

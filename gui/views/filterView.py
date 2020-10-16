@@ -44,7 +44,7 @@ class FilterView(QWidget, Ui_filterView):
         try:
             devices = sb.list_devices()
             self.spec = sb.Spectrometer(devices[0])
-            self.spec.integration_time_micros(int(self.le_acqTime.text()) * 1000)
+            self.spec.integration_time_micros(float(self.le_exposure.text()) * 1000)
             log.info(devices)
             self.deviceConnected = True
         except IndexError as e:
@@ -55,6 +55,8 @@ class FilterView(QWidget, Ui_filterView):
         self.pb_liveView.clicked.connect(self.toggle_liveView)
         self.pb_analyse.clicked.connect(lambda: print("lol compute computer"))
         self.pb_normalize.clicked.connect(lambda: print("lol compute filter"))
+        self.le_exposure.textChanged.connect(lambda: self.spec.integration_time_micros(float(self.le_exposure.text()) * 1000))
+
         log.info("Connecting GUI widgets...")
 
     def connect_checkbox(self):
@@ -73,6 +75,7 @@ class FilterView(QWidget, Ui_filterView):
     def update_graph(self, plotData):
         x = plotData["x"]
         y = plotData["y"]
+        print(min(x), max(x), min(y), max(y), type(x[0]), type(y[0]), type(x), x.shape)
         self.dataPlotItem.setData(x, y)
 
     def read_data_live(self, *args, **kwargs):
