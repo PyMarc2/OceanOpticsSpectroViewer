@@ -13,7 +13,7 @@ import os
 
 log = logging.getLogger(__name__)
 
-paramsViewUiPath = os.path.dirname(os.path.realpath(__file__)) + '\\paramsViewUi.ui'
+paramsViewUiPath = os.path.dirname(os.path.realpath(__file__)) + '\\lensViewUi.ui'
 Ui_paramsView, QtBaseClass = uic.loadUiType(paramsViewUiPath)
 
 class ParametersView(QWidget, Ui_paramsView):  # type: QWidget

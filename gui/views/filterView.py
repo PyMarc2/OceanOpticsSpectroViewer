@@ -12,7 +12,7 @@ import logging
 
 log = logging.getLogger(__name__)
 
-simulationViewUiPath = os.path.dirname(os.path.realpath(__file__)) + "\\simulationViewUi.ui"
+simulationViewUiPath = os.path.dirname(os.path.realpath(__file__)) + "\\filterViewUi.ui"
 Ui_simulationView, QtBaseClass = uic.loadUiType(simulationViewUiPath)
 
 
@@ -29,16 +29,22 @@ class SimulationView(QWidget, Ui_simulationView):
         self.connect_signals()
         self.connect_checkbox()
 
+        self.acqWorker = None
         self.spec = None
         self.isAlive = 1
+        self.deviceConnected = 0
         self.initialize_device()
 
     def initialize_device(self):
-        devices = sb.list_devices()
-        self.spec = sb.Spectrometer(devices[0])
-        self.spec.integration_time_micros(int(self.le_acqTime.text())*1000)
-        self.pyqtgraphWidget.clear()
-        print(devices)
+        try:
+            devices = sb.list_devices()
+            self.spec = sb.Spectrometer(devices[0])
+            self.spec.integration_time_micros(int(self.le_acqTime.text()) * 1000)
+            log.info(devices)
+            self.deviceConnected = True
+        except IndexError as e:
+            log.warning("No SpectrumDevice was found. Try connecting manually.")
+            self.deviceConnected = False
 
     def connect_buttons(self):
         self.pb_backgroundAcq.clicked.connect(self.start_data_acquisition)
@@ -60,7 +66,6 @@ class SimulationView(QWidget, Ui_simulationView):
         self.dataPlotItem = self.plotItem.plot()
         print(self.dataPlotItem)
 
-
     @pyqtSlot(dict)
     def update_graph(self, plotData):
         print(plotData)
@@ -68,14 +73,14 @@ class SimulationView(QWidget, Ui_simulationView):
         y = plotData["y"]
         self.dataPlotItem.setData(x, y)
 
-    def update_spectrum_plot(self, *args, **kwargs):
+    def read_data_live(self, *args, **kwargs):
         while self.isAlive:
             waves = self.spec.wavelengths()[2:]
             intens = self.spec.intensities()[2:]
             self.s_data_changed.emit({"x": waves, "y": intens})
 
     def start_data_acquisition(self, *args):
-        self.acqWorker = Worker(self.update_spectrum_plot, *args)
+        self.acqWorker = Worker(self.read_data_live, *args)
         self.acqThread = QThread()
         self.acqWorker.moveToThread(self.acqThread)
         self.acqThread.started.connect(self.acqWorker.run)

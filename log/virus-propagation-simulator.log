@@ -581,3 +581,122 @@ Traceback (most recent call last):
   File "C:\Users\marc-\Documents\Github\DCC\Optics-ID\gui\views\simulationView.py", line 38, in initialize_device
     self.spec = sb.Spectrometer(devices[0])
 IndexError: list index out of range
+2020-10-16 00:52:27,377		 (__main__                 ) (thread:19732) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:/Users/marc-/Documents/Github/DCC/Optics-ID/main.py", line 82, in <module>
+    main()
+  File "C:/Users/marc-/Documents/Github/DCC/Optics-ID/main.py", line 76, in main
+    app = App(sys.argv)
+  File "C:/Users/marc-/Documents/Github/DCC/Optics-ID/main.py", line 38, in __init__
+    self.mainWindow = MainWindow(model=self.mainModel)
+  File "C:\Users\marc-\Documents\Github\DCC\Optics-ID\gui\windows\mainWindow.py", line 25, in __init__
+    self.create_views_and_dialogs()
+  File "C:\Users\marc-\Documents\Github\DCC\Optics-ID\gui\windows\mainWindow.py", line 48, in create_views_and_dialogs
+    self.simulationView = SimulationView(model=self.model)
+  File "C:\Users\marc-\Documents\Github\DCC\Optics-ID\gui\views\simulationView.py", line 34, in __init__
+    self.initialize_device()
+  File "C:\Users\marc-\Documents\Github\DCC\Optics-ID\gui\views\simulationView.py", line 38, in initialize_device
+    self.spec = sb.Spectrometer(devices[0])
+IndexError: list index out of range
+2020-10-16 00:52:46,157		 (__main__                 ) (thread:15928) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:/Users/marc-/Documents/Github/DCC/Optics-ID/main.py", line 82, in <module>
+    main()
+  File "C:/Users/marc-/Documents/Github/DCC/Optics-ID/main.py", line 76, in main
+    app = App(sys.argv)
+  File "C:/Users/marc-/Documents/Github/DCC/Optics-ID/main.py", line 38, in __init__
+    self.mainWindow = MainWindow(model=self.mainModel)
+  File "C:\Users\marc-\Documents\Github\DCC\Optics-ID\gui\windows\mainWindow.py", line 25, in __init__
+    self.create_views_and_dialogs()
+  File "C:\Users\marc-\Documents\Github\DCC\Optics-ID\gui\windows\mainWindow.py", line 48, in create_views_and_dialogs
+    self.simulationView = SimulationView(model=self.model)
+  File "C:\Users\marc-\Documents\Github\DCC\Optics-ID\gui\views\simulationView.py", line 34, in __init__
+    self.initialize_device()
+  File "C:\Users\marc-\Documents\Github\DCC\Optics-ID\gui\views\simulationView.py", line 38, in initialize_device
+    self.spec = sb.Spectrometer(devices[0])
+IndexError: list index out of range
+2020-10-16 00:53:08,467		 (__main__                 ) (thread:1556) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:/Users/marc-/Documents/Github/DCC/Optics-ID/main.py", line 82, in <module>
+    main()
+  File "C:/Users/marc-/Documents/Github/DCC/Optics-ID/main.py", line 76, in main
+    app = App(sys.argv)
+  File "C:/Users/marc-/Documents/Github/DCC/Optics-ID/main.py", line 38, in __init__
+    self.mainWindow = MainWindow(model=self.mainModel)
+  File "C:\Users\marc-\Documents\Github\DCC\Optics-ID\gui\windows\mainWindow.py", line 25, in __init__
+    self.create_views_and_dialogs()
+  File "C:\Users\marc-\Documents\Github\DCC\Optics-ID\gui\windows\mainWindow.py", line 48, in create_views_and_dialogs
+    self.simulationView = SimulationView(model=self.model)
+  File "C:\Users\marc-\Documents\Github\DCC\Optics-ID\gui\views\simulationView.py", line 34, in __init__
+    self.initialize_device()
+  File "C:\Users\marc-\Documents\Github\DCC\Optics-ID\gui\views\simulationView.py", line 38, in initialize_device
+    self.spec = sb.Spectrometer(devices[0])
+IndexError: list index out of range
+2020-10-16 00:57:10,311		 (__main__                 ) (thread:22720) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:/Users/marc-/Documents/Github/DCC/Optics-ID/main.py", line 82, in <module>
+    main()
+  File "C:/Users/marc-/Documents/Github/DCC/Optics-ID/main.py", line 76, in main
+    app = App(sys.argv)
+  File "C:/Users/marc-/Documents/Github/DCC/Optics-ID/main.py", line 38, in __init__
+    self.mainWindow = MainWindow(model=self.mainModel)
+  File "C:\Users\marc-\Documents\Github\DCC\Optics-ID\gui\windows\mainWindow.py", line 25, in __init__
+    self.create_views_and_dialogs()
+  File "C:\Users\marc-\Documents\Github\DCC\Optics-ID\gui\windows\mainWindow.py", line 48, in create_views_and_dialogs
+    self.simulationView = SimulationView(model=self.model)
+  File "C:\Users\marc-\Documents\Github\DCC\Optics-ID\gui\views\simulationView.py", line 34, in __init__
+    self.initialize_device()
+  File "C:\Users\marc-\Documents\Github\DCC\Optics-ID\gui\views\simulationView.py", line 38, in initialize_device
+    self.spec = sb.Spectrometer(devices[0])
+IndexError: list index out of range
+2020-10-16 07:26:22,594		 (__main__                 ) (thread:7344) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:/Users/marc-/Documents/Github/DCC/Optics-ID/main.py", line 82, in <module>
+    main()
+  File "C:/Users/marc-/Documents/Github/DCC/Optics-ID/main.py", line 76, in main
+    app = App(sys.argv)
+  File "C:/Users/marc-/Documents/Github/DCC/Optics-ID/main.py", line 38, in __init__
+    self.mainWindow = MainWindow(model=self.mainModel)
+  File "C:\Users\marc-\Documents\Github\DCC\Optics-ID\gui\windows\mainWindow.py", line 25, in __init__
+    self.create_views_and_dialogs()
+  File "C:\Users\marc-\Documents\Github\DCC\Optics-ID\gui\windows\mainWindow.py", line 48, in create_views_and_dialogs
+    self.simulationView = SimulationView(model=self.model)
+  File "C:\Users\marc-\Documents\Github\DCC\Optics-ID\gui\views\simulationView.py", line 34, in __init__
+    self.initialize_device()
+  File "C:\Users\marc-\Documents\Github\DCC\Optics-ID\gui\views\simulationView.py", line 38, in initialize_device
+    self.spec = sb.Spectrometer(devices[0])
+IndexError: list index out of range
+2020-10-16 07:26:43,182		 (__main__                 ) (thread:6680) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:/Users/marc-/Documents/Github/DCC/Optics-ID/main.py", line 82, in <module>
+    main()
+  File "C:/Users/marc-/Documents/Github/DCC/Optics-ID/main.py", line 76, in main
+    app = App(sys.argv)
+  File "C:/Users/marc-/Documents/Github/DCC/Optics-ID/main.py", line 38, in __init__
+    self.mainWindow = MainWindow(model=self.mainModel)
+  File "C:\Users\marc-\Documents\Github\DCC\Optics-ID\gui\windows\mainWindow.py", line 25, in __init__
+    self.create_views_and_dialogs()
+  File "C:\Users\marc-\Documents\Github\DCC\Optics-ID\gui\windows\mainWindow.py", line 48, in create_views_and_dialogs
+    self.simulationView = SimulationView(model=self.model)
+  File "C:\Users\marc-\Documents\Github\DCC\Optics-ID\gui\views\simulationView.py", line 34, in __init__
+    self.initialize_device()
+  File "C:\Users\marc-\Documents\Github\DCC\Optics-ID\gui\views\simulationView.py", line 38, in initialize_device
+    self.spec = sb.Spectrometer(devices[0])
+IndexError: list index out of range
+2020-10-16 07:50:07,556		 (__main__                 ) (thread:5732) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:/Users/marc-/Documents/Github/DCC/Optics-ID/main.py", line 82, in <module>
+    main()
+  File "C:/Users/marc-/Documents/Github/DCC/Optics-ID/main.py", line 76, in main
+    app = App(sys.argv)
+  File "C:/Users/marc-/Documents/Github/DCC/Optics-ID/main.py", line 38, in __init__
+    self.mainWindow = MainWindow(model=self.mainModel)
+  File "C:\Users\marc-\Documents\Github\DCC\Optics-ID\gui\windows\mainWindow.py", line 25, in __init__
+    self.create_views_and_dialogs()
+  File "C:\Users\marc-\Documents\Github\DCC\Optics-ID\gui\windows\mainWindow.py", line 48, in create_views_and_dialogs
+    self.simulationView = SimulationView(model=self.model)
+  File "C:\Users\marc-\Documents\Github\DCC\Optics-ID\gui\views\simulationView.py", line 35, in __init__
+    self.initialize_device()
+  File "C:\Users\marc-\Documents\Github\DCC\Optics-ID\gui\views\simulationView.py", line 45, in initialize_device
+    self.spec.integration_time_micros(int(self.le_acqTime.text())*1000)
+AttributeError: 'NoneType' object has no attribute 'integration_time_micros'

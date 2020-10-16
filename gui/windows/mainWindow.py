@@ -1,6 +1,6 @@
 from gui.dialog.helpDialog import HelpDialog
-from gui.views.paramsView import ParametersView
-from gui.views.simulationView import SimulationView
+from gui.views.lensView import ParametersView
+from gui.views.filterView import SimulationView
 from PyQt5.QtWidgets import QMainWindow, QWidget, QLabel, QVBoxLayout, QTabWidget, QAction
 from PyQt5.QtCore import Qt, pyqtSlot
 import logging
