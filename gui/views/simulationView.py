@@ -2,6 +2,7 @@ from PyQt5.QtWidgets import QWidget
 from PyQt5.QtCore import pyqtSlot, pyqtSignal, QThread
 import os
 from pyqtgraph import PlotItem, BarGraphItem
+from pyqtgraph import GraphicsLayoutWidget
 from PyQt5 import uic
 import seabreeze.spectrometers as sb
 from tools.threadWorker import Worker
