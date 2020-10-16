@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>745</width>
+    <width>713</width>
     <height>741</height>
    </rect>
   </property>
@@ -50,7 +50,7 @@ font: 11pt &quot;OpenSans-Light&quot;;
         </property>
         <layout class="QVBoxLayout" name="verticalLayout">
          <item>
-          <widget class="QPushButton" name="pb_liveView">
+          <widget class="QFlashButton" name="pb_liveView">
            <property name="styleSheet">
             <string notr="true"/>
            </property>
@@ -60,26 +60,19 @@ font: 11pt &quot;OpenSans-Light&quot;;
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="pb_backgroundAcq">
+          <widget class="QPushButton" name="pb_normalize">
            <property name="styleSheet">
             <string notr="true"/>
            </property>
            <property name="text">
-            <string>Background Acquisition</string>
+            <string>Normalize Reference</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="pb_filterAcq">
+          <widget class="QPushButton" name="pb_analyse">
            <property name="text">
-            <string>Filter Acquisition</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="pb_compute">
-           <property name="text">
-            <string>Computer, Compute</string>
+            <string>Analyse Filter</string>
            </property>
           </widget>
          </item>
@@ -110,12 +103,91 @@ font: 11pt &quot;OpenSans-Light&quot;;
             <item>
              <widget class="QLabel" name="la_acqTime">
               <property name="text">
-               <string>Acq. time (ms)</string>
+               <string>exposureTime</string>
               </property>
              </widget>
             </item>
             <item>
+             <spacer name="horizontalSpacer">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
              <widget class="QLineEdit" name="le_acqTime">
+              <property name="text">
+               <string>100</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item>
+          <widget class="QWidget" name="widget_2" native="true">
+           <layout class="QHBoxLayout" name="horizontalLayout_3">
+            <item>
+             <widget class="QLabel" name="la_acqTime_2">
+              <property name="text">
+               <string>View IT</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_2">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QLineEdit" name="le_acqTime_2">
+              <property name="text">
+               <string>100</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item>
+          <widget class="QWidget" name="widget_3" native="true">
+           <layout class="QHBoxLayout" name="horizontalLayout_4">
+            <item>
+             <widget class="QLabel" name="la_acqTime_3">
+              <property name="text">
+               <string>Acquisition IT</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_3">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QLineEdit" name="le_acqTime_3">
               <property name="text">
                <string>100</string>
               </property>
@@ -140,6 +212,11 @@ font: 11pt &quot;OpenSans-Light&quot;;
    <class>GraphicsLayoutWidget</class>
    <extends>QGraphicsView</extends>
    <header>pyqtgraph.h</header>
+  </customwidget>
+  <customwidget>
+   <class>QFlashButton</class>
+   <extends>QPushButton</extends>
+   <header>QFlashButton.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

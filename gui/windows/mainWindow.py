@@ -33,7 +33,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.tabWidget = QTabWidget()
         self.setCentralWidget(self.tabWidget)
         self.tabWidget.addTab(self.filterView, "Filter ID")
-        self.tabWidget.addTab(self.filterView, "Lens ID")
+        self.tabWidget.addTab(self.lensView, "Lens ID")
 
     def setup_menuBar(self):
         self.helpAction = QAction(self)

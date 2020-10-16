@@ -11,3 +11,10 @@ class MainModel(QObject):
     def __init__(self):
         super(MainModel, self).__init__()
 
+    @property
+    def exposureTime(self):
+        return
+
+    @exposureTime.setter
+    def exposureTime(self, value):
+        pass
