@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QWidget
+from PyQt5.QtWidgets import QWidget, QMessageBox, QApplication, QCheckBox
 from PyQt5.QtCore import pyqtSlot, pyqtSignal, QThread
 from PyQt5.Qt import QColor, QPalette
 import os
@@ -56,12 +56,13 @@ class FilterView(QWidget, Ui_filterView):
         try:
             devices = sb.list_devices()
             self.spec = sb.Spectrometer(devices[0])
-            log.info(devices)
+            log.info("Devices:{}".format(devices))
             self.deviceConnected = True
         except IndexError as e:
             log.warning("No SpectrumDevice was found. Try connecting manually.")
             self.deviceConnected = False
             self.spec = mock.MockSpectrometer()
+            log.info("No device found; Mocking Spectrometer Enabled.")
 
         self.spec.integration_time_micros(int(float(self.le_exposure.text()) * 1000))
 
@@ -91,6 +92,11 @@ class FilterView(QWidget, Ui_filterView):
     def connect_signals(self):
         log.debug("Connecting GUI signals...")
         self.s_data_changed.connect(self.update_graph)
+
+    def make_threads(self, *args):
+        self.acqWorker = Worker(self.read_data_live, *args)
+        self.acqWorker.moveToThread(self.acqThread)
+        self.acqThread.started.connect(self.acqWorker.run)
 
     def create_plots(self):
         log.debug("Creating GUI plots...")
@@ -142,6 +148,11 @@ class FilterView(QWidget, Ui_filterView):
             self.ind_rmBackground.setStyleSheet("QCheckBox::indicator{background-color: #9e9e9e;}")
             self.ind_normalize.setStyleSheet("QCheckBox::indicator{background-color: #9e9e9e;}")
             self.ind_analyse.setStyleSheet("QCheckBox::indicator{background-color: #9e9e9e;}")
+
+    def load_parameters(self):
+        self.showRmBackgroundWarning = 1
+
+    # Non-Initializing Functions
 
     @pyqtSlot(dict)
     def update_graph(self, plotData):
@@ -209,6 +220,20 @@ class FilterView(QWidget, Ui_filterView):
 
     def visualize_any_acquisition(self):
         pass
+    def remove_background(self):
+        if self.showRmBackgroundWarning:
+            warningDialog = QMessageBox()
+            warningDialog.setIcon(QMessageBox.Information)
+            #warningDialog.setText("Information:")
+            warningDialog.setText("Your light source should be 'OFF' before removing the background signal.")
+            warningDialog.setWindowTitle("Remove Background")
+            warningDialog.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
+            doNotShow = QCheckBox("Do not show again.")
+            warningDialog.setCheckBox(doNotShow)
+            warningDialog.buttonClicked.connect(lambda:print("lol"))
+            doNotShow.clicked.connect(lambda: setattr(self, 'showRmBackgroundWarning', 0))
+            warningDialog.exec_()
+
 # TODO:
 # remove background, normalize (take ref, create norm, norm stream)
 # add wavelength line cursor with value display
