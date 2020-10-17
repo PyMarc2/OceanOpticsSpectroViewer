@@ -42,7 +42,7 @@ def gaussian(x, mu, sig):
 
 def halogenSpectrum():
     x = np.linspace(339.24, 1022.28, 2048)
-    return gaussian(x, mu=600, sig=100) + gaussian(x, mu=670, sig=100) * 0.2
+    return gaussian(x, mu=600, sig=100) * 0.7 + gaussian(x, mu=700, sig=70) * 0.3
 
 
 def backgroundSpectrum():
