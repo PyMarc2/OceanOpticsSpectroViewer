@@ -5337,3 +5337,35 @@ Traceback (most recent call last):
   File "C:\Users\marc-\Documents\Github\DCC\Optics-ID\gui\views\filterView.py", line 129, in remove_background
     warning_dialog.setCheckBox(QWidget.QCheckBox("hello"))
 AttributeError: type object 'QWidget' has no attribute 'QCheckBox'
+2020-10-17 14:15:59,533		 (__main__                 ) (thread:12212) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\DCC\Optics-ID\gui\views\filterView.py", line 118, in set_exposure_time
+    self.exposure_time = int(time_in_ms)
+ValueError: invalid literal for int() with base 10: ''
+2020-10-17 14:24:56,001		 (gui.views.filterView     ) (thread:8836) (line:  124)		[ERROR] invalid literal for int() with base 10: ''
+2020-10-17 14:24:57,329		 (__main__                 ) (thread:8836) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\DCC\Optics-ID\gui\views\filterView.py", line 126, in set_exposure_time
+    self.set_integration_time()
+  File "C:\Users\marc-\Documents\Github\DCC\Optics-ID\gui\views\filterView.py", line 135, in set_integration_time
+    self.integration_count = integration_time // self.exposure_time
+ZeroDivisionError: integer division or modulo by zero
+2020-10-17 14:25:04,662		 (__main__                 ) (thread:8836) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\DCC\Optics-ID\gui\views\filterView.py", line 126, in set_exposure_time
+    self.set_integration_time()
+  File "C:\Users\marc-\Documents\Github\DCC\Optics-ID\gui\views\filterView.py", line 135, in set_integration_time
+    self.integration_count = integration_time // self.exposure_time
+ZeroDivisionError: integer division or modulo by zero
+2020-10-17 14:25:04,858		 (gui.views.filterView     ) (thread:8836) (line:  124)		[ERROR] invalid literal for int() with base 10: ''
+2020-10-17 14:25:04,858		 (__main__                 ) (thread:8836) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\DCC\Optics-ID\gui\views\filterView.py", line 126, in set_exposure_time
+    self.set_integration_time()
+  File "C:\Users\marc-\Documents\Github\DCC\Optics-ID\gui\views\filterView.py", line 135, in set_integration_time
+    self.integration_count = integration_time // self.exposure_time
+ZeroDivisionError: integer division or modulo by zero
+2020-10-17 14:25:53,240		 (gui.views.filterView     ) (thread:8836) (line:  124)		[ERROR] invalid literal for int() with base 10: ''
+2020-10-17 14:25:58,919		 (gui.views.filterView     ) (thread:8836) (line:  124)		[ERROR] invalid literal for int() with base 10: ''
+2020-10-17 14:37:42,817		 (gui.views.filterView     ) (thread:16636) (line:  144)		[ERROR] invalid literal for int() with base 10: ''
+2020-10-17 14:38:12,041		 (gui.views.filterView     ) (thread:16636) (line:  144)		[ERROR] invalid literal for int() with base 10: ''

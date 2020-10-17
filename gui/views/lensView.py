@@ -40,13 +40,10 @@ class LensView(QWidget, Ui_lensView):  # type: QWidget
     def create_plots(self):
         self.pyqtgraphWidget.clear()
         self.plotItem = self.pyqtgraphWidget.addPlot()
-        print(type(self.plotItem))
         self.dataPlotItem = self.plotItem.plot()
-        print(self.dataPlotItem)
 
     @pyqtSlot(dict)
     def update_graph(self, plotData):
-        print(plotData)
         x = plotData["x"]
         y = plotData["y"]
         self.dataPlotItem.setData(x, y)

@@ -29,7 +29,7 @@ class App(QApplication):
 
         sys.excepthook = self.handle_exception
         self.init_logging()
-
+        log.debug("This is the MAIN THREAD")
         self.setAttribute(Qt.AA_EnableHighDpiScaling)
         QFontDatabase.addApplicationFont(os.path.dirname(os.path.realpath(__file__)) +"\\gui\\misc\\Open_Sans\\OpenSans-Light.ttf")
         self.setStyle("Fusion")
@@ -38,7 +38,7 @@ class App(QApplication):
         self.mainWindow = MainWindow(model=self.mainModel)
         self.mainWindow.setWindowTitle("opt-id")
         self.mainWindow.show()
-        log.info("This is the MAIN THREAD")
+
 
     @staticmethod
     def init_logging():
