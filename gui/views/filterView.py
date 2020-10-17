@@ -100,6 +100,7 @@ class FilterView(QWidget, Ui_filterView):
                 self.pb_liveView.start_flash()
             except Exception as e:
                 log.error(e)
+                self.spec = mock.MockSpectrometer()
 
         else:
             self.acqThread.terminate()
