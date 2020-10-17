@@ -21,13 +21,15 @@ class MockSpectrometer:
         return np.linspace(339.24, 1022.28, 2048)
 
     def intensities(self) -> np.ndarray:
+        t = time.time()
         background = self._background * self.backgroundIntensity * self.exposureFactor
         source = self._source * self.exposureFactor * self.shutterFactor
         noise = np.random.uniform(0, self.noise, 2048)
+        out = np.clip((background + source + noise) * 4095, 0, 4095)
 
-        out = (background + source + noise) * 4095
-        time.sleep(0.9 * self.exposureTime / 1000000)
-        return np.clip(out, 0, 4095)
+        delta = time.time() - t
+        time.sleep(self.exposureTime / 1000000 - delta)
+        return out
 
     @property
     def exposureFactor(self):
