@@ -5,6 +5,7 @@ from pyqtgraph import PlotItem, BarGraphItem
 from pyqtgraph import GraphicsLayoutWidget
 from PyQt5 import uic
 import seabreeze.spectrometers as sb
+from gui.modules import spectrometers as mock
 from tools.threadWorker import Worker
 
 import logging
@@ -33,6 +34,7 @@ class FilterView(QWidget, Ui_filterView):
         self.dataPlotItem = None
         self.acqWorker = None
         self.spec = None
+        self.waves = None
         self.isAcqAlive = 0
         self.deviceConnected = 0
 
@@ -44,18 +46,20 @@ class FilterView(QWidget, Ui_filterView):
         try:
             devices = sb.list_devices()
             self.spec = sb.Spectrometer(devices[0])
-            self.spec.integration_time_micros(float(self.le_exposure.text()) * 1000)
             log.info(devices)
             self.deviceConnected = True
         except IndexError as e:
             log.warning("No SpectrumDevice was found. Try connecting manually.")
             self.deviceConnected = False
+            self.spec = mock.MockSpectrometer()
+
+        self.spec.integration_time_micros(int(float(self.le_exposure.text()) * 1000))
 
     def connect_buttons(self):
         self.pb_liveView.clicked.connect(self.toggle_liveView)
         self.pb_analyse.clicked.connect(lambda: print("lol compute computer"))
         self.pb_normalize.clicked.connect(lambda: print("lol compute filter"))
-        self.le_exposure.textChanged.connect(lambda: self.spec.integration_time_micros(float(self.le_exposure.text()) * 1000))
+        self.le_exposure.textChanged.connect(lambda: self.spec.integration_time_micros(int(float(self.le_exposure.text()) * 1000)))
 
         log.info("Connecting GUI widgets...")
 
@@ -73,16 +77,15 @@ class FilterView(QWidget, Ui_filterView):
 
     @pyqtSlot(dict)
     def update_graph(self, plotData):
-        x = plotData["x"]
         y = plotData["y"]
-        print(min(x), max(x), min(y), max(y), type(x[0]), type(y[0]), type(x), x.shape)
-        self.dataPlotItem.setData(x, y)
+        self.dataPlotItem.setData(self.waves, y)
 
     def read_data_live(self, *args, **kwargs):
+        self.waves = self.spec.wavelengths()[2:]
+
         while self.isAcqAlive:
-            waves = self.spec.wavelengths()[2:]
             intens = self.spec.intensities()[2:]
-            self.s_data_changed.emit({"x": waves, "y": intens})
+            self.s_data_changed.emit({"y": intens})
 
     def make_threads(self, *args):
         self.acqWorker = Worker(self.read_data_live, *args)
@@ -102,3 +105,8 @@ class FilterView(QWidget, Ui_filterView):
             self.acqThread.terminate()
             self.pb_liveView.stop_flash()
             self.isAcqAlive = False
+
+# TODO:
+# integration time (has to a multiple of exposure ( subtract exceed: IT -= IT % ET ))
+# connect (auto), remove background, normalize (take ref, create norm, norm stream)
+# add wavelength line cursor with value display
