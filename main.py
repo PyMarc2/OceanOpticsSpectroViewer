@@ -54,6 +54,7 @@ class App(QApplication):
 
         # create debug file handler in working directory
         paramsViewUiPath = os.path.dirname(os.path.realpath(__file__)) + "\\lensViewUi.ui"
+        os.makedirs(os.path.dirname(os.path.realpath(__file__)) + "\\log", exist_ok=True)
         handler = RotatingFileHandler(os.path.dirname(os.path.realpath(__file__)) + "\\log\\virus-propagation-simulator.log", maxBytes=2.3 * 1024 * 1024, backupCount=5)
         handler.setLevel(logging.ERROR)
         formatter = logging.Formatter("%(asctime)s\t\t (%(name)-25.25s) (thread:%(thread)d) (line:%(lineno)5d)\t\t[%(levelname)-5.5s] %(message)s")
