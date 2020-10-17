@@ -5885,3 +5885,18 @@ Traceback (most recent call last):
   File "C:\Users\marc-\Documents\Github\DCC\Optics-ID\venv\lib\site-packages\pyqtgraph\graphicsItems\PlotDataItem.py", line 683, in _fourierTransform
     y = abs(f[1:len(f)/2])
 TypeError: slice indices must be integers or None or have an __index__ method
+2020-10-17 17:15:30,463		 (__main__                 ) (thread:14024) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\DCC\Optics-ID\gui\views\filterView.py", line 226, in remove_background
+    if self.showRmBackgroundWarning:
+AttributeError: 'FilterView' object has no attribute 'showRmBackgroundWarning'
+2020-10-17 17:16:09,347		 (__main__                 ) (thread:6576) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\DCC\Optics-ID\gui\views\filterView.py", line 226, in remove_background
+    if self.showRmBackgroundWarning:
+AttributeError: 'FilterView' object has no attribute 'showRmBackgroundWarning'
+2020-10-17 17:17:01,388		 (__main__                 ) (thread:14648) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\DCC\Optics-ID\gui\views\filterView.py", line 227, in remove_background
+    if self.showRmBackgroundWarning:
+AttributeError: 'FilterView' object has no attribute 'showRmBackgroundWarning'

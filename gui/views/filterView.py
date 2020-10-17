@@ -42,6 +42,7 @@ class FilterView(QWidget, Ui_filterView):
 
         self.isAcqAlive = 0
         self.deviceConnected = 0
+        self.backgroundWarning = 1
 
         self.connect_buttons()
         self.connect_signals()
@@ -69,7 +70,7 @@ class FilterView(QWidget, Ui_filterView):
     def connect_buttons(self):
         self.pb_liveView.clicked.connect(self.toggle_live_view)
 
-        self.pb_rmBackground.clicked.connect(lambda: setattr(self, "backgroundData", True))
+        self.pb_rmBackground.clicked.connect(self.remove_background)
         self.pb_rmBackground.clicked.connect(self.manage_indicators)
 
         self.pb_analyse.clicked.connect(lambda: setattr(self, "analysedData", True))
@@ -220,8 +221,10 @@ class FilterView(QWidget, Ui_filterView):
 
     def visualize_any_acquisition(self):
         pass
+
     def remove_background(self):
-        if self.showRmBackgroundWarning:
+        self.backgroundData = True
+        if self.backgroundWarning:
             warningDialog = QMessageBox()
             warningDialog.setIcon(QMessageBox.Information)
             #warningDialog.setText("Information:")
@@ -230,8 +233,8 @@ class FilterView(QWidget, Ui_filterView):
             warningDialog.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
             doNotShow = QCheckBox("Do not show again.")
             warningDialog.setCheckBox(doNotShow)
-            warningDialog.buttonClicked.connect(lambda:print("lol"))
-            doNotShow.clicked.connect(lambda: setattr(self, 'showRmBackgroundWarning', 0))
+            warningDialog.buttonClicked.connect(lambda: setattr(self, "backgroundData", True))
+            doNotShow.clicked.connect(lambda: setattr(self, 'backgroundWarning', 0))
             warningDialog.exec_()
 
 # TODO:
