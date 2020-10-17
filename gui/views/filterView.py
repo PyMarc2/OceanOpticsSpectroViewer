@@ -170,11 +170,6 @@ class FilterView(QWidget, Ui_filterView):
             intens = np.mean(intens, axis=0)
             self.s_data_changed.emit({"y": intens})
 
-    def make_threads(self, *args):
-        self.acqWorker = Worker(self.read_data_live, *args)
-        self.acqWorker.moveToThread(self.acqThread)
-        self.acqThread.started.connect(self.acqWorker.run)
-
     def toggle_live_view(self):
         if not self.isAcqAlive:
             try:
