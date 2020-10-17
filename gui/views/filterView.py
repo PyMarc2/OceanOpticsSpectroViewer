@@ -5,6 +5,7 @@ from pyqtgraph import PlotItem, BarGraphItem
 from pyqtgraph import GraphicsLayoutWidget
 from PyQt5 import uic
 import seabreeze.spectrometers as sb
+from gui.modules import spectrometers as mock
 from tools.threadWorker import Worker
 
 import logging
@@ -45,12 +46,14 @@ class FilterView(QWidget, Ui_filterView):
         try:
             devices = sb.list_devices()
             self.spec = sb.Spectrometer(devices[0])
-            self.spec.integration_time_micros(float(self.le_exposure.text()) * 1000)
             log.info(devices)
             self.deviceConnected = True
         except IndexError as e:
             log.warning("No SpectrumDevice was found. Try connecting manually.")
             self.deviceConnected = False
+            self.spec = mock.MockSpectrometer()
+
+        self.spec.integration_time_micros(int(float(self.le_exposure.text()) * 1000))
 
     def connect_buttons(self):
         self.pb_liveView.clicked.connect(self.toggle_liveView)
@@ -103,3 +106,7 @@ class FilterView(QWidget, Ui_filterView):
             self.pb_liveView.stop_flash()
             self.isAcqAlive = False
 
+# TODO:
+# integration time (has to a multiple of exposure ( subtract exceed: IT -= IT % ET ))
+# connect (auto), remove background, normalize (take ref, create norm, norm stream)
+# add wavelength line cursor with value display
