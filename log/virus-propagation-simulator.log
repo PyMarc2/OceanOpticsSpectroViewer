@@ -5285,3 +5285,55 @@ Traceback (most recent call last):
   File "C:\Users\marc-\Documents\Github\Optics-ID\gui\views\filterView.py", line 78, in update_graph
     print(min(x), max(x), type(x[0]), type(y[0]), type(x), x.shape())
 TypeError: 'tuple' object is not callable
+2020-10-17 11:33:14,292		 (__main__                 ) (thread:6424) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:/Users/marc-/Documents/Github/DCC/Optics-ID/main.py", line 82, in <module>
+    main()
+  File "C:/Users/marc-/Documents/Github/DCC/Optics-ID/main.py", line 76, in main
+    app = App(sys.argv)
+  File "C:/Users/marc-/Documents/Github/DCC/Optics-ID/main.py", line 38, in __init__
+    self.mainWindow = MainWindow(model=self.mainModel)
+  File "C:\Users\marc-\Documents\Github\DCC\Optics-ID\gui\windows\mainWindow.py", line 25, in __init__
+    self.create_views_and_dialogs()
+  File "C:\Users\marc-\Documents\Github\DCC\Optics-ID\gui\windows\mainWindow.py", line 49, in create_views_and_dialogs
+    self.filterView = FilterView(model=self.model)
+  File "C:\Users\marc-\Documents\Github\DCC\Optics-ID\gui\views\filterView.py", line 28, in __init__
+    self.connect_buttons()
+  File "C:\Users\marc-\Documents\Github\DCC\Optics-ID\gui\views\filterView.py", line 61, in connect_buttons
+    self.pb_rmBackground.clicked.connect(self.remove_background)
+AttributeError: 'FilterView' object has no attribute 'remove_background'
+2020-10-17 11:41:49,639		 (__main__                 ) (thread:14364) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\DCC\Optics-ID\gui\views\filterView.py", line 116, in remove_background
+    warning_dialog.showMessage("Make sure the light source is 'OFF' while removing background.")
+AttributeError: 'QMessageBox' object has no attribute 'showMessage'
+2020-10-17 11:42:42,223		 (__main__                 ) (thread:6500) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\DCC\Optics-ID\gui\views\filterView.py", line 115, in remove_background
+    warning_dialog = QMessageBox.warning("Make sure the light source is 'OFF' while removing background.")
+TypeError: warning(QWidget, str, str, buttons: Union[QMessageBox.StandardButtons, QMessageBox.StandardButton] = QMessageBox.Ok, defaultButton: QMessageBox.StandardButton = QMessageBox.NoButton): argument 1 has unexpected type 'str'
+2020-10-17 11:44:08,067		 (__main__                 ) (thread:15292) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\DCC\Optics-ID\gui\views\filterView.py", line 115, in remove_background
+    warning_dialog = QMessageBox.warning(self, "Make sure the light source is 'OFF' while removing background.", QMessageBox.Ok)
+TypeError: warning(QWidget, str, str, buttons: Union[QMessageBox.StandardButtons, QMessageBox.StandardButton] = QMessageBox.Ok, defaultButton: QMessageBox.StandardButton = QMessageBox.NoButton): argument 3 has unexpected type 'StandardButton'
+2020-10-17 11:44:29,609		 (__main__                 ) (thread:3380) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\DCC\Optics-ID\gui\views\filterView.py", line 115, in remove_background
+    warning_dialog = QMessageBox.information(self, "Make sure the light source is 'OFF' while removing background.", QMessageBox.Ok)
+TypeError: information(QWidget, str, str, buttons: Union[QMessageBox.StandardButtons, QMessageBox.StandardButton] = QMessageBox.Ok, defaultButton: QMessageBox.StandardButton = QMessageBox.NoButton): argument 3 has unexpected type 'StandardButton'
+2020-10-17 11:52:23,397		 (__main__                 ) (thread:7220) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\DCC\Optics-ID\gui\views\filterView.py", line 123, in remove_background
+    warning_dialog.setCheckBox(QWidget.QCheckBox("hello"))
+AttributeError: 'StandardButton' object has no attribute 'setCheckBox'
+2020-10-17 11:55:40,479		 (__main__                 ) (thread:13816) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\DCC\Optics-ID\gui\views\filterView.py", line 128, in remove_background
+    warning_dialog.buttonClicked.connect("lol")
+TypeError: argument 1 has unexpected type 'str'
+2020-10-17 11:56:06,846		 (__main__                 ) (thread:15284) (line:   69)		[ERROR] Uncaught exception
+Traceback (most recent call last):
+  File "C:\Users\marc-\Documents\Github\DCC\Optics-ID\gui\views\filterView.py", line 129, in remove_background
+    warning_dialog.setCheckBox(QWidget.QCheckBox("hello"))
+AttributeError: type object 'QWidget' has no attribute 'QCheckBox'

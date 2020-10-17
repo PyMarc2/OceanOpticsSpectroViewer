@@ -74,7 +74,7 @@ def main():
     appID = "opt-id"  # arbitrary string
     ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(appID)
     app = App(sys.argv)
-    app.setWindowIcon(QIcon(os.path.dirname(os.path.realpath(__file__)) + "\\img\\biohazard.png"))
+    app.setWindowIcon(QIcon(os.path.dirname(os.path.realpath(__file__)) + "\\gui\\misc\\logo\\logo3.png"))
     sys.exit(app.exec_())
 
 
