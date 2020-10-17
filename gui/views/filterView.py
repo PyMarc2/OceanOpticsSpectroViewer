@@ -1,5 +1,6 @@
 from PyQt5.QtWidgets import QWidget
 from PyQt5.QtCore import pyqtSlot, pyqtSignal, QThread
+from PyQt5.Qt import QColor, QPalette
 import os
 from pyqtgraph import PlotItem, BarGraphItem
 from pyqtgraph import GraphicsLayoutWidget
@@ -26,10 +27,6 @@ class FilterView(QWidget, Ui_filterView):
         self.model = model
         self.setupUi(self)
 
-        self.connect_buttons()
-        self.connect_signals()
-        self.connect_checkbox()
-
         self.acqThread = QThread()
         self.plotItem = None
         self.dataPlotItem = None
@@ -38,12 +35,21 @@ class FilterView(QWidget, Ui_filterView):
         self.waves = None
         self.exposure_time = 100
         self.integration_count = 1
+        self.backgroundData = None
+        self.acquisitionData = None
+        self.analysedData = None
+        self.isNormalized = None
+
         self.isAcqAlive = 0
         self.deviceConnected = 0
 
+        self.connect_buttons()
+        self.connect_signals()
+        self.connect_checkbox()
         self.make_threads()
         self.create_plots()
         self.initialize_device()
+        self.manage_indicators()
 
     def initialize_device(self):
         log.debug("Initializing devices...")
@@ -61,15 +67,26 @@ class FilterView(QWidget, Ui_filterView):
 
     def connect_buttons(self):
         self.pb_liveView.clicked.connect(self.toggle_live_view)
-        self.pb_analyse.clicked.connect(lambda: print("lol compute computer"))
-        self.pb_normalize.clicked.connect(lambda: print("lol compute filter"))
+
+        self.pb_rmBackground.clicked.connect(lambda: setattr(self, "backgroundData", True))
+        self.pb_rmBackground.clicked.connect(self.manage_indicators)
+
+        self.pb_analyse.clicked.connect(lambda: setattr(self, "analysedData", True))
+        self.pb_analyse.clicked.connect(lambda: setattr(self, "acquisitionData", True))
+        self.pb_analyse.clicked.connect(self.manage_indicators)
+
+        self.pb_normalize.clicked.connect(lambda: setattr(self, "isNormalized", True))
+        self.pb_normalize.clicked.connect(lambda: self.manage_indicators())
+
         self.le_exposure.textChanged.connect(self.set_exposure_time)
         self.le_viewTime.textChanged.connect(self.set_integration_time)
 
         log.debug("Connecting GUI buttons...")
 
     def connect_checkbox(self):
-        pass
+        self.ind_rmBackground.clicked.connect(lambda:print("showBackground if available"))
+        self.ind_normalize.clicked.connect(lambda: print("show normalisation if available"))
+        self.ind_analyse.clicked.connect(lambda: print("show acquisition if available"))
 
     def connect_signals(self):
         log.debug("Connecting GUI signals...")
@@ -80,6 +97,51 @@ class FilterView(QWidget, Ui_filterView):
         self.pyqtgraphWidget.clear()
         self.plotItem = self.pyqtgraphWidget.addPlot()
         self.dataPlotItem = self.plotItem.plot()
+
+    def manage_indicators(self):
+        if self.isAcqAlive:
+            self.ind_rmBackground.setEnabled(True)
+            self.ind_normalize.setEnabled(True)
+            self.ind_analyse.setEnabled(True)
+            self.pb_rmBackground.setEnabled(True)
+            self.pb_normalize.setEnabled(True)
+            self.pb_analyse.setEnabled(True)
+            if self.backgroundData is None:
+                self.ind_rmBackground.setStyleSheet("QCheckBox::indicator{background-color: #db1a1a;}")
+                try:
+                    self.ind_rmBackground.clicked.disconnect()
+                except Exception:
+                    pass
+            else:
+                self.ind_rmBackground.setStyleSheet("QCheckBox::indicator{background-color: #55b350;}")
+
+            if self.isNormalized is None:
+                self.ind_normalize.setStyleSheet("QCheckBox::indicator{background-color: #db1a1a;}")
+                try:
+                    self.ind_normalize.clicked.disconnect()
+                except Exception:
+                    pass
+            else:
+                self.ind_normalize.setStyleSheet("QCheckBox::indicator{background-color: #55b350;}")
+
+            if self.acquisitionData is None:
+                self.ind_analyse.setStyleSheet("QCheckBox::indicator{background-color: #db1a1a;}")
+                try:
+                    self.ind_analyse.clicked.disconnect()
+                except Exception:
+                    pass
+            else:
+                self.ind_analyse.setStyleSheet("QCheckBox::indicator{background-color: #55b350;}")
+        else:
+            self.pb_rmBackground.setEnabled(False)
+            self.pb_normalize.setEnabled(False)
+            self.pb_analyse.setEnabled(False)
+            self.ind_rmBackground.setEnabled(False)
+            self.ind_normalize.setEnabled(False)
+            self.ind_analyse.setEnabled(False)
+            self.ind_rmBackground.setStyleSheet("QCheckBox::indicator{background-color: #9e9e9e;}")
+            self.ind_normalize.setStyleSheet("QCheckBox::indicator{background-color: #9e9e9e;}")
+            self.ind_analyse.setStyleSheet("QCheckBox::indicator{background-color: #9e9e9e;}")
 
     @pyqtSlot(dict)
     def update_graph(self, plotData):
@@ -115,6 +177,7 @@ class FilterView(QWidget, Ui_filterView):
             self.acqThread.terminate()
             self.pb_liveView.stop_flash()
             self.isAcqAlive = False
+        self.manage_indicators()
 
     def set_exposure_time(self, time_in_ms):
         try:
@@ -144,7 +207,8 @@ class FilterView(QWidget, Ui_filterView):
             log.error(e)
             self.le_viewTime.setStyleSheet('color: red')
 
-    set_
+    def visualize_any_acquisition(self):
+        pass
 # TODO:
 # remove background, normalize (take ref, create norm, norm stream)
 # add wavelength line cursor with value display
