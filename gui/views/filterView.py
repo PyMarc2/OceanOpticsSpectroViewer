@@ -117,17 +117,17 @@ class FilterView(QWidget, Ui_filterView):
 
     def remove_background(self):
         if self.showRmBackgroundWarning:
-            warning_dialog = QMessageBox()
-            warning_dialog.setIcon(QMessageBox.Information)
-
-            warning_dialog.setText("This is a message box")
-            warning_dialog.setInformativeText("This is additional information")
-            warning_dialog.setWindowTitle("MessageBox demo")
-            warning_dialog.setDetailedText("The details are as follows:")
-            warning_dialog.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
-            warning_dialog.buttonClicked.connect(lambda:print("lol"))
-            warning_dialog.setCheckBox(QCheckBox("hello"))
-            warning_dialog.exec_()
+            warningDialog = QMessageBox()
+            warningDialog.setIcon(QMessageBox.Information)
+            #warningDialog.setText("Information:")
+            warningDialog.setText("Your light source should be 'OFF' before removing the background signal.")
+            warningDialog.setWindowTitle("Remove Background")
+            warningDialog.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
+            doNotShow = QCheckBox("Do not show again.")
+            warningDialog.setCheckBox(doNotShow)
+            warningDialog.buttonClicked.connect(lambda:print("lol"))
+            doNotShow.clicked.connect(lambda: setattr(self, 'showRmBackgroundWarning', 0))
+            warningDialog.exec_()
 
 # TODO:
 # integration time (has to a multiple of exposure ( subtract exceed: IT -= IT % ET ))
