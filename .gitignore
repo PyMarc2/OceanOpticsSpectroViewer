@@ -5,5 +5,4 @@
 venv/
 .env/
 env/
-/log
-.log/
+log/
