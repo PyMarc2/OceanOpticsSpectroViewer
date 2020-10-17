@@ -33,8 +33,8 @@ class FilterView(QWidget, Ui_filterView):
         self.acqWorker = None
         self.spec = None
         self.waves = None
-        self.exposure_time = 100
-        self.integration_count = 1
+        self.exposureTime = 100
+        self.integrationCount = 1
         self.backgroundData = None
         self.acquisitionData = None
         self.analysedData = None
@@ -165,7 +165,7 @@ class FilterView(QWidget, Ui_filterView):
 
         while self.isAcqAlive:
             intens = []
-            for _ in range(self.integration_count):
+            for _ in range(self.integrationCount):
                 intens.append(self.spec.intensities()[2:])
             intens = np.mean(intens, axis=0)
             self.s_data_changed.emit({"y": intens})
@@ -193,8 +193,8 @@ class FilterView(QWidget, Ui_filterView):
 
     def set_exposure_time(self, time_in_ms):
         try:
-            self.exposure_time = int(time_in_ms)
-            self.spec.integration_time_micros(self.exposure_time * 1000)
+            self.exposureTime = int(time_in_ms)
+            self.spec.integration_time_micros(self.exposureTime * 1000)
             self.le_exposure.setStyleSheet('color: black')
         except ValueError as e:
             self.le_exposure.setStyleSheet('color: red')
@@ -208,11 +208,11 @@ class FilterView(QWidget, Ui_filterView):
                 time_in_ms = self.le_viewTime.text()
 
             integration_time = int(time_in_ms)
-            if integration_time >= self.exposure_time:
-                self.integration_count = integration_time // self.exposure_time
+            if integration_time >= self.exposureTime:
+                self.integrationCount = integration_time // self.exposureTime
                 self.le_viewTime.setStyleSheet('color: black')
             else:
-                self.integration_count = 1
+                self.integrationCount = 1
                 self.le_viewTime.setStyleSheet('color: red')
                 # self.le_viewTime.setText(str(self.exposure_time))
         except ValueError as e:
