@@ -60,7 +60,7 @@ class FilterView(QWidget, Ui_filterView):
         self.spec.integration_time_micros(int(float(self.le_exposure.text()) * 1000))
 
     def connect_buttons(self):
-        self.pb_liveView.clicked.connect(self.toggle_liveView)
+        self.pb_liveView.clicked.connect(self.toggle_live_view)
         self.pb_analyse.clicked.connect(lambda: print("lol compute computer"))
         self.pb_normalize.clicked.connect(lambda: print("lol compute filter"))
         self.le_exposure.textChanged.connect(self.set_exposure_time)
@@ -101,7 +101,7 @@ class FilterView(QWidget, Ui_filterView):
         self.acqWorker.moveToThread(self.acqThread)
         self.acqThread.started.connect(self.acqWorker.run)
 
-    def toggle_liveView(self):
+    def toggle_live_view(self):
         if not self.isAcqAlive:
             try:
                 self.acqThread.start()
@@ -144,6 +144,7 @@ class FilterView(QWidget, Ui_filterView):
             log.error(e)
             self.le_viewTime.setStyleSheet('color: red')
 
+    set_
 # TODO:
 # remove background, normalize (take ref, create norm, norm stream)
 # add wavelength line cursor with value display
