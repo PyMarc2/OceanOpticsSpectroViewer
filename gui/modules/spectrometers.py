@@ -1,4 +1,5 @@
 import numpy as np
+import time
 
 
 class MockSpectrometer:
@@ -25,6 +26,7 @@ class MockSpectrometer:
         noise = np.random.uniform(0, self.noise, 2048)
 
         out = (background + source + noise) * 4095
+        time.sleep(0.9 * self.exposureTime / 1000000)
         return np.clip(out, 0, 4095)
 
     @property
