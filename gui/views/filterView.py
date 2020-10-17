@@ -7,6 +7,7 @@ from PyQt5 import uic
 import seabreeze.spectrometers as sb
 from gui.modules import spectrometers as mock
 from tools.threadWorker import Worker
+import numpy as np
 
 import logging
 
@@ -35,6 +36,8 @@ class FilterView(QWidget, Ui_filterView):
         self.acqWorker = None
         self.spec = None
         self.waves = None
+        self.exposure_time = 100
+        self.integration_count = 1
         self.isAcqAlive = 0
         self.deviceConnected = 0
 
@@ -59,7 +62,8 @@ class FilterView(QWidget, Ui_filterView):
         self.pb_liveView.clicked.connect(self.toggle_liveView)
         self.pb_analyse.clicked.connect(lambda: print("lol compute computer"))
         self.pb_normalize.clicked.connect(lambda: print("lol compute filter"))
-        self.le_exposure.textChanged.connect(lambda: self.spec.integration_time_micros(int(float(self.le_exposure.text()) * 1000)))
+        self.le_exposure.textChanged.connect(self.set_exposure_time)
+        self.le_viewTime.textChanged.connect(self.set_integration_time)
 
         log.info("Connecting GUI widgets...")
 
@@ -84,7 +88,10 @@ class FilterView(QWidget, Ui_filterView):
         self.waves = self.spec.wavelengths()[2:]
 
         while self.isAcqAlive:
-            intens = self.spec.intensities()[2:]
+            intens = []
+            for _ in range(self.integration_count):
+                intens.append(self.spec.intensities()[2:])
+            intens = np.mean(intens, axis=0)
             self.s_data_changed.emit({"y": intens})
 
     def make_threads(self, *args):
@@ -107,7 +114,25 @@ class FilterView(QWidget, Ui_filterView):
             self.pb_liveView.stop_flash()
             self.isAcqAlive = False
 
+    def set_exposure_time(self, time_in_ms):
+        self.exposure_time = int(time_in_ms)
+        self.spec.integration_time_micros(self.exposure_time * 1000)
+
+        self.set_integration_time()
+
+    def set_integration_time(self, time_in_ms=None):
+        if not time_in_ms:
+            time_in_ms = self.le_viewTime.text()
+
+        integration_time = int(time_in_ms)
+        if integration_time >= self.exposure_time:
+            self.integration_count = integration_time // self.exposure_time
+            self.le_viewTime.setStyleSheet('color: black')
+        else:
+            self.integration_count = 1
+            self.le_viewTime.setStyleSheet('color: red')
+            # self.le_viewTime.setText(str(self.exposure_time))
+
 # TODO:
-# integration time (has to a multiple of exposure ( subtract exceed: IT -= IT % ET ))
-# connect (auto), remove background, normalize (take ref, create norm, norm stream)
+# remove background, normalize (take ref, create norm, norm stream)
 # add wavelength line cursor with value display
