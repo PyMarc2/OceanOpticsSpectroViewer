@@ -9,8 +9,8 @@ class MockSpectrometer:
         self.backgroundIntensity = 0.005
         self.noise = 0.01
 
-        self._background = backgroundSpectrum()
-        self._source = halogenSpectrum()
+        self._background = background_spectrum()
+        self._source = halogen_spectrum()
         # todo: move bg and source to spectrum object
         # todo: calibration offset?
 
@@ -28,7 +28,9 @@ class MockSpectrometer:
         out = np.clip((background + source + noise) * 4095, 0, 4095)
 
         delta = time.time() - t
-        time.sleep(self.exposureTime / 1000000 - delta)
+        sleepTime = self.exposureTime / 1000000 - delta
+        if sleepTime > 0:
+            time.sleep(sleepTime)
         return out
 
     @property
@@ -44,12 +46,12 @@ def gaussian(x, mu, sig):
     return np.exp(-np.power(x - mu, 2.) / (2 * np.power(sig, 2.)))
 
 
-def halogenSpectrum():
+def halogen_spectrum():
     x = np.linspace(339.24, 1022.28, 2048)
     return gaussian(x, mu=600, sig=100) * 0.7 + gaussian(x, mu=700, sig=70) * 0.3
 
 
-def backgroundSpectrum():
+def background_spectrum():
     x = np.linspace(339.24, 1022.28, 2048)
     return gaussian(x, mu=550, sig=5) * 1 + gaussian(x, mu=610, sig=8) * 0.7 + \
            gaussian(x, mu=480, sig=15) * 0.2 + gaussian(x, mu=550, sig=200) * 0.1
