@@ -46,8 +46,8 @@ class FilterView(QWidget, Ui_filterView):
         self.isAcqAlive = 0
         self.deviceConnected = 0
         self.backgroundAcquire = 0
+        self.backgroundRemove = 0
         self.backgroundWarningDisplay = 1
-        self.backgroundWarningCalled = 0
 
         self.create_dialogs()
         self.connect_buttons()
@@ -187,7 +187,11 @@ class FilterView(QWidget, Ui_filterView):
             if saveBackground:
                 self.backgroundData = intens
                 self.backgroundAcquire = False
+                self.backgroundRemove = True
                 log.debug("Background acquired.")
+
+            if self.backgroundRemove:
+                intens = intens-self.backgroundData
 
             self.s_data_changed.emit({"y": intens})
             self.s_data_acquisition_done.emit()
