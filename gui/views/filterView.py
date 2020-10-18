@@ -8,7 +8,7 @@ from PyQt5 import uic
 import seabreeze.spectrometers as sb
 from gui.modules import spectrometers as mock
 from tools.threadWorker import Worker
-from tools.CircularList import CircularList
+from tools.CircularList import CircularList, RingBuffer
 import numpy as np
 import collections
 import time
@@ -54,13 +54,14 @@ class FilterView(QWidget, Ui_filterView):
         self.backgroundRemove = 0
         self.backgroundWarningDisplay = 1
         self.expositionCounter = 0
+        self.changeLastExposition = 0
 
         self.integrationTimeViewRemainder_ms = 0
         self.integrationTimeAcqRemainder_ms = 0
         self.integrationCountAcq = 0
         self.integrationCountView = 0
         self.liveAcquisitionData = []
-        self.movingIntegrationData = CircularList()
+        self.movingIntegrationData = None
 
         self.create_dialogs()
         self.connect_buttons()
@@ -159,19 +160,18 @@ class FilterView(QWidget, Ui_filterView):
             rawIntensity = self.read_data_live().tolist()
             self.liveAcquisitionData = rawIntensity
 
-            if self.expositionCounter < self.integrationCountView + 1:
+            if self.expositionCounter < self.integrationCountView-1:
                 self.movingIntegrationData.append(rawIntensity)
                 self.expositionCounter += 1
 
-            elif self.expositionCounter == self.integrationCountView and int(self.integrationTimeViewRemainder_ms) > 4:
-                self.set_exposure_time(int(self.integrationTimeViewRemainder_ms), update=False)
+            elif self.expositionCounter == self.integrationCountView-1:
+                self.movingIntegrationData.append(rawIntensity)
                 self.expositionCounter += 1
-
-            elif self.expositionCounter == self.integrationCountView + 1:
-                self.set_exposure_time()
-                self.expositionCounter = 0
+                if self.changeLastExposition:
+                    self.set_exposure_time(self.integrationTimeViewRemainder_ms, update=False)
 
             else:
+                self.movingIntegrationData.append(rawIntensity)
                 self.expositionCounter = 0
 
             log.debug(self.movingIntegrationData)
@@ -185,8 +185,15 @@ class FilterView(QWidget, Ui_filterView):
             if self.backgroundRemove:
                 rawIntensity = rawIntensity-self.backgroundData
 
-            TEST = list(self.movingIntegrationData)
-            self.displayData = np.sum(np.array(self.movingIntegrationData), 0)
+            TEST = self.movingIntegrationData()
+            try:
+                testsum = np.array(TEST)
+                testsum = np.sum(testsum, 0)
+                log.debug(testsum)
+            except Exception as e:
+                log.error(e)
+
+            self.displayData = testsum
 
             self.s_data_changed.emit({"y": self.displayData})
             self.s_data_acquisition_done.emit()
@@ -232,7 +239,12 @@ class FilterView(QWidget, Ui_filterView):
             log.error(e)
             self.le_viewTime.setStyleSheet('color: red')
 
-        self.movingIntegrationData = CircularList(size=self.integrationCountView+1)
+        if self.integrationTimeViewRemainder_ms > 3:
+            self.movingIntegrationData = RingBuffer(size_max=self.integrationCountView+1)
+            self.changeLastExposition = 1
+        else:
+            self.movingIntegrationData = RingBuffer(size_max=self.integrationCountView)
+            self.changeLastExposition = 0
 
     # High-Level Front-End Functions
     
