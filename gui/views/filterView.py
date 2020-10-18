@@ -9,6 +9,7 @@ import seabreeze.spectrometers as sb
 from gui.modules import spectrometers as mock
 from tools.threadWorker import Worker
 import numpy as np
+import time
 
 import logging
 
@@ -35,6 +36,7 @@ class FilterView(QWidget, Ui_filterView):
         self.waves = None
         self.exposureTime = 100
         self.integrationCount = 1
+        self.displayData = None
         self.backgroundData = None
         self.acquisitionData = None
         self.analysedData = None
@@ -42,7 +44,9 @@ class FilterView(QWidget, Ui_filterView):
 
         self.isAcqAlive = 0
         self.deviceConnected = 0
-        self.backgroundWarning = 1
+        self.backgroundAcquire = 0
+        self.backgroundWarningDisplay = 1
+        self.backgroundWarningCalled = 0
 
         self.connect_buttons()
         self.connect_signals()
@@ -70,7 +74,7 @@ class FilterView(QWidget, Ui_filterView):
     def connect_buttons(self):
         self.pb_liveView.clicked.connect(self.toggle_live_view)
 
-        self.pb_rmBackground.clicked.connect(self.remove_background)
+        self.pb_rmBackground.clicked.connect(self.save_background)
         self.pb_rmBackground.clicked.connect(self.manage_indicators)
 
         self.pb_analyse.clicked.connect(lambda: setattr(self, "analysedData", True))
@@ -110,9 +114,7 @@ class FilterView(QWidget, Ui_filterView):
             self.ind_rmBackground.setEnabled(True)
             self.ind_normalize.setEnabled(True)
             self.ind_analyse.setEnabled(True)
-            self.pb_rmBackground.setEnabled(True)
-            self.pb_normalize.setEnabled(True)
-            self.pb_analyse.setEnabled(True)
+            self.enable_all_buttons()
             if self.backgroundData is None:
                 self.ind_rmBackground.setStyleSheet("QCheckBox::indicator{background-color: #db1a1a;}")
                 try:
@@ -140,9 +142,7 @@ class FilterView(QWidget, Ui_filterView):
             else:
                 self.ind_analyse.setStyleSheet("QCheckBox::indicator{background-color: #55b350;}")
         else:
-            self.pb_rmBackground.setEnabled(False)
-            self.pb_normalize.setEnabled(False)
-            self.pb_analyse.setEnabled(False)
+            self.disable_all_buttons()
             self.ind_rmBackground.setEnabled(False)
             self.ind_normalize.setEnabled(False)
             self.ind_analyse.setEnabled(False)
@@ -169,6 +169,11 @@ class FilterView(QWidget, Ui_filterView):
                 intens.append(self.spec.intensities()[2:])
             intens = np.mean(intens, axis=0)
             self.s_data_changed.emit({"y": intens})
+
+            if self.backgroundAcquire:
+                self.backgroundData = intens
+                self.backgroundAcquire = False
+                log.debug("Background acquired.")
 
     def toggle_live_view(self):
         if not self.isAcqAlive:
@@ -217,20 +222,44 @@ class FilterView(QWidget, Ui_filterView):
     def visualize_any_acquisition(self):
         pass
 
-    def remove_background(self):
-        self.backgroundData = True
-        if self.backgroundWarning:
-            warningDialog = QMessageBox()
-            warningDialog.setIcon(QMessageBox.Information)
-            #warningDialog.setText("Information:")
-            warningDialog.setText("Your light source should be 'OFF' before removing the background signal.")
-            warningDialog.setWindowTitle("Remove Background")
-            warningDialog.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
-            doNotShow = QCheckBox("Do not show again.")
-            warningDialog.setCheckBox(doNotShow)
-            warningDialog.buttonClicked.connect(lambda: setattr(self, "backgroundData", True))
-            doNotShow.clicked.connect(lambda: setattr(self, 'backgroundWarning', 0))
-            warningDialog.exec_()
+    def save_background_warning(self):
+        self.backgroundWarningCalled = True
+        self.warningDialog = QMessageBox()
+        self.warningDialog.setIcon(QMessageBox.Information)
+        self.warningDialog.setText("Your light source should be 'OFF' before removing the background signal.")
+        self.warningDialog.setWindowTitle("Remove Background")
+        self.warningDialog.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
+        self.doNotShow = QCheckBox("Do not show again.")
+        self.warningDialog.setCheckBox(self.doNotShow)
+        self.doNotShow.clicked.connect(lambda: setattr(self, 'backgroundWarningDisplay', 0))
+        answer = self.warningDialog.exec_()
+        if answer == QMessageBox.Ok:
+            self.save_background()
+        elif answer == QMessageBox.Cancel:
+            log.debug("Background data not taken.")
+            self.backgroundWarningCalled = False
+
+    def save_background(self):
+        if not self.backgroundWarningCalled and self.backgroundWarningDisplay:
+            self.save_background_warning()
+            self.backgroundWarningCalled = True
+        else:
+            self.ind_rmBackground.setStyleSheet("QCheckBox::indicator{background-color: #f79c34;}")
+            self.disable_all_buttons()
+            log.debug("Acquiring background")
+            self.backgroundAcquire = 1
+
+        self.backgroundWarningCalled = False
+
+    def disable_all_buttons(self):
+        self.pb_rmBackground.setEnabled(False)
+        self.pb_normalize.setEnabled(False)
+        self.pb_analyse.setEnabled(False)
+
+    def enable_all_buttons(self):
+        self.pb_rmBackground.setEnabled(True)
+        self.pb_normalize.setEnabled(True)
+        self.pb_analyse.setEnabled(True)
 
 # TODO:
 # remove background, normalize (take ref, create norm, norm stream)
