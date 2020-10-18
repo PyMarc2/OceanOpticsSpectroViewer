@@ -22,6 +22,8 @@ Ui_filterView, QtBaseClass = uic.loadUiType(filterViewUiPath)
 
 class FilterView(QWidget, Ui_filterView):
     s_data_changed = pyqtSignal(dict)
+    s_acquire_background = pyqtSignal()
+    s_data_acquisition_done = pyqtSignal()
 
     def __init__(self, model=None, controller=None):
         super(FilterView, self).__init__()
@@ -97,6 +99,8 @@ class FilterView(QWidget, Ui_filterView):
     def connect_signals(self):
         log.debug("Connecting GUI signals...")
         self.s_data_changed.connect(self.update_graph)
+        self.s_acquire_background.connect(lambda: setattr(self, 'backgroundAcquire', True ))
+        self.s_data_acquisition_done.connect(self.manage_indicators)
 
     def make_threads(self, *args):
         self.acqWorker = Worker(self.read_data_live, *args)
@@ -160,17 +164,24 @@ class FilterView(QWidget, Ui_filterView):
         y = plotData["y"]
         self.dataPlotItem.setData(self.waves, y)
 
+
     def read_data_live(self, *args, **kwargs):
         self.waves = self.spec.wavelengths()[2:]
 
         while self.isAcqAlive:
+            saveBackground = 0
+
+            if self.backgroundAcquire:
+                saveBackground = 1
+                log.debug("Acquiring background...")
             intens = []
             for _ in range(self.integrationCount):
                 intens.append(self.spec.intensities()[2:])
             intens = np.mean(intens, axis=0)
             self.s_data_changed.emit({"y": intens})
+            self.s_data_acquisition_done.emit()
 
-            if self.backgroundAcquire:
+            if saveBackground:
                 self.backgroundData = intens
                 self.backgroundAcquire = False
                 log.debug("Background acquired.")
@@ -246,8 +257,8 @@ class FilterView(QWidget, Ui_filterView):
         else:
             self.ind_rmBackground.setStyleSheet("QCheckBox::indicator{background-color: #f79c34;}")
             self.disable_all_buttons()
-            log.debug("Acquiring background")
-            self.backgroundAcquire = 1
+            self.s_acquire_background.emit()
+
 
         self.backgroundWarningCalled = False
 
