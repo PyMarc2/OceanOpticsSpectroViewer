@@ -22,7 +22,6 @@ Ui_filterView, QtBaseClass = uic.loadUiType(filterViewUiPath)
 
 class FilterView(QWidget, Ui_filterView):
     s_data_changed = pyqtSignal(dict)
-    s_acquire_background = pyqtSignal()
     s_data_acquisition_done = pyqtSignal()
 
     def __init__(self, model=None, controller=None):
@@ -50,6 +49,7 @@ class FilterView(QWidget, Ui_filterView):
         self.backgroundWarningDisplay = 1
         self.backgroundWarningCalled = 0
 
+        self.create_dialogs()
         self.connect_buttons()
         self.connect_signals()
         self.connect_checkbox()
@@ -99,13 +99,22 @@ class FilterView(QWidget, Ui_filterView):
     def connect_signals(self):
         log.debug("Connecting GUI signals...")
         self.s_data_changed.connect(self.update_graph)
-        self.s_acquire_background.connect(lambda: setattr(self, 'backgroundAcquire', True ))
         self.s_data_acquisition_done.connect(self.manage_indicators)
 
     def make_threads(self, *args):
-        self.acqWorker = Worker(self.read_data_live, *args)
+        self.acqWorker = Worker(self.manage_data_flow, *args)
         self.acqWorker.moveToThread(self.acqThread)
         self.acqThread.started.connect(self.acqWorker.run)
+
+    def create_dialogs(self):
+        self.warningDialog = QMessageBox()
+        self.warningDialog.setIcon(QMessageBox.Information)
+        self.warningDialog.setText("Your light source should be 'OFF' before removing the background signal.")
+        self.warningDialog.setWindowTitle("Remove Background")
+        self.warningDialog.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
+        self.doNotShow = QCheckBox("Do not show again.")
+        self.warningDialog.setCheckBox(self.doNotShow)
+        self.doNotShow.clicked.connect(lambda: setattr(self, 'backgroundWarningDisplay', 0))
 
     def create_plots(self):
         log.debug("Creating GUI plots...")
@@ -164,27 +173,34 @@ class FilterView(QWidget, Ui_filterView):
         y = plotData["y"]
         self.dataPlotItem.setData(self.waves, y)
 
-
-    def read_data_live(self, *args, **kwargs):
+    def manage_data_flow(self, *args, **kwargs):
         self.waves = self.spec.wavelengths()[2:]
 
         while self.isAcqAlive:
             saveBackground = 0
-
             if self.backgroundAcquire:
                 saveBackground = 1
                 log.debug("Acquiring background...")
-            intens = []
-            for _ in range(self.integrationCount):
-                intens.append(self.spec.intensities()[2:])
-            intens = np.mean(intens, axis=0)
-            self.s_data_changed.emit({"y": intens})
-            self.s_data_acquisition_done.emit()
+
+            intens = self.read_data_live()
 
             if saveBackground:
                 self.backgroundData = intens
                 self.backgroundAcquire = False
                 log.debug("Background acquired.")
+
+            self.s_data_changed.emit({"y": intens})
+            self.s_data_acquisition_done.emit()
+
+    def substract_background_data(self):
+        pass
+
+    def read_data_live(self, *args, **kwargs):
+        intens = []
+        for _ in range(self.integrationCount):
+            intens.append(self.spec.intensities()[2:])
+        intens = np.mean(intens, axis=0)
+        return intens
 
     def toggle_live_view(self):
         if not self.isAcqAlive:
@@ -233,34 +249,18 @@ class FilterView(QWidget, Ui_filterView):
     def visualize_any_acquisition(self):
         pass
 
-    def save_background_warning(self):
-        self.backgroundWarningCalled = True
-        self.warningDialog = QMessageBox()
-        self.warningDialog.setIcon(QMessageBox.Information)
-        self.warningDialog.setText("Your light source should be 'OFF' before removing the background signal.")
-        self.warningDialog.setWindowTitle("Remove Background")
-        self.warningDialog.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
-        self.doNotShow = QCheckBox("Do not show again.")
-        self.warningDialog.setCheckBox(self.doNotShow)
-        self.doNotShow.clicked.connect(lambda: setattr(self, 'backgroundWarningDisplay', 0))
-        answer = self.warningDialog.exec_()
-        if answer == QMessageBox.Ok:
-            self.save_background()
-        elif answer == QMessageBox.Cancel:
-            log.debug("Background data not taken.")
-            self.backgroundWarningCalled = False
-
     def save_background(self):
-        if not self.backgroundWarningCalled and self.backgroundWarningDisplay:
-            self.save_background_warning()
-            self.backgroundWarningCalled = True
+        if self.backgroundWarningDisplay:
+            answer = self.warningDialog.exec_()
+            if answer == QMessageBox.Ok:
+                self.backgroundAcquire = 1
+            elif answer == QMessageBox.Cancel:
+                log.debug("Background data not taken.")
+
         else:
+            self.backgroundAcquire = 1
             self.ind_rmBackground.setStyleSheet("QCheckBox::indicator{background-color: #f79c34;}")
             self.disable_all_buttons()
-            self.s_acquire_background.emit()
-
-
-        self.backgroundWarningCalled = False
 
     def disable_all_buttons(self):
         self.pb_rmBackground.setEnabled(False)
