@@ -44,15 +44,13 @@ class FilterView(QWidget, Ui_filterView):
         self.dataPlotItem = None
         self.acqWorker = None
 
-        self.exposureTime = 100
+        self.exposureTime = 50
         self.expositionCounter = 0
         self.changeLastExposition = 0
 
-        self.integrationCount = 1
-        self.integrationTimeViewRemainder_ms = 0
+        self.integrationTimeAcq = 3000
         self.integrationTimeAcqRemainder_ms = 0
         self.integrationCountAcq = 0
-        self.integrationCountView = 0
 
         self.liveAcquisitionData = []
         self.temporaryIntegrationData = None
@@ -73,6 +71,7 @@ class FilterView(QWidget, Ui_filterView):
         self.isAcquiringNormalization = False
         self.isAcquiringBackground = False
         self.isAcquiringIntegration = False
+        self.isAcquisitionDone = False
         
         self.acquisitionType = ""
 
@@ -114,8 +113,11 @@ class FilterView(QWidget, Ui_filterView):
         self.pb_normalize.clicked.connect(lambda: setattr(self, 'isAcquiringNormalization', True))
         self.pb_normalize.clicked.connect(lambda: self.update_indicators())
 
-        self.le_exposure.textChanged.connect(self.set_exposure_time)
-        self.le_viewTime.textChanged.connect(self.set_integration_time)
+        self.sb_exposure.valueChanged.connect(lambda: setattr(self, 'exposureTime', self.sb_exposure.value()))
+        self.sb_exposure.valueChanged.connect(self.set_exposure_time)
+
+        self.sb_acqTime.valueChanged.connect(lambda: setattr(self, 'integrationTimeAcq', self.sb_exposure.value()))
+        self.sb_acqTime.valueChanged.connect(self.set_integration_time)
 
         log.debug("Connecting GUI buttons...")
 
@@ -178,62 +180,49 @@ class FilterView(QWidget, Ui_filterView):
         return self.spec.intensities()[2:]
 
     def set_exposure_time(self, time_in_ms=None, update=True):
-        try:
-            if time_in_ms is None:
-                self.exposureTime = int(self.le_exposure.text())
-            else:
-                self.exposureTime = int(time_in_ms)
+        if time_in_ms is not None:
+            expositionTime = time_in_ms
+        else:
+            expositionTime = self.exposureTime
+        self.spec.integration_time_micros(expositionTime * 1000)
 
-            self.spec.integration_time_micros(self.exposureTime * 1000)
-            self.le_exposure.setStyleSheet('color: black')
-        except ValueError as e:
-            self.le_exposure.setStyleSheet('color: red')
-            log.error(e)
         if update:
             self.set_integration_time()
 
     def set_integration_time(self, time_in_ms_view=None, time_in_ms_acq=None):
         try:
-
-            time_in_ms_view = self.le_viewTime.text()
-            time_in_ms_acq = self.le_acqTime.text()
-
-            integrationTimeView = int(time_in_ms_view)
-            integrationTimeAcq = int(time_in_ms_acq)
-
-            if integrationTimeView >= self.exposureTime:
-                self.integrationCountView = integrationTimeView // self.exposureTime
-                self.integrationCountAcq = integrationTimeAcq // self.exposureTime
-                self.integrationTimeViewRemainder_ms = integrationTimeView-self.integrationCountView*self.exposureTime
-                self.integrationTimeAcqRemainder_ms = integrationTimeAcq - self.integrationCountAcq * self.exposureTime
-                self.le_viewTime.setStyleSheet('color: black')
+            if self.integrationTimeAcq >= self.exposureTime:
+                self.integrationCountAcq = self.integrationTimeAcq // self.exposureTime
+                self.integrationTimeAcqRemainder_ms = self.integrationTimeAcq - (self.integrationCountAcq * self.exposureTime)
+                self.sb_acqTime.setStyleSheet('color: black')
             else:
-                self.integrationCountView = 1
-                self.le_viewTime.setStyleSheet('color: red')
+                self.integrationCountAcq = 1
+                self.sb_acqTime.setStyleSheet('color: red')
 
         except ValueError as e:
             log.error(e)
-            self.le_viewTime.setStyleSheet('color: red')
+            self.sb_acqTime.setStyleSheet('color: red')
 
-        if self.integrationTimeViewRemainder_ms > 3:
-            self.movingIntegrationData = RingBuffer(size_max=self.integrationCountView+1)
+        if self.integrationTimeAcqRemainder_ms > 3:
+            self.movingIntegrationData = RingBuffer(size_max=self.integrationCountAcq+1)
             self.changeLastExposition = 1
         else:
-            self.movingIntegrationData = RingBuffer(size_max=self.integrationCountView)
+            self.movingIntegrationData = RingBuffer(size_max=self.integrationCountAcq)
             self.changeLastExposition = 0
 
     def integrate_data(self):
         self.isAcquisitionDone = False
-        if self.expositionCounter < self.integrationCountView - 1:
+        if self.expositionCounter < self.integrationCountAcq - 1:
             self.movingIntegrationData.append(self.liveAcquisitionData)
             self.expositionCounter += 1
 
-        elif self.expositionCounter == self.integrationCountView - 1:
+        elif self.expositionCounter == self.integrationCountAcq - 1:
             self.movingIntegrationData.append(self.liveAcquisitionData)
             self.expositionCounter += 1
             if self.changeLastExposition:
-                self.set_exposure_time(self.integrationTimeViewRemainder_ms, update=False)
+                self.set_exposure_time(self.integrationTimeAcqRemainder_ms, update=False)
         else:
+            self.set_exposure_time()
             self.movingIntegrationData.append(self.liveAcquisitionData)
             self.isAcquisitionDone = True
             self.expositionCounter = 0
@@ -256,9 +245,9 @@ class FilterView(QWidget, Ui_filterView):
         elif self.isAcquiringIntegration:
             if not self.isAcquisitionDone:
                 log.debug(
-                    "Acquisition frame: {} over {} : {}%".format(self.expositionCounter, self.integrationCountView,
+                    "Acquisition frame: {} over {} : {}%".format(self.expositionCounter, self.integrationCountAcq,
                                                                 int(
-                                                                    self.expositionCounter * 100 / self.integrationCountView)))
+                                                                    self.expositionCounter * 100 / self.integrationCountAcq)))
             elif self.isAcquisitionDone:
                 self.temporaryIntegrationData = np.mean(np.array(self.movingIntegrationData()), 0)
                 self.isAcquiringIntegration = False
@@ -290,7 +279,7 @@ class FilterView(QWidget, Ui_filterView):
                 for i in self.normalizationData:
                     self.normalizationMultiplierList.append(float(maximumCount/i))
 
-                self.normalizationMultiplierList = self.normalizationMultiplierList/maximumCount
+                self.normalizationMultiplierList = self.normalizationMultiplierList / maximumCount
                 self.isSpectrumNormalized = True
                 self.isAcquiringNormalization = False
                 log.info("Normalization Spectrum acquired.")
