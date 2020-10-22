@@ -67,10 +67,7 @@ class FilterView(QWidget, Ui_filterView):
         self.isBackgroundRemoved = False
         self.isDataAnalysed = False
 
-        self.launchBackgroundAcquisition = False
-        self.launchNormalizationAcquisition = False
         self.launchIntegrationAcquisition = False
-        self.launchFilterAcquisition = False
 
         self.isAcquiringFilter = False
         self.isAcquiringNormalization = False
@@ -254,7 +251,7 @@ class FilterView(QWidget, Ui_filterView):
             self.expositionCounter = 0
             self.isAcquiringIntegration = True
             self.launchIntegrationAcquisition = False
-            log.debug("Integration Acquiring...")
+            log.info("Integration Acquiring...")
 
         elif self.isAcquiringIntegration:
             if not self.isAcquisitionDone:
@@ -276,7 +273,7 @@ class FilterView(QWidget, Ui_filterView):
                 self.backgroundData = self.temporaryIntegrationData
                 self.isBackgroundRemoved = True
                 self.isAcquiringBackground = False
-                log.debug("Background acquired.")
+                log.info("Background acquired.")
 
         if self.isBackgroundRemoved:
             self.displayData = self.displayData - self.backgroundData
@@ -289,25 +286,16 @@ class FilterView(QWidget, Ui_filterView):
             if self.isAcquisitionDone:
                 self.normalizationMultiplierList = []
                 self.normalizationData = self.displayData
-                log.debug(type(self.normalizationData))
                 maximumCount = max(self.normalizationData)
-                log.debug(maximumCount)
                 for i in self.normalizationData:
                     self.normalizationMultiplierList.append(float(maximumCount/i))
 
-                log.debug(self.normalizationMultiplierList)
-                # self.normalizationMultiplierList = self.normalizationMultiplierList/maximumCount
-                self.verificateur = [a * b for a, b in zip(self.normalizationData, self.normalizationMultiplierList)]
-                log.debug(self.verificateur)
-                # log.debug(self.normalizationMultiplierList)
+                self.normalizationMultiplierList = self.normalizationMultiplierList/maximumCount
                 self.isSpectrumNormalized = True
                 self.isAcquiringNormalization = False
-                log.debug("Normalization Spectrum acquired.")
+                log.info("Normalization Spectrum acquired.")
 
         if self.isSpectrumNormalized:
-            #log.debug(self.displayData)
-            #log.debug(self.normalizationMultiplierList)
-            #self.displayData = self.verificateur
             self.displayData = [a * b for a, b in zip(self.displayData, self.normalizationMultiplierList)]
 
     def analyse_data(self):
