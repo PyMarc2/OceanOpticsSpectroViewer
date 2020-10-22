@@ -277,7 +277,10 @@ class FilterView(QWidget, Ui_filterView):
                 self.normalizationData = self.displayData
                 maximumCount = max(self.normalizationData)
                 for i in self.normalizationData:
-                    self.normalizationMultiplierList.append(float(maximumCount/i))
+                    if i != 0:
+                        self.normalizationMultiplierList.append(float(maximumCount/i))
+                    else:
+                        self.normalizationMultiplierList.append(0)
 
                 self.normalizationMultiplierList = self.normalizationMultiplierList / maximumCount
                 self.isSpectrumNormalized = True
