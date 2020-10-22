@@ -292,6 +292,7 @@ class FilterView(QWidget, Ui_filterView):
                 for i in self.normalizationData:
                     self.normalizationMultiplierList.append(float(maximumCount/i))
 
+                log.debug(self.normalizationMultiplierList)
                 self.normalizationMultiplierList = self.normalizationMultiplierList/maximumCount
                 log.debug(self.normalizationMultiplierList)
                 self.isSpectrumNormalized = True
@@ -299,8 +300,8 @@ class FilterView(QWidget, Ui_filterView):
                 log.debug("Normalization Spectrum acquired.")
 
         if self.isSpectrumNormalized:
-            log.debug(self.displayData)
-            log.debug(self.normalizationMultiplierList)
+            #log.debug(self.displayData)
+            #log.debug(self.normalizationMultiplierList)
             self.displayData = [a * b for a, b in zip(self.displayData, self.normalizationMultiplierList)]
 
     def analyse_data(self):
