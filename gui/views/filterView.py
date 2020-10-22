@@ -287,6 +287,7 @@ class FilterView(QWidget, Ui_filterView):
             self.launch_integration_acquisition()
 
             if self.isAcquisitionDone:
+                self.normalizationMultiplierList = []
                 self.normalizationData = self.temporaryIntegrationData
                 maximumCount = max(self.normalizationData)
                 for i in self.normalizationData:
@@ -349,7 +350,7 @@ class FilterView(QWidget, Ui_filterView):
             if self.isAcquiringNormalization:
                 self.ind_normalize.setStyleSheet("QCheckBox::indicator{background-color: #f79c34;}")
 
-            if self.isSpectrumNormalized is False:
+            if not self.isSpectrumNormalized:
                 self.ind_normalize.setStyleSheet("QCheckBox::indicator{background-color: #db1a1a;}")
                 try:
                     self.ind_normalize.clicked.disconnect()
