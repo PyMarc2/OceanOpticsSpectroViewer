@@ -8,7 +8,9 @@ from PyQt5 import uic
 import seabreeze.spectrometers as sb
 from gui.modules import spectrometers as mock
 from tools.threadWorker import Worker
+from tools.CircularList import CircularList, RingBuffer
 import numpy as np
+import collections
 import time
 
 import logging
@@ -24,39 +26,66 @@ class FilterView(QWidget, Ui_filterView):
     s_data_changed = pyqtSignal(dict)
     s_data_acquisition_done = pyqtSignal()
 
+    # Initializing Functions
+
     def __init__(self, model=None, controller=None):
         super(FilterView, self).__init__()
         self.model = model
         self.setupUi(self)
 
         self.acqThread = QThread()
+        self.isAcquisitionThreadAlive = False
+
+        self.spec = None
+        self.waves = None
+        self.deviceConnected = False
+
         self.plotItem = None
         self.dataPlotItem = None
         self.acqWorker = None
-        self.spec = None
-        self.waves = None
+
         self.exposureTime = 100
+        self.expositionCounter = 0
+        self.changeLastExposition = 0
+
         self.integrationCount = 1
+        self.integrationTimeViewRemainder_ms = 0
+        self.integrationTimeAcqRemainder_ms = 0
+        self.integrationCountAcq = 0
+        self.integrationCountView = 0
+
+        self.liveAcquisitionData = []
+        self.temporaryIntegrationData = None
+        self.movingIntegrationData = None
         self.displayData = None
         self.backgroundData = None
-        self.acquisitionData = None
-        self.analysedData = None
-        self.isNormalized = None
+        self.filterData = None
+        self.normalizationData = None
+        self.normalizationMultiplierList = []
 
-        self.isAcqAlive = 0
-        self.deviceConnected = 0
-        self.backgroundAcquire = 0
-        self.backgroundWarningDisplay = 1
-        self.backgroundWarningCalled = 0
+        self.isSpectrumNormalized = False
+        self.isBackgroundRemoved = False
+        self.isDataAnalysed = False
+
+        self.launchIntegrationAcquisition = False
+
+        self.isAcquiringFilter = False
+        self.isAcquiringNormalization = False
+        self.isAcquiringBackground = False
+        self.isAcquiringIntegration = False
+        
+        self.acquisitionType = ""
+
+        self.backgroundWarningDisplay = True
 
         self.create_dialogs()
         self.connect_buttons()
         self.connect_signals()
         self.connect_checkbox()
-        self.make_threads()
+        self.create_threads()
         self.create_plots()
         self.initialize_device()
-        self.manage_indicators()
+        self.update_indicators()
 
     def initialize_device(self):
         log.debug("Initializing devices...")
@@ -71,20 +100,19 @@ class FilterView(QWidget, Ui_filterView):
             self.spec = mock.MockSpectrometer()
             log.info("No device found; Mocking Spectrometer Enabled.")
 
-        self.spec.integration_time_micros(int(float(self.le_exposure.text()) * 1000))
+        self.set_exposure_time()
 
     def connect_buttons(self):
         self.pb_liveView.clicked.connect(self.toggle_live_view)
 
         self.pb_rmBackground.clicked.connect(self.save_background)
-        self.pb_rmBackground.clicked.connect(self.manage_indicators)
+        self.pb_rmBackground.clicked.connect(self.update_indicators)
 
-        self.pb_analyse.clicked.connect(lambda: setattr(self, "analysedData", True))
-        self.pb_analyse.clicked.connect(lambda: setattr(self, "acquisitionData", True))
-        self.pb_analyse.clicked.connect(self.manage_indicators)
+        self.pb_analyse.clicked.connect(lambda: setattr(self, "isAcquiringFilter", True))
+        self.pb_analyse.clicked.connect(self.update_indicators)
 
-        self.pb_normalize.clicked.connect(lambda: setattr(self, "isNormalized", True))
-        self.pb_normalize.clicked.connect(lambda: self.manage_indicators())
+        self.pb_normalize.clicked.connect(lambda: setattr(self, 'isAcquiringNormalization', True))
+        self.pb_normalize.clicked.connect(lambda: self.update_indicators())
 
         self.le_exposure.textChanged.connect(self.set_exposure_time)
         self.le_viewTime.textChanged.connect(self.set_integration_time)
@@ -99,9 +127,10 @@ class FilterView(QWidget, Ui_filterView):
     def connect_signals(self):
         log.debug("Connecting GUI signals...")
         self.s_data_changed.connect(self.update_graph)
-        self.s_data_acquisition_done.connect(self.manage_indicators)
+        self.s_data_changed.connect(self.update_indicators)
+        # self.s_data_acquisition_done.connect(self.update_indicators)
 
-    def make_threads(self, *args):
+    def create_threads(self, *args):
         self.acqWorker = Worker(self.manage_data_flow, *args)
         self.acqWorker.moveToThread(self.acqThread)
         self.acqThread.started.connect(self.acqWorker.run)
@@ -122,8 +151,179 @@ class FilterView(QWidget, Ui_filterView):
         self.plotItem = self.pyqtgraphWidget.addPlot()
         self.dataPlotItem = self.plotItem.plot()
 
-    def manage_indicators(self):
-        if self.isAcqAlive:
+    # Low-Level Backend Functions
+
+    @pyqtSlot(dict)
+    def update_graph(self, plotData):
+        y = plotData["y"]
+        self.dataPlotItem.setData(self.waves, y)
+
+    def manage_data_flow(self, *args, **kwargs):
+        self.waves = self.spec.wavelengths()[2:]
+
+        while self.isAcquisitionThreadAlive:
+
+            self.liveAcquisitionData = self.read_data_live().tolist()
+
+            self.integrate_data()
+            self.displayData = np.mean(np.array(self.movingIntegrationData()), 0)
+
+            self.acquire_background()
+            self.normalize_data()
+            self.analyse_data()
+
+            self.s_data_changed.emit({"y": self.displayData})
+
+    def read_data_live(self, *args, **kwargs):
+        return self.spec.intensities()[2:]
+
+    def set_exposure_time(self, time_in_ms=None, update=True):
+        try:
+            if time_in_ms is None:
+                self.exposureTime = int(self.le_exposure.text())
+            else:
+                self.exposureTime = int(time_in_ms)
+
+            self.spec.integration_time_micros(self.exposureTime * 1000)
+            self.le_exposure.setStyleSheet('color: black')
+        except ValueError as e:
+            self.le_exposure.setStyleSheet('color: red')
+            log.error(e)
+        if update:
+            self.set_integration_time()
+
+    def set_integration_time(self, time_in_ms_view=None, time_in_ms_acq=None):
+        try:
+
+            time_in_ms_view = self.le_viewTime.text()
+            time_in_ms_acq = self.le_acqTime.text()
+
+            integrationTimeView = int(time_in_ms_view)
+            integrationTimeAcq = int(time_in_ms_acq)
+
+            if integrationTimeView >= self.exposureTime:
+                self.integrationCountView = integrationTimeView // self.exposureTime
+                self.integrationCountAcq = integrationTimeAcq // self.exposureTime
+                self.integrationTimeViewRemainder_ms = integrationTimeView-self.integrationCountView*self.exposureTime
+                self.integrationTimeAcqRemainder_ms = integrationTimeAcq - self.integrationCountAcq * self.exposureTime
+                self.le_viewTime.setStyleSheet('color: black')
+            else:
+                self.integrationCountView = 1
+                self.le_viewTime.setStyleSheet('color: red')
+
+        except ValueError as e:
+            log.error(e)
+            self.le_viewTime.setStyleSheet('color: red')
+
+        if self.integrationTimeViewRemainder_ms > 3:
+            self.movingIntegrationData = RingBuffer(size_max=self.integrationCountView+1)
+            self.changeLastExposition = 1
+        else:
+            self.movingIntegrationData = RingBuffer(size_max=self.integrationCountView)
+            self.changeLastExposition = 0
+
+    def integrate_data(self):
+        self.isAcquisitionDone = False
+        if self.expositionCounter < self.integrationCountView - 1:
+            self.movingIntegrationData.append(self.liveAcquisitionData)
+            self.expositionCounter += 1
+
+        elif self.expositionCounter == self.integrationCountView - 1:
+            self.movingIntegrationData.append(self.liveAcquisitionData)
+            self.expositionCounter += 1
+            if self.changeLastExposition:
+                self.set_exposure_time(self.integrationTimeViewRemainder_ms, update=False)
+        else:
+            self.movingIntegrationData.append(self.liveAcquisitionData)
+            self.isAcquisitionDone = True
+            self.expositionCounter = 0
+
+    def check_type_of_acquisition(self):
+        if self.launchBackgroundAcquisition:
+            self.acquisitionType = "background"
+        elif self.launchNormalizationAcquisition:
+            self.acquisitionType = "normalization"
+        elif self.launchFilterAcquisition:
+            self.acquisitionType = "data"
+
+    def launch_integration_acquisition(self):
+        if self.launchIntegrationAcquisition and not self.isAcquiringIntegration:
+            self.expositionCounter = 0
+            self.isAcquiringIntegration = True
+            self.launchIntegrationAcquisition = False
+            log.info("Integration Acquiring...")
+
+        elif self.isAcquiringIntegration:
+            if not self.isAcquisitionDone:
+                log.debug(
+                    "Acquisition frame: {} over {} : {}%".format(self.expositionCounter, self.integrationCountView,
+                                                                int(
+                                                                    self.expositionCounter * 100 / self.integrationCountView)))
+            elif self.isAcquisitionDone:
+                self.temporaryIntegrationData = np.mean(np.array(self.movingIntegrationData()), 0)
+                self.isAcquiringIntegration = False
+                log.debug("Integration acquired.")
+
+    def acquire_background(self):
+        if self.isAcquiringBackground:
+            self.launchIntegrationAcquisition = True
+            self.launch_integration_acquisition()
+
+            if self.isAcquisitionDone:
+                self.backgroundData = self.temporaryIntegrationData
+                self.isBackgroundRemoved = True
+                self.isAcquiringBackground = False
+                log.info("Background acquired.")
+
+        if self.isBackgroundRemoved:
+            self.displayData = self.displayData - self.backgroundData
+
+    def normalize_data(self):
+        if self.isAcquiringNormalization:
+            self.launchIntegrationAcquisition = True
+            self.launch_integration_acquisition()
+
+            if self.isAcquisitionDone:
+                self.normalizationMultiplierList = []
+                self.normalizationData = self.displayData
+                maximumCount = max(self.normalizationData)
+                for i in self.normalizationData:
+                    self.normalizationMultiplierList.append(float(maximumCount/i))
+
+                self.normalizationMultiplierList = self.normalizationMultiplierList/maximumCount
+                self.isSpectrumNormalized = True
+                self.isAcquiringNormalization = False
+                log.info("Normalization Spectrum acquired.")
+
+        if self.isSpectrumNormalized:
+            self.displayData = [a * b for a, b in zip(self.displayData, self.normalizationMultiplierList)]
+
+    def analyse_data(self):
+        pass
+
+    # High-Level Front-End Functions
+    
+    def toggle_live_view(self):
+        if not self.isAcquisitionThreadAlive:
+            try:
+                self.acqThread.start()
+                self.isAcquisitionThreadAlive = True
+                self.pb_liveView.start_flash()
+            except Exception as e:
+                log.error(e)
+                self.spec = mock.MockSpectrometer()
+
+        else:
+            self.acqThread.terminate()
+            self.pb_liveView.stop_flash()
+            self.isAcquisitionThreadAlive = False
+        self.update_indicators()
+
+    def visualize_any_acquisition(self):
+        pass
+        
+    def update_indicators(self):
+        if self.isAcquisitionThreadAlive:
             self.ind_rmBackground.setEnabled(True)
             self.ind_normalize.setEnabled(True)
             self.ind_analyse.setEnabled(True)
@@ -137,7 +337,13 @@ class FilterView(QWidget, Ui_filterView):
             else:
                 self.ind_rmBackground.setStyleSheet("QCheckBox::indicator{background-color: #55b350;}")
 
-            if self.isNormalized is None:
+            if self.isAcquiringBackground:
+                self.ind_rmBackground.setStyleSheet("QCheckBox::indicator{background-color: #f79c34;}")
+
+            if self.isAcquiringNormalization:
+                self.ind_normalize.setStyleSheet("QCheckBox::indicator{background-color: #f79c34;}")
+
+            if not self.isSpectrumNormalized:
                 self.ind_normalize.setStyleSheet("QCheckBox::indicator{background-color: #db1a1a;}")
                 try:
                     self.ind_normalize.clicked.disconnect()
@@ -146,7 +352,7 @@ class FilterView(QWidget, Ui_filterView):
             else:
                 self.ind_normalize.setStyleSheet("QCheckBox::indicator{background-color: #55b350;}")
 
-            if self.acquisitionData is None:
+            if self.filterData is None:
                 self.ind_analyse.setStyleSheet("QCheckBox::indicator{background-color: #db1a1a;}")
                 try:
                     self.ind_analyse.clicked.disconnect()
@@ -163,105 +369,6 @@ class FilterView(QWidget, Ui_filterView):
             self.ind_normalize.setStyleSheet("QCheckBox::indicator{background-color: #9e9e9e;}")
             self.ind_analyse.setStyleSheet("QCheckBox::indicator{background-color: #9e9e9e;}")
 
-    def load_parameters(self):
-        self.showRmBackgroundWarning = 1
-
-    # Non-Initializing Functions
-
-    @pyqtSlot(dict)
-    def update_graph(self, plotData):
-        y = plotData["y"]
-        self.dataPlotItem.setData(self.waves, y)
-
-    def manage_data_flow(self, *args, **kwargs):
-        self.waves = self.spec.wavelengths()[2:]
-
-        while self.isAcqAlive:
-            saveBackground = 0
-            if self.backgroundAcquire:
-                saveBackground = 1
-                log.debug("Acquiring background...")
-
-            intens = self.read_data_live()
-
-            if saveBackground:
-                self.backgroundData = intens
-                self.backgroundAcquire = False
-                log.debug("Background acquired.")
-
-            self.s_data_changed.emit({"y": intens})
-            self.s_data_acquisition_done.emit()
-
-    def substract_background_data(self):
-        pass
-
-    def read_data_live(self, *args, **kwargs):
-        intens = []
-        for _ in range(self.integrationCount):
-            intens.append(self.spec.intensities()[2:])
-        intens = np.mean(intens, axis=0)
-        return intens
-
-    def toggle_live_view(self):
-        if not self.isAcqAlive:
-            try:
-                self.acqThread.start()
-                self.isAcqAlive = True
-                self.pb_liveView.start_flash()
-            except Exception as e:
-                log.error(e)
-                self.spec = mock.MockSpectrometer()
-
-        else:
-            self.acqThread.terminate()
-            self.pb_liveView.stop_flash()
-            self.isAcqAlive = False
-        self.manage_indicators()
-
-    def set_exposure_time(self, time_in_ms):
-        try:
-            self.exposureTime = int(time_in_ms)
-            self.spec.integration_time_micros(self.exposureTime * 1000)
-            self.le_exposure.setStyleSheet('color: black')
-        except ValueError as e:
-            self.le_exposure.setStyleSheet('color: red')
-            log.error(e)
-
-        self.set_integration_time()
-
-    def set_integration_time(self, time_in_ms=None):
-        try:
-            if not time_in_ms:
-                time_in_ms = self.le_viewTime.text()
-
-            integration_time = int(time_in_ms)
-            if integration_time >= self.exposureTime:
-                self.integrationCount = integration_time // self.exposureTime
-                self.le_viewTime.setStyleSheet('color: black')
-            else:
-                self.integrationCount = 1
-                self.le_viewTime.setStyleSheet('color: red')
-                # self.le_viewTime.setText(str(self.exposure_time))
-        except ValueError as e:
-            log.error(e)
-            self.le_viewTime.setStyleSheet('color: red')
-
-    def visualize_any_acquisition(self):
-        pass
-
-    def save_background(self):
-        if self.backgroundWarningDisplay:
-            answer = self.warningDialog.exec_()
-            if answer == QMessageBox.Ok:
-                self.backgroundAcquire = 1
-            elif answer == QMessageBox.Cancel:
-                log.debug("Background data not taken.")
-
-        else:
-            self.backgroundAcquire = 1
-            self.ind_rmBackground.setStyleSheet("QCheckBox::indicator{background-color: #f79c34;}")
-            self.disable_all_buttons()
-
     def disable_all_buttons(self):
         self.pb_rmBackground.setEnabled(False)
         self.pb_normalize.setEnabled(False)
@@ -271,6 +378,21 @@ class FilterView(QWidget, Ui_filterView):
         self.pb_rmBackground.setEnabled(True)
         self.pb_normalize.setEnabled(True)
         self.pb_analyse.setEnabled(True)
+
+    def save_background(self):
+        if self.backgroundWarningDisplay:
+            answer = self.warningDialog.exec_()
+            if answer == QMessageBox.Ok:
+                self.isAcquiringBackground = 1
+            elif answer == QMessageBox.Cancel:
+                log.debug("Background data not taken.")
+
+        else:
+
+            self.isAcquiringBackground = 1
+            self.update_indicators()
+            self.disable_all_buttons()
+
 
 # TODO:
 # remove background, normalize (take ref, create norm, norm stream)
