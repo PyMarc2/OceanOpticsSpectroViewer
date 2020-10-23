@@ -222,7 +222,7 @@ class FilterView(QWidget, Ui_filterView):
             if self.changeLastExposition:
                 self.set_exposure_time(self.integrationTimeAcqRemainder_ms, update=False)
         else:
-            self.set_exposure_time()
+            self.set_exposure_time(update=False)
             self.movingIntegrationData.append(self.liveAcquisitionData)
             self.isAcquisitionDone = True
             self.expositionCounter = 0
@@ -246,8 +246,7 @@ class FilterView(QWidget, Ui_filterView):
             if not self.isAcquisitionDone:
                 log.debug(
                     "Acquisition frame: {} over {} : {}%".format(self.expositionCounter, self.integrationCountAcq,
-                                                                int(
-                                                                    self.expositionCounter * 100 / self.integrationCountAcq)))
+                                                                int(self.expositionCounter * 100 / self.integrationCountAcq)))
             elif self.isAcquisitionDone:
                 self.temporaryIntegrationData = np.mean(np.array(self.movingIntegrationData()), 0)
                 self.isAcquiringIntegration = False
