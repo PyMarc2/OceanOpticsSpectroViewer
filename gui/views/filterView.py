@@ -119,6 +119,8 @@ class FilterView(QWidget, Ui_filterView):
         self.sb_acqTime.valueChanged.connect(lambda: setattr(self, 'integrationTimeAcq', self.sb_exposure.value()))
         self.sb_acqTime.valueChanged.connect(self.set_integration_time)
 
+        self.pb_reset.clicked.connect(self.reset)
+
         log.debug("Connecting GUI buttons...")
 
     def connect_checkbox(self):
@@ -291,6 +293,15 @@ class FilterView(QWidget, Ui_filterView):
 
     def analyse_data(self):
         pass
+
+    def reset(self):
+        self.backgroundData = None
+        self.isBackgroundRemoved = False
+        self.normalizationData = None
+        self.normalizationMultiplierList = None
+        self.isSpectrumNormalized = False
+        self.update_indicators()
+        log.info("All parameters and acquisition reset.")
 
     # High-Level Front-End Functions
     
