@@ -2,7 +2,7 @@ from PyQt5.QtWidgets import QWidget, QMessageBox, QApplication, QCheckBox
 from PyQt5.QtCore import pyqtSlot, pyqtSignal, QThread
 from PyQt5.Qt import QColor, QPalette
 import os
-from pyqtgraph import PlotItem, BarGraphItem
+from pyqtgraph import LinearRegionItem, InfiniteLine, mkBrush, mkPen
 from pyqtgraph import GraphicsLayoutWidget
 from PyQt5 import uic
 import seabreeze.spectrometers as sb
@@ -38,11 +38,21 @@ class FilterView(QWidget, Ui_filterView):
 
         self.spec = None
         self.waves = None
+        self.dataLen = None
         self.deviceConnected = False
 
         self.plotItem = None
+        self.yPlotRange = [0, 4120]
         self.dataPlotItem = None
         self.acqWorker = None
+
+        self.errorRejectedList = None
+        self.maxAcceptedAbsErrorValue = 0.10
+        self.pyqtRegionList = []
+        self.errorRegionPoints = []
+        self.errorRegionIndexes = []
+        self.errorBrush = mkBrush((255, 0, 0, 25))
+        self.errorPen = mkPen((255, 0, 0, 180))
 
         self.exposureTime = 50
         self.expositionCounter = 0
@@ -72,7 +82,7 @@ class FilterView(QWidget, Ui_filterView):
         self.isAcquiringBackground = False
         self.isAcquiringIntegration = False
         self.isAcquisitionDone = False
-        
+
         self.acquisitionType = ""
 
         self.backgroundWarningDisplay = True
@@ -116,10 +126,14 @@ class FilterView(QWidget, Ui_filterView):
         self.sb_exposure.valueChanged.connect(lambda: setattr(self, 'exposureTime', self.sb_exposure.value()))
         self.sb_exposure.valueChanged.connect(self.set_exposure_time)
 
-        self.sb_acqTime.valueChanged.connect(lambda: setattr(self, 'integrationTimeAcq', self.sb_exposure.value()))
+        self.sb_acqTime.valueChanged.connect(lambda: setattr(self, 'movingIntegrationData', None))
+        self.sb_acqTime.valueChanged.connect(lambda: setattr(self, 'integrationTimeAcq', self.sb_acqTime.value()))
         self.sb_acqTime.valueChanged.connect(self.set_integration_time)
 
         self.pb_reset.clicked.connect(self.reset)
+
+        self.sb_absError.valueChanged.connect(lambda: setattr(self, 'maxAcceptedAbsErrorValue', self.sb_absError.value()/100))
+        self.sb_absError.valueChanged.connect(self.verify_absolute_error)
 
         log.debug("Connecting GUI buttons...")
 
@@ -154,6 +168,7 @@ class FilterView(QWidget, Ui_filterView):
         self.pyqtgraphWidget.clear()
         self.plotItem = self.pyqtgraphWidget.addPlot()
         self.dataPlotItem = self.plotItem.plot()
+        self.plotItem.enableAutoScale()
 
     # Low-Level Backend Functions
 
@@ -164,6 +179,7 @@ class FilterView(QWidget, Ui_filterView):
 
     def manage_data_flow(self, *args, **kwargs):
         self.waves = self.spec.wavelengths()[2:]
+        self.dataLen = len(self.waves)
 
         while self.isAcquisitionThreadAlive:
 
@@ -174,6 +190,8 @@ class FilterView(QWidget, Ui_filterView):
 
             self.acquire_background()
             self.normalize_data()
+            self.verify_absolute_error()
+            self.hide_high_error_values()
             self.analyse_data()
 
             self.s_data_changed.emit({"y": self.displayData})
@@ -246,7 +264,9 @@ class FilterView(QWidget, Ui_filterView):
 
         elif self.isAcquiringIntegration:
             if not self.isAcquisitionDone:
-                log.debug(
+                percent = int(self.expositionCounter * 100 / self.integrationCountAcq)
+                if percent in [25, 50, 75, 100]:
+                    log.debug(
                     "Acquisition frame: {} over {} : {}%".format(self.expositionCounter, self.integrationCountAcq,
                                                                 int(self.expositionCounter * 100 / self.integrationCountAcq)))
             elif self.isAcquisitionDone:
@@ -279,22 +299,72 @@ class FilterView(QWidget, Ui_filterView):
                 maximumCount = max(self.normalizationData)
                 for i in self.normalizationData:
                     if i != 0:
-                        self.normalizationMultiplierList.append(float(maximumCount/i))
+                        self.normalizationMultiplierList.append(float(1/i))
                     else:
                         self.normalizationMultiplierList.append(0)
 
-                self.normalizationMultiplierList = self.normalizationMultiplierList / maximumCount
                 self.isSpectrumNormalized = True
                 self.isAcquiringNormalization = False
                 log.info("Normalization Spectrum acquired.")
+                self.plotItem.setRange(yRange=[0, 1.1])
+                self.verify_absolute_error()
 
         if self.isSpectrumNormalized:
             self.displayData = [a * b for a, b in zip(self.displayData, self.normalizationMultiplierList)]
+
+    def hide_high_error_values(self):
+        if self.isSpectrumNormalized:
+            log.debug(self.errorRegionIndexes)
+            for region in self.errorRegionIndexes:
+                for i in range(region[0], region[1]):
+                    self.displayData[i] = self.displayData[i] * 0
+
+    def verify_absolute_error(self):
+        if self.isSpectrumNormalized and self.isAcquisitionDone:
+            brute = np.array(self.movingIntegrationData()) * np.array(self.normalizationMultiplierList)
+            sd = np.std(brute, axis=0)
+            # log.debug("Standard Deviation of points:{}".format(sd))
+            self.errorRejectedList = []
+            counter = 0
+            for i, error in enumerate(sd):
+                if error >= self.maxAcceptedAbsErrorValue:
+                    self.errorRejectedList.append(True)
+                else:
+                    self.errorRejectedList.append(False)
+                    counter += 1
+
+            sep = (max(self.waves) - min(self.waves)) / len(self.waves)
+
+            log.debug("Amount of accepted values:{}".format(counter))
+            # log.debug("Accepted Values: {}".format(self.waves[list(~np.array(self.errorRejectedList))]))
+            # log.debug("Rejected Values: {}".format(self.waves[self.errorRejectedList]))
+
+            try:
+                for region in self.pyqtRegionList:
+                    self.plotItem.removeItem(region)
+            except Exception as e:
+                log.error(e)
+
+            regionsLimits, regionPoints, regionIndexes, regionIndexesLimits = self.segregate_same_regions(self.waves[self.errorRejectedList], 10*sep)
+            self.errorRegionPoints = regionPoints
+            self.errorRegionIndexes = regionIndexesLimits
+            log.debug("regions:{}".format(regionsLimits))
+            try:
+                self.pyqtRegionList = []
+                for region in regionsLimits:
+                    errorRegion = LinearRegionItem(brush=self.errorBrush, pen=self.errorPen, movable=False)
+                    errorRegion.setRegion(region)
+                    self.pyqtRegionList.append(errorRegion)
+                    self.plotItem.addItem(self.pyqtRegionList[-1])
+            except Exception as e:
+                log.error(e)
 
     def analyse_data(self):
         pass
 
     def reset(self):
+        self.plotItem.clear()
+        self.plotItem.enableAutoScale()
         self.backgroundData = None
         self.isBackgroundRemoved = False
         self.normalizationData = None
@@ -304,7 +374,7 @@ class FilterView(QWidget, Ui_filterView):
         log.info("All parameters and acquisition reset.")
 
     # High-Level Front-End Functions
-    
+
     def toggle_live_view(self):
         if not self.isAcquisitionThreadAlive:
             try:
@@ -323,7 +393,7 @@ class FilterView(QWidget, Ui_filterView):
 
     def visualize_any_acquisition(self):
         pass
-        
+
     def update_indicators(self):
         if self.isAcquisitionThreadAlive:
             self.ind_rmBackground.setEnabled(True)
@@ -395,6 +465,40 @@ class FilterView(QWidget, Ui_filterView):
             self.update_indicators()
             self.disable_all_buttons()
 
+    @staticmethod
+    def segregate_same_regions(inputList, sep):
+        listOfRegions = [[]]
+        listOfRegionsIndexes = [[]]
+        newRegion = 0
+        for i, v in enumerate(inputList):
+
+            if i == 0:
+                if inputList[1] <= inputList[0] + sep:
+                    listOfRegions[-1].append(inputList[0])
+                    listOfRegionsIndexes[-1].append(int(i))
+
+            elif inputList[i] <= inputList[i - 1] + sep:
+                if newRegion:
+                    listOfRegions[-1].append(inputList[i - 1])
+                    listOfRegionsIndexes[-1].append(int(i - 1))
+                    newRegion = 0
+                listOfRegions[-1].append(inputList[i])
+                listOfRegionsIndexes[-1].append(int(i))
+
+            else:
+                listOfRegions.append([])
+                listOfRegionsIndexes.append([])
+                newRegion = 1
+
+        listOfLimits = []
+        listOfIndexesLimits = []
+        if listOfRegions:
+            for i, region in enumerate(listOfRegions):
+                if region:
+                    listOfLimits.append([min(region), max(region)])
+                    listOfIndexesLimits.append([min(listOfRegionsIndexes[i]), max(listOfRegionsIndexes[i])])
+
+        return listOfLimits, listOfRegions, listOfRegionsIndexes, listOfIndexesLimits
 
 # TODO:
 # remove background, normalize (take ref, create norm, norm stream)
