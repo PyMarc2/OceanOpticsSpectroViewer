@@ -47,12 +47,15 @@ class FilterView(QWidget, Ui_filterView):
         self.acqWorker = None
 
         self.errorRejectedList = None
-        self.maxAcceptedAbsErrorValue = 0.10
+        self.maxAcceptedAbsErrorValue = 0.01
+        self.rejectedXValues = []
         self.pyqtRegionList = []
-        self.errorRegionPoints = []
-        self.errorRegionIndexes = []
+        self.errorRegionsPoints = []
+        self.errorRegionsIndexesLimits = []
+        self.errorRegionsLimits = []
         self.errorBrush = mkBrush((255, 0, 0, 25))
         self.errorPen = mkPen((255, 0, 0, 180))
+        self.dataSep = 0
 
         self.exposureTime = 50
         self.expositionCounter = 0
@@ -133,7 +136,7 @@ class FilterView(QWidget, Ui_filterView):
         self.pb_reset.clicked.connect(self.reset)
 
         self.sb_absError.valueChanged.connect(lambda: setattr(self, 'maxAcceptedAbsErrorValue', self.sb_absError.value()/100))
-        self.sb_absError.valueChanged.connect(self.verify_absolute_error)
+        self.sb_absError.valueChanged.connect(self.draw_error_regions)
 
         log.debug("Connecting GUI buttons...")
 
@@ -180,6 +183,7 @@ class FilterView(QWidget, Ui_filterView):
     def manage_data_flow(self, *args, **kwargs):
         self.waves = self.spec.wavelengths()[2:]
         self.dataLen = len(self.waves)
+        self.dataSep = (max(self.waves) - min(self.waves)) / len(self.waves)
 
         while self.isAcquisitionThreadAlive:
 
@@ -190,8 +194,7 @@ class FilterView(QWidget, Ui_filterView):
 
             self.acquire_background()
             self.normalize_data()
-            self.verify_absolute_error()
-            self.hide_high_error_values()
+            #self.hide_high_error_values()
             self.analyse_data()
 
             self.s_data_changed.emit({"y": self.displayData})
@@ -307,20 +310,26 @@ class FilterView(QWidget, Ui_filterView):
                 self.isAcquiringNormalization = False
                 log.info("Normalization Spectrum acquired.")
                 self.plotItem.setRange(yRange=[0, 1.1])
-                self.verify_absolute_error()
+                self.draw_error_regions()
 
         if self.isSpectrumNormalized:
             self.displayData = [a * b for a, b in zip(self.displayData, self.normalizationMultiplierList)]
 
     def hide_high_error_values(self):
         if self.isSpectrumNormalized:
-            log.debug(self.errorRegionIndexes)
-            for region in self.errorRegionIndexes:
+            #log.debug(self.errorRegionIndexesLimits)
+            for region in self.errorRegionIndexesLimits:
                 for i in range(region[0], region[1]):
                     self.displayData[i] = self.displayData[i] * 0
 
+    def draw_error_regions(self):
+        self.verify_absolute_error()
+        self.remove_old_error_regions()
+        self.find_error_regions()
+        self.add_error_regions()
+
     def verify_absolute_error(self):
-        if self.isSpectrumNormalized and self.isAcquisitionDone:
+        if self.isSpectrumNormalized:
             brute = np.array(self.movingIntegrationData()) * np.array(self.normalizationMultiplierList)
             sd = np.std(brute, axis=0)
             # log.debug("Standard Deviation of points:{}".format(sd))
@@ -332,39 +341,41 @@ class FilterView(QWidget, Ui_filterView):
                 else:
                     self.errorRejectedList.append(False)
                     counter += 1
-
-            sep = (max(self.waves) - min(self.waves)) / len(self.waves)
-
+            self.rejectedXValues = self.waves[self.errorRejectedList]
             log.debug("Amount of accepted values:{}".format(counter))
-            # log.debug("Accepted Values: {}".format(self.waves[list(~np.array(self.errorRejectedList))]))
-            # log.debug("Rejected Values: {}".format(self.waves[self.errorRejectedList]))
 
-            try:
-                for region in self.pyqtRegionList:
-                    self.plotItem.removeItem(region)
-            except Exception as e:
-                log.error(e)
+    def find_error_regions(self):
+        regionsLimits, regionPoints, regionIndexes, regionIndexesLimits = self.segregate_same_regions(
+            self.rejectedXValues, 15 * self.dataSep)
 
-            regionsLimits, regionPoints, regionIndexes, regionIndexesLimits = self.segregate_same_regions(self.waves[self.errorRejectedList], 10*sep)
-            self.errorRegionPoints = regionPoints
-            self.errorRegionIndexes = regionIndexesLimits
-            log.debug("regions:{}".format(regionsLimits))
-            try:
-                self.pyqtRegionList = []
-                for region in regionsLimits:
-                    errorRegion = LinearRegionItem(brush=self.errorBrush, pen=self.errorPen, movable=False)
-                    errorRegion.setRegion(region)
-                    self.pyqtRegionList.append(errorRegion)
-                    self.plotItem.addItem(self.pyqtRegionList[-1])
-            except Exception as e:
-                log.error(e)
+        self.errorRegionsIndexesLimits = regionIndexesLimits
+        self.errorRegionsLimits = regionsLimits
+        log.debug("Rejected Regions:{}".format(self.errorRegionsLimits))
+
+    def add_error_regions(self):
+        try:
+            self.pyqtRegionList = []
+            for region in self.errorRegionsLimits:
+                errorRegion = LinearRegionItem(brush=self.errorBrush, pen=self.errorPen, movable=False)
+                errorRegion.setRegion(region)
+                self.pyqtRegionList.append(errorRegion)
+                self.plotItem.addItem(self.pyqtRegionList[-1])
+        except Exception as e:
+            log.error(e)
+
+    def remove_old_error_regions(self):
+        try:
+            for region in self.pyqtRegionList:
+                self.plotItem.removeItem(region)
+        except Exception as e:
+            log.error(e)
 
     def analyse_data(self):
         pass
 
     def reset(self):
         self.plotItem.clear()
-        self.plotItem.enableAutoScale()
+        self.plotItem.autoRange()
         self.backgroundData = None
         self.isBackgroundRemoved = False
         self.normalizationData = None
@@ -372,6 +383,7 @@ class FilterView(QWidget, Ui_filterView):
         self.isSpectrumNormalized = False
         self.update_indicators()
         log.info("All parameters and acquisition reset.")
+
 
     # High-Level Front-End Functions
 
