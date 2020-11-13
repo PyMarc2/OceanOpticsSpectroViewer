@@ -364,7 +364,7 @@ font: 11pt &quot;OpenSans-Light&quot;;
               <double>0.100000000000000</double>
              </property>
              <property name="value">
-              <double>1.000000000000000</double>
+              <double>5.000000000000000</double>
              </property>
             </widget>
            </item>

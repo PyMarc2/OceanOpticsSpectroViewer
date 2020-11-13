@@ -42,7 +42,9 @@ class FilterView(QWidget, Ui_filterView):
         self.deviceConnected = False
 
         self.plotItem = None
+        self.xPlotRange = [350, 1000]
         self.yPlotRange = [0, 4120]
+
         self.dataPlotItem = None
         self.acqWorker = None
 
@@ -374,8 +376,10 @@ class FilterView(QWidget, Ui_filterView):
         pass
 
     def reset(self):
-        self.plotItem.clear()
-        self.plotItem.autoRange()
+        self.dataPlotItem.clear()
+        #self.plotItem.autoRange()
+        self.remove_old_error_regions()
+        self.plotItem.setRange(xRange=self.xPlotRange, yRange=self.yPlotRange)
         self.backgroundData = None
         self.isBackgroundRemoved = False
         self.normalizationData = None
