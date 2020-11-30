@@ -1,24 +1,21 @@
-from PyQt5.QtWidgets import QWidget, QMessageBox, QApplication, QCheckBox
+from PyQt5.QtWidgets import QWidget, QMessageBox, QCheckBox
 from PyQt5.QtCore import pyqtSlot, pyqtSignal, QThread
-from PyQt5.Qt import QColor, QPalette
 import os
-from pyqtgraph import LinearRegionItem, InfiniteLine, mkBrush, mkPen
-from pyqtgraph import GraphicsLayoutWidget
+from pyqtgraph import LinearRegionItem, mkBrush, mkPen
 from PyQt5 import uic
 import seabreeze.spectrometers as sb
 from gui.modules import spectrometers as mock
 from tools.threadWorker import Worker
-from tools.CircularList import CircularList, RingBuffer
+from tools.CircularList import RingBuffer
 import numpy as np
-import collections
-import time
+
 
 import logging
 
 
 log = logging.getLogger(__name__)
 
-filterViewUiPath = os.path.dirname(os.path.realpath(__file__)) + "\\filterViewUi.ui"
+filterViewUiPath = os.path.dirname(os.path.realpath(__file__)) + "\\filterViewUiDark.ui"
 Ui_filterView, QtBaseClass = uic.loadUiType(filterViewUiPath)
 
 
@@ -252,14 +249,6 @@ class FilterView(QWidget, Ui_filterView):
             self.isAcquisitionDone = True
             self.expositionCounter = 0
 
-    def check_type_of_acquisition(self):
-        if self.launchBackgroundAcquisition:
-            self.acquisitionType = "background"
-        elif self.launchNormalizationAcquisition:
-            self.acquisitionType = "normalization"
-        elif self.launchFilterAcquisition:
-            self.acquisitionType = "data"
-
     def launch_integration_acquisition(self):
         if self.launchIntegrationAcquisition and not self.isAcquiringIntegration:
             self.expositionCounter = 0
@@ -377,7 +366,6 @@ class FilterView(QWidget, Ui_filterView):
 
     def reset(self):
         self.dataPlotItem.clear()
-        #self.plotItem.autoRange()
         self.remove_old_error_regions()
         self.plotItem.setRange(xRange=self.xPlotRange, yRange=self.yPlotRange)
         self.backgroundData = None
@@ -387,7 +375,6 @@ class FilterView(QWidget, Ui_filterView):
         self.isSpectrumNormalized = False
         self.update_indicators()
         log.info("All parameters and acquisition reset.")
-
 
     # High-Level Front-End Functions
 
