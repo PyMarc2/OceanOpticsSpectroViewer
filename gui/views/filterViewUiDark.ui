@@ -49,6 +49,12 @@ font: 11pt &quot;OpenSans-Light&quot;;
         <property name="text">
          <string extracomment="Double-click to set a marker">Delta</string>
         </property>
+        <property name="checkable">
+         <bool>true</bool>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
        </widget>
       </item>
       <item>
@@ -530,7 +536,7 @@ font: 11pt &quot;OpenSans-Light&quot;;
            <item row="2" column="4">
             <widget class="QCheckBox" name="cb_absError">
              <property name="statusTip">
-              <string>Activates data exclusion.</string>
+              <string>Activates data exclusion. Requires Normalization.</string>
              </property>
              <property name="text">
               <string/>

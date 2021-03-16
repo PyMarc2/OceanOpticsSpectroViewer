@@ -202,6 +202,7 @@ class FilterView(QWidget, Ui_filterView):
         if state:
             self.vLine.show()
             self.hLine.show()
+            self
 
     def mouseMoved(self, evt):
         if self.cursorActivated:
