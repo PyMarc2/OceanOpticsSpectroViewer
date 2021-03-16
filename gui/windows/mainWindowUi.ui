@@ -31,7 +31,6 @@
     </property>
     <addaction name="actionLoad_Parameters"/>
     <addaction name="actionSave_Parameters"/>
-    <addaction name="actionChange_Theme"/>
    </widget>
    <widget class="QMenu" name="menuEdit">
     <property name="title">

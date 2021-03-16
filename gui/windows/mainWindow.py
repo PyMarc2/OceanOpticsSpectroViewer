@@ -56,6 +56,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def connect_signals(self):
         self.helpDialog.s_windowClose.connect(lambda: self.setEnabled(True))
         self.model.s_mouse_graph_position.connect(lambda: self.change_status_message("x:{:.2f}, y:{:.2f}".format(self.model.mouseX, self.model.mouseY)))
+        self.model.s_show_delta.connect(lambda: self.change_status_message("x:{:.2f}, y:{:.2f}\t\t ∆x:{:.2f}, ∆y:{:.2f}".format(self.model.mouseX, self.model.mouseY, self.model.arrowDelta[0], self.model.arrowDelta[1])))
 
     def change_status_message(self, message):
         self.statusbarMessage.setText(message)

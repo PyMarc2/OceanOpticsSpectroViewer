@@ -48,7 +48,8 @@ class FilterView(QWidget, Ui_filterView):
         self.dataPlotItem = None
         self.acqWorker = None
         self.cursorCurvePosition = []
-
+        self.mode = "delta"
+        self.deltaValues = []
 
         self.errorRejectedList = None
         self.maxAcceptedAbsErrorValue = 0.01
@@ -150,6 +151,8 @@ class FilterView(QWidget, Ui_filterView):
         self.ind_normalize.clicked.connect(lambda: print("show normalisation if available"))
         self.ind_analyse.clicked.connect(lambda: print("show acquisition if available"))
         self.cb_cursor.clicked.connect(lambda: self.toggle_cursor(not self.cursorActivated))
+        self.rb_free.toggled.connect(lambda: self.set_cursor_mode())
+        self.rb_delta.toggled.connect(lambda: self.set_cursor_mode())
 
     def connect_signals(self):
         log.debug("Connecting GUI signals...")
@@ -197,12 +200,25 @@ class FilterView(QWidget, Ui_filterView):
 
     # General View Functions
 
+    def set_cursor_mode(self):
+        if self.rb_delta.isChecked():
+            self.mode = "delta"
+        elif self.rb_free.isChecked():
+            self.mode = "free"
+
     def toggle_cursor(self, state):
         self.cursorActivated = state
         if state:
             self.vLine.show()
             self.hLine.show()
-            self
+            self.rb_delta.setEnabled(True)
+            self.rb_free.setEnabled(True)
+            self.set_cursor_mode()
+
+        else:
+            self.rb_delta.setEnabled(False)
+            self.rb_free.setEnabled(False)
+            self.mouseMoved()
 
     def mouseMoved(self, evt):
         if self.cursorActivated:
@@ -213,8 +229,29 @@ class FilterView(QWidget, Ui_filterView):
                 self.hLine.setPos(self.cursorCurvePosition[1])
                 self.model.mousePosition = self.cursorCurvePosition
         else:
-            self.vLine.hide()
-            self.hLine.hide()
+            self.hide_graph_sprites()
+
+    def hide_graph_sprites(self):
+        self.vLine.hide()
+        self.hLine.hide()
+        for item1 in self.arrowText:
+            item1.hide()
+        for item2 in self.arrows:
+            item2.hide()
+
+    def show_graph_sprites(self):
+        self.vLine.show()
+        self.hLine.show()
+        for item1 in self.arrowText:
+            item1.show()
+        for item2 in self.arrows:
+            item2.show()
+
+    def remove_graph_arrows(self):
+        for item1 in self.arrowText:
+            self.plotItem.removeItem(item1)
+        for item2 in self.arrows:
+            self.plotItem.removeItem(item2)
 
     def findClosestPoint(self, pos):
         mousePoint = self.plotItem.vb.mapSceneToView(pos)
@@ -226,9 +263,12 @@ class FilterView(QWidget, Ui_filterView):
             self.cursorCurvePosition = [self.waves[self.index], self.y[self.index]]
 
     def mouseClicked(self, evt):
-        if self.cursorActivated:
-            if self.mode == 0:
+        if self.cursorActivated and evt[0].double():
+            log.debug("Double-click event: {}".format(evt[0]))
+            if self.mode == "delta":
                 self.manage_arrow_delta()
+            elif self.mode == "free":
+                self.manage_arrow_free()
 
     def manage_arrow_delta(self):
         if self.clickCounter < 2:
@@ -241,16 +281,21 @@ class FilterView(QWidget, Ui_filterView):
 
             self.arrows[-1].setPos(self.cursorCurvePosition[0], self.cursorCurvePosition[1])
             self.arrowText[-1].setPos(self.cursorCurvePosition[0], self.cursorCurvePosition[1])
-
-        if self.clickCounter == 1:
-            pass
+            self.deltaValues.append([self.cursorCurvePosition[0], self.cursorCurvePosition[1]])
 
         else:
-            for item1 in self.arrowText:
-                self.plotItem.removeItem(item1)
-            for item2 in self.arrows:
-                self.plotItem.removeItem(item2)
+            self.deltaValues = []
+            self.model.showDelta = False
+            self.remove_graph_arrows()
             self.clickCounter = 0
+
+        if self.clickCounter == 2:
+            deltaX = abs(self.deltaValues[0][0]-self.deltaValues[1][0])
+            deltaY = abs(self.deltaValues[0][1] - self.deltaValues[1][1])
+            self.model.arrowDelta = [deltaX, deltaY]
+
+
+
 
 
     # Low-Level Backend Graph Functions
