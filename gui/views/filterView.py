@@ -1,7 +1,8 @@
-from PyQt5.QtWidgets import QWidget, QMessageBox, QCheckBox
+from PyQt5.QtWidgets import QWidget, QMessageBox, QCheckBox, QFileDialog
 from PyQt5.QtCore import pyqtSlot, pyqtSignal, QThread
 from PyQt5 import Qt
 from PyQt5.QtCore import Qt
+import copy
 import os
 from pyqtgraph import LinearRegionItem, mkBrush, mkPen, SignalProxy, InfiniteLine, TextItem, ArrowItem
 from PyQt5 import uic
@@ -96,6 +97,11 @@ class FilterView(QWidget, Ui_filterView):
 
         self.backgroundWarningDisplay = True
 
+        # Saving Data
+        self.folderPath = ""
+        self.fileName = ""
+        self.autoindexing = False
+
         self.create_dialogs()
         self.connect_buttons()
         self.connect_signals()
@@ -144,6 +150,9 @@ class FilterView(QWidget, Ui_filterView):
 
         self.sb_absError.valueChanged.connect(lambda: setattr(self, 'maxAcceptedAbsErrorValue', self.sb_absError.value()/100))
         self.sb_absError.valueChanged.connect(self.draw_error_regions)
+
+        self.tb_folderPath.clicked.connect(self.select_save_folder)
+        self.pb_saveData.clicked.connect(self.save_capture_csv)
 
         log.debug("Connecting GUI buttons...")
 
@@ -200,7 +209,7 @@ class FilterView(QWidget, Ui_filterView):
     def define_colors(self):
         pass
 
-    # General View Functions
+    # General Cursor-Graph Interaction Functions
 
     def set_cursor_mode(self):
         if self.rb_delta.isChecked():
@@ -274,7 +283,6 @@ class FilterView(QWidget, Ui_filterView):
 
         if evt[0].button() == 4:
             self.remove_graph_arrows()
-
 
     def manage_arrow_delta(self):
         if self.clickCounter < 2:
@@ -655,6 +663,35 @@ class FilterView(QWidget, Ui_filterView):
                     listOfIndexesLimits.append([min(listOfRegionsIndexes[i]), max(listOfRegionsIndexes[i])])
 
         return listOfLimits, listOfRegions, listOfRegionsIndexes, listOfIndexesLimits
+
+    # Data Capture Methods
+
+    def select_save_folder(self):
+        self.folderPath = str(QFileDialog.getExistingDirectory(self, "Select Directory"))
+        if self.folderPath != "":
+            self.le_folderPath.setText(self.folderPath)
+
+    def toggle_autoindexing(self):
+        pass
+
+    def save_capture_csv(self):
+        self.fileName = self.le_fileName.text()
+        if self.folderPath == "":
+            pass
+
+        elif self.fileName == "":
+            pass
+
+        else:
+            fixedData = copy.deepcopy(self.displayData)
+            print(fixedData)
+            path = os.path.join(self.folderPath, self.fileName)
+            with open(path+".csv", "w+") as f:
+                for i, x in enumerate(self.waves):
+                    f.write(f"{x},{fixedData[i]}\n")
+                f.close()
+
+
 
 # TODO:
 # remove background, normalize (take ref, create norm, norm stream)
