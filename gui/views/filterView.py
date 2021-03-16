@@ -1,7 +1,8 @@
 from PyQt5.QtWidgets import QWidget, QMessageBox, QCheckBox
 from PyQt5.QtCore import pyqtSlot, pyqtSignal, QThread
+from PyQt5 import Qt
 import os
-from pyqtgraph import LinearRegionItem, mkBrush, mkPen, SignalProxy, InfiniteLine, TextItem
+from pyqtgraph import LinearRegionItem, mkBrush, mkPen, SignalProxy, InfiniteLine, TextItem, ArrowItem
 from PyQt5 import uic
 import seabreeze.spectrometers as sb
 from gui.modules import spectrometers as mock
@@ -42,9 +43,12 @@ class FilterView(QWidget, Ui_filterView):
         self.plotItem = None
         self.xPlotRange = [350, 1000]
         self.yPlotRange = [0, 4120]
-        self.cursorActivated = True
+        self.cursorActivated = False
+        self.clickCounter = 0
         self.dataPlotItem = None
         self.acqWorker = None
+        self.cursorCurvePosition = []
+
 
         self.errorRejectedList = None
         self.maxAcceptedAbsErrorValue = 0.01
@@ -98,6 +102,7 @@ class FilterView(QWidget, Ui_filterView):
         self.create_plots()
         self.initialize_device()
         self.update_indicators()
+        self.define_colors()
 
     def initialize_device(self):
         log.debug("Initializing devices...")
@@ -144,6 +149,7 @@ class FilterView(QWidget, Ui_filterView):
         self.ind_rmBackground.clicked.connect(lambda:print("showBackground if available"))
         self.ind_normalize.clicked.connect(lambda: print("show normalisation if available"))
         self.ind_analyse.clicked.connect(lambda: print("show acquisition if available"))
+        self.cb_cursor.clicked.connect(lambda: self.toggle_cursor(not self.cursorActivated))
 
     def connect_signals(self):
         log.debug("Connecting GUI signals...")
@@ -174,26 +180,77 @@ class FilterView(QWidget, Ui_filterView):
         self.plotItem.enableAutoScale()
 
         # Create Cursor
-        self.proxy = SignalProxy(self.plotItem.scene().sigMouseMoved, rateLimit=60, slot=self.mouseMoved)
+        self.proxyClick = SignalProxy(self.plotItem.scene().sigMouseClicked, rateLimit=10, slot=self.mouseClicked)
+        self.proxyMove = SignalProxy(self.plotItem.scene().sigMouseMoved, rateLimit=60, slot=self.mouseMoved)
         self.cursorlabel = TextItem(anchor=(50, 50))
         self.vLine = InfiniteLine(angle=90, movable=False)
         self.hLine = InfiniteLine(angle=0, movable=False)
         self.plotItem.addItem(self.vLine, ignoreBounds=True)
         self.plotItem.addItem(self.hLine, ignoreBounds=True)
 
+        # Create graphical sprites
+        self.arrows = []
+        self.arrowText = []
+
+    def define_colors(self):
+        pass
+
     # General View Functions
+
+    def toggle_cursor(self, state):
+        self.cursorActivated = state
+        if state:
+            self.vLine.show()
+            self.hLine.show()
+
     def mouseMoved(self, evt):
         if self.cursorActivated:
             pos = evt[0]
             if self.plotItem.sceneBoundingRect().contains(pos):
-                mousePoint = self.plotItem.vb.mapSceneToView(pos)
-                mx = np.array([abs(i - mousePoint.x()) for i in self.waves])
-                index = mx.argmin()
-                self.vLine.setPos(self.waves[index])
-                self.hLine.setPos(self.y[index])
-                self.model.mousePosition = [self.waves[index], self.y[index]]
+                self.findClosestPoint(pos)
+                self.vLine.setPos(self.cursorCurvePosition[0])
+                self.hLine.setPos(self.cursorCurvePosition[1])
+                self.model.mousePosition = self.cursorCurvePosition
         else:
+            self.vLine.hide()
+            self.hLine.hide()
+
+    def findClosestPoint(self, pos):
+        mousePoint = self.plotItem.vb.mapSceneToView(pos)
+        if self.waves is None:
+            self.cursorCurvePosition = [mousePoint.x(), mousePoint.y()]
+        else:
+            mx = np.array([abs(i - mousePoint.x()) for i in self.waves])
+            self.index = mx.argmin()
+            self.cursorCurvePosition = [self.waves[self.index], self.y[self.index]]
+
+    def mouseClicked(self, evt):
+        if self.cursorActivated:
+            if self.mode == 0:
+                self.manage_arrow_delta()
+
+    def manage_arrow_delta(self):
+        if self.clickCounter < 2:
+            self.clickCounter += 1
+            self.arrows.append(ArrowItem(angle=-90))
+            self.arrowText.append(
+                TextItem("[{:.2f}, {:.2f}]".format(self.cursorCurvePosition[0], self.cursorCurvePosition[1])))
+            self.plotItem.addItem(self.arrows[-1])
+            self.plotItem.addItem(self.arrowText[-1])
+
+            self.arrows[-1].setPos(self.cursorCurvePosition[0], self.cursorCurvePosition[1])
+            self.arrowText[-1].setPos(self.cursorCurvePosition[0], self.cursorCurvePosition[1])
+
+        if self.clickCounter == 1:
             pass
+
+        else:
+            for item1 in self.arrowText:
+                self.plotItem.removeItem(item1)
+            for item2 in self.arrows:
+                self.plotItem.removeItem(item2)
+            self.clickCounter = 0
+
 
     # Low-Level Backend Graph Functions
 

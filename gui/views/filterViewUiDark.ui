@@ -22,6 +22,67 @@ font: 11pt &quot;OpenSans-Light&quot;;
 </string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
+   <item row="1" column="0">
+    <widget class="QWidget" name="widget_3" native="true">
+     <layout class="QHBoxLayout" name="horizontalLayout_5">
+      <item>
+       <widget class="QCheckBox" name="cb_cursor">
+        <property name="statusTip">
+         <string>Show a crosshair cursor.</string>
+        </property>
+        <property name="text">
+         <string>Cursor</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QRadioButton" name="rb_delta">
+        <property name="toolTip">
+         <string>Double-click to set a marker</string>
+        </property>
+        <property name="statusTip">
+         <string>Double-click the Graph to set a marker</string>
+        </property>
+        <property name="whatsThis">
+         <string>Double-click to set a marker</string>
+        </property>
+        <property name="text">
+         <string extracomment="Double-click to set a marker">Delta</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QRadioButton" name="rb_free">
+        <property name="toolTip">
+         <string>Double-click to set a marker</string>
+        </property>
+        <property name="statusTip">
+         <string>Double-click the Graph to set a marker</string>
+        </property>
+        <property name="whatsThis">
+         <string>Double-click to set a marker</string>
+        </property>
+        <property name="text">
+         <string extracomment="Double-click to set a marker">Free</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="horizontalSpacer">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+     </layout>
+    </widget>
+   </item>
    <item row="0" column="0">
     <widget class="QFrame" name="fr_control">
      <property name="frameShape">
@@ -65,6 +126,9 @@ font: 11pt &quot;OpenSans-Light&quot;;
                <height>0</height>
               </size>
              </property>
+             <property name="statusTip">
+              <string>Starts data reading from the SpectrumDevice</string>
+             </property>
              <property name="styleSheet">
               <string notr="true"/>
              </property>
@@ -92,6 +156,9 @@ font: 11pt &quot;OpenSans-Light&quot;;
                <width>50</width>
                <height>16777215</height>
               </size>
+             </property>
+             <property name="statusTip">
+              <string>Resets the data and the view to initial parameters.</string>
              </property>
              <property name="text">
               <string>Reset</string>
@@ -131,6 +198,9 @@ font: 11pt &quot;OpenSans-Light&quot;;
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
+                </property>
+                <property name="statusTip">
+                 <string>Will print a report for the OpticalDevice analysed.</string>
                 </property>
                 <property name="text">
                  <string>Analyse Filter</string>
@@ -177,6 +247,9 @@ font: 11pt &quot;OpenSans-Light&quot;;
                   <verstretch>0</verstretch>
                  </sizepolicy>
                 </property>
+                <property name="statusTip">
+                 <string>Acquires 1 data set. Will subtract to other data acquisition and readings.</string>
+                </property>
                 <property name="text">
                  <string>Remove Background</string>
                 </property>
@@ -189,6 +262,9 @@ font: 11pt &quot;OpenSans-Light&quot;;
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
+                </property>
+                <property name="statusTip">
+                 <string>Will normalize the spectrum to allow for transmission/reflexion spectral analysis.</string>
                 </property>
                 <property name="styleSheet">
                  <string notr="true"/>
@@ -330,6 +406,9 @@ font: 11pt &quot;OpenSans-Light&quot;;
                <height>0</height>
               </size>
              </property>
+             <property name="statusTip">
+              <string>Sets the integration time on the SpectrumDevice.</string>
+             </property>
              <property name="minimum">
               <number>10</number>
              </property>
@@ -378,6 +457,9 @@ font: 11pt &quot;OpenSans-Light&quot;;
                <width>0</width>
                <height>0</height>
               </size>
+             </property>
+             <property name="statusTip">
+              <string>If selected, Will exclude data which has a standard deviation higher than (value).</string>
              </property>
              <property name="minimum">
               <double>0.100000000000000</double>
@@ -428,6 +510,9 @@ font: 11pt &quot;OpenSans-Light&quot;;
                <height>0</height>
               </size>
              </property>
+             <property name="statusTip">
+              <string>Sets exposure time one the SpectrumDevice.</string>
+             </property>
              <property name="minimum">
               <number>4</number>
              </property>
@@ -444,6 +529,9 @@ font: 11pt &quot;OpenSans-Light&quot;;
            </item>
            <item row="2" column="4">
             <widget class="QCheckBox" name="cb_absError">
+             <property name="statusTip">
+              <string>Activates data exclusion.</string>
+             </property>
              <property name="text">
               <string/>
              </property>
@@ -537,6 +625,9 @@ font: 11pt &quot;OpenSans-Light&quot;;
                <verstretch>0</verstretch>
               </sizepolicy>
              </property>
+             <property name="statusTip">
+              <string>Opens a dialog box to select destination filer.</string>
+             </property>
              <property name="text">
               <string>Set Folder Path</string>
              </property>
@@ -576,6 +667,9 @@ font: 11pt &quot;OpenSans-Light&quot;;
                <verstretch>0</verstretch>
               </sizepolicy>
              </property>
+             <property name="statusTip">
+              <string>Set the name of the file that will be saved.</string>
+             </property>
             </widget>
            </item>
            <item row="1" column="3">
@@ -587,19 +681,19 @@ font: 11pt &quot;OpenSans-Light&quot;;
               </sizepolicy>
              </property>
              <property name="toolTip">
-              <string>Autoindexing?</string>
+              <string/>
              </property>
              <property name="statusTip">
               <string>Autoindexing?</string>
              </property>
              <property name="whatsThis">
-              <string>Autoindexing?</string>
+              <string/>
              </property>
              <property name="layoutDirection">
               <enum>Qt::LeftToRight</enum>
              </property>
              <property name="text">
-              <string extracomment="Autoindexing?"/>
+              <string/>
              </property>
             </widget>
            </item>
@@ -612,6 +706,9 @@ font: 11pt &quot;OpenSans-Light&quot;;
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
+           </property>
+           <property name="statusTip">
+            <string>Saves data as a .csv</string>
            </property>
            <property name="text">
             <string>Save Data</string>
@@ -656,7 +753,7 @@ font: 11pt &quot;OpenSans-Light&quot;;
      </layout>
     </widget>
    </item>
-   <item row="1" column="0">
+   <item row="2" column="0">
     <widget class="GraphicsLayoutWidget" name="pyqtgraphWidget">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
