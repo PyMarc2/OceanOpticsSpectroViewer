@@ -55,6 +55,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def connect_signals(self):
         self.helpDialog.s_windowClose.connect(lambda: self.setEnabled(True))
+        self.model.s_mouse_graph_position.connect(lambda: self.change_status_message("x:{:.2f}, y:{:.2f}".format(self.model.mouseX, self.model.mouseY)))
+
+    def change_status_message(self, message):
+        self.statusbarMessage.setText(message)
 
     def show_helpDialog(self):
         log.info('Help Dialog Opened')

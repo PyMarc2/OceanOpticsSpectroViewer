@@ -1,7 +1,7 @@
 from PyQt5.QtWidgets import QWidget, QMessageBox, QCheckBox
 from PyQt5.QtCore import pyqtSlot, pyqtSignal, QThread
 import os
-from pyqtgraph import LinearRegionItem, mkBrush, mkPen
+from pyqtgraph import LinearRegionItem, mkBrush, mkPen, SignalProxy, InfiniteLine, TextItem
 from PyQt5 import uic
 import seabreeze.spectrometers as sb
 from gui.modules import spectrometers as mock
@@ -35,13 +35,14 @@ class FilterView(QWidget, Ui_filterView):
 
         self.spec = None
         self.waves = None
+        self.y = None
         self.dataLen = None
         self.deviceConnected = False
 
         self.plotItem = None
         self.xPlotRange = [350, 1000]
         self.yPlotRange = [0, 4120]
-
+        self.cursorActivated = True
         self.dataPlotItem = None
         self.acqWorker = None
 
@@ -172,12 +173,34 @@ class FilterView(QWidget, Ui_filterView):
         self.dataPlotItem = self.plotItem.plot()
         self.plotItem.enableAutoScale()
 
-    # Low-Level Backend Functions
+        # Create Cursor
+        self.proxy = SignalProxy(self.plotItem.scene().sigMouseMoved, rateLimit=60, slot=self.mouseMoved)
+        self.cursorlabel = TextItem(anchor=(50, 50))
+        self.vLine = InfiniteLine(angle=90, movable=False)
+        self.hLine = InfiniteLine(angle=0, movable=False)
+        self.plotItem.addItem(self.vLine, ignoreBounds=True)
+        self.plotItem.addItem(self.hLine, ignoreBounds=True)
+
+    # General View Functions
+    def mouseMoved(self, evt):
+        if self.cursorActivated:
+            pos = evt[0]
+            if self.plotItem.sceneBoundingRect().contains(pos):
+                mousePoint = self.plotItem.vb.mapSceneToView(pos)
+                mx = np.array([abs(i - mousePoint.x()) for i in self.waves])
+                index = mx.argmin()
+                self.vLine.setPos(self.waves[index])
+                self.hLine.setPos(self.y[index])
+                self.model.mousePosition = [self.waves[index], self.y[index]]
+        else:
+            pass
+
+    # Low-Level Backend Graph Functions
 
     @pyqtSlot(dict)
     def update_graph(self, plotData):
-        y = plotData["y"]
-        self.dataPlotItem.setData(self.waves, y)
+        self.y = plotData["y"]
+        self.dataPlotItem.setData(self.waves, self.y)
 
     def manage_data_flow(self, *args, **kwargs):
         self.waves = self.spec.wavelengths()[2:]

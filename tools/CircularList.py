@@ -1,8 +1,9 @@
 """Module containing the circular list class"""
 import numpy as np
+import collections
 
 
-class CircularList():
+class CircularList:
     """FIFO style buffer class
     List of fixed size where appended data overwrites the oldest entries
     Args:
@@ -87,3 +88,72 @@ class RingBuffer:
     def get(self):
         """ Return a list of elements from the oldest to the newest. """
         return self.data
+
+
+class Buffer:
+
+    def __init__(self, length):
+        self._data = collections.deque(maxlen=length)
+
+    def __call__(self):
+        return self._data
+
+    def __len__(self):
+        return len(self._data)
+
+    def __getitem__(self, key):
+        if isinstance(key, slice):
+            return [self._data[i] for i in range(*key.indices(len(self)))]
+        elif isinstance(key, int):
+            return self._data[key]
+
+    def __setitem__(self, key, item):
+        if isinstance(key, slice):
+            if len(item) == len(range(*key.indices(len(self)))):
+                for i, e in enumerate(range(key.start, key.stop)):
+                    self._data[e] = item[i]
+            else:
+                raise IndexError
+
+        elif isinstance(key, int):
+            self._data[key] = item
+
+    def __contains__(self, item):
+        return item in self._data
+
+    def __iter__(self):
+        self.n = 0
+        self.dataSub = self._data
+        return iter(self.dataSub)
+
+    def __next__(self):
+        if self.n <= len(self._data):
+            result = self._data[self.n]
+            self.n += 1
+            return result
+        else:
+            raise IndexError
+
+    def __repr__(self):
+        return str(list(self._data))
+
+    def append(self, x):
+        self._data.append(x)
+
+    def get(self):
+        return self._data
+
+b = Buffer(10)
+for i in range(20):
+    b.append(i)
+
+b[6] = 0
+print(b[0:8])
+
+b[1:4] = [1,2,3]
+
+for item in b:
+    print(item)
+
+
+print(b)

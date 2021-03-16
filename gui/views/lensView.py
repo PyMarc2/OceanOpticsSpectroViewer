@@ -28,22 +28,9 @@ class LensView(QWidget, Ui_lensView):  # type: QWidget
         self.plotItem = None
         self.dataPlotItem = None
         self.connect_widgets()
-        self.create_plots()
 
     def connect_widgets(self):
         pass
 
     def connect_signals(self):
-        log.info("Connecting simulationView Signals...")
-        self.s_lens_data_changed.connect(self.update_graph)
-
-    def create_plots(self):
-        self.pyqtgraphWidget.clear()
-        self.plotItem = self.pyqtgraphWidget.addPlot()
-        self.dataPlotItem = self.plotItem.plot()
-
-    @pyqtSlot(dict)
-    def update_graph(self, plotData):
-        x = plotData["x"]
-        y = plotData["y"]
-        self.dataPlotItem.setData(x, y)
+        pass
