@@ -27,6 +27,9 @@ font: 11pt &quot;OpenSans-Light&quot;;
      <layout class="QHBoxLayout" name="horizontalLayout_5">
       <item>
        <widget class="QCheckBox" name="cb_cursor">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <property name="statusTip">
          <string>Show a crosshair cursor.</string>
         </property>
@@ -37,6 +40,9 @@ font: 11pt &quot;OpenSans-Light&quot;;
       </item>
       <item>
        <widget class="QRadioButton" name="rb_delta">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <property name="toolTip">
          <string>Double-click to set a marker</string>
         </property>
@@ -59,6 +65,9 @@ font: 11pt &quot;OpenSans-Light&quot;;
       </item>
       <item>
        <widget class="QRadioButton" name="rb_free">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <property name="toolTip">
          <string>Double-click to set a marker</string>
         </property>
@@ -623,22 +632,6 @@ font: 11pt &quot;OpenSans-Light&quot;;
            <property name="spacing">
             <number>9</number>
            </property>
-           <item row="0" column="0">
-            <widget class="QPushButton" name="pb_setFolderPath">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="statusTip">
-              <string>Opens a dialog box to select destination filer.</string>
-             </property>
-             <property name="text">
-              <string>Set Folder Path</string>
-             </property>
-            </widget>
-           </item>
            <item row="1" column="0">
             <widget class="QLabel" name="la_fileName">
              <property name="sizePolicy">
@@ -700,6 +693,20 @@ font: 11pt &quot;OpenSans-Light&quot;;
              </property>
              <property name="text">
               <string/>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="3">
+            <widget class="QToolButton" name="tbfolderPath">
+             <property name="text">
+              <string>...</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="0">
+            <widget class="QLabel" name="label_5">
+             <property name="text">
+              <string>Folder Path:</string>
              </property>
             </widget>
            </item>
