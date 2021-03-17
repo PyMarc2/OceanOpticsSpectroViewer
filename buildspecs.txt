@@ -1,0 +1,4 @@
+datas=[('/gui/modules/*', 'gui/modules/'), ('/gui/dialog/*', 'gui/dialog/'),
+             ('/gui/views/*', 'gui/views/'), ('/gui/widgets/*', 'gui/widgets/'),
+             ('/gui/windows/*', 'gui/windows/'), ('/gui/misc/logo/*', 'gui/misc/logo/'),
+             ('QFlashButton.py', '.'), ('MainModel.py', '.')]

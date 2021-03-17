@@ -684,7 +684,6 @@ class FilterView(QWidget, Ui_filterView):
 
         else:
             fixedData = copy.deepcopy(self.displayData)
-            print(fixedData)
             path = os.path.join(self.folderPath, self.fileName)
             with open(path+".csv", "w+") as f:
                 for i, x in enumerate(self.waves):

@@ -142,18 +142,3 @@ class Buffer:
 
     def get(self):
         return self._data
-
-b = Buffer(10)
-for i in range(20):
-    b.append(i)
-
-b[6] = 0
-print(b[0:8])
-
-b[1:4] = [1,2,3]
-
-for item in b:
-    print(item)
-
-
-print(b)
