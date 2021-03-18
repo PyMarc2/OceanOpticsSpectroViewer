@@ -16,7 +16,7 @@ import logging
 
 log = logging.getLogger(__name__)
 
-filterViewUiPath = os.path.dirname(os.path.realpath(__file__)) + ".{0}filterViewUiDark.ui".format(os.sep)
+filterViewUiPath = os.path.dirname(os.path.realpath(__file__)) + "{0}filterViewUiDark.ui".format(os.sep)
 Ui_filterView, QtBaseClass = uic.loadUiType(filterViewUiPath)
 
 

@@ -6,7 +6,7 @@ import os
 
 log = logging.getLogger(__name__)
 
-lensViewUiPath = os.path.dirname(os.path.realpath(__file__)) + '\\lensViewUi.ui'
+lensViewUiPath = os.path.dirname(os.path.realpath(__file__)) + '{0}lensViewUi.ui'.format(os.sep)
 Ui_lensView, QtBaseClass = uic.loadUiType(lensViewUiPath)
 
 
