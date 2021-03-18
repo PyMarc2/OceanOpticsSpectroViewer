@@ -2,7 +2,7 @@
 
 block_cipher = None
 
-a = Analysis(['main.py'],
+a = Analysis(['opt-id.py'],
              pathex=['C:\\Users\\marc-\\Documents\\Github\\DCC\\Optics-ID'],
              binaries=[],
              datas=[('gui/modules/*', 'gui/modules/'), ('gui/dialog/*', 'gui/dialog/'),
