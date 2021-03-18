@@ -6,20 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1113</width>
-    <height>695</height>
+    <width>1115</width>
+    <height>699</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">
-QWidget{
-color:#0B0B0B;
-font: 11pt &quot;OpenSans-Light&quot;;
-}
-</string>
+   <string notr="true">font: 10pt;</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="1" column="0">
@@ -809,7 +804,7 @@ font: 11pt &quot;OpenSans-Light&quot;;
   <customwidget>
    <class>QFlashButton</class>
    <extends>QPushButton</extends>
-   <header>QFlashButton.h</header>
+   <header>/gui/widgets/QFlashButton.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

@@ -1,13 +1,11 @@
 from PyQt5.QtWidgets import QWidget, QMessageBox, QCheckBox, QFileDialog
 from PyQt5.QtCore import pyqtSlot, pyqtSignal, QThread
-from PyQt5 import Qt
-from PyQt5.QtCore import Qt
 import copy
 import os
 from pyqtgraph import LinearRegionItem, mkBrush, mkPen, SignalProxy, InfiniteLine, TextItem, ArrowItem
 from PyQt5 import uic
 import seabreeze.spectrometers as sb
-from gui.modules import spectrometers as mock
+from gui.modules import mockSpectrometer as mock
 from tools.threadWorker import Worker
 from tools.CircularList import RingBuffer
 import numpy as np
@@ -18,7 +16,7 @@ import logging
 
 log = logging.getLogger(__name__)
 
-filterViewUiPath = os.path.dirname(os.path.realpath(__file__)) + "\\filterViewUiDark.ui"
+filterViewUiPath = os.path.dirname(os.path.realpath(__file__)) + ".{0}filterViewUiDark.ui".format(os.sep)
 Ui_filterView, QtBaseClass = uic.loadUiType(filterViewUiPath)
 
 
@@ -28,7 +26,7 @@ class FilterView(QWidget, Ui_filterView):
 
     # Initializing Functions
 
-    def __init__(self, model=None, controller=None):
+    def __init__(self, model=None):
         super(FilterView, self).__init__()
         self.model = model
         self.setupUi(self)
@@ -190,7 +188,7 @@ class FilterView(QWidget, Ui_filterView):
         self.pyqtgraphWidget.clear()
         self.plotItem = self.pyqtgraphWidget.addPlot()
         self.dataPlotItem = self.plotItem.plot()
-        self.plotItem.enableAutoScale()
+        self.plotItem.enableAutoRange()
 
         # Create Cursor
         self.proxyClick = SignalProxy(self.plotItem.scene().sigMouseClicked, rateLimit=10, slot=self.mouseClicked)
@@ -692,6 +690,5 @@ class FilterView(QWidget, Ui_filterView):
 
 
 
-# TODO:
-# remove background, normalize (take ref, create norm, norm stream)
-# add wavelength line cursor with value display
+ #  TODO:
+ #  remove background, normalize (take ref, create norm, norm stream)

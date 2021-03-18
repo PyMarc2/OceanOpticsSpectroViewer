@@ -2,7 +2,6 @@
 
 block_cipher = None
 
-
 a = Analysis(['main.py'],
              pathex=['C:\\Users\\marc-\\Documents\\Github\\DCC\\Optics-ID'],
              binaries=[],
@@ -10,7 +9,6 @@ a = Analysis(['main.py'],
              ('gui/views/*', 'gui/views/'), ('gui/widgets/*', 'gui/widgets/'),
              ('gui/windows/*', 'gui/windows/'), ('gui/misc/logo/*', 'gui/misc/logo/'),
              ('QFlashButton.py', '.'), ('MainModel.py', '.')],
-
              hiddenimports=[],
              hookspath=[],
              runtime_hooks=[],
@@ -31,7 +29,7 @@ exe = EXE(pyz,
           debug=False,
           bootloader_ignore_signals=False,
           strip=False,
-          upx=False,
+          upx=True,
           upx_exclude=[],
           runtime_tmpdir=None,
           console=True , icon='C:\\Users\\marc-\\Documents\\Github\\DCC\\Optics-ID\\gui\\misc\\logo\\logo3.ico')

@@ -10,13 +10,13 @@ from PyQt5 import uic
 log = logging.getLogger(__name__)
 
 
-MainWindowPath = os.path.dirname(os.path.realpath(__file__)) + '\\mainWindowUi.ui'
+MainWindowPath = os.path.dirname(os.path.realpath(__file__)) + '{}mainWindowUi.ui'.format(os.sep)
 Ui_MainWindow, QtBaseClass = uic.loadUiType(MainWindowPath)
 
 
 class MainWindow(QMainWindow, Ui_MainWindow):
 
-    def __init__(self, model=None, controller=None):
+    def __init__(self, model=None):
         super(MainWindow, self).__init__()
         self.setAttribute(Qt.WA_AlwaysStackOnTop)
         self.setupUi(self)
