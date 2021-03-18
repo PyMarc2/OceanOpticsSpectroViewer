@@ -2,12 +2,13 @@
 
 block_cipher = None
 
+
 a = Analysis(['opt-id.py'],
              pathex=['C:\\Users\\marc-\\Documents\\Github\\DCC\\Optics-ID'],
              binaries=[],
              datas=[('gui/modules/*', 'gui/modules/'), ('gui/dialog/*', 'gui/dialog/'),
              ('gui/views/*', 'gui/views/'), ('gui/widgets/*', 'gui/widgets/'),
-             ('gui/windows/*', 'gui/windows/'), ('gui/misc/logo/*', 'gui/misc/logo/')],
+             ('gui/windows/*', 'gui/windows/'), ('gui/misc/logo/logo3.ico', 'gui/misc/logo/'),],
              hiddenimports=[],
              hookspath=[],
              runtime_hooks=[],
@@ -24,11 +25,11 @@ exe = EXE(pyz,
           a.zipfiles,
           a.datas,
           [],
-          name='main',
+          name='opt-id',
           debug=False,
           bootloader_ignore_signals=False,
           strip=False,
           upx=True,
           upx_exclude=[],
           runtime_tmpdir=None,
-          console=True , icon='C:\\Users\\marc-\\Documents\\Github\\DCC\\Optics-ID\\gui\\misc\\logo\\logo3.ico')
+          console=False , icon='C:\\Users\\marc-\\Documents\\Github\\DCC\\Optics-ID\\gui\\misc\\logo\\logo3.ico')

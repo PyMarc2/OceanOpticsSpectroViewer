@@ -21,7 +21,15 @@ from logging.handlers import RotatingFileHandler
 import os
 
 log = logging.getLogger(__name__)
-mainPath = os.path.dirname(os.path.realpath(__file__))
+
+
+if getattr(sys, 'frozen', False):
+    # If the application is run as a bundle, the PyInstaller bootloader
+    # extends the sys module by a flag frozen=True and sets the app 
+    # path into variable _MEIPASS'.
+    application_path = sys._MEIPASS
+else:
+    application_path = os.path.dirname(os.path.abspath(__file__))
 
 
 class App(QApplication):
@@ -54,8 +62,8 @@ class App(QApplication):
         logger.addHandler(handler)
 
         # Log Error File Handler
-        os.makedirs(mainPath + "{0}log".format(os.sep), exist_ok=True)
-        handler = RotatingFileHandler(mainPath + "{0}log{0}opt-id.log".format(os.sep), maxBytes=2.3 * 1024 * 1024, backupCount=5)
+        os.makedirs(application_path + "{0}log".format(os.sep), exist_ok=True)
+        handler = RotatingFileHandler(application_path + "{0}log{0}opt-id.log".format(os.sep), maxBytes=2.3 * 1024 * 1024, backupCount=5)
         handler.setLevel(logging.ERROR)
         formatter = logging.Formatter("%(asctime)s\t (%(name)-30.30s) (thread:%(thread)d) (line:%(lineno)5d)\t[%(levelname)-5.5s] %(message)s")
         handler.setFormatter(formatter)
@@ -78,7 +86,8 @@ def main():
     elif os.name == 'posix':
         pass
     app = App(sys.argv)
-    app.setWindowIcon(QIcon(mainPath + "{0}gui{0}misc{0}logo{0}logo3.png".format(os.sep)))
+    app.setWindowIcon(QIcon(application_path + "{0}gui{0}misc{0}logo{0}logo3.ico".format(os.sep)))
+    app.mainWindow.setWindowIcon(QIcon(application_path + "{0}gui{0}misc{0}logo{0}logo3.ico".format(os.sep)))
     sys.exit(app.exec_())
 
 
