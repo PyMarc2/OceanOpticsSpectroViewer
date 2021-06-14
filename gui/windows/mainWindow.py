@@ -1,6 +1,6 @@
 from gui.dialog.helpDialog import HelpDialog
-from gui.views.filterView import FilterView
-from gui.views.lensView import LensView
+from gui.views.spectraView import SpectraView
+from gui.views.microRamanView import MicroRamanView
 from PyQt5.QtWidgets import QMainWindow, QWidget, QLabel, QVBoxLayout, QTabWidget, QAction, QApplication
 from PyQt5.QtCore import Qt, pyqtSlot, QFile, QTextStream
 import logging
@@ -32,8 +32,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def setup_window_tabs(self):
         self.tabWidget = QTabWidget()
         self.setCentralWidget(self.tabWidget)
-        self.tabWidget.addTab(self.filterView, "Filter ID")
-        self.tabWidget.addTab(self.lensView, "Lens ID")
+        self.tabWidget.addTab(self.spectraView, "SpectraView")
+        self.tabWidget.addTab(self.microRamanView, "MicroRaman")
 
     def setup_menuBar(self):
         self.helpAction = QAction(self)
@@ -46,8 +46,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def create_views_and_dialogs(self):
         self.helpDialog = HelpDialog()
-        self.filterView = FilterView(model=self.model)
-        self.lensView = LensView(model=self.model)
+        self.spectraView = SpectraView(model=self.model)
+        self.microRamanView = MicroRamanView(model=self.model)
 
     def connect_buttons(self):
         self.helpAction.triggered.connect(self.show_helpDialog)

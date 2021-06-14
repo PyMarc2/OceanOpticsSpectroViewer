@@ -16,18 +16,18 @@ import logging
 
 log = logging.getLogger(__name__)
 
-filterViewUiPath = os.path.dirname(os.path.realpath(__file__)) + "{0}filterViewUiDark.ui".format(os.sep)
-Ui_filterView, QtBaseClass = uic.loadUiType(filterViewUiPath)
+spectraViewUiPath = os.path.dirname(os.path.realpath(__file__)) + "{0}spectraViewUi.ui".format(os.sep)
+Ui_spectraView, QtBaseClass = uic.loadUiType(spectraViewUiPath)
 
 
-class FilterView(QWidget, Ui_filterView):
+class SpectraView(QWidget, Ui_spectraView):
     s_data_changed = pyqtSignal(dict)
     s_data_acquisition_done = pyqtSignal()
 
     # Initializing Functions
 
     def __init__(self, model=None):
-        super(FilterView, self).__init__()
+        super(SpectraView, self).__init__()
         self.model = model
         self.setupUi(self)
 
