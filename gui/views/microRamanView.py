@@ -1,13 +1,14 @@
-from PyQt5.QtWidgets import QWidget
-from PyQt5.Qt import QPixmap
-from PyQt5.QtCore import pyqtSignal, Qt
+import numpy
+from PyQt5.QtWidgets import *
+from PyQt5.QtGui import *
+from PyQt5.QtCore import *
+from PyQt5.Qt import *
 from PyQt5 import uic
-import logging
 import os
 
-log = logging.getLogger(__name__)
 
 microRamanViewUiPath = os.path.dirname(os.path.realpath(__file__)) + '{0}microRamanViewUi.ui'.format(os.sep)
+print(microRamanViewUiPath)
 Ui_microRamanView, QtBaseClass = uic.loadUiType(microRamanViewUiPath)
 
 
@@ -22,6 +23,11 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.plotItem = None
         self.dataPlotItem = None
         self.initialize_buttons()
+        self.hauteur = 0
+        self.largeur = 0
+        self.step = 0
+        self.ordre = 1
+        self.animation = QPropertyAnimation(self, b"color")
         self.connect_widgets()
 
     def initialize_buttons(self):
@@ -36,6 +42,32 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
                                    QPixmap("./gui/misc/icons/sweep_alternate_selected.png").scaled(50, 50,Qt.KeepAspectRatio, Qt.SmoothTransformation))
 
     def connect_widgets(self):
+        self.spinBox.textChanged.connect(self.image_size_1)
+        self.spinBox_2.textChanged.connect(self.image_size_2)
+        self.spinBox_3.textChanged.connect(self.displacement_step)
+        self.comboBox.currentTextChanged.connect(self.measure_unit)
+        self.pb_sweepSame.clicked.connect(self.sweep)
+
+    def image_size_1(self):
+        self.hauteur = self.spinBox.value()
+
+    def image_size_2(self):
+        self.largeur = self.spinBox_2.value()
+
+    def displacement_step(self):
+        self.step = self.spinBox_3.value()
+
+    def measure_unit(self):
+        if self.comboBox.currentText() == 'mm':
+            self.ordre = 10**3
+
+        elif self.comboBox.currentText() == 'um':
+            self.ordre = 1
+
+        elif self.comboBox.currentText() == 'nm':
+            self.ordre = 10**(-3)
+
+    def sweep(self):
         pass
 
     def connect_signals(self):
