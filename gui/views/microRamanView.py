@@ -34,6 +34,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.AcqTime = 3000
         self.reset = False
         self.connect_widgets()
+        self.create_threads()
 
     def initialize_buttons(self):
 
@@ -54,7 +55,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.pb_sweepSame.clicked.connect(self.sweep_same)
         self.pb_sweepAlternate.clicked.connect(self.sweep_other)
         self.pb_reset.clicked.connect(self.reset_acq)
-        #self.pb_liveView.clicked.connect(self.begin)
+        #self.pb_liveView.clicked.connect(self.sweep)
         self.sb_acqTime.textChanged.connect(self.set_acq_time)
         self.sb_exposure.textChanged.connect(self.set_exposure_time)
 
@@ -93,19 +94,37 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
     def set_acq_time(self):
         self.AcqTime = self.sb_acqTime.value()
 
-    def begin(self):
+    def create_threads(self):
+        self.sweepWorker = Worker(self.sweep, *args)
+        self.sweepWorker.moveToThread(self.sweepThread)
+        self.sweepThread.started.connect(self.sweepWorker.run)
+
+    def disable_all_buttons(self):
+        self.spinBox.setEnabled(False)
+        self.spinBox_2.setEnabled(False)
+        self.spinBox_3.setEnabled(False)
+        self.comboBox.setEnabled(False)
+        self.pb_sweepSame.setEnabled(False)
+        self.pb_sweepAlternate.setEnabled(False)
+        self.sb_exposure.setEnabled(False)
+        self.sb_acqTime.setEnabled(False)
+
+    def enable_all_buttons(self):
+        self.spinBox.setEnabled(True)
+        self.spinBox_2.setEnabled(True)
+        self.spinBox_3.setEnabled(True)
+        self.comboBox.setEnabled(True)
+        self.pb_sweepSame.setEnabled(True)
+        self.pb_sweepAlternate.setEnabled(True)
+        self.sb_exposure.setEnabled(True)
+        self.sb_acqTime.setEnabled(True)
+
+    def sweep(self):
         for i in range(100):
             self.pb_reset.clicked.connect(self.resetAcq)
             if not self.reset:
                 self.pb_reset.clicked.connect(self.resetAcq)
-                self.spinBox.setEnabled(False)
-                self.spinBox_2.setEnabled(False)
-                self.spinBox_3.setEnabled(False)
-                self.comboBox.setEnabled(False)
-                self.pb_sweepSame.setEnabled(False)
-                self.pb_sweepAlternate.setEnabled(False)
-                self.sb_exposure.setEnabled(False)
-                self.sb_acqTime.setEnabled(False)
+                self.disable_all_buttons()
                 print(i)
             else:
                 pass
