@@ -28,7 +28,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.ordre = 1
         self.direction = 'other'
         self.exposureTime = 50
-        self.integrationTime = 3000
+        self.AcqTime = 3000
         self.reset = False
         self.connect_widgets()
 
@@ -52,6 +52,8 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.pb_sweepAlternate.clicked.connect(self.sweepOther)
         self.pb_reset.clicked.connect(self.resetAcq)
         self.pb_liveView.clicked.connect(self.begin)
+        self.sb_acqTime.textChanged.connect(self.setAcqTime)
+        self.sb_exposure.textChanged.connect(self.setExposureTime)
 
     def image_size_1(self):
         self.hauteur = self.spinBox.value()
@@ -83,10 +85,10 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         #return True
 
     def setExposureTime(self):
-        self.exposureTime = self.b_exposure.value()
+        self.exposureTime = self.sb_exposure.value()
 
-    def setIntegrationTime(self):
-        self.integrationTime = self.sb_acqTime.value()
+    def setAcqTime(self):
+        self.AcqTime = self.sb_acqTime.value()
 
     def begin(self):
         for i in range(100):
