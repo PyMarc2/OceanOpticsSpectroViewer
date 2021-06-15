@@ -1,7 +1,7 @@
 import numpy
 from PyQt5.QtWidgets import QWidget
 from PyQt5.Qt import QPixmap
-from PyQt5.QtCore import pyqtSignal, Qt
+from PyQt5.QtCore import pyqtSignal, Qt, QObject, QThread
 from PyQt5 import uic
 import os
 
@@ -22,6 +22,9 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.plotItem = None
         self.dataPlotItem = None
         self.initialize_buttons()
+
+        self.sweepThread = QThread()
+
         self.hauteur = 0
         self.largeur = 0
         self.step = 0
@@ -48,12 +51,12 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.spinBox_2.textChanged.connect(self.image_size_2)
         self.spinBox_3.textChanged.connect(self.displacement_step)
         self.comboBox.currentTextChanged.connect(self.measure_unit)
-        self.pb_sweepSame.clicked.connect(self.sweepSame)
-        self.pb_sweepAlternate.clicked.connect(self.sweepOther)
-        self.pb_reset.clicked.connect(self.resetAcq)
-        self.pb_liveView.clicked.connect(self.begin)
-        self.sb_acqTime.textChanged.connect(self.setAcqTime)
-        self.sb_exposure.textChanged.connect(self.setExposureTime)
+        self.pb_sweepSame.clicked.connect(self.sweep_same)
+        self.pb_sweepAlternate.clicked.connect(self.sweep_other)
+        self.pb_reset.clicked.connect(self.reset_acq)
+        #self.pb_liveView.clicked.connect(self.begin)
+        self.sb_acqTime.textChanged.connect(self.set_acq_time)
+        self.sb_exposure.textChanged.connect(self.set_exposure_time)
 
     def image_size_1(self):
         self.hauteur = self.spinBox.value()
@@ -74,20 +77,20 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         elif self.comboBox.currentText() == 'nm':
             self.ordre = 10**(-3)
 
-    def sweepSame(self):
+    def sweep_same(self):
         self.direction = 'same'
 
-    def sweepOther(self):
+    def sweep_other(self):
         self.direction = 'other'
 
-    def resetAcq(self):
+    def reset_acq(self):
         self.reset = True
         #return True
 
-    def setExposureTime(self):
+    def set_exposure_time(self):
         self.exposureTime = self.sb_exposure.value()
 
-    def setAcqTime(self):
+    def set_acq_time(self):
         self.AcqTime = self.sb_acqTime.value()
 
     def begin(self):
