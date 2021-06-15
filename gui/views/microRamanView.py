@@ -27,10 +27,10 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.step = 0
         self.ordre = 1
         self.direction = 'other'
-        self.reset = False
-        self.connect_widgets()
         self.exposureTime = 50
         self.integrationTime = 3000
+        self.reset = False
+        self.connect_widgets()
 
     def initialize_buttons(self):
 
