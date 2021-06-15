@@ -1,8 +1,7 @@
 import numpy
-from PyQt5.QtWidgets import *
-from PyQt5.QtGui import *
-from PyQt5.QtCore import *
-from PyQt5.Qt import *
+from PyQt5.QtWidgets import QWidget
+from PyQt5.Qt import QPixmap
+from PyQt5.QtCore import pyqtSignal, Qt
 from PyQt5 import uic
 import os
 
@@ -27,7 +26,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.largeur = 0
         self.step = 0
         self.ordre = 1
-        self.animation = QPropertyAnimation(self, b"color")
+        self.direction = 'other'
         self.connect_widgets()
 
     def initialize_buttons(self):
@@ -46,7 +45,8 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.spinBox_2.textChanged.connect(self.image_size_2)
         self.spinBox_3.textChanged.connect(self.displacement_step)
         self.comboBox.currentTextChanged.connect(self.measure_unit)
-        self.pb_sweepSame.clicked.connect(self.sweep)
+        self.pb_sweepSame.clicked.connect(self.sweepSame)
+        self.pb_sweepAlternate.clicked.connect(self.sweepOther)
 
     def image_size_1(self):
         self.hauteur = self.spinBox.value()
@@ -67,8 +67,11 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         elif self.comboBox.currentText() == 'nm':
             self.ordre = 10**(-3)
 
-    def sweep(self):
-        pass
+    def sweepSame(self):
+        self.direction = 'same'
+
+    def sweepOther(self):
+        self.direction = 'other'
 
     def connect_signals(self):
         pass
