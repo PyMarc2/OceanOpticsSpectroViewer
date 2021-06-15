@@ -77,25 +77,27 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.direction = 'other'
 
     def resetAcq(self):
-        #self.reset = True
-        return True
+        self.reset = True
+        #return True
 
     def begin(self):
-        """
-        while not self.reset:
+        for i in range(100):
             self.pb_reset.clicked.connect(self.resetAcq)
-            self.spinBox.setEnabled(False)
-            self.spinBox_2.setEnabled(False)
-            self.spinBox_3.setEnabled(False)
-            self.comboBox.setEnabled(False)
-            self.pb_sweepSame.setEnabled(False)
-            self.pb_sweepAlternate.setEnabled(False)
-            self.sb_exposure.setEnabled(False)
-            self.sb_acqTime.setEnabled(False)
-            for i in range(100):
+            if not self.reset:
+                self.pb_reset.clicked.connect(self.resetAcq)
+                self.spinBox.setEnabled(False)
+                self.spinBox_2.setEnabled(False)
+                self.spinBox_3.setEnabled(False)
+                self.comboBox.setEnabled(False)
+                self.pb_sweepSame.setEnabled(False)
+                self.pb_sweepAlternate.setEnabled(False)
+                self.sb_exposure.setEnabled(False)
+                self.sb_acqTime.setEnabled(False)
                 print(i)
-            """
-        print('done')
+            else:
+                pass
+
+        self.reset = False
 
     """
     def connect_signals(self):
