@@ -48,7 +48,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.comboBox.currentTextChanged.connect(self.measure_unit)
         self.pb_sweepSame.clicked.connect(self.sweepSame)
         self.pb_sweepAlternate.clicked.connect(self.sweepOther)
-        self.pb_reset.clicked(self.resetAcq)
+        self.pb_reset.clicked.connect(self.resetAcq)
         self.pb_liveView.clicked.connect(self.begin)
 
     def image_size_1(self):
@@ -81,11 +81,13 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
 
     def begin(self):
         while self.reset is False:
-            self.spinBox.setEnabled()
-            self.spinBox_2.setEnabled()
-            self.spinBox_3.setEnabled()
-            self.comboBox.setEnabled()
-            self.pb_sweepSame.setEnabled()
-            self.pb_sweepAlternate.setEnabled()
-            self.sb_exposure.setEnabled()
-            self.sb_acqTime.setEnabled()
+            self.spinBox.setEnabled(True)
+            self.spinBox_2.setEnabled(True)
+            self.spinBox_3.setEnabled(True)
+            self.comboBox.setEnabled(True)
+            self.pb_sweepSame.setEnabled(True)
+            self.pb_sweepAlternate.setEnabled(True)
+            self.sb_exposure.setEnabled(True)
+            self.sb_acqTime.setEnabled(True)
+            for i in range(100):
+                print(i)
