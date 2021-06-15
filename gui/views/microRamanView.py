@@ -77,17 +77,70 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.direction = 'other'
 
     def resetAcq(self):
-        self.reset = True
+        #self.reset = True
+        return True
 
     def begin(self):
         """
-        while self.reset is False:
-            self.spinBox.setEnabled(True)
-            self.spinBox_2.setEnabled(True)
-            self.spinBox_3.setEnabled(True)
-            self.comboBox.setEnabled(True)
-            self.pb_sweepSame.setEnabled(True)
-            self.pb_sweepAlternate.setEnabled(True)
-            self.sb_exposure.setEnabled(True)
-            self.sb_acqTime.setEnabled(True)
-        """
+        while not self.reset:
+            self.pb_reset.clicked.connect(self.resetAcq)
+            self.spinBox.setEnabled(False)
+            self.spinBox_2.setEnabled(False)
+            self.spinBox_3.setEnabled(False)
+            self.comboBox.setEnabled(False)
+            self.pb_sweepSame.setEnabled(False)
+            self.pb_sweepAlternate.setEnabled(False)
+            self.sb_exposure.setEnabled(False)
+            self.sb_acqTime.setEnabled(False)
+            for i in range(100):
+                print(i)
+            """
+        print('done')
+
+    """
+    def connect_signals(self):
+        log.debug("Connecting GUI signals...")
+        self.s_data_changed.connect(self.update_graph)
+        self.s_data_changed.connect(self.update_indicators)
+        # self.s_data_acquisition_done.connect(self.update_indicators)
+    
+    def reset(self):
+           self.dataPlotItem.clear()
+           self.remove_old_error_regions()
+           self.plotItem.setRange(xRange=self.xPlotRange, yRange=self.yPlotRange)
+           self.backgroundData = None
+           self.isBackgroundRemoved = False
+           self.normalizationData = None
+           self.normalizationMultiplierList = None
+           self.isSpectrumNormalized = False
+           self.update_indicators()
+           log.info("All parameters and acquisition reset.")
+    """
+
+    # Data Capture Methods
+
+    """
+    def select_save_folder(self):
+        self.folderPath = str(QFileDialog.getExistingDirectory(self, "Select Directory"))
+        if self.folderPath != "":
+            self.le_folderPath.setText(self.folderPath)
+
+    def toggle_autoindexing(self):
+        pass
+
+    def save_capture_csv(self):
+        self.fileName = self.le_fileName.text()
+        if self.folderPath == "":
+            pass
+
+        elif self.fileName == "":
+            pass
+
+        else:
+            fixedData = copy.deepcopy(self.displayData)
+            path = os.path.join(self.folderPath, self.fileName)
+            with open(path + ".csv", "w+") as f:
+                for i, x in enumerate(self.waves):
+                    f.write(f"{x},{fixedData[i]}\n")
+                f.close()
+    """
