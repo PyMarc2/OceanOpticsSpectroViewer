@@ -29,6 +29,8 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.direction = 'other'
         self.reset = False
         self.connect_widgets()
+        self.exposureTime = 50
+        self.integrationTime = 3000
 
     def initialize_buttons(self):
 
@@ -78,6 +80,12 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
 
     def resetAcq(self):
         self.reset = True
+
+    def setExposureTime(self):
+        self.exposureTime = self.b_exposure.value()
+
+    def setIntegrationTime(self):
+        self.integrationTime = self.sb_acqTime.value()
 
     def begin(self):
         """
