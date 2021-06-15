@@ -89,5 +89,3 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
             self.pb_sweepAlternate.setEnabled(True)
             self.sb_exposure.setEnabled(True)
             self.sb_acqTime.setEnabled(True)
-            for i in range(100):
-                print(i)
