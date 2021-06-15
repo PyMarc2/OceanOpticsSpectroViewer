@@ -27,6 +27,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.step = 0
         self.ordre = 1
         self.direction = 'other'
+        self.reset = False
         self.connect_widgets()
 
     def initialize_buttons(self):
@@ -47,6 +48,8 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.comboBox.currentTextChanged.connect(self.measure_unit)
         self.pb_sweepSame.clicked.connect(self.sweepSame)
         self.pb_sweepAlternate.clicked.connect(self.sweepOther)
+        self.pb_reset.clicked(self.resetAcq)
+        self.pb_liveView.clicked.connect(self.begin)
 
     def image_size_1(self):
         self.hauteur = self.spinBox.value()
@@ -73,5 +76,16 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
     def sweepOther(self):
         self.direction = 'other'
 
-    def connect_signals(self):
-        pass
+    def resetAcq(self):
+        self.reset = True
+
+    def begin(self):
+        while self.reset is False:
+            self.spinBox.setEnabled()
+            self.spinBox_2.setEnabled()
+            self.spinBox_3.setEnabled()
+            self.comboBox.setEnabled()
+            self.pb_sweepSame.setEnabled()
+            self.pb_sweepAlternate.setEnabled()
+            self.sb_exposure.setEnabled()
+            self.sb_acqTime.setEnabled()
