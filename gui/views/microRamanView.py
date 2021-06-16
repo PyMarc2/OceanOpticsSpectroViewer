@@ -7,6 +7,10 @@ import os
 from gui.modules import mockSpectrometer as mock
 from tools.threadWorker import Worker
 import numpy as np
+import logging
+
+
+log = logging.getLogger(__name__)
 
 
 microRamanViewUiPath = os.path.dirname(os.path.realpath(__file__)) + '{0}microRamanViewUi.ui'.format(os.sep)
@@ -292,8 +296,6 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.remove_old_error_regions()
         self.find_error_regions()
         self.add_error_regions()
-
-
 
     def verify_absolute_error(self):
         if self.isSpectrumNormalized:
