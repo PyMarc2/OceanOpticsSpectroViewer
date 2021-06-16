@@ -37,7 +37,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.AcqTime = 3000
         self.reset = False
         self.connect_widgets()
-        self.create_threads()
+        #self.create_threads()
 
         self.waves = None
         self.spec = None
@@ -51,10 +51,16 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.movingIntegrationData = None
         self.changeLastExposition = 0
 
-    def create_threads(self, *args):
+    def create_threads_acq(self, *args):
         self.acqWorker = Worker(self.manage_data_flow, *args)
         self.acqWorker.moveToThread(self.acqThread)
         self.acqThread.started.connect(self.acqWorker.run)
+
+    def create_threads(self):
+        self.sweepWorker = Worker(self.sweep, *args)
+        self.sweepWorker.moveToThread(self.sweepThread)
+        self.sweepThread.started.connect(self.sweepWorker.run)
+
 
     def initialize_buttons(self):
 
@@ -114,12 +120,6 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
     def set_acq_time(self):
         self.AcqTime = self.sb_acqTime.value()
 
-<<<<<<< Updated upstream
-    def create_threads(self):
-        self.sweepWorker = Worker(self.sweep, *args)
-        self.sweepWorker.moveToThread(self.sweepThread)
-        self.sweepThread.started.connect(self.sweepWorker.run)
-
     def disable_all_buttons(self):
         self.spinBox.setEnabled(False)
         self.spinBox_2.setEnabled(False)
@@ -141,8 +141,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.sb_acqTime.setEnabled(True)
 
     def sweep(self):
-=======
-
+        pass
 
 
 
@@ -179,7 +178,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
 
             self.acquire_background()
             self.normalize_data()
-            # self.hide_high_error_values()
+            self.hide_high_error_values()
             self.analyse_data()
 
             self.s_data_changed.emit({"y": self.displayData})
@@ -189,7 +188,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
 
 
     def begin(self):
->>>>>>> Stashed changes
+#>>>>>>> Stashed changes
         for i in range(100):
             self.pb_reset.clicked.connect(self.resetAcq)
             if not self.reset:
