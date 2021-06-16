@@ -41,8 +41,9 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.connect_widgets()
         self.create_threads()
 
+        s_data_changed = pyqtSignal(dict)
+        s_data_acquisition_done = pyqtSignal()
         self.acqThread = QThread()
-        self.create_threads_acq()
         self.waves = None
         self.spec = None
         self.dataLen = None
@@ -156,6 +157,25 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
             self.movingIntegrationData.append(self.liveAcquisitionData)
             self.isAcquisitionDone = True
             self.expositionCounter = 0
+
+    def launch_integration_acquisition(self):
+        if self.launchIntegrationAcquisition and not self.isAcquiringIntegration:
+            self.expositionCounter = 0
+            self.isAcquiringIntegration = True
+            self.launchIntegrationAcquisition = False
+            log.info("Integration Acquiring...")
+
+    def acquire_background(self):
+        pass
+
+    def normalize_data(self):
+        pass
+
+    def hide_high_error_values(self):
+        pass
+
+    def analyse_data(self):
+        pass
 
     def manage_data_flow(self, *args, **kwargs):
         self.waves = self.spec.wavelengths()[2:]
