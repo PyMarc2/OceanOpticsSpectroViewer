@@ -99,7 +99,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.comboBox.currentTextChanged.connect(self.measure_unit)
         self.pb_sweepSame.clicked.connect(self.sweep_same)
         self.pb_sweepAlternate.clicked.connect(self.sweep_other)
-        self.pb_reset.clicked.connect(self.reset_acq)
+        self.pb_reset.clicked.connect(self.stop_acq)
         self.pb_liveView.clicked.connect(self.begin)
         self.sb_acqTime.textChanged.connect(self.set_acq_time)
         self.sb_exposure.textChanged.connect(self.set_exposure_time)
@@ -347,9 +347,10 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
             self.s_data_changed.emit({"y": self.displayData})
 
     def sweep(self, *args, **kwargs):
+        self.count = 0
         while self.isSweepThreadAlive:
-            for i in range(100):
-                print(i)
+            self.count += 1
+            print(self.count)
 
     def begin(self):
         if not self.isSweepThreadAlive:
@@ -364,7 +365,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         else:
             print('Sampling already started')
 
-    def reset_acq(self):
+    def stop_acq(self):
         self.sweepThread.terminate()
         # self.pb_liveView.stop_flash()
         self.isSweepThreadAlive = False
