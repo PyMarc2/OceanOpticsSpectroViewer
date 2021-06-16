@@ -44,6 +44,14 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
 
         s_data_changed = pyqtSignal(dict)
         s_data_acquisition_done = pyqtSignal()
+        self.isAcquiringIntegration = False
+        self.isAcquiringBackground = False
+        self.launchIntegrationAcquisition = False
+        self.backgroundData = None
+        self.temporaryIntegrationData = None
+        self.isBackgroundRemoved = False
+        self.displayData = None
+        self.backgroundData = None
         self.waves = None
         self.spec = None
         self.dataLen = None
@@ -164,8 +172,32 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
             self.launchIntegrationAcquisition = False
             log.info("Integration Acquiring...")
 
+        elif self.isAcquiringIntegration:
+            if not self.isAcquisitionDone:
+                percent = int(self.expositionCounter * 100 / self.integrationCountAcq)
+                if percent in [25, 50, 75, 100]:
+                    log.debug(
+                    "Acquisition frame: {} over {} : {}%".format(self.expositionCounter, self.integrationCountAcq,
+                                                                int(self.expositionCounter * 100 / self.integrationCountAcq)))
+            elif self.isAcquisitionDone:
+                self.temporaryIntegrationData = np.mean(np.array(self.movingIntegrationData()), 0)
+                self.isAcquiringIntegration = False
+                log.debug("Integration acquired.")
+
+
     def acquire_background(self):
-        pass
+        if self.isAcquiringBackground:
+            self.launchIntegrationAcquisition = True
+            self.launch_integration_acquisition()
+
+            if self.isAcquisitionDone:
+                self.backgroundData = self.temporaryIntegrationData
+                self.isBackgroundRemoved = True
+                self.isAcquiringBackground = False
+                log.info("Background acquired.")
+
+        if self.isBackgroundRemoved:
+            self.displayData = self.displayData - self.backgroundData
 
     def normalize_data(self):
         pass
