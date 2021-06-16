@@ -20,7 +20,8 @@ Ui_microRamanView, QtBaseClass = uic.loadUiType(microRamanViewUiPath)
 
 class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
 
-    s_lens_data_changed = pyqtSignal(dict)
+    s_data_changed = pyqtSignal(dict)
+    s_data_acquisition_done = pyqtSignal()
 
     def __init__(self, model=None, controller=None):
         super(MicroRamanView, self).__init__()
@@ -31,7 +32,6 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.initialize_buttons()
 
         self.sweepThread = QThread()
-        self.acqThread =QThread()
         self.isAcquisitionThreadAlive = False
         self.isSweepThreadAlive = False
 
@@ -46,46 +46,20 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.connect_widgets()
         self.create_threads()
 
-        s_data_changed = pyqtSignal(dict)
-        s_data_acquisition_done = pyqtSignal()
-        self.isAcquiringNormalization = False
-        self.isSpectrumNormalized = False
+
         self.isAcquiringIntegration = False
-        self.isAcquiringBackground = False
         self.launchIntegrationAcquisition = False
-        self.backgroundData = None
         self.temporaryIntegrationData = None
-        self.isBackgroundRemoved = False
-        self.displayData = None
-        self.backgroundData = None
-        self.waves = None
         self.spec = None
-        self.dataLen = None
-        self.dataSep = 0
         self.liveAcquisitionData = []
         self.isAcquisitionDone = False
         self.expositionCounter = 0
         self.integrationCountAcq = 0
-        self.movingIntegrationData = None
-        self.changeLastExposition = 0
-        self.normalizationMultiplierList = []
-        self.normalizationData = None
-        self.errorRejectedList = None
-        self.maxAcceptedAbsErrorValues = 0.01
-        self.rejectedXValues = []
-        self.errorRegionsIndexesLimits = []
-        self.errorRegionsLimits = []
-        self.pyqtRegionList = []
-        self.integrationCountAcq = 0
-        self.changeLastExposition = 0
+
 
     #on va devoir changer le sweepthread pour un savethread, qui servira uniquement à l'enregistrement des données,
     #sinon le sweep et acquisition sont la même chose finalement
     def create_threads(self, *args):
-        self.acqWorker = Worker(self.manage_data_flow, *args)
-        self.acqWorker.moveToThread(self.acqThread)
-        self.acqThread.started.connect(self.acqWorker.run)
-
         self.sweepWorker = Worker(self.sweep, *args)
         self.sweepWorker.moveToThread(self.sweepThread)
         self.sweepThread.started.connect(self.sweepWorker.run)
@@ -137,31 +111,6 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
     def sweep_other(self):
         self.direction = 'other'
 
-    def set_exposure_time(self):
-        self.exposureTime = self.sb_exposure.value()
-
-    def set_integration_time(self, time_in_ms_view=None, time_in_ms_acq=None):
-        try:
-            if self.integrationTimeAcq >= self.exposureTime:
-                self.integrationCountAcq = self.integrationTimeAcq // self.exposureTime
-                self.integrationTimeAcqRemainder_ms = self.integrationTimeAcq - (
-                            self.integrationCountAcq * self.exposureTime)
-                self.sb_acqTime.setStyleSheet('color: black')
-            else:
-                self.integrationCountAcq = 1
-                self.sb_acqTime.setStyleSheet('color: red')
-
-        except ValueError as e:
-            log.error(e)
-            self.sb_acqTime.setStyleSheet('color: red')
-
-        if self.integrationTimeAcqRemainder_ms > 3:
-            self.movingIntegrationData = RingBuffer(size_max=self.integrationCountAcq + 1)
-            self.changeLastExposition = 1
-        else:
-            self.movingIntegrationData = RingBuffer(size_max=self.integrationCountAcq)
-            self.changeLastExposition = 0
-
     def disable_all_buttons(self):
         self.spinBox.setEnabled(False)
         self.spinBox_2.setEnabled(False)
@@ -182,25 +131,23 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.sb_exposure.setEnabled(True)
         self.sb_acqTime.setEnabled(True)
 
+    def set_exposure_time(self):
+        self.exposureTime = self.sb_exposure.value()
+
+    def set_integration_time(self, time_in_ms_view=None, time_in_ms_acq=None):
+        try:
+            if self.integrationTimeAcq >= self.exposureTime:
+                self.integrationCountAcq = self.integrationTimeAcq // self.exposureTime
+                self.integrationTimeAcqRemainder_ms = self.integrationTimeAcq - (
+                            self.integrationCountAcq * self.exposureTime)
+            else:
+                self.integrationCountAcq = 1
+
+        except ValueError as e:
+            self.sb_acqTime.setStyleSheet('color: red')
+
     def read_data_live(self, *args, **kwargs):
         return self.spec.intensities()[2:]
-
-    def integrate_data(self):
-        self.isAcquisitionDone = False
-        if self.expositionCounter < self.integrationCountAcq - 1:
-            self.movingIntegrationData.append(self.liveAcquisitionData)
-            self.expositionCounter += 1
-
-        elif self.expositionCounter == self.integrationCountAcq - 1:
-            self.movingIntegrationData.append(self.liveAcquisitionData)
-            self.expositionCounter += 1
-            if self.changeLastExposition:
-                self.set_exposure_time(self.integrationTimeAcqRemainder_ms, update=False)
-        else:
-            self.set_exposure_time(update=False)
-            self.movingIntegrationData.append(self.liveAcquisitionData)
-            self.isAcquisitionDone = True
-            self.expositionCounter = 0
 
     def launch_integration_acquisition(self):
         if self.launchIntegrationAcquisition and not self.isAcquiringIntegration:
