@@ -79,6 +79,8 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.integrationCountAcq = 0
         self.changeLastExposition = 0
 
+    #on va devoir changer le sweepthread pour un savethread, qui servira uniquement à l'enregistrement des données,
+    #sinon le sweep et acquisition sont la même chose finalement
     def create_threads(self, *args):
         self.acqWorker = Worker(self.manage_data_flow, *args)
         self.acqWorker.moveToThread(self.acqThread)
@@ -367,6 +369,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
 
             self.s_data_changed.emit({"y": self.displayData})
 
+    #ce sera ta fonction ça Benjamin, on pourrait changer le nom
     def sweep(self, *args, **kwargs):
         self.countHeight = 0
         self.countWidth = 0
@@ -376,14 +379,15 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
                 pass #read
             else:
                 self.isSweepThreadAlive = False
+    #il faudra connecter le signal de fin à move_stage, une fonction que je vais créer
 
+    #on veut donc activer acquisitionthread (sweepthread n'existera plus)
     def begin(self):
         if not self.isSweepThreadAlive:
             try:
                 self.disable_all_buttons()
                 self.sweepThread.start()
                 self.isSweepThreadAlive = True
-                #self.pb_liveView.start_flash()
 
             except Exception as e:
                 self.spec = mock.MockSpectrometer()
@@ -397,6 +401,9 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.isSweepThreadAlive = False
         self.enable_all_buttons()
 
+    def move_stage(self):
+        pass
+        #va manquer à importer le fichier de commnucation avec le stage
 
     """
     def connect_signals(self):
@@ -404,18 +411,6 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.s_data_changed.connect(self.update_graph)
         self.s_data_changed.connect(self.update_indicators)
         # self.s_data_acquisition_done.connect(self.update_indicators)
-    
-    def reset(self):
-           self.dataPlotItem.clear()
-           self.remove_old_error_regions()
-           self.plotItem.setRange(xRange=self.xPlotRange, yRange=self.yPlotRange)
-           self.backgroundData = None
-           self.isBackgroundRemoved = False
-           self.normalizationData = None
-           self.normalizationMultiplierList = None
-           self.isSpectrumNormalized = False
-           self.update_indicators()
-           log.info("All parameters and acquisition reset.")
     """
 
     # Data Capture Methods
