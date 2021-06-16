@@ -9,7 +9,6 @@ from tools.threadWorker import Worker
 import numpy as np
 
 
-
 microRamanViewUiPath = os.path.dirname(os.path.realpath(__file__)) + '{0}microRamanViewUi.ui'.format(os.sep)
 print(microRamanViewUiPath)
 Ui_microRamanView, QtBaseClass = uic.loadUiType(microRamanViewUiPath)
@@ -32,8 +31,8 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.isAcquisitionThreadAlive = False
         self.isSweepThreadAlive = False
 
-        self.hauteur = 0
-        self.largeur = 0
+        self.height = 0
+        self.width = 0
         self.step = 0
         self.ordre = 1
         self.direction = 'other'
@@ -93,10 +92,10 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
                                    QPixmap("./gui/misc/icons/sweep_alternate_selected.png").scaled(50, 50,Qt.KeepAspectRatio, Qt.SmoothTransformation))
 
     def connect_widgets(self):
-        self.spinBox.textChanged.connect(self.image_size_1)
-        self.spinBox_2.textChanged.connect(self.image_size_2)
-        self.spinBox_3.textChanged.connect(self.displacement_step)
-        self.comboBox.currentTextChanged.connect(self.measure_unit)
+        self.sb_height.textChanged.connect(self.image_height)
+        self.sb_width.textChanged.connect(self.image_width)
+        self.sb_step.textChanged.connect(self.displacement_step)
+        self.cmb_magnitude.currentTextChanged.connect(self.measure_unit)
         self.pb_sweepSame.clicked.connect(self.sweep_same)
         self.pb_sweepAlternate.clicked.connect(self.sweep_other)
         self.pb_reset.clicked.connect(self.stop_acq)
@@ -104,11 +103,11 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.sb_acqTime.textChanged.connect(self.set_acq_time)
         self.sb_exposure.textChanged.connect(self.set_exposure_time)
 
-    def image_size_1(self):
-        self.hauteur = self.spinBox.value()
+    def image_height(self):
+        self.height = self.spinBox.value()
 
-    def image_size_2(self):
-        self.largeur = self.spinBox_2.value()
+    def image_width(self):
+        self.width = self.spinBox_2.value()
 
     def displacement_step(self):
         self.step = self.spinBox_3.value()
@@ -350,7 +349,6 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.count = 0
         while self.isSweepThreadAlive:
             self.count += 1
-            print(self.count)
 
     def begin(self):
         if not self.isSweepThreadAlive:
