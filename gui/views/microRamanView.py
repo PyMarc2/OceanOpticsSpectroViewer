@@ -27,6 +27,9 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.initialize_buttons()
 
         self.sweepThread = QThread()
+        self.acqThread =QThread()
+        self.isAcquisitionThreadAlive = False
+        self.isSweepThreadAlive = False
 
         self.hauteur = 0
         self.largeur = 0
@@ -35,10 +38,8 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.direction = 'other'
         self.exposureTime = 50
         self.AcqTime = 3000
-        self.reset = False
         self.connect_widgets()
-        #self.create_threads()
-        #self.create_threads_acq()
+        self.create_threads()
 
         self.waves = None
         self.spec = None
@@ -52,19 +53,16 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.movingIntegrationData = None
         self.changeLastExposition = 0
 
-    def create_threads_acq(self, *args):
+    def create_threads(self, *args):
         self.acqWorker = Worker(self.manage_data_flow, *args)
         self.acqWorker.moveToThread(self.acqThread)
         self.acqThread.started.connect(self.acqWorker.run)
 
-    def create_threads(self):
         self.sweepWorker = Worker(self.sweep, *args)
         self.sweepWorker.moveToThread(self.sweepThread)
         self.sweepThread.started.connect(self.sweepWorker.run)
 
-
     def initialize_buttons(self):
-
         self.pb_sweepSame.setIcons(QPixmap("./gui/misc/icons/sweep_same.png").scaled(50, 50,Qt.KeepAspectRatio, Qt.SmoothTransformation),
                                    QPixmap("./gui/misc/icons/sweep_same_hover.png").scaled(50, 50,Qt.KeepAspectRatio, Qt.SmoothTransformation),
                                    QPixmap("./gui/misc/icons/sweep_same_clicked.png").scaled(50, 50,Qt.KeepAspectRatio, Qt.SmoothTransformation),
@@ -111,10 +109,6 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
     def sweep_other(self):
         self.direction = 'other'
 
-    def reset_acq(self):
-        self.reset = True
-        #return True
-
     def set_exposure_time(self):
         self.exposureTime = self.sb_exposure.value()
 
@@ -140,9 +134,6 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.pb_sweepAlternate.setEnabled(True)
         self.sb_exposure.setEnabled(True)
         self.sb_acqTime.setEnabled(True)
-
-    def sweep(self):
-        pass
 
     def read_data_live(self, *args, **kwargs):
         return self.spec.intensities()[2:]
@@ -182,17 +173,29 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
 
             self.s_data_changed.emit({"y": self.displayData})
 
-    def begin(self):
+    def sweep(self):
         for i in range(100):
-            self.pb_reset.clicked.connect(self.resetAcq)
-            if not self.reset:
-                self.pb_reset.clicked.connect(self.resetAcq)
-                self.disable_all_buttons()
-                print(i)
-            else:
-                pass
+            pass
 
-        self.reset = False
+    def begin(self):
+        if not self.isAcquisitionThreadAlive:
+            try:
+                self.acqThread.start()
+                self.isAcquisitionThreadAlive = True
+                #self.pb_liveView.start_flash()
+
+            except Exception as e:
+                self.spec = mock.MockSpectrometer()
+
+        else:
+            self.acqThread.terminate()
+            #self.pb_liveView.stop_flash()
+            self.isAcquisitionThreadAlive = False
+
+
+    def reset_acq(self):
+        pass
+
 
     """
     def connect_signals(self):
