@@ -4,6 +4,9 @@ from PyQt5.Qt import QPixmap
 from PyQt5.QtCore import pyqtSignal, Qt, QObject, QThread
 from PyQt5 import uic
 import os
+from gui.modules import mockSpectrometer as mock
+from tools.threadWorker import Worker
+
 
 
 microRamanViewUiPath = os.path.dirname(os.path.realpath(__file__)) + '{0}microRamanViewUi.ui'.format(os.sep)
@@ -35,6 +38,23 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.reset = False
         self.connect_widgets()
         self.create_threads()
+
+        self.waves = None
+        self.spec = None
+        self.dataLen = None
+        self.dataSep = 0
+        self.isAcquisitionThreadAlive = False
+        self.liveAcquisitionData = []
+        self.isAcquisitionDone = False
+        self.expositionCounter = 0
+        self.integrationCountAcq = 0
+        self.movingIntegrationData = None
+        self.changeLastExposition = 0
+
+    def create_threads(self, *args):
+        self.acqWorker = Worker(self.manage_data_flow, *args)
+        self.acqWorker.moveToThread(self.acqThread)
+        self.acqThread.started.connect(self.acqWorker.run)
 
     def initialize_buttons(self):
 
@@ -94,6 +114,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
     def set_acq_time(self):
         self.AcqTime = self.sb_acqTime.value()
 
+<<<<<<< Updated upstream
     def create_threads(self):
         self.sweepWorker = Worker(self.sweep, *args)
         self.sweepWorker.moveToThread(self.sweepThread)
@@ -120,6 +141,55 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.sb_acqTime.setEnabled(True)
 
     def sweep(self):
+=======
+
+
+
+
+    def read_data_live(self, *args, **kwargs):
+        return self.spec.intensities()[2:]
+
+    def integrate_data(self):
+        self.isAcquisitionDone = False
+        if self.expositionCounter < self.integrationCountAcq - 1:
+            self.movingIntegrationData.append(self.liveAcquisitionData)
+            self.expositionCounter += 1
+
+        elif self.expositionCounter == self.integrationCountAcq - 1:
+            self.movingIntegrationData.append(self.liveAcquisitionData)
+            self.expositionCounter += 1
+            if self.changeLastExposition:
+                self.set_exposure_time(self.integrationTimeAcqRemainder_ms, update=False)
+        else:
+            self.set_exposure_time(update=False)
+            self.movingIntegrationData.append(self.liveAcquisitionData)
+            self.isAcquisitionDone = True
+            self.expositionCounter = 0
+
+    def manage_data_flow(self, *args, **kwargs):
+        self.waves = self.spec.wavelengths()[2:]
+        self.dataLen = len(self.waves)
+        self.dataSep = (max(self.waves) - min(self.waves)) / len(self.waves)
+
+        while self.isAcquisitionThreadAlive:
+            self.liveAcquisitionData = self.read_data_live().tolist()
+
+            self.integrate_data()
+            self.displayData = np.mean(np.array(self.movingIntegrationData()), 0)
+
+            self.acquire_background()
+            self.normalize_data()
+            # self.hide_high_error_values()
+            self.analyse_data()
+
+            self.s_data_changed.emit({"y": self.displayData})
+
+
+
+
+
+    def begin(self):
+>>>>>>> Stashed changes
         for i in range(100):
             self.pb_reset.clicked.connect(self.resetAcq)
             if not self.reset:
