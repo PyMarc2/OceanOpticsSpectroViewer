@@ -41,6 +41,8 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.connect_widgets()
         self.create_threads()
 
+        self.acqThread = QThread()
+        self.create_threads_acq()
         self.waves = None
         self.spec = None
         self.dataLen = None
