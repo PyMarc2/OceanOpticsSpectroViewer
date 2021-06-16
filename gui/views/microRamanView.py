@@ -38,6 +38,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.reset = False
         self.connect_widgets()
         #self.create_threads()
+        #self.create_threads_acq()
 
         self.waves = None
         self.spec = None
@@ -143,8 +144,6 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
     def sweep(self):
         pass
 
-
-
     def read_data_live(self, *args, **kwargs):
         return self.spec.intensities()[2:]
 
@@ -183,12 +182,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
 
             self.s_data_changed.emit({"y": self.displayData})
 
-
-
-
-
     def begin(self):
-#>>>>>>> Stashed changes
         for i in range(100):
             self.pb_reset.clicked.connect(self.resetAcq)
             if not self.reset:
