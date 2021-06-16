@@ -41,13 +41,10 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.connect_widgets()
         self.create_threads()
 
-        self.acqThread = QThread()
-        self.create_threads_acq()
         self.waves = None
         self.spec = None
         self.dataLen = None
         self.dataSep = 0
-        self.isAcquisitionThreadAlive = False
         self.liveAcquisitionData = []
         self.isAcquisitionDone = False
         self.expositionCounter = 0
@@ -82,7 +79,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.pb_sweepSame.clicked.connect(self.sweep_same)
         self.pb_sweepAlternate.clicked.connect(self.sweep_other)
         self.pb_reset.clicked.connect(self.reset_acq)
-        #self.pb_liveView.clicked.connect(self.sweep)
+        self.pb_liveView.clicked.connect(self.begin)
         self.sb_acqTime.textChanged.connect(self.set_acq_time)
         self.sb_exposure.textChanged.connect(self.set_exposure_time)
 
@@ -177,7 +174,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
 
     def sweep(self):
         for i in range(100):
-            pass
+            print(i)
 
     def begin(self):
         if not self.isAcquisitionThreadAlive:
