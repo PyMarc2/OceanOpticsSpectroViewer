@@ -6,6 +6,7 @@ from PyQt5 import uic
 import os
 from gui.modules import mockSpectrometer as mock
 from tools.threadWorker import Worker
+import numpy as np
 
 
 
@@ -40,7 +41,6 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.AcqTime = 3000
         self.connect_widgets()
         self.create_threads()
-
 
         s_data_changed = pyqtSignal(dict)
         s_data_acquisition_done = pyqtSignal()
@@ -162,7 +162,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
             self.expositionCounter = 0
             self.isAcquiringIntegration = True
             self.launchIntegrationAcquisition = False
-            log.info("Integration Acquiring...")
+            #log.info("Integration Acquiring...")
 
     def acquire_background(self):
         pass
@@ -195,8 +195,9 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
             self.s_data_changed.emit({"y": self.displayData})
 
     def sweep(self):
-        for i in range(100):
-            print(i)
+        while self.isSweepThreadAlive:
+            for i in range(100):
+                print(i)
 
     def begin(self):
         if not self.isAcquisitionThreadAlive:
@@ -212,7 +213,6 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
             self.acqThread.terminate()
             #self.pb_liveView.stop_flash()
             self.isAcquisitionThreadAlive = False
-
 
     def reset_acq(self):
         pass
