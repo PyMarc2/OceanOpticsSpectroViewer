@@ -368,13 +368,19 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
             self.s_data_changed.emit({"y": self.displayData})
 
     def sweep(self, *args, **kwargs):
-        self.count = 0
+        self.countHeight = 0
+        self.countWidth = 0
+        self.countSpectrums = 0
         while self.isSweepThreadAlive:
-            self.count += 1
+            if self.countSpectrums < self.width*self.height:
+                pass #read
+            else:
+                self.isSweepThreadAlive = False
 
     def begin(self):
         if not self.isSweepThreadAlive:
             try:
+                self.disable_all_buttons()
                 self.sweepThread.start()
                 self.isSweepThreadAlive = True
                 #self.pb_liveView.start_flash()
@@ -383,12 +389,13 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
                 self.spec = mock.MockSpectrometer()
 
         else:
-            print('Sampling already started')
+            print('Sampling already started.')
 
     def stop_acq(self):
         self.sweepThread.terminate()
         # self.pb_liveView.stop_flash()
         self.isSweepThreadAlive = False
+        self.enable_all_buttons()
 
 
     """
