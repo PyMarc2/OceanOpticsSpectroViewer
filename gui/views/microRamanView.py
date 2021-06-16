@@ -6,6 +6,7 @@ from PyQt5 import uic
 import os
 from gui.modules import mockSpectrometer as mock
 from tools.threadWorker import Worker
+from tools.CircularList import RingBuffer
 import numpy as np
 import logging
 
@@ -20,7 +21,7 @@ Ui_microRamanView, QtBaseClass = uic.loadUiType(microRamanViewUiPath)
 
 class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
 
-    s_lens_data_changed = pyqtSignal(dict)
+    s_data_changed = pyqtSignal(dict)
 
     def __init__(self, model=None, controller=None):
         super(MicroRamanView, self).__init__()
@@ -219,40 +220,6 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
                 self.isAcquiringIntegration = False
                 log.debug("Integration acquired.")
 
-    def segregate_same_regions(inputList, sep):
-        listOfRegions = [[]]
-        listOfRegionsIndexes = [[]]
-        newRegion = 0
-        for i, v in enumerate(inputList):
-
-            if i == 0:
-                if inputList[1] <= inputList[0] + sep:
-                    listOfRegions[-1].append(inputList[0])
-                    listOfRegionsIndexes[-1].append(int(i))
-
-            elif inputList[i] <= inputList[i - 1] + sep:
-                if newRegion:
-                    listOfRegions[-1].append(inputList[i - 1])
-                    listOfRegionsIndexes[-1].append(int(i - 1))
-                    newRegion = 0
-                listOfRegions[-1].append(inputList[i])
-                listOfRegionsIndexes[-1].append(int(i))
-
-            else:
-                listOfRegions.append([])
-                listOfRegionsIndexes.append([])
-                newRegion = 1
-
-        listOfLimits = []
-        listOfIndexesLimits = []
-        if listOfRegions:
-            for i, region in enumerate(listOfRegions):
-                if region:
-                    listOfLimits.append([min(region), max(region)])
-                    listOfIndexesLimits.append([min(listOfRegionsIndexes[i]), max(listOfRegionsIndexes[i])])
-
-        return listOfLimits, listOfRegions, listOfRegionsIndexes, listOfIndexesLimits
-
     def acquire_background(self):
         if self.isAcquiringBackground:
             self.launchIntegrationAcquisition = True
@@ -291,64 +258,6 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         if self.isSpectrumNormalized:
             self.displayData = [a * b for a, b in zip(self.displayData, self.normalizationMultiplierList)]
 
-    def draw_error_regions(self):
-        self.verify_absolute_error()
-        self.remove_old_error_regions()
-        self.find_error_regions()
-        self.add_error_regions()
-
-    def verify_absolute_error(self):
-        if self.isSpectrumNormalized:
-            brute = np.array(self.movingIntegrationData()) * np.array(self.normalizationMultiplierList)
-            sd = np.std(brute, axis=0)
-            # log.debug("Standard Deviation of points:{}".format(sd))
-            self.errorRejectedList = []
-            counter = 0
-            for i, error in enumerate(sd):
-                if error >= self.maxAcceptedAbsErrorValue:
-                    self.errorRejectedList.append(True)
-                else:
-                    self.errorRejectedList.append(False)
-                    counter += 1
-            self.rejectedXValues = self.waves[self.errorRejectedList]
-            log.debug("Amount of accepted values:{}".format(counter))
-
-    def find_error_regions(self):
-        regionsLimits, regionPoints, regionIndexes, regionIndexesLimits = self.segregate_same_regions(
-            self.rejectedXValues, 15 * self.dataSep)
-
-        self.errorRegionsIndexesLimits = regionIndexesLimits
-        self.errorRegionsLimits = regionsLimits
-        log.debug("Rejected Regions:{}".format(self.errorRegionsLimits))
-
-    def add_error_regions(self):
-        try:
-            self.pyqtRegionList = []
-            for region in self.errorRegionsLimits:
-                errorRegion = LinearRegionItem(brush=self.errorBrush, pen=self.errorPen, movable=False)
-                errorRegion.setRegion(region)
-                self.pyqtRegionList.append(errorRegion)
-                self.plotItem.addItem(self.pyqtRegionList[-1])
-        except Exception as e:
-            log.error(e)
-
-    def remove_old_error_regions(self):
-        try:
-            for region in self.pyqtRegionList:
-                self.plotItem.removeItem(region)
-        except Exception as e:
-            log.error(e)
-
-    def hide_high_error_values(self):
-        if self.isSpectrumNormalized:
-            # log.debug(self.errorRegionIndexesLimits)
-            for region in self.errorRegionIndexesLimits:
-                for i in range(region[0], region[1]):
-                    self.displayData[i] = self.displayData[i] * 0
-
-    def analyse_data(self):
-        pass
-
     def manage_data_flow(self, *args, **kwargs):
         self.waves = self.spec.wavelengths()[2:]
         self.dataLen = len(self.waves)
@@ -362,8 +271,6 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
 
             self.acquire_background()
             self.normalize_data()
-            self.hide_high_error_values()
-            self.analyse_data()
 
             self.s_data_changed.emit({"y": self.displayData})
 
@@ -373,7 +280,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.countSpectrums = 0
         while self.isSweepThreadAlive:
             if self.countSpectrums < self.width*self.height:
-                pass #read
+                pass
             else:
                 self.isSweepThreadAlive = False
 
