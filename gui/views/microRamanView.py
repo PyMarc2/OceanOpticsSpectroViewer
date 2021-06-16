@@ -44,6 +44,8 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
 
         s_data_changed = pyqtSignal(dict)
         s_data_acquisition_done = pyqtSignal()
+        self.isAcquiringNormalization = False
+        self.isSpectrumNormalized = False
         self.isAcquiringIntegration = False
         self.isAcquiringBackground = False
         self.launchIntegrationAcquisition = False
@@ -62,6 +64,14 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.integrationCountAcq = 0
         self.movingIntegrationData = None
         self.changeLastExposition = 0
+        self.normalizationMultiplierList = []
+        self.normalizationData = None
+        self.errorRejectedList = None
+        self.maxAcceptedAbsErrorValues = 0.01
+        self.rejectedXValues = []
+        self.errorRegionsIndexesLimits = []
+        self.errorRegionsLimits = []
+        self.pyqtRegionList = []
 
     def create_threads(self, *args):
         self.acqWorker = Worker(self.manage_data_flow, *args)
@@ -184,6 +194,39 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
                 self.isAcquiringIntegration = False
                 log.debug("Integration acquired.")
 
+    def segregate_same_regions(inputList, sep):
+        listOfRegions = [[]]
+        listOfRegionsIndexes = [[]]
+        newRegion = 0
+        for i, v in enumerate(inputList):
+
+            if i == 0:
+                if inputList[1] <= inputList[0] + sep:
+                    listOfRegions[-1].append(inputList[0])
+                    listOfRegionsIndexes[-1].append(int(i))
+
+            elif inputList[i] <= inputList[i - 1] + sep:
+                if newRegion:
+                    listOfRegions[-1].append(inputList[i - 1])
+                    listOfRegionsIndexes[-1].append(int(i - 1))
+                    newRegion = 0
+                listOfRegions[-1].append(inputList[i])
+                listOfRegionsIndexes[-1].append(int(i))
+
+            else:
+                listOfRegions.append([])
+                listOfRegionsIndexes.append([])
+                newRegion = 1
+
+        listOfLimits = []
+        listOfIndexesLimits = []
+        if listOfRegions:
+            for i, region in enumerate(listOfRegions):
+                if region:
+                    listOfLimits.append([min(region), max(region)])
+                    listOfIndexesLimits.append([min(listOfRegionsIndexes[i]), max(listOfRegionsIndexes[i])])
+
+        return listOfLimits, listOfRegions, listOfRegionsIndexes, listOfIndexesLimits
 
     def acquire_background(self):
         if self.isAcquiringBackground:
@@ -200,10 +243,87 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
             self.displayData = self.displayData - self.backgroundData
 
     def normalize_data(self):
-        pass
+        if self.isAcquiringNormalization:
+            self.launchIntegrationAcquisition = True
+            self.launch_integration_acquisition()
+
+            if self.isAcquisitionDone:
+                self.normalizationMultiplierList = []
+                self.normalizationData = self.displayData
+                maximumCount = max(self.normalizationData)
+                for i in self.normalizationData:
+                    if i != 0:
+                        self.normalizationMultiplierList.append(float(1 / i))
+                    else:
+                        self.normalizationMultiplierList.append(0)
+
+                self.isSpectrumNormalized = True
+                self.isAcquiringNormalization = False
+                log.info("Normalization Spectrum acquired.")
+                self.plotItem.setRange(yRange=[0, 1.1])
+                self.draw_error_regions()
+
+        if self.isSpectrumNormalized:
+            self.displayData = [a * b for a, b in zip(self.displayData, self.normalizationMultiplierList)]
+
+    def draw_error_regions(self):
+        self.verify_absolute_error()
+        self.remove_old_error_regions()
+        self.find_error_regions()
+        self.add_error_regions()
+
+
+
+    def verify_absolute_error(self):
+        if self.isSpectrumNormalized:
+            brute = np.array(self.movingIntegrationData()) * np.array(self.normalizationMultiplierList)
+            sd = np.std(brute, axis=0)
+            # log.debug("Standard Deviation of points:{}".format(sd))
+            self.errorRejectedList = []
+            counter = 0
+            for i, error in enumerate(sd):
+                if error >= self.maxAcceptedAbsErrorValue:
+                    self.errorRejectedList.append(True)
+                else:
+                    self.errorRejectedList.append(False)
+                    counter += 1
+            self.rejectedXValues = self.waves[self.errorRejectedList]
+            log.debug("Amount of accepted values:{}".format(counter))
+
+    def find_error_regions(self):
+        regionsLimits, regionPoints, regionIndexes, regionIndexesLimits = self.segregate_same_regions(
+            self.rejectedXValues, 15 * self.dataSep)
+
+        self.errorRegionsIndexesLimits = regionIndexesLimits
+        self.errorRegionsLimits = regionsLimits
+        log.debug("Rejected Regions:{}".format(self.errorRegionsLimits))
+
+    def add_error_regions(self):
+        try:
+            self.pyqtRegionList = []
+            for region in self.errorRegionsLimits:
+                errorRegion = LinearRegionItem(brush=self.errorBrush, pen=self.errorPen, movable=False)
+                errorRegion.setRegion(region)
+                self.pyqtRegionList.append(errorRegion)
+                self.plotItem.addItem(self.pyqtRegionList[-1])
+        except Exception as e:
+            log.error(e)
+
+    def remove_old_error_regions(self):
+        try:
+            for region in self.pyqtRegionList:
+                self.plotItem.removeItem(region)
+        except Exception as e:
+            log.error(e)
 
     def hide_high_error_values(self):
-        pass
+        if self.isSpectrumNormalized:
+            # log.debug(self.errorRegionIndexesLimits)
+            for region in self.errorRegionIndexesLimits:
+                for i in range(region[0], region[1]):
+                    self.displayData[i] = self.displayData[i] * 0
+
+
 
     def analyse_data(self):
         pass
