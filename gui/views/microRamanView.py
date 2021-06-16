@@ -37,7 +37,8 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.ordre = 1
         self.direction = 'other'
         self.exposureTime = 50
-        self.AcqTime = 3000
+        self.integrationTimeAcq = 3000
+        self.acqTimeRemainder_ms = 0
         self.connect_widgets()
         self.create_threads()
 
@@ -71,6 +72,8 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.errorRegionsIndexesLimits = []
         self.errorRegionsLimits = []
         self.pyqtRegionList = []
+        self.integrationCountAcq = 0
+        self.changeLastExposition = 0
 
     def create_threads(self, *args):
         self.acqWorker = Worker(self.manage_data_flow, *args)
@@ -100,8 +103,8 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.pb_sweepAlternate.clicked.connect(self.sweep_other)
         self.pb_reset.clicked.connect(self.stop_acq)
         self.pb_liveView.clicked.connect(self.begin)
-        self.sb_acqTime.textChanged.connect(self.set_acq_time)
-        self.sb_exposure.textChanged.connect(self.set_exposure_time)
+        self.sb_acqTime.valueChanged.connect(lambda: setattr(self, 'integrationTimeAcq', self.sb_acqTime.value()))
+        self.sb_exposure.valueChanged.connect(lambda: setattr(self, 'exposureTime', self.sb_exposure.value()))
 
     def image_height(self):
         self.height = self.spinBox.value()
@@ -131,8 +134,27 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
     def set_exposure_time(self):
         self.exposureTime = self.sb_exposure.value()
 
-    def set_acq_time(self):
-        self.AcqTime = self.sb_acqTime.value()
+    def set_integration_time(self, time_in_ms_view=None, time_in_ms_acq=None):
+        try:
+            if self.integrationTimeAcq >= self.exposureTime:
+                self.integrationCountAcq = self.integrationTimeAcq // self.exposureTime
+                self.integrationTimeAcqRemainder_ms = self.integrationTimeAcq - (
+                            self.integrationCountAcq * self.exposureTime)
+                self.sb_acqTime.setStyleSheet('color: black')
+            else:
+                self.integrationCountAcq = 1
+                self.sb_acqTime.setStyleSheet('color: red')
+
+        except ValueError as e:
+            log.error(e)
+            self.sb_acqTime.setStyleSheet('color: red')
+
+        if self.integrationTimeAcqRemainder_ms > 3:
+            self.movingIntegrationData = RingBuffer(size_max=self.integrationCountAcq + 1)
+            self.changeLastExposition = 1
+        else:
+            self.movingIntegrationData = RingBuffer(size_max=self.integrationCountAcq)
+            self.changeLastExposition = 0
 
     def disable_all_buttons(self):
         self.spinBox.setEnabled(False)
@@ -321,8 +343,6 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
             for region in self.errorRegionIndexesLimits:
                 for i in range(region[0], region[1]):
                     self.displayData[i] = self.displayData[i] * 0
-
-
 
     def analyse_data(self):
         pass
