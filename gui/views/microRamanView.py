@@ -121,7 +121,8 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.sb_acqTime.setEnabled(True)
 
     def set_exposure_time(self):
-        self.exposureTime = self.sb_exposure.value()
+        expositionTime = self.exposureTime
+        self.spec.integration_time_micros(expositionTime * 1000)
 
     def set_integration_time(self, time_in_ms_view=None, time_in_ms_acq=None):
         try:
