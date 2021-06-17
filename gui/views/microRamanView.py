@@ -175,7 +175,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.countSpectrums = 0
         while self.isSweepThreadAlive:
             if self.countSpectrums < self.width*self.height:
-
+                pass
             else:
                 self.isSweepThreadAlive = False
             self.countSpectrums += 1
