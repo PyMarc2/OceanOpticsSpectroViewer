@@ -49,12 +49,18 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.create_threads()
 
         self.countIntegrationWhile = 0
-        self.isAcquiringIntegration = False
-        self.temporaryIntegrationData = None
-        self.spec = None
-        self.liveAcquisitionData = []
-        self.isAcquisitionDone = False
         self.integrationCountAcq = 0
+        self.expositionCounter = 0
+        self.integrationTimeAcqRemainder_ms = 0
+        self.changeLastExposition = 0
+        self.isAcquiringIntegration = False
+        self.isAcquisitionDone = False
+        self.isAcquiringBackground = False
+        self.launchIntegrationAcquisition = False
+        self.temporaryIntegrationData = None
+        self.movingIntegrationData = None
+        self.backgroundData = None
+        self.spec = None
         self.dataLive = []
         self.matriceDonnesBrutes = []
 
@@ -132,7 +138,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         expositionTime = self.exposureTime
         self.spec.integration_time_micros(expositionTime * 1000)
 
-    def set_integration_time(self, time_in_ms_view=None, time_in_ms_acq=None):
+    def set_integration_time(self):
         try:
             if self.integrationTimeAcq >= self.exposureTime:
                 self.integrationCountAcq = self.integrationTimeAcq // self.exposureTime
@@ -143,6 +149,43 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
 
         except ValueError as e:
             self.sb_acqTime.setStyleSheet('color: red')
+    
+        if self.integrationTimeAcqRemainder_ms > 3:
+            self.movingIntegrationData = RingBuffer(size_max=self.integrationCountAcq + 1)
+            self.changeLastExposition = 1
+        else:
+            self.movingIntegrationData = RingBuffer(size_max=self.integrationCountAcq)
+            self.changeLastExposition = 0
+
+    def integrate_data(self):
+        self.isAcquisitionDone = False
+        if self.expositionCounter < self.integrationCountAcq - 1:
+            self.movingIntegrationData.append(self.liveAcquisitionData)
+            self.expositionCounter += 1
+
+        elif self.expositionCounter == self.integrationCountAcq - 1:
+            self.movingIntegrationData.append(self.liveAcquisitionData)
+            self.expositionCounter += 1
+            if self.changeLastExposition:
+                self.set_exposure_time(self.integrationTimeAcqRemainder_ms, update=False)
+        else:
+            self.set_exposure_time(update=False)
+            self.movingIntegrationData.append(self.liveAcquisitionData)
+            self.isAcquisitionDone = True
+            self.expositionCounter = 0
+
+    def acquire_background(self):
+        if self.isAcquiringBackground:
+            self.launchIntegrationAcquisition = True
+            self.launch_integration_acquisition()
+
+            if self.isAcquisitionDone:
+                self.backgroundData = self.temporaryIntegrationData
+                self.isBackgroundRemoved = True
+                self.isAcquiringBackground = False
+
+        if self.isBackgroundRemoved:
+            self.dataLive = self.dataLive - self.backgroundData
 
     def read_data_live(self, *args, **kwargs):
         return self.spec.intensities()[2:]
@@ -160,12 +203,6 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
                 self.isAcquiringIntegration = False
 
     def SpectrumAcquisition(self):#Pas optimal avec la boucle en discuter avec MARC (boucle while + count?)
-        self.launch_integration_acquisition()
-        for i in range(integrationCountAcq):
-            self.dataLive.append(self.read_data_live)
-        self.matriceDonnesBrutes.append(dataLive)# il faudrait l'envoyé au bon endroit... comment faire?
-        self.dataLive = []
-        self.isAcquisitionDone = True
         self.launch_integration_acquisition()
 
     #ce sera ta fonction ça Benjamin, on pourrait changer le nom
