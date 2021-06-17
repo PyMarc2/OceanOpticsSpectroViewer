@@ -49,13 +49,13 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
 
         self.countIntegrationWhile = 0
         self.isAcquiringIntegration = False
-        self.launchIntegrationAcquisition = False
         self.temporaryIntegrationData = None
         self.spec = None
         self.liveAcquisitionData = []
         self.isAcquisitionDone = False
-        self.expositionCounter = 0
         self.integrationCountAcq = 0
+        self.dataLive = []
+        self.matriceDonnesBrutes = []
 
     #on va devoir changer le sweepthread pour un savethread, qui servira uniquement à l'enregistrement des données,
     #sinon le sweep et acquisition sont la même chose finalement
@@ -142,9 +142,8 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
 
     def launch_integration_acquisition(self):
         if self.launchIntegrationAcquisition and not self.isAcquiringIntegration:
-            self.expositionCounter = 0
             self.isAcquiringIntegration = True
-            self.launchIntegrationAcquisition = False
+            self.isAcquisitionDone = False
 
         elif self.isAcquiringIntegration:
             if not self.isAcquisitionDone:
@@ -155,10 +154,10 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
 
     def SpectrumAcquisition(self):#Pas optimal avec la boucle en discuter avec MARC (boucle while + count?)
         self.launch_integration_acquisition()
-        #self.set_exposure_time()
-        #self.set_integration_time()
         for i in range(integrationCountAcq):
-            self.dataDisplay += self.read_data_live
+            self.dataLive.append(self.read_data_live)
+        self.matriceDonnesBrutes.append(dataLive)# il faudrait l'envoyé au bon endroit... comment faire?
+        self.dataLive = []
         self.isAcquisitionDone = True
         self.launch_integration_acquisition()
 
