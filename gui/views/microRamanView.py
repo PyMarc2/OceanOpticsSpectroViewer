@@ -76,25 +76,16 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
                                    QPixmap("./gui/misc/icons/sweep_alternate_selected.png").scaled(50, 50,Qt.KeepAspectRatio, Qt.SmoothTransformation))
 
     def connect_widgets(self):
-        self.sb_height.textChanged.connect(self.image_height)
-        self.sb_width.textChanged.connect(self.image_width)
-        self.sb_step.textChanged.connect(self.displacement_step)
+        self.sb_height.textChanged.connect(lambda: setattr(self, 'height', self.sb_height.value()))
+        self.sb_width.textChanged.connect(lambda: setattr(self, 'width', self.sb_width.value()))
+        self.sb_step.textChanged.connect(lambda: setattr(self, 'step', self.sb_step.value()))
         self.cmb_magnitude.currentTextChanged.connect(self.measure_unit)
-        self.pb_sweepSame.clicked.connect(self.sweep_same)
-        self.pb_sweepAlternate.clicked.connect(self.sweep_other)
+        self.pb_sweepSame.clicked.connect(lambda: setattr(self, 'direction', 'same'))
+        self.pb_sweepAlternate.clicked.connect(lambda: setattr(self, 'direction', 'other'))
         self.pb_reset.clicked.connect(self.stop_acq)
         self.pb_liveView.clicked.connect(self.begin)
         self.sb_acqTime.valueChanged.connect(lambda: setattr(self, 'integrationTimeAcq', self.sb_acqTime.value()))
         self.sb_exposure.valueChanged.connect(lambda: setattr(self, 'exposureTime', self.sb_exposure.value()))
-
-    def image_height(self):
-        self.height = self.sb_height.value()
-
-    def image_width(self):
-        self.width = self.sb_width.value()
-
-    def displacement_step(self):
-        self.step = self.sb_step.value()
 
     def measure_unit(self):
         if self.cmb_magnitude.currentText() == 'mm':
@@ -106,11 +97,8 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         elif self.cmb_magnitude.currentText() == 'nm':
             self.ordre = 10**(-3)
 
-    def sweep_same(self):
-        self.direction = 'same'
-
-    def sweep_other(self):
-        self.direction = 'other'
+        else:
+            print('What the hell is going on?')
 
     def disable_all_buttons(self):
         self.sb_height.setEnabled(False)
