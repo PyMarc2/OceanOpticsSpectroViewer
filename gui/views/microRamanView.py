@@ -88,22 +88,22 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.sb_exposure.valueChanged.connect(lambda: setattr(self, 'exposureTime', self.sb_exposure.value()))
 
     def image_height(self):
-        self.height = self.spinBox.value()
+        self.height = self.sb_height.value()
 
     def image_width(self):
-        self.width = self.spinBox_2.value()
+        self.width = self.sb_width.value()
 
     def displacement_step(self):
-        self.step = self.spinBox_3.value()
+        self.step = self.sb_step.value()
 
     def measure_unit(self):
-        if self.comboBox.currentText() == 'mm':
+        if self.cmb_magnitude.currentText() == 'mm':
             self.ordre = 10**3
 
-        elif self.comboBox.currentText() == 'um':
+        elif self.cmb_magnitude.currentText() == 'um':
             self.ordre = 1
 
-        elif self.comboBox.currentText() == 'nm':
+        elif self.cmb_magnitude.currentText() == 'nm':
             self.ordre = 10**(-3)
 
     def sweep_same(self):
