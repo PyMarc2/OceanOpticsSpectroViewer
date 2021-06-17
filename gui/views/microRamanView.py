@@ -196,10 +196,14 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
             print('Sampling already started.')
 
     def stop_acq(self):
-        self.sweepThread.terminate()
-        # self.pb_liveView.stop_flash()
-        self.isSweepThreadAlive = False
-        self.enable_all_buttons()
+        if self.isSweepThreadAlive:
+            self.sweepThread.terminate()
+            # self.pb_liveView.stop_flash()
+            self.isSweepThreadAlive = False
+            self.enable_all_buttons()
+        else:
+            print('Sampling already stopped.')
+
 
     def move_stage(self):
         pass
