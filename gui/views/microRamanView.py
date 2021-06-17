@@ -47,7 +47,6 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.connect_widgets()
         self.create_threads()
 
-
         self.isAcquiringIntegration = False
         self.launchIntegrationAcquisition = False
         self.temporaryIntegrationData = None
@@ -56,7 +55,6 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.isAcquisitionDone = False
         self.expositionCounter = 0
         self.integrationCountAcq = 0
-
 
     #on va devoir changer le sweepthread pour un savethread, qui servira uniquement à l'enregistrement des données,
     #sinon le sweep et acquisition sont la même chose finalement
@@ -153,17 +151,14 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
             elif self.isAcquisitionDone:
                 self.isAcquiringIntegration = False
 
-
-
     def SpectrumAcquisition(self):
         self.launch_integration_acquisition()
-        self.set_exposure_time()
-        self.set_integration_time()
-        for i in range (integrationCountAcq):
+        #self.set_exposure_time()
+        #self.set_integration_time()
+        for i in range(integrationCountAcq):
             self.dataDisplay += self.read_data_live
         self.isAcquisitionDone = True
         self.launch_integration_acquisition()
-
 
     #ce sera ta fonction ça Benjamin, on pourrait changer le nom
     def sweep(self, *args, **kwargs):
