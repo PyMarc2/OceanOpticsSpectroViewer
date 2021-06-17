@@ -138,8 +138,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         else:
             print('What the hell is going on?')
 
-<<<<<<< Updated upstream
-=======
+
     def disable_all_buttons(self):
         self.sb_height.setEnabled(False)
         self.sb_width.setEnabled(False)
@@ -164,7 +163,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         #self.pb_sweepSame.setFlat(False)
         #self.pb_sweepAlternate.setFlat(False)
 
->>>>>>> Stashed changes
+
     def set_exposure_time(self):
         expositionTime = self.exposureTime
         self.spec.integration_time_micros(expositionTime * 1000)
