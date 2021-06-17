@@ -169,10 +169,6 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
                 self.isAcquiringIntegration = False
                 log.debug("Integration acquired.")
 
-<<<<<<< HEAD
-
-=======
->>>>>>> benjustine-microraman
     #ce sera ta fonction ça Benjamin, on pourrait changer le nom
     def sweep(self, *args, **kwargs):
         self.countHeight = 0
