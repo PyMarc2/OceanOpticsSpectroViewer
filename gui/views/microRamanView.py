@@ -113,20 +113,20 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.direction = 'other'
 
     def disable_all_buttons(self):
-        self.spinBox.setEnabled(False)
-        self.spinBox_2.setEnabled(False)
-        self.spinBox_3.setEnabled(False)
-        self.comboBox.setEnabled(False)
+        self.sb_height.setEnabled(False)
+        self.sb_width.setEnabled(False)
+        self.sb_step.setEnabled(False)
+        self.cmb_magnitude.setEnabled(False)
         self.pb_sweepSame.setEnabled(False)
         self.pb_sweepAlternate.setEnabled(False)
         self.sb_exposure.setEnabled(False)
         self.sb_acqTime.setEnabled(False)
 
     def enable_all_buttons(self):
-        self.spinBox.setEnabled(True)
-        self.spinBox_2.setEnabled(True)
-        self.spinBox_3.setEnabled(True)
-        self.comboBox.setEnabled(True)
+        self.sb_height.setEnabled(True)
+        self.sb_width.setEnabled(True)
+        self.sb_step.setEnabled(True)
+        self.cmb_magnitude.setEnabled(True)
         self.pb_sweepSame.setEnabled(True)
         self.pb_sweepAlternate.setEnabled(True)
         self.sb_exposure.setEnabled(True)
