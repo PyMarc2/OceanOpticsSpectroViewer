@@ -47,6 +47,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.connect_widgets()
         self.create_threads()
 
+        self.countIntegrationWhile = 0
         self.isAcquiringIntegration = False
         self.launchIntegrationAcquisition = False
         self.temporaryIntegrationData = None
@@ -152,7 +153,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
             elif self.isAcquisitionDone:
                 self.isAcquiringIntegration = False
 
-    def SpectrumAcquisition(self):
+    def SpectrumAcquisition(self):#Pas optimal avec la boucle en discuter avec MARC (boucle while + count?)
         self.launch_integration_acquisition()
         #self.set_exposure_time()
         #self.set_integration_time()
