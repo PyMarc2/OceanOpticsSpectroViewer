@@ -6,6 +6,7 @@ from PyQt5 import uic
 import os
 from gui.modules import mockSpectrometer as mock
 from tools.threadWorker import Worker
+from tools.CircularList import RingBuffer
 import numpy as np
 import logging
 
@@ -20,7 +21,7 @@ Ui_microRamanView, QtBaseClass = uic.loadUiType(microRamanViewUiPath)
 
 class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
 
-    s_lens_data_changed = pyqtSignal(dict)
+    s_data_changed = pyqtSignal(dict)
 
     def __init__(self, model=None, controller=None):
         super(MicroRamanView, self).__init__()
@@ -221,7 +222,6 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
                 self.isAcquiringIntegration = False
                 log.debug("Integration acquired.")
 
-
     #ce sera ta fonction ça Benjamin, on pourrait changer le nom
     def sweep(self, *args, **kwargs):
         self.countHeight = 0
@@ -229,7 +229,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.countSpectrums = 0
         while self.isSweepThreadAlive:
             if self.countSpectrums < self.width*self.height:
-                pass #read
+                pass
             else:
                 self.isSweepThreadAlive = False
     #il faudra connecter le signal de fin à move_stage, une fonction que je vais créer
