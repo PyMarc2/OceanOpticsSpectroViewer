@@ -161,7 +161,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.set_integration_time()
         for i in range (integrationCountAcq):
             self.dataDisplay += self.read_data_live
-        self.isAcquisitionDone = False
+        self.isAcquisitionDone = True
         self.launch_integration_acquisition()
 
 
