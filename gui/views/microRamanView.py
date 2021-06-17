@@ -35,6 +35,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.sweepThread = QThread()
         self.isAcquisitionThreadAlive = False
         self.isSweepThreadAlive = False
+        self.saveThread = Qthread()
 
         self.height = 0
         self.width = 0
@@ -63,6 +64,12 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.sweepWorker = Worker(self.sweep, *args)
         self.sweepWorker.moveToThread(self.sweepThread)
         self.sweepThread.started.connect(self.sweepWorker.run)
+
+        """
+        self.saveWorker = Worker(self.save, *args)
+        self.saveWorker.moveToThread(self.saveThread)
+        self.saveThread.started.connect(self.saveWorker.run)
+        """
 
     def initialize_buttons(self):
         self.pb_sweepSame.setIcons(QPixmap("./gui/misc/icons/sweep_same.png").scaled(50, 50,Qt.KeepAspectRatio, Qt.SmoothTransformation),
@@ -168,9 +175,10 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.countSpectrums = 0
         while self.isSweepThreadAlive:
             if self.countSpectrums < self.width*self.height:
-                pass
+
             else:
                 self.isSweepThreadAlive = False
+            self.countSpectrums += 1
     #il faudra connecter le signal de fin à move_stage, une fonction que je vais créer
 
     #on veut donc activer acquisitionthread (sweepthread n'existera plus)
@@ -191,15 +199,18 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         if self.isSweepThreadAlive:
             self.sweepThread.terminate()
             # self.pb_liveView.stop_flash()
-            self.isSweepThreadAlive = False
-            self.enable_all_buttons()
         else:
             print('Sampling already stopped.')
 
+        self.isSweepThreadAlive = False
+        self.enable_all_buttons()
 
     def move_stage(self):
         pass
         #va manquer à importer le fichier de commnucation avec le stage
+
+    def save(self):
+        pass
 
     """
     def connect_signals(self):
