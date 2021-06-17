@@ -62,6 +62,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.spec = None
         self.dataLive = []
         self.matriceDonnesBrutes = []
+        self.liveAcquisitionData = []
 
     #on va devoir changer le sweepthread pour un savethread, qui servira uniquement à l'enregistrement des données,
     #sinon le sweep et acquisition sont la même chose finalement
@@ -81,6 +82,26 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
                                    QPixmap("./gui/misc/icons/sweep_alternate_hover.png").scaled(50, 50,Qt.KeepAspectRatio, Qt.SmoothTransformation),
                                    QPixmap("./gui/misc/icons/sweep_alternate_clicked.png").scaled(50, 50,Qt.KeepAspectRatio, Qt.SmoothTransformation),
                                    QPixmap("./gui/misc/icons/sweep_alternate_selected.png").scaled(50, 50,Qt.KeepAspectRatio, Qt.SmoothTransformation))
+
+    def disable_all_buttons(self):
+        self.sb_height.setEnabled(False)
+        self.sb_width.setEnabled(False)
+        self.sb_step.setEnabled(False)
+        self.cmb_magnitude.setEnabled(False)
+        self.pb_sweepSame.setEnabled(False)
+        self.pb_sweepAlternate.setEnabled(False)
+        self.sb_exposure.setEnabled(False)
+        self.sb_acqTime.setEnabled(False)
+
+    def enable_all_buttons(self):
+        self.sb_height.setEnabled(True)
+        self.sb_width.setEnabled(True)
+        self.sb_step.setEnabled(True)
+        self.cmb_magnitude.setEnabled(True)
+        self.pb_sweepSame.setEnabled(True)
+        self.pb_sweepAlternate.setEnabled(True)
+        self.sb_exposure.setEnabled(True)
+        self.sb_acqTime.setEnabled(True)
 
     def connect_widgets(self):
         self.sb_height.textChanged.connect(lambda: setattr(self, 'height', self.sb_height.value()))
@@ -109,26 +130,6 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         else:
             print('What the hell is going on?')
 
-    def disable_all_buttons(self):
-        self.sb_height.setEnabled(False)
-        self.sb_width.setEnabled(False)
-        self.sb_step.setEnabled(False)
-        self.cmb_magnitude.setEnabled(False)
-        self.pb_sweepSame.setEnabled(False)
-        self.pb_sweepAlternate.setEnabled(False)
-        self.sb_exposure.setEnabled(False)
-        self.sb_acqTime.setEnabled(False)
-
-    def enable_all_buttons(self):
-        self.sb_height.setEnabled(True)
-        self.sb_width.setEnabled(True)
-        self.sb_step.setEnabled(True)
-        self.cmb_magnitude.setEnabled(True)
-        self.pb_sweepSame.setEnabled(True)
-        self.pb_sweepAlternate.setEnabled(True)
-        self.sb_exposure.setEnabled(True)
-        self.sb_acqTime.setEnabled(True)
-
     def set_exposure_time(self):
         expositionTime = self.exposureTime
         self.spec.integration_time_micros(expositionTime * 1000)
@@ -152,6 +153,31 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
             self.movingIntegrationData = RingBuffer(size_max=self.integrationCountAcq)
             self.changeLastExposition = 0
 
+    def launch_integration_acquisition(self):
+        if self.launchIntegrationAcquisition and not self.isAcquiringIntegration:
+            self.isAcquiringIntegration = True
+            self.isAcquisitionDone = False
+
+        elif self.isAcquiringIntegration:
+            if not self.isAcquisitionDone:
+                pass
+
+            elif self.isAcquisitionDone:
+                self.isAcquiringIntegration = False
+
+    def acquire_background(self):
+        if self.isAcquiringBackground:
+            self.launchIntegrationAcquisition = True
+            self.launch_integration_acquisition()
+
+            if self.isAcquisitionDone:
+                self.backgroundData = self.temporaryIntegrationData
+                self.isBackgroundRemoved = True
+                self.isAcquiringBackground = False
+
+        if self.isBackgroundRemoved:
+            self.dataLive = self.dataLive - self.backgroundData
+
     def integrate_data(self):
         self.isAcquisitionDone = False
         if self.expositionCounter < self.integrationCountAcq - 1:
@@ -169,36 +195,24 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
             self.isAcquisitionDone = True
             self.expositionCounter = 0
 
-    def acquire_background(self):
-        if self.isAcquiringBackground:
-            self.launchIntegrationAcquisition = True
-            self.launch_integration_acquisition()
-
-            if self.isAcquisitionDone:
-                self.backgroundData = self.temporaryIntegrationData
-                self.isBackgroundRemoved = True
-                self.isAcquiringBackground = False
-
-        if self.isBackgroundRemoved:
-            self.dataLive = self.dataLive - self.backgroundData
-
     def read_data_live(self, *args, **kwargs):
         return self.spec.intensities()[2:]
 
-    def launch_integration_acquisition(self):
-        if self.launchIntegrationAcquisition and not self.isAcquiringIntegration:
-            self.isAcquiringIntegration = True
-            self.isAcquisitionDone = False
-
-        elif self.isAcquiringIntegration:
-            if not self.isAcquisitionDone:
-                pass
-
-            elif self.isAcquisitionDone:
-                self.isAcquiringIntegration = False
-
     def SpectrumAcquisition(self):#Pas optimal avec la boucle en discuter avec MARC (boucle while + count?)
         self.launch_integration_acquisition()
+
+    def stop_acq(self):
+        if self.isSweepThreadAlive:
+            self.sweepThread.terminate()
+            self.isSweepThreadAlive = False
+        else:
+            print('Sampling already stopped.')
+
+        self.enable_all_buttons()
+
+    def move_stage(self):
+        pass
+        #va manquer à importer le fichier de commnucation avec le stage
 
     #ce sera ta fonction ça Benjamin, on pourrait changer le nom
     def sweep(self, *args, **kwargs):
@@ -226,19 +240,6 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
 
         else:
             print('Sampling already started.')
-
-    def stop_acq(self):
-        if self.isSweepThreadAlive:
-            self.sweepThread.terminate()
-            self.isSweepThreadAlive = False
-        else:
-            print('Sampling already stopped.')
-
-        self.enable_all_buttons()
-
-    def move_stage(self):
-        pass
-        #va manquer à importer le fichier de commnucation avec le stage
 
     def save(self):
         pass
