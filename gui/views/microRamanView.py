@@ -1,7 +1,7 @@
 import numpy
 from PyQt5.QtWidgets import QWidget
 from PyQt5.Qt import QPixmap
-from PyQt5.QtCore import pyqtSignal, Qt, QObject, QThread
+from PyQt5.QtCore import pyqtSignal, Qt, QObject, QThreadPool
 from PyQt5 import uic
 import os
 from gui.modules import mockSpectrometer as mock
@@ -32,10 +32,9 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.dataPlotItem = None
         self.initialize_buttons()
 
-        self.sweepThread = QThread()
+        self.threading = QThreadPool()
         self.isAcquisitionThreadAlive = False
         self.isSweepThreadAlive = False
-        self.saveThread = Qthread()
 
         self.height = 0
         self.width = 0
@@ -62,13 +61,9 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
     #sinon le sweep et acquisition sont la même chose finalement
     def create_threads(self, *args):
         self.sweepWorker = Worker(self.sweep, *args)
-        self.sweepWorker.moveToThread(self.sweepThread)
-        self.sweepThread.started.connect(self.sweepWorker.run)
 
         """
         self.saveWorker = Worker(self.save, *args)
-        self.saveWorker.moveToThread(self.saveThread)
-        self.saveThread.started.connect(self.saveWorker.run)
         """
 
     def initialize_buttons(self):
@@ -186,7 +181,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         if not self.isSweepThreadAlive:
             try:
                 self.disable_all_buttons()
-                self.sweepThread.start()
+                self.threading.start(self.sweepWorker)
                 self.isSweepThreadAlive = True
 
             except Exception as e:
@@ -198,11 +193,10 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
     def stop_acq(self):
         if self.isSweepThreadAlive:
             self.sweepThread.terminate()
-            # self.pb_liveView.stop_flash()
+            self.isSweepThreadAlive = False
         else:
             print('Sampling already stopped.')
 
-        self.isSweepThreadAlive = False
         self.enable_all_buttons()
 
     def move_stage(self):
