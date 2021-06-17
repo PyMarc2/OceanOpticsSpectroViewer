@@ -85,7 +85,9 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.pb_reset.clicked.connect(self.stop_acq)
         self.pb_liveView.clicked.connect(self.begin)
         self.sb_acqTime.valueChanged.connect(lambda: setattr(self, 'integrationTimeAcq', self.sb_acqTime.value()))
+        self.sb_acqTime.valueChanged.connect(self.set_integration_time)
         self.sb_exposure.valueChanged.connect(lambda: setattr(self, 'exposureTime', self.sb_exposure.value()))
+        self.sb_exposure.valueChanged.connect(self.set_exposure_time)
 
     def measure_unit(self):
         if self.cmb_magnitude.currentText() == 'mm':
@@ -143,19 +145,24 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
             self.expositionCounter = 0
             self.isAcquiringIntegration = True
             self.launchIntegrationAcquisition = False
-            #log.info("Integration Acquiring...")
 
         elif self.isAcquiringIntegration:
             if not self.isAcquisitionDone:
-                percent = int(self.expositionCounter * 100 / self.integrationCountAcq)
-                if percent in [25, 50, 75, 100]:
-                    log.debug(
-                    "Acquisition frame: {} over {} : {}%".format(self.expositionCounter, self.integrationCountAcq,
-                                                                int(self.expositionCounter * 100 / self.integrationCountAcq)))
+                pass
+
             elif self.isAcquisitionDone:
-                self.temporaryIntegrationData = np.mean(np.array(self.movingIntegrationData()), 0)
                 self.isAcquiringIntegration = False
-                log.debug("Integration acquired.")
+
+
+
+    def SpectrumAcquisition(self):
+        self.launch_integration_acquisition()
+        self.set_exposure_time()
+        self.set_integration_time()
+        for i in range (integrationCountAcq):
+            self.dataDisplay += self.read_data_live
+        self.launch_integration_acquisition()
+
 
     #ce sera ta fonction ça Benjamin, on pourrait changer le nom
     def sweep(self, *args, **kwargs):
