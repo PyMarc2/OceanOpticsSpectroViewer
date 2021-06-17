@@ -1,7 +1,7 @@
 import numpy
 from PyQt5.QtWidgets import QWidget
 from PyQt5.Qt import QPixmap
-from PyQt5.QtCore import pyqtSignal, Qt, QObject, QThreadPool
+from PyQt5.QtCore import pyqtSignal, Qt, QObject, QThreadPool, QThread
 from PyQt5 import uic
 import os
 from gui.modules import mockSpectrometer as mock
@@ -32,7 +32,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.dataPlotItem = None
         self.initialize_buttons()
 
-        self.threading = QThreadPool()
+        self.threadpool = QThreadPool()
         self.isAcquisitionThreadAlive = False
         self.isSweepThreadAlive = False
 
@@ -68,6 +68,14 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
     #sinon le sweep et acquisition sont la même chose finalement
     def create_threads(self, *args):
         self.sweepWorker = Worker(self.sweep, *args)
+        self.sweepThread = QThread()
+        self.sweepWorker.moveToThread(self.sweepThread)
+        self.sweepThread.started.connect(self.sweepWorker.run)
+
+        self.saveWorker = Worker(self.save, *args)
+        self.saveThread = QThread()
+        self.saveWorker.moveToThread(self.saveThread)
+        self.saveThread.started.connect(self.saveWorker.run)
 
         """
         self.saveWorker = Worker(self.save, *args)
@@ -130,6 +138,33 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         else:
             print('What the hell is going on?')
 
+<<<<<<< Updated upstream
+=======
+    def disable_all_buttons(self):
+        self.sb_height.setEnabled(False)
+        self.sb_width.setEnabled(False)
+        self.sb_step.setEnabled(False)
+        self.cmb_magnitude.setEnabled(False)
+        self.pb_sweepSame.setEnabled(False)
+        self.pb_sweepAlternate.setEnabled(False)
+        self.sb_exposure.setEnabled(False)
+        self.sb_acqTime.setEnabled(False)
+        #self.pb_sweepSame.setFlat(True)
+        #self.pb_sweepAlternate.setFlat(True)
+
+    def enable_all_buttons(self):
+        self.sb_height.setEnabled(True)
+        self.sb_width.setEnabled(True)
+        self.sb_step.setEnabled(True)
+        self.cmb_magnitude.setEnabled(True)
+        self.pb_sweepSame.setEnabled(True)
+        self.pb_sweepAlternate.setEnabled(True)
+        self.sb_exposure.setEnabled(True)
+        self.sb_acqTime.setEnabled(True)
+        #self.pb_sweepSame.setFlat(False)
+        #self.pb_sweepAlternate.setFlat(False)
+
+>>>>>>> Stashed changes
     def set_exposure_time(self):
         expositionTime = self.exposureTime
         self.spec.integration_time_micros(expositionTime * 1000)
@@ -245,7 +280,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         if not self.isSweepThreadAlive:
             try:
                 self.disable_all_buttons()
-                self.threading.start(self.sweepWorker)
+                self.threadpool.start(self.sweepWorker)
                 self.isSweepThreadAlive = True
 
             except Exception as e:
