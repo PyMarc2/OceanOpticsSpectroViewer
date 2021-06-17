@@ -60,7 +60,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.movingIntegrationData = None
         self.backgroundData = None
         self.spec = None
-        self.dataLive = []
+        self.dataPixel = []
         self.matriceDonnesBrutes = []
         self.liveAcquisitionData = []
 
@@ -176,7 +176,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
                 self.isAcquiringBackground = False
 
         if self.isBackgroundRemoved:
-            self.dataLive = self.dataLive - self.backgroundData
+            self.dataPixel = self.dataPixel - self.backgroundData
 
     def integrate_data(self):
         self.isAcquisitionDone = False
@@ -198,8 +198,17 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
     def read_data_live(self, *args, **kwargs):
         return self.spec.intensities()[2:]
 
-    def SpectrumAcquisition(self):#Pas optimal avec la boucle en discuter avec MARC (boucle while + count?)
-        self.launch_integration_acquisition()
+    def spectrum_pixel_acquisition(self):#l'équivalent de manage_data_flow
+
+        while self.isAcquisitionThreadAlive:
+            self.liveAcquisitionData = self.read_data_live().tolist()
+
+            self.integrate_data()
+            self.dataPixel = np.mean(np.array(self.movingIntegrationData()), 0)
+            self.acquire_background()
+
+            self.s_data_changed.emit({"y": self.dataPixel})
+
 
     def stop_acq(self):
         if self.isSweepThreadAlive:
