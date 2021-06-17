@@ -77,9 +77,6 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.saveWorker.moveToThread(self.saveThread)
         self.saveThread.started.connect(self.saveWorker.run)
 
-        """
-        self.saveWorker = Worker(self.save, *args)
-        """
 
     def initialize_buttons(self):
         self.pb_sweepSame.setIcons(QPixmap("./gui/misc/icons/sweep_same.png").scaled(50, 50,Qt.KeepAspectRatio, Qt.SmoothTransformation),
@@ -137,7 +134,6 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
 
         else:
             print('What the hell is going on?')
-
 
     def disable_all_buttons(self):
         self.sb_height.setEnabled(False)
@@ -247,16 +243,6 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
 
             self.s_data_changed.emit({"y": self.dataPixel})
 
-
-    def stop_acq(self):
-        if self.isSweepThreadAlive:
-            self.sweepThread.terminate()
-            self.isSweepThreadAlive = False
-        else:
-            print('Sampling already stopped.')
-
-        self.enable_all_buttons()
-
     def move_stage(self):
         pass
         #va manquer à importer le fichier de commnucation avec le stage
@@ -279,7 +265,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         if not self.isSweepThreadAlive:
             try:
                 self.disable_all_buttons()
-                self.threadpool.start(self.sweepWorker)
+                self.sweepThread.start()
                 self.isSweepThreadAlive = True
 
             except Exception as e:
@@ -287,6 +273,15 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
 
         else:
             print('Sampling already started.')
+
+    def stop_acq(self):
+        if self.isSweepThreadAlive:
+            self.sweepThread.terminate()
+            self.isSweepThreadAlive = False
+        else:
+            print('Sampling already stopped.')
+
+        self.enable_all_buttons()
 
     def save(self):
         pass
