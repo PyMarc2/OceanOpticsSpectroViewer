@@ -200,6 +200,10 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
 
     def spectrum_pixel_acquisition(self):#l'équivalent de manage_data_flow
 
+        #self.waves = self.spec.wavelengths()[2:]
+        #self.dataLen = len(self.waves)
+        #self.dataSep = (max(self.waves) - min(self.waves)) / len(self.waves)
+
         while self.isAcquisitionThreadAlive:
             self.liveAcquisitionData = self.read_data_live().tolist()
 
