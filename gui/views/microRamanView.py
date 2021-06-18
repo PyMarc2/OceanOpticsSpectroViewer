@@ -47,6 +47,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.connect_widgets()
         self.create_threads()
 
+        self.dataSep = 0
         self.countIntegrationWhile = 0
         self.integrationCountAcq = 0
         self.expositionCounter = 0
@@ -60,6 +61,8 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.movingIntegrationData = None
         self.backgroundData = None
         self.spec = None
+        self.waves = None
+        self.dataLen = None
         self.dataPixel = []
         self.matriceDonnesBrutes = []
         self.liveAcquisitionData = []
@@ -230,9 +233,9 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
 
     def spectrum_pixel_acquisition(self):#l'équivalent de manage_data_flow
 
-        #self.waves = self.spec.wavelengths()[2:]
-        #self.dataLen = len(self.waves)
-        #self.dataSep = (max(self.waves) - min(self.waves)) / len(self.waves)
+        self.waves = self.spec.wavelengths()[2:]
+        self.dataLen = len(self.waves)
+        self.dataSep = (max(self.waves) - min(self.waves)) / len(self.waves)
 
         while self.isAcquisitionThreadAlive:
             self.liveAcquisitionData = self.read_data_live().tolist()
