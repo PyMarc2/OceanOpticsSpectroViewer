@@ -63,8 +63,9 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.spec = None
         self.waves = None
         self.dataLen = None
+        self.actualPosition = None
         self.dataPixel = []
-        self.matriceDonnesBrutes = []
+        self.matrixData = []
         self.liveAcquisitionData = []
 
     #on va devoir changer le sweepthread pour un savethread, qui servira uniquement à l'enregistrement des données,
@@ -124,6 +125,9 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.sb_acqTime.valueChanged.connect(self.set_integration_time)
         self.sb_exposure.valueChanged.connect(lambda: setattr(self, 'exposureTime', self.sb_exposure.value()))
         self.sb_exposure.valueChanged.connect(self.set_exposure_time)
+
+    def create_matrixData(self):
+        self.matrixData = np.zeros((height, width),dtype=object)
 
     def measure_unit(self):
         if self.cmb_magnitude.currentText() == 'mm':
@@ -246,8 +250,12 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
 
             self.s_data_changed.emit({"y": self.dataPixel})
 
-    def matrice_brute(self):# Mettre le dataPixel au bon endroit dans la matrice
-        pass
+    def matrixData_replace(self):# Mettre le dataPixel au bon endroit dans la matrice
+        if actualPosition == None:
+            print("wtf man bouge ton cucu")
+        else:
+            self.matrixData[self.countHeight][self.countWidth] = self.dataPixel
+            self.dataPixel = []
 
     def move_stage(self):
         pass
