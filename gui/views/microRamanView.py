@@ -1,5 +1,5 @@
 import numpy
-from PyQt5.QtWidgets import QWidget
+from PyQt5.QtWidgets import QWidget, QFileDialog
 from PyQt5.Qt import QPixmap
 from PyQt5.QtCore import pyqtSignal, Qt, QObject, QThreadPool, QThread
 from PyQt5 import uic
@@ -10,6 +10,7 @@ from tools.CircularList import RingBuffer
 import numpy as np
 from numpy import trapz
 import logging
+import copy
 
 
 log = logging.getLogger(__name__)
@@ -73,6 +74,11 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.dataPixel = []
         self.liveAcquisitionData = []
 
+        # Saving Data
+        self.folderPath = ""
+        self.fileName = ""
+        self.autoindexing = False
+
     def connect_widgets(self):
         self.sb_height.textChanged.connect(lambda: setattr(self, 'height', self.sb_height.value()))
         self.sb_width.textChanged.connect(lambda: setattr(self, 'width', self.sb_width.value()))
@@ -86,6 +92,8 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.sb_acqTime.valueChanged.connect(self.set_integration_time)
         self.sb_exposure.valueChanged.connect(lambda: setattr(self, 'exposureTime', self.sb_exposure.value()))
         self.sb_exposure.valueChanged.connect(self.set_exposure_time)
+        self.tb_folderPath.clicked.connect(self.select_save_folder)
+        self.pb_saveData.clicked.connect(self.save_capture_csv)
 
     def connect_signals(self):
         #self.s_data_changed.connect(self.move_stage)
@@ -97,7 +105,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.sweepWorker.moveToThread(self.sweepThread)
         self.sweepThread.started.connect(self.sweepWorker.run)
 
-        self.saveWorker = Worker(self.save, *args)
+        self.saveWorker = Worker(self.save_capture_csv, *args)
         self.saveThread = QThread()
         self.saveWorker.moveToThread(self.saveThread)
         self.saveThread.started.connect(self.saveWorker.run)
@@ -342,6 +350,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
             try:
                 self.disable_all_buttons()
                 self.create_matrixData()
+                self.create_matrixRGB()
                 self.sweepThread.start()
                 self.saveThread.start()
                 self.threadpool.start(self.sweepWorker)
@@ -363,21 +372,6 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
 
         self.enable_all_buttons()
 
-    def save(self):
-        pass
-    #will use the dict from s_data_changed?
-
-    """
-    def connect_signals(self):
-        log.debug("Connecting GUI signals...")
-        self.s_data_changed.connect(self.update_graph)
-        self.s_data_changed.connect(self.update_indicators)
-        # self.s_data_acquisition_done.connect(self.update_indicators)
-    """
-
-    # Data Capture Methods
-
-    """
     def select_save_folder(self):
         self.folderPath = str(QFileDialog.getExistingDirectory(self, "Select Directory"))
         if self.folderPath != "":
@@ -401,4 +395,3 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
                 for i, x in enumerate(self.waves):
                     f.write(f"{x},{fixedData[i]}\n")
                 f.close()
-    """
