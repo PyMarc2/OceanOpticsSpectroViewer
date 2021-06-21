@@ -257,7 +257,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
     def matrixData_replace(self):# Mettre le dataPixel au bon endroit dans la matrice
         self.matrixData[self.countHeight][self.countWidth] = np.array(self.dataPixel)
 
-    def matrixRGB_replace(self):
+    def matrixRGB_replace(self): # Coucou
         self.dataPixel = np.array(self.dataPixel) / max(self.dataPixel)
         R, G, B = np.array_split(self.dataPixel, 3)
         areaR = trapz(R, dx=1)
