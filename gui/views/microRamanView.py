@@ -1,6 +1,7 @@
 import numpy
 from PyQt5.QtWidgets import QWidget, QFileDialog
 from PyQt5.Qt import QPixmap
+import pyqtgraph as pg
 from PyQt5.QtCore import pyqtSignal, Qt, QObject, QThreadPool, QThread
 from PyQt5 import uic
 import os
@@ -116,6 +117,8 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
 
     def create_matrixRGB(self):
         self.matrixRGB = np.zeros((self.height, self.width, 3), dtype=np.uint8)
+        area = np.array([255, 0, 0])
+        self.matrixRGB[0, 0, :] = area
 
     def initialize_buttons(self):
         self.pb_sweepSame.setIcons(QPixmap("./gui/misc/icons/sweep_same.png").scaled(50, 50,Qt.KeepAspectRatio, Qt.SmoothTransformation),
@@ -280,11 +283,15 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.dataPixel = []
         self.s_data_changed.emit({f"{self.countSpectrums}": self.dataPixel})  # était avant à la fin de la fonction prédédente, soit spectrum_pixel_acq...
 
-    def show_matrixRGB(self): # basic usage c'est ça... espérons que ça marche vraiment
-        plot = self.graph_rgb.ImageView()
-        plot.autoRange(True)
-        plot.show()
-        plot.setImage(self.matrixRGB)
+    def show_matrixRGB(self):# basic usage c'est ça... espérons que ça marche vraiment
+        print("1")
+        self.graph_rgb = pg.ImageView()
+        print("2")
+        #plot.autoRange(True)
+        self.graph_rgb.show()
+        print("3")
+        self.graph_rgb.setImage(self.matrixRGB)
+        print("ca marche tu?")
 
     def move_stage(self):
         pass
@@ -302,7 +309,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
                 self.spectrum_pixel_acquisition()
                 self.matrixData_replace()
                 self.matrixRGB_replace()
-                self.show_matrixRGB()
+                #self.show_matrixRGB()
                 if self.direction == "same":
                     if self.countWidth < self.width-1:
                         #wait for signal... (with a connect?)
@@ -352,6 +359,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
                 self.disable_all_buttons()
                 self.create_matrixData()
                 self.create_matrixRGB()
+                self.show_matrixRGB()
                 self.sweepThread.start()
                 self.saveThread.start()
                 self.threadpool.start(self.sweepWorker)
