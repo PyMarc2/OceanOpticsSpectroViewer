@@ -289,6 +289,14 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
                 self.matrixData_replace()
                 self.matrixRGB_replace()
                 self.show_matrixRGB()
+<<<<<<< Updated upstream
+=======
+                try:
+                    wait(lambda: self.isEveryAcqDone, timeout_seconds=10,
+                         waiting_for="every acquisition step to be done.")
+                except TimeoutExpired:
+                    raise Exception("acquisition functions exceeded timeout.")
+>>>>>>> Stashed changes
                 if self.direction == "same":
                     if self.countWidth < self.width-1:
                         #wait for signal... (with a connect?)
