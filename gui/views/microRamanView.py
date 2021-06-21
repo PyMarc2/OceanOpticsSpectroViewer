@@ -1,19 +1,16 @@
+import numpy
+from PyQt5.QtWidgets import QWidget
+from PyQt5.Qt import QPixmap
+from PyQt5.QtCore import pyqtSignal, Qt, QObject, QThreadPool, QThread
+from PyQt5 import uic
+import os
+from gui.modules import mockSpectrometer as mock
+from tools.threadWorker import Worker
+from tools.CircularList import RingBuffer
+import numpy as np
+from numpy import trapz
 import logging
 
-from PyQt5.QtWidgets import QWidget
-import os
-
-import numpy as np
-from PyQt5 import uic
-from PyQt5.Qt import QPixmap
-from PyQt5.QtCore import pyqtSignal, Qt, QThreadPool, QThread
-from PyQt5.QtWidgets import QWidget
-from numpy import trapz
-from waiting import wait, TimeoutExpired
-
-from gui.modules import mockSpectrometer as mock
-from tools.CircularList import RingBuffer
-from tools.threadWorker import Worker
 
 log = logging.getLogger(__name__)
 
@@ -60,7 +57,6 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.isAcquiringIntegration = False
         self.isAcquisitionDone = False
         self.isAcquiringBackground = False
-        self.isEveryAcqDone = False
         self.launchIntegrationAcquisition = False
         self.temporaryIntegrationData = None
         self.movingIntegrationData = None
@@ -89,8 +85,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.sb_exposure.valueChanged.connect(self.set_exposure_time)
 
     def connect_signals(self):
-        #self.s_data_changed.connect(self.move_stage)
-        self.s_data_changed.connect(lambda: setattr(self, "isEveryAcqDone", True))
+        self.s_data_changed.connect(self.move_stage)
 
     def create_threads(self, *args):
         self.sweepWorker = Worker(self.sweep, *args)
@@ -293,17 +288,14 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
                 self.spectrum_pixel_acquisition()
                 self.matrixData_replace()
                 self.matrixRGB_replace()
-                try:
-                    wait(lambda: self.isEveryAcqDone, timeout_seconds=10,
-                         waiting_for="every acquisition step to be done.")
-                except TimeoutExpired:
-                    raise Exception("acquisition functions exceeded timeout.")
                 if self.direction == "same":
                     if self.countWidth < self.width-1:
-                            self.countWidth += 1
-                            self.move_stage()
+                        #wait for signal... (with a connect?)
+                        self.countWidth += 1
+                        self.move_stage()
                     elif self.countHeight < self.height and self.countWidth == self.width-1:
                         if self.countSpectrums < self.width*self.height-1:
+                            # wait for signal...
                             self.countWidth = 0
                             self.countHeight += 1
                             self.move_stage()
@@ -316,13 +308,16 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
                 elif self.direction == "other":
                     if self.countWidth < self.width-1:
                         if self.countHeight % 2 == 0:
+                            # wait for signal...
                             self.countWidth += 1
                             self.move_stage()
                         elif self.countHeight % 2 == 1:
+                            # wait for signal...
                             self.countWidth -= 1
                             self.move_stage()
                     elif self.countHeight < self.height and self.countWidth == self.width-1:
                         if self.countSpectrums < self.width * self.height - 1:
+                            # wait for signal...
                             self.countHeight += 1
                             self.move_stage()
                         else:
