@@ -69,8 +69,23 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.dataPixel = []
         self.liveAcquisitionData = []
 
-    #on va devoir changer le sweepthread pour un savethread, qui servira uniquement à l'enregistrement des données,
-    #sinon le sweep et acquisition sont la même chose finalement
+    def connect_widgets(self):
+        self.sb_height.textChanged.connect(lambda: setattr(self, 'height', self.sb_height.value()))
+        self.sb_width.textChanged.connect(lambda: setattr(self, 'width', self.sb_width.value()))
+        self.sb_step.textChanged.connect(lambda: setattr(self, 'step', self.sb_step.value()))
+        self.cmb_magnitude.currentTextChanged.connect(self.measure_unit)
+        self.pb_sweepSame.clicked.connect(lambda: setattr(self, 'direction', 'same'))
+        self.pb_sweepAlternate.clicked.connect(lambda: setattr(self, 'direction', 'other'))
+        self.pb_reset.clicked.connect(self.stop_acq)
+        self.pb_liveView.clicked.connect(self.begin)
+        self.sb_acqTime.valueChanged.connect(lambda: setattr(self, 'integrationTimeAcq', self.sb_acqTime.value()))
+        self.sb_acqTime.valueChanged.connect(self.set_integration_time)
+        self.sb_exposure.valueChanged.connect(lambda: setattr(self, 'exposureTime', self.sb_exposure.value()))
+        self.sb_exposure.valueChanged.connect(self.set_exposure_time)
+
+    def connect_signals(self):
+        self.s_data_changed.connect(self.move_stage)
+
     def create_threads(self, *args):
         self.sweepWorker = Worker(self.sweep, *args)
         self.sweepThread = QThread()
@@ -87,7 +102,6 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
 
     def create_matrixRGB(self):
         self.matrixRGB = None#Pas encore fini
-
 
     def initialize_buttons(self):
         self.pb_sweepSame.setIcons(QPixmap("./gui/misc/icons/sweep_same.png").scaled(50, 50,Qt.KeepAspectRatio, Qt.SmoothTransformation),
@@ -118,20 +132,6 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.pb_sweepAlternate.setEnabled(True)
         self.sb_exposure.setEnabled(True)
         self.sb_acqTime.setEnabled(True)
-
-    def connect_widgets(self):
-        self.sb_height.textChanged.connect(lambda: setattr(self, 'height', self.sb_height.value()))
-        self.sb_width.textChanged.connect(lambda: setattr(self, 'width', self.sb_width.value()))
-        self.sb_step.textChanged.connect(lambda: setattr(self, 'step', self.sb_step.value()))
-        self.cmb_magnitude.currentTextChanged.connect(self.measure_unit)
-        self.pb_sweepSame.clicked.connect(lambda: setattr(self, 'direction', 'same'))
-        self.pb_sweepAlternate.clicked.connect(lambda: setattr(self, 'direction', 'other'))
-        self.pb_reset.clicked.connect(self.stop_acq)
-        self.pb_liveView.clicked.connect(self.begin)
-        self.sb_acqTime.valueChanged.connect(lambda: setattr(self, 'integrationTimeAcq', self.sb_acqTime.value()))
-        self.sb_acqTime.valueChanged.connect(self.set_integration_time)
-        self.sb_exposure.valueChanged.connect(lambda: setattr(self, 'exposureTime', self.sb_exposure.value()))
-        self.sb_exposure.valueChanged.connect(self.set_exposure_time)
 
     def measure_unit(self):
         if self.cmb_magnitude.currentText() == 'mm':
@@ -169,7 +169,6 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.sb_acqTime.setEnabled(True)
         #self.pb_sweepSame.setFlat(False)
         #self.pb_sweepAlternate.setFlat(False)
-
 
     def set_exposure_time(self):
         expositionTime = self.exposureTime
@@ -240,30 +239,27 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         return self.spec.intensities()[2:]
 
     def spectrum_pixel_acquisition(self):#l'équivalent de manage_data_flow
-
         self.waves = self.spec.wavelengths()[2:]
         self.dataLen = len(self.waves)
         self.dataSep = (max(self.waves) - min(self.waves)) / len(self.waves)
 
-        while self.isAcquisitionThreadAlive:
-            self.liveAcquisitionData = self.read_data_live().tolist()
+        self.liveAcquisitionData = self.read_data_live().tolist()
 
-            self.integrate_data()
-            self.dataPixel = np.mean(np.array(self.movingIntegrationData()), 0)
-            self.acquire_background()
-
-            self.s_data_changed.emit({"y": self.dataPixel})
+        self.integrate_data()
+        self.dataPixel = np.mean(np.array(self.movingIntegrationData()), 0)
+        self.acquire_background()
 
     def matrixData_replace(self):# Mettre le dataPixel au bon endroit dans la matrice
-        if countHeight == 0:
-            print("wtf man bouge ton cucu")
-        else:
-            self.matrixData[self.countHeight][self.countWidth] = np.array(self.dataPixel)
-            self.dataPixel = []
+        self.matrixData[self.countHeight][self.countWidth] = np.array(self.dataPixel)
+        self.dataPixel = []
+
+        self.s_data_changed.emit({f"{self.countSpectrums}": self.dataPixel}) #était avant à la fin de la fonction prédédente, soit spectrum_pixel_acq...
 
     def move_stage(self):
         pass
-        #va manquer à importer le fichier de commnucation avec le stage
+        #on pourrait créer une position avec avant et maintenant (en pixels) et avec la différence fois le pas (move by)
+        #ou on prend la position initiale dans un attribut de la classe et on y additionne les tuples * pas à chaque fois
+        #va manquer à importer le fichier de commnucation avec le stage (hardwareLibrary)
 
     #ce sera ta fonction ça Benjamin, on pourrait changer le nom
     def sweep(self, *args, **kwargs):
@@ -272,18 +268,34 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.countSpectrums = 0
         while self.isSweepThreadAlive:
             if self.countSpectrums < self.width*self.height:
-                pass
+                self.spectrum_pixel_acquisition()
+                if self.direction == "same":
+                    if self.countWidth < self.width:
+                        self.matrixData_replace()
+                        self.move_stage()
+                        self.countWidth += 1
+                    elif self.countHeight < self.height and self.countWidth == self.width:
+                        self.countWidth = 0
+                        self.countHeight += 1
+                        self.countSpectrums -= 1
+                    else:
+                        raise Exception('Somehow, the loop is trying to create more row or columns than asked on the GUI.')
+                        #self.isSweepThreadAlive = False
+                elif self.direction == "other":
+                    pass
+                self.countSpectrums += 1
             else:
                 self.isSweepThreadAlive = False
-            self.countSpectrums += 1
     #il faudra connecter le signal de fin à move_stage, une fonction que je vais créer
 
-    #on veut donc activer acquisitionthread (sweepthread n'existera plus)
+    #on veut donc activer acquisitionthread
     def begin(self):
         if not self.isSweepThreadAlive:
             try:
                 self.disable_all_buttons()
+                self.create_matrixData()
                 self.sweepThread.start()
+                self.saveThread.start()
                 self.isSweepThreadAlive = True
 
             except Exception as e:
@@ -295,6 +307,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
     def stop_acq(self):
         if self.isSweepThreadAlive:
             self.sweepThread.terminate()
+            self.saveThread.terminate()
             self.isSweepThreadAlive = False
         else:
             print('Sampling already stopped.')
@@ -303,6 +316,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
 
     def save(self):
         pass
+    #will use the dict from s_data_changed?
 
     """
     def connect_signals(self):
