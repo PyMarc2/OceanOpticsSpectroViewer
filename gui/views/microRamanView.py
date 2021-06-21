@@ -350,6 +350,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         if not self.isSweepThreadAlive:
             try:
                 self.disable_all_buttons()
+                print('coucou')
                 self.create_matrixData()
                 self.create_matrixRGB()
                 self.sweepThread.start()
@@ -381,17 +382,17 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
     def toggle_autoindexing(self):
         pass
 
-    def save_capture_csv(self):
+    def save_capture_csv(self, data):
         self.fileName = self.le_fileName.text()
         if self.folderPath == "":
             pass
 
         elif self.fileName == "":
-            pass
+            self.fileName = f"spectrum_{self.direction}"
 
         else:
             fixedData = copy.deepcopy(self.displayData)
-            path = os.path.join(self.folderPath, self.fileName)
+            path = os.path.join(self.folderPath, f"{self.fileName}_{data.keys()}")
             with open(path + ".csv", "w+") as f:
                 for i, x in enumerate(self.waves):
                     f.write(f"{x},{fixedData[i]}\n")
