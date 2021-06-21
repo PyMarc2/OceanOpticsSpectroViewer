@@ -98,6 +98,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
     def connect_signals(self):
         #self.s_data_changed.connect(self.move_stage)
         self.s_data_changed.connect(lambda: setattr(self, 'isEveryAcqDone', True))
+        self.s_data_changed.connect(self.save_capture_csv)
 
     def create_threads(self, *args):
         self.sweepWorker = Worker(self.sweep, *args)
