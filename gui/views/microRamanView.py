@@ -8,6 +8,7 @@ from gui.modules import mockSpectrometer as mock
 from tools.threadWorker import Worker
 from tools.CircularList import RingBuffer
 import numpy as np
+from numpy import trapz
 import logging
 
 
@@ -101,7 +102,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.matrixData = np.zeros((self.height, self.width),dtype=object)
 
     def create_matrixRGB(self):
-        self.matrixRGB = None#Pas encore fini
+        self.matrixRGB = np.zeros((self.height, self.width),dtype=object)
 
     def initialize_buttons(self):
         self.pb_sweepSame.setIcons(QPixmap("./gui/misc/icons/sweep_same.png").scaled(50, 50,Qt.KeepAspectRatio, Qt.SmoothTransformation),
@@ -251,9 +252,22 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
 
     def matrixData_replace(self):# Mettre le dataPixel au bon endroit dans la matrice
         self.matrixData[self.countHeight][self.countWidth] = np.array(self.dataPixel)
-        self.dataPixel = []
 
-        self.s_data_changed.emit({f"{self.countSpectrums}": self.dataPixel}) #était avant à la fin de la fonction prédédente, soit spectrum_pixel_acq...
+    def matrixRGB_replace(self):
+        self.dataPixel = np.array(self.dataPixel) / max(self.dataPixel)
+        R, G, B = np.array_split(self.dataPixel, 3)
+        areaR = trapz(R, dx=1)
+        areaG = trapz(G, dx=1)
+        areaB = trapz(B, dx=1)
+
+        areas = np.array([areaR, areaG, areaB])
+        areas = areas / max(areas)
+        areas = areas * 255
+
+        self.matrixRGB[self.countHeight][self.countWidth] = areas
+
+        self.dataPixel = []
+        self.s_data_changed.emit({f"{self.countSpectrums}": self.dataPixel})  # était avant à la fin de la fonction prédédente, soit spectrum_pixel_acq...
 
     def move_stage(self):
         pass
@@ -269,6 +283,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
             if self.countSpectrums < self.width*self.height:
                 self.spectrum_pixel_acquisition()
                 self.matrixData_replace()
+                self.matrixRGB_replace()
                 if self.direction == "same":
                     if self.countWidth < self.width-1:
                         #wait for signal... (with a connect?)
