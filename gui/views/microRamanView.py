@@ -98,7 +98,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.saveThread.started.connect(self.saveWorker.run)
 
     def create_matrixData(self):
-        self.matrixData = np.zeros((height, width),dtype=object)
+        self.matrixData = np.zeros((self.height, self.width),dtype=object)
 
     def create_matrixRGB(self):
         self.matrixRGB = None#Pas encore fini
@@ -261,7 +261,6 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         #ou on prend la position initiale dans un attribut de la classe et on y additionne les tuples * pas à chaque fois
         #va manquer à importer le fichier de commnucation avec le stage (hardwareLibrary)
 
-    #ce sera ta fonction ça Benjamin, on pourrait changer le nom
     def sweep(self, *args, **kwargs):
         self.countHeight = 0
         self.countWidth = 0
@@ -270,23 +269,45 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
             if self.countSpectrums < self.width*self.height:
                 self.spectrum_pixel_acquisition()
                 if self.direction == "same":
-                    if self.countWidth < self.width:
+                    if self.countWidth < self.width-1:
                         self.matrixData_replace()
-                        self.move_stage()
                         self.countWidth += 1
-                    elif self.countHeight < self.height and self.countWidth == self.width:
-                        self.countWidth = 0
-                        self.countHeight += 1
-                        self.countSpectrums -= 1
+                        self.move_stage()
+                    elif self.countHeight < self.height and self.countWidth == self.width-1:
+                        if self.countSpectrums < self.width*self.height-1:
+                            self.countWidth = 0
+                            self.countHeight += 1
+                            self.move_stage()
+                        else:
+                            self.isSweepThreadAlive = False
                     else:
-                        raise Exception('Somehow, the loop is trying to create more row or columns than asked on the GUI.')
+                        raise Exception(
+                            'Somehow, the loop is trying to create more row or columns than asked on the GUI.')
                         #self.isSweepThreadAlive = False
                 elif self.direction == "other":
-                    pass
+                    if self.countWidth < self.width-1:
+                        if self.countHeight % 2 == 0:
+                            self.matrixData_replace()
+                            self.countWidth += 1
+                            self.move_stage()
+                        elif self.countHeight % 2 == 1:
+                            self.matrixData_replace()
+                            self.countWidth -= 1
+                            self.move_stage()
+                    elif self.countHeight < self.height and self.countWidth == self.width-1:
+                        if self.countSpectrums < self.width * self.height - 1:
+                            self.countHeight += 1
+                            self.move_stage()
+                        else:
+                            self.isSweepThreadAlive = False
+                    else:
+                        raise Exception(
+                            'Somehow, the loop is trying to create more row or columns than asked on the GUI.')
+                        # self.isSweepThreadAlive = False
                 self.countSpectrums += 1
             else:
                 self.isSweepThreadAlive = False
-    #il faudra connecter le signal de fin à move_stage, une fonction que je vais créer
+    #il faudra connecter le signal de fin à move_stage
 
     #on veut donc activer acquisitionthread
     def begin(self):
