@@ -267,11 +267,16 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
 
         areas = np.array([areaR, areaG, areaB])
         areas = (areas / max(areas))*255
-
         self.matrixRGB[self.countHeight, self.countWidth, :] = areas
 
         self.dataPixel = []
         self.s_data_changed.emit({f"{self.countSpectrums}": self.dataPixel})  # était avant à la fin de la fonction prédédente, soit spectrum_pixel_acq...
+
+    def show_matrixRGB(self): # basic usage c'est ça... espérons que ça marche vraiment
+        plot = grah_rgb.ImageView()
+        plot.autoRange(True)
+        plot.show()
+        plot.setImage(self.matrixRGB)
 
     def move_stage(self):
         pass
