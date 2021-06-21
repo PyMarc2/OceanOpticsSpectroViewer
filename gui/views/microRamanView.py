@@ -268,7 +268,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.s_data_changed.emit({f"{self.countSpectrums}": self.dataPixel})  # était avant à la fin de la fonction prédédente, soit spectrum_pixel_acq...
 
     def show_matrixRGB(self): # basic usage c'est ça... espérons que ça marche vraiment
-        plot = grah_rgb.ImageView()
+        plot = self.graph_rgb.ImageView()
         plot.autoRange(True)
         plot.show()
         plot.setImage(self.matrixRGB)
@@ -288,6 +288,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
                 self.spectrum_pixel_acquisition()
                 self.matrixData_replace()
                 self.matrixRGB_replace()
+                self.show_matrixRGB()
                 if self.direction == "same":
                     if self.countWidth < self.width-1:
                         #wait for signal... (with a connect?)
