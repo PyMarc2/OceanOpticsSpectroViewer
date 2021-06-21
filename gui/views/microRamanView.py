@@ -282,8 +282,6 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         #device.moveTo((self.positionSutter[0]+self.countWidth*self.step,
         #       self.positionSutter[1]_self.countHeight*self.step,
         #       self.positionSutter[2]))
-        #on pourrait créer une position avec avant et maintenant (en pixels) et avec la différence fois le pas (move by)
-        #ou on prend la position initiale dans un attribut de la classe et on y additionne les tuples * pas à chaque fois
         #va manquer à importer le fichier de commnucation avec le stage (hardwareLibrary)
 
     def sweep(self, *args, **kwargs):
