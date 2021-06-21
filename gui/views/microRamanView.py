@@ -268,13 +268,15 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         while self.isSweepThreadAlive:
             if self.countSpectrums < self.width*self.height:
                 self.spectrum_pixel_acquisition()
+                self.matrixData_replace()
                 if self.direction == "same":
                     if self.countWidth < self.width-1:
-                        self.matrixData_replace()
+                        #wait for signal...
                         self.countWidth += 1
                         self.move_stage()
                     elif self.countHeight < self.height and self.countWidth == self.width-1:
                         if self.countSpectrums < self.width*self.height-1:
+                            # wait for signal...
                             self.countWidth = 0
                             self.countHeight += 1
                             self.move_stage()
@@ -287,15 +289,16 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
                 elif self.direction == "other":
                     if self.countWidth < self.width-1:
                         if self.countHeight % 2 == 0:
-                            self.matrixData_replace()
+                            # wait for signal...
                             self.countWidth += 1
                             self.move_stage()
                         elif self.countHeight % 2 == 1:
-                            self.matrixData_replace()
+                            # wait for signal...
                             self.countWidth -= 1
                             self.move_stage()
                     elif self.countHeight < self.height and self.countWidth == self.width-1:
                         if self.countSpectrums < self.width * self.height - 1:
+                            # wait for signal...
                             self.countHeight += 1
                             self.move_stage()
                         else:
@@ -307,7 +310,6 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
                 self.countSpectrums += 1
             else:
                 self.isSweepThreadAlive = False
-    #il faudra connecter le signal de fin à move_stage
 
     #on veut donc activer acquisitionthread
     def begin(self):
