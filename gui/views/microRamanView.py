@@ -293,6 +293,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
                 self.spectrum_pixel_acquisition()
                 self.matrixData_replace()
                 self.matrixRGB_replace()
+                self.show_matrixRGB()
                 try:
                     wait(lambda: self.isEveryAcqDone, timeout_seconds=10,
                          waiting_for="every acquisition step to be done.")
