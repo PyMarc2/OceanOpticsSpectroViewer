@@ -144,7 +144,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
             self.ordre = 10**(-3)
 
         else:
-            print('What the hell is going on?')
+            print('What the hell is going on?!')
 
     def disable_all_buttons(self):
         self.sb_height.setEnabled(False)
@@ -271,7 +271,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
                 self.matrixData_replace()
                 if self.direction == "same":
                     if self.countWidth < self.width-1:
-                        #wait for signal...
+                        #wait for signal... (with a connect?)
                         self.countWidth += 1
                         self.move_stage()
                     elif self.countHeight < self.height and self.countWidth == self.width-1:

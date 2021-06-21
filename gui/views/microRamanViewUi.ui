@@ -796,7 +796,7 @@
     </widget>
    </item>
    <item row="2" column="0">
-    <widget class="GraphicsLayoutWidget" name="pyqtgraphWidget">
+    <widget class="GraphicsLayoutWidget" name="graph_rgb">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
        <horstretch>0</horstretch>
