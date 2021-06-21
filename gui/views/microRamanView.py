@@ -339,6 +339,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
                 self.create_matrixData()
                 self.sweepThread.start()
                 self.saveThread.start()
+                self.threadpool.start(self.sweepWorker)
                 self.isSweepThreadAlive = True
 
             except Exception as e:
