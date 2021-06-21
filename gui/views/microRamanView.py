@@ -99,10 +99,10 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.saveThread.started.connect(self.saveWorker.run)
 
     def create_matrixData(self):
-        self.matrixData = np.zeros((self.height, self.width),dtype=object)
+        self.matrixData = np.zeros((self.height, self.width), dtype=object)
 
     def create_matrixRGB(self):
-        self.matrixRGB = np.zeros((self.height, self.width),dtype=object)
+        self.matrixRGB = np.zeros((self.height, self.width, 3), dtype=np.uint8)
 
     def initialize_buttons(self):
         self.pb_sweepSame.setIcons(QPixmap("./gui/misc/icons/sweep_same.png").scaled(50, 50,Qt.KeepAspectRatio, Qt.SmoothTransformation),
@@ -261,10 +261,9 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         areaB = trapz(B, dx=1)
 
         areas = np.array([areaR, areaG, areaB])
-        areas = areas / max(areas)
-        areas = areas * 255
+        areas = (areas / max(areas))*255
 
-        self.matrixRGB[self.countHeight][self.countWidth] = areas
+        self.matrixRGB[self.countHeight, self.countWidth, :] = areas
 
         self.dataPixel = []
         self.s_data_changed.emit({f"{self.countSpectrums}": self.dataPixel})  # était avant à la fin de la fonction prédédente, soit spectrum_pixel_acq...
