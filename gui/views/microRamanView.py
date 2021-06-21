@@ -41,6 +41,8 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.width = 0
         self.step = 0
         self.ordre = 1
+        #device = SutterDevice()
+        #self.positionSutter = device.position()
         self.direction = 'other'
         self.exposureTime = 50
         self.integrationTimeAcq = 3000
@@ -57,6 +59,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.isAcquiringIntegration = False
         self.isAcquisitionDone = False
         self.isAcquiringBackground = False
+        self.isEveryAcqDone = False
         self.launchIntegrationAcquisition = False
         self.temporaryIntegrationData = None
         self.movingIntegrationData = None
@@ -85,7 +88,8 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.sb_exposure.valueChanged.connect(self.set_exposure_time)
 
     def connect_signals(self):
-        self.s_data_changed.connect(self.move_stage)
+        #self.s_data_changed.connect(self.move_stage)
+        self.s_data_changed.connect(lambda: setattr(self, 'isEveryAcqDone', True))
 
     def create_threads(self, *args):
         self.sweepWorker = Worker(self.sweep, *args)
@@ -275,6 +279,9 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
 
     def move_stage(self):
         pass
+        #device.moveTo((self.positionSutter[0]+self.countWidth*self.step,
+        #       self.positionSutter[1]_self.countHeight*self.step,
+        #       self.positionSutter[2]))
         #on pourrait créer une position avec avant et maintenant (en pixels) et avec la différence fois le pas (move by)
         #ou on prend la position initiale dans un attribut de la classe et on y additionne les tuples * pas à chaque fois
         #va manquer à importer le fichier de commnucation avec le stage (hardwareLibrary)
