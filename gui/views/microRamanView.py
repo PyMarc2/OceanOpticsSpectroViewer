@@ -281,7 +281,8 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.matrixRGB[self.countHeight, self.countWidth, :] = areas
 
         self.dataPixel = []
-        self.s_data_changed.emit({f"{self.countSpectrums}": self.dataPixel})  # était avant à la fin de la fonction prédédente, soit spectrum_pixel_acq...
+        self.s_data_changed.emit({f"{self.countSpectrums}": self.matrixData[self.countHeight][self.countWidth]})
+                # était avant à la fin de la fonction prédédente, soit spectrum_pixel_acq...
 
     def show_matrixRGB(self):# basic usage c'est ça... espérons que ça marche vraiment
         print("1")
@@ -357,6 +358,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         if not self.isSweepThreadAlive:
             try:
                 self.disable_all_buttons()
+                print('coucou')
                 self.create_matrixData()
                 self.create_matrixRGB()
                 self.show_matrixRGB()
@@ -389,17 +391,19 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
     def toggle_autoindexing(self):
         pass
 
-    def save_capture_csv(self):
+    def save_capture_csv(self, data):
+        key, spectrum = data.items()[0]
         self.fileName = self.le_fileName.text()
+        if self.fileName == "":
+            self.fileName = f"spectrum_{self.direction}"
+
         if self.folderPath == "":
             pass
 
-        elif self.fileName == "":
-            pass
-
         else:
-            fixedData = copy.deepcopy(self.displayData)
-            path = os.path.join(self.folderPath, self.fileName)
+            fixedData = copy.deepcopy(spectrum)
+            path = os.path.join(self.folderPath, f"{self.fileName}_{key}")
+            #print(key, spectrum)
             with open(path + ".csv", "w+") as f:
                 for i, x in enumerate(self.waves):
                     f.write(f"{x},{fixedData[i]}\n")
