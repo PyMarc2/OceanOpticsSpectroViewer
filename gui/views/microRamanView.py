@@ -39,8 +39,8 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.isAcquisitionThreadAlive = False
         self.isSweepThreadAlive = False
 
-        self.height = 0
-        self.width = 0
+        self.height = 1
+        self.width = 1
         self.step = 0
         self.ordre = 1
         #device = SutterDevice()
@@ -75,10 +75,13 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.dataPixel = []
         self.liveAcquisitionData = []
 
+        self.img = None
+
         # Saving Data
         self.folderPath = ""
         self.fileName = ""
         self.autoindexing = False
+
 
     def connect_widgets(self):
         self.sb_height.textChanged.connect(lambda: setattr(self, 'height', self.sb_height.value()))
@@ -112,13 +115,24 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.saveWorker.moveToThread(self.saveThread)
         self.saveThread.started.connect(self.saveWorker.run)
 
+    def create_plot(self):
+        self.graph_rgb.clear()
+        self.plotItem = self.graph_rgb.addViewBox()
+        self.plotItem.enableAutoRange()
+        self.plotItem.invertY(True)
+
     def create_matrixData(self):
         self.matrixData = np.zeros((self.height, self.width), dtype=object)
 
-    def create_matrixRGB(self):
+    def create_matrixRGB(self):# Pour voir le test il faut mettre du 3x3 pixels et activer les lignes de code ci-dessous
         self.matrixRGB = np.zeros((self.height, self.width, 3), dtype=np.uint8)
-        area = np.array([255, 0, 0])
-        self.matrixRGB[0, 0, :] = area
+
+        #area = np.array([255, 0, 0])
+        #area1 = np.array([0, 255, 0])
+        #area2 = np.array([0, 0, 255])
+        #self.matrixRGB[0, 0, :] = area
+        #self.matrixRGB[1, 1, :] = area1
+        #self.matrixRGB[2, 2, :] = area2
 
     def initialize_buttons(self):
         self.pb_sweepSame.setIcons(QPixmap("./gui/misc/icons/sweep_same.png").scaled(50, 50,Qt.KeepAspectRatio, Qt.SmoothTransformation),
@@ -284,15 +298,9 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.s_data_changed.emit({f"{self.countSpectrums}": self.matrixData[self.countHeight][self.countWidth]})
                 # était avant à la fin de la fonction prédédente, soit spectrum_pixel_acq...
 
-    def show_matrixRGB(self):# basic usage c'est ça... espérons que ça marche vraiment
-        print("1")
-        self.graph_rgb = pg.ImageView()
-        print("2")
-        #plot.autoRange(True)
-        self.graph_rgb.show()
-        print("3")
-        self.graph_rgb.setImage(self.matrixRGB)
-        print("ca marche tu?")
+    def update_plot(self):
+        img = pg.ImageItem(image=self.matrixRGB, levels=(0, 1))
+        self.plotItem.addItem(img)
 
     def move_stage(self):
         pass
@@ -310,7 +318,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
                 self.spectrum_pixel_acquisition()
                 self.matrixData_replace()
                 self.matrixRGB_replace()
-                #self.show_matrixRGB()
+                self.update_plot()
                 if self.direction == "same":
                     if self.countWidth < self.width-1:
                         #wait for signal... (with a connect?)
@@ -357,11 +365,12 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
     def begin(self):
         if not self.isSweepThreadAlive:
             try:
+                self.graph_rgb.clear()
+                self.create_plot()
                 self.disable_all_buttons()
-                print('coucou')
                 self.create_matrixData()
                 self.create_matrixRGB()
-                self.show_matrixRGB()
+                self.update_plot()
                 self.sweepThread.start()
                 self.saveThread.start()
                 self.threadpool.start(self.sweepWorker)
@@ -380,6 +389,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
             self.isSweepThreadAlive = False
         else:
             print('Sampling already stopped.')
+            self.graph_rgb.clear()# Pour clear l'image quand on clique sur Stop
 
         self.enable_all_buttons()
 

@@ -405,8 +405,14 @@
                  </property>
                  <item>
                   <widget class="QSpinBox" name="sb_height">
+                   <property name="minimum">
+                    <number>1</number>
+                   </property>
                    <property name="maximum">
                     <number>999</number>
+                   </property>
+                   <property name="value">
+                    <number>1</number>
                    </property>
                   </widget>
                  </item>
@@ -425,8 +431,14 @@
                  </item>
                  <item>
                   <widget class="QSpinBox" name="sb_width">
+                   <property name="minimum">
+                    <number>1</number>
+                   </property>
                    <property name="maximum">
                     <number>999</number>
+                   </property>
+                   <property name="value">
+                    <number>1</number>
                    </property>
                   </widget>
                  </item>
