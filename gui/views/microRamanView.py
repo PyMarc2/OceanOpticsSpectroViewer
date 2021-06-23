@@ -12,7 +12,8 @@ import numpy as np
 from numpy import trapz
 import logging
 import copy
-
+import tools.sutterneeded.sutterdevice as phl
+import seabreeze.spectrometers as sb
 
 log = logging.getLogger(__name__)
 
@@ -39,12 +40,10 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.isAcquisitionThreadAlive = False
         self.isSweepThreadAlive = False
 
-        self.height = 1
-        self.width = 1
-        self.step = 0
+        self.height = 3
+        self.width = 3
+        self.step = 1
         self.ordre = 1
-        #device = SutterDevice()
-        #self.positionSutter = device.position()
         self.direction = 'other'
         self.exposureTime = 50
         self.integrationTimeAcq = 3000
@@ -52,6 +51,9 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.connect_widgets()
         self.create_threads()
 
+        self.stageDevice = phl.SutterDevice()
+        self.specDevices = sb.list_devices()
+        self.spec = sb.Spectrometer(self.specDevices[0])
         self.dataSep = 0
         self.countIntegrationWhile = 0
         self.integrationCountAcq = 0
@@ -61,12 +63,12 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.isAcquiringIntegration = False
         self.isAcquisitionDone = False
         self.isAcquiringBackground = False
+        self.isBackgroundRemoved = False
         self.isEveryAcqDone = False
         self.launchIntegrationAcquisition = False
         self.temporaryIntegrationData = None
         self.movingIntegrationData = None
         self.backgroundData = None
-        self.spec = None
         self.waves = None
         self.dataLen = None
         self.actualPosition = None
@@ -102,15 +104,15 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
     def connect_signals(self):
         #self.s_data_changed.connect(self.move_stage)
         self.s_data_changed.connect(lambda: setattr(self, 'isEveryAcqDone', True))
-        self.s_data_changed.connect(self.save_capture_csv)
+        self.s_data_changed.connect(self.startSaveThread)
 
     def create_threads(self, *args):
-        self.sweepWorker = Worker(self.sweep, *args)
+        self.sweepWorker = Worker(self.sweep)
         self.sweepThread = QThread()
         self.sweepWorker.moveToThread(self.sweepThread)
         self.sweepThread.started.connect(self.sweepWorker.run)
 
-        self.saveWorker = Worker(self.save_capture_csv, *args)
+        self.saveWorker = Worker(self.save_capture_csv)
         self.saveThread = QThread()
         self.saveWorker.moveToThread(self.saveThread)
         self.saveThread.started.connect(self.saveWorker.run)
@@ -201,9 +203,15 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         #self.pb_sweepSame.setFlat(False)
         #self.pb_sweepAlternate.setFlat(False)
 
-    def set_exposure_time(self):
-        expositionTime = self.exposureTime
+    def set_exposure_time(self, time_in_ms=None, update=True):
+        if time_in_ms is not None:
+            expositionTime = time_in_ms
+        else:
+            expositionTime = self.exposureTime
         self.spec.integration_time_micros(expositionTime * 1000)
+
+        if update:
+            self.set_integration_time()
 
     def set_integration_time(self):
         try:
@@ -282,6 +290,8 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
 
     def matrixData_replace(self):# Mettre le dataPixel au bon endroit dans la matrice
         self.matrixData[self.countHeight][self.countWidth] = np.array(self.dataPixel)
+        print(self.countHeight)
+        print(self.countWidth)
 
     def matrixRGB_replace(self):
         self.dataPixel = np.array(self.dataPixel) / max(self.dataPixel)
@@ -303,10 +313,11 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.plotItem.addItem(img)
 
     def move_stage(self):
-        pass
-        #device.moveTo((self.positionSutter[0]+self.countWidth*self.step,
-        #       self.positionSutter[1]_self.countHeight*self.step,
-        #       self.positionSutter[2]))
+        self.positionSutter = self.stageDevice.position()
+        print(self.positionSutter)
+        self.stageDevice.moveTo((self.positionSutter[0]+self.countWidth*self.step,
+                                 self.positionSutter[1]+self.countHeight*self.step,
+                                 self.positionSutter[2]))
         #va manquer à importer le fichier de commnucation avec le stage (hardwareLibrary)
 
     def sweep(self, *args, **kwargs):
@@ -332,20 +343,22 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
                             self.move_stage()
                         else:
                             self.isSweepThreadAlive = False
+                            self.enable_all_buttons()
                     else:
                         raise Exception(
                             'Somehow, the loop is trying to create more row or columns than asked on the GUI.')
                         #self.isSweepThreadAlive = False
                 elif self.direction == "other":
-                    if self.countWidth < self.width-1:
-                        if self.countHeight % 2 == 0:
-                            # wait for signal...
-                            self.countWidth += 1
-                            self.move_stage()
-                        elif self.countHeight % 2 == 1:
-                            # wait for signal...
-                            self.countWidth -= 1
-                            self.move_stage()
+                    if self.countWidth < self.width-1 and self.countHeight % 2 == 0:
+                        # wait for signal...
+                        self.countWidth += 1
+                        self.move_stage()
+
+                    elif self.countHeight % 2 == 1 and self.countWidth <= self.width-1:
+                        # wait for signal...
+                        self.countWidth -= 1
+                        self.move_stage()
+
                     elif self.countHeight < self.height and self.countWidth == self.width-1:
                         if self.countSpectrums < self.width * self.height - 1:
                             # wait for signal...
@@ -353,28 +366,42 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
                             self.move_stage()
                         else:
                             self.isSweepThreadAlive = False
+                            self.enable_all_buttons()
+
+                    elif self.countHeight >= self.height:
+                        raise Exception(
+                            'Somehow, the loop is trying to create more rows than asked on the GUI.')
+                        # self.isSweepThreadAlive = False
+
                     else:
                         raise Exception(
-                            'Somehow, the loop is trying to create more row or columns than asked on the GUI.')
-                        # self.isSweepThreadAlive = False
+                            'Somehow, the loop is trying to create more columns than asked on the GUI.')
                 self.countSpectrums += 1
             else:
                 self.isSweepThreadAlive = False
+                self.enable_all_buttons()
+
+    def startSaveThread(self, data=None):
+        self.data = data
+        self.saveThread.start()
+
+    def stopSaveThread(self):
+        self.saveThread.sleep()
 
     #on veut donc activer acquisitionthread
     def begin(self):
         if not self.isSweepThreadAlive:
             try:
+                self.isSweepThreadAlive = True
+                self.set_integration_time()
+                self.set_exposure_time()
                 self.graph_rgb.clear()
                 self.create_plot()
                 self.disable_all_buttons()
                 self.create_matrixData()
                 self.create_matrixRGB()
-                self.update_plot()
                 self.sweepThread.start()
-                self.saveThread.start()
                 self.threadpool.start(self.sweepWorker)
-                self.isSweepThreadAlive = True
 
             except Exception as e:
                 self.spec = mock.MockSpectrometer()
@@ -389,7 +416,6 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
             self.isSweepThreadAlive = False
         else:
             print('Sampling already stopped.')
-            self.graph_rgb.clear()# Pour clear l'image quand on clique sur Stop
 
         self.enable_all_buttons()
 
@@ -401,20 +427,25 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
     def toggle_autoindexing(self):
         pass
 
-    def save_capture_csv(self, data):
-        key, spectrum = data.items()[0]
-        self.fileName = self.le_fileName.text()
-        if self.fileName == "":
-            self.fileName = f"spectrum_{self.direction}"
-
-        if self.folderPath == "":
+    def save_capture_csv(self, *args, **kwargs):
+        if self.data is None:
             pass
+        elif self.data is not None:
+            key, spectrum = self.data.items()[0]
+            self.fileName = self.le_fileName.text()
+            if self.fileName == "":
+                self.fileName = f"spectrum_{self.direction}"
 
-        else:
-            fixedData = copy.deepcopy(spectrum)
-            path = os.path.join(self.folderPath, f"{self.fileName}_{key}")
-            #print(key, spectrum)
-            with open(path + ".csv", "w+") as f:
-                for i, x in enumerate(self.waves):
-                    f.write(f"{x},{fixedData[i]}\n")
-                f.close()
+            if self.folderPath == "":
+                pass
+
+            else:
+                fixedData = copy.deepcopy(spectrum)
+                path = os.path.join(self.folderPath, f"{self.fileName}_{key}")
+                #print(key, spectrum)
+                with open(path + ".csv", "w+") as f:
+                    for i, x in enumerate(self.waves):
+                        f.write(f"{x},{fixedData[i]}\n")
+                    f.close()
+
+            self.stopSaveThread()
