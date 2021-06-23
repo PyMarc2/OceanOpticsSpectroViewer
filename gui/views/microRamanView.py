@@ -51,7 +51,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.connect_widgets()
         self.create_threads()
 
-        self.stageDevice = phl.SutterDevice()
+        self.stageDevice = phl.SutterDevice(portPath="debug")
         self.specDevices = sb.list_devices()
         self.spec = sb.Spectrometer(self.specDevices[0])
         self.dataSep = 0
@@ -345,37 +345,33 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
                             self.isSweepThreadAlive = False
                             self.enable_all_buttons()
                     else:
+                        self.isSweepThreadAlive = False
                         raise Exception(
                             'Somehow, the loop is trying to create more row or columns than asked on the GUI.')
-                        #self.isSweepThreadAlive = False
+
                 elif self.direction == "other":
-                    if self.countWidth < self.width-1 and self.countHeight % 2 == 0:
-                        # wait for signal...
+                    if self.countWidth < self.width - 1 and self.countHeight % 2 == 0:
                         self.countWidth += 1
                         self.move_stage()
-
-                    elif self.countHeight % 2 == 1 and self.countWidth <= self.width-1:
-                        # wait for signal...
+                    elif self.countWidth == self.width - 1 and self.countHeight % 2 == 0:
+                        self.countHeight += 1
+                        if self.countHeight == self.height:
+                            self.isSweepThreadAlive = False
+                        else:
+                            self.move_stage()
+                    elif 0 < self.countWidth < self.width and self.countHeight % 2 == 1:
                         self.countWidth -= 1
                         self.move_stage()
-
-                    elif self.countHeight < self.height and self.countWidth == self.width-1:
-                        if self.countSpectrums < self.width * self.height - 1:
-                            # wait for signal...
-                            self.countHeight += 1
-                            self.move_stage()
-                        else:
+                    elif self.countWidth == 0 and self.countHeight % 2 == 1:
+                        self.countHeight += 1
+                        if self.countHeight == self.height:
                             self.isSweepThreadAlive = False
-                            self.enable_all_buttons()
-
-                    elif self.countHeight >= self.height:
-                        raise Exception(
-                            'Somehow, the loop is trying to create more rows than asked on the GUI.')
-                        # self.isSweepThreadAlive = False
-
+                        else:
+                            self.move_stage()
                     else:
+                        self.isSweepThreadAlive = False
                         raise Exception(
-                            'Somehow, the loop is trying to create more columns than asked on the GUI.')
+                            'Somehow, the loop is trying to create more columns or rows than asked on the GUI.')
                 self.countSpectrums += 1
             else:
                 self.isSweepThreadAlive = False

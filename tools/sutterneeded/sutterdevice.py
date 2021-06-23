@@ -1,6 +1,7 @@
 from tools.sutterneeded.physicaldevice import *
 from tools.sutterneeded.communication.communicationport import *
 from tools.sutterneeded.communication.commands import DataCommand
+from tools.sutterneeded.communication import serialport
 
 import numpy as np
 from struct import *
@@ -39,7 +40,7 @@ class SutterDevice(PhysicalDevice):
             if self.portPath == "debug":
                 self.port = SutterDebugSerialPort()
             else:
-                self.port = SerialPort(idVendor=4930, idProduct=0x0001)
+                self.port = serialport.SerialPort(idVendor=4930, idProduct=0x0001)
             
             if self.port is None:
                 raise PhysicalDeviceUnableToInitialize("Cannot allocate port {0}".format(self.portPath))
@@ -144,7 +145,7 @@ class SutterDevice(PhysicalDevice):
     def home(self):
         commandBytes = pack('<cc', b'H', b'\r')
         self.sendCommand(commandBytes)
-        replyByte = self.readReply(1)
+        replyBytes = self.readReply(1)
         reply = unpack('<c', replyBytes)
         if reply != '\r':
             raise Exception(f"Expected carriage return, but got {reply} instead.")
@@ -162,7 +163,7 @@ class SutterDevice(PhysicalDevice):
 
 class SutterDebugSerialPort(CommunicationPort):
     def __init__(self):
-        super(SutterDebugSerialPort,self).__init__()
+        super(SutterDebugSerialPort, self).__init__()
         self.xSteps = 0
         self.ySteps = 0
         self.zSteps = 0
