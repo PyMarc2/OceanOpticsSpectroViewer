@@ -84,7 +84,6 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.fileName = ""
         self.autoindexing = False
 
-
     def connect_widgets(self):
         self.sb_height.textChanged.connect(lambda: setattr(self, 'height', self.sb_height.value()))
         self.sb_width.textChanged.connect(lambda: setattr(self, 'width', self.sb_width.value()))
@@ -351,18 +350,22 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
 
                 elif self.direction == "other":
                     if self.countWidth < self.width - 1 and self.countHeight % 2 == 0:
+                        # wait for signal...
                         self.countWidth += 1
                         self.move_stage()
                     elif self.countWidth == self.width - 1 and self.countHeight % 2 == 0:
+                        # wait for signal...
                         self.countHeight += 1
                         if self.countHeight == self.height:
                             self.isSweepThreadAlive = False
                         else:
                             self.move_stage()
                     elif 0 < self.countWidth < self.width and self.countHeight % 2 == 1:
+                        # wait for signal...
                         self.countWidth -= 1
                         self.move_stage()
                     elif self.countWidth == 0 and self.countHeight % 2 == 1:
+                        # wait for signal...
                         self.countHeight += 1
                         if self.countHeight == self.height:
                             self.isSweepThreadAlive = False
