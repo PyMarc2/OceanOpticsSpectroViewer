@@ -53,7 +53,11 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
 
         self.stageDevice = phl.SutterDevice(portPath="debug")
         self.specDevices = sb.list_devices()
-        self.spec = sb.Spectrometer(self.specDevices[0])
+        if self.specDevices == []:
+            self.spec = mock.MockSpectrometer()
+        else:
+            self.spec = sb.Spectrometer(self.specDevices[0])
+
         self.dataSep = 0
         self.countIntegrationWhile = 0
         self.integrationCountAcq = 0
