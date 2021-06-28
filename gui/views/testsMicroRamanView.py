@@ -16,10 +16,9 @@ import copy
 import tools.sutterneeded.sutterdevice as phl
 import seabreeze.spectrometers as sb
 
-class TestMicroRamanView:
-    def canWeConnectDebugSutter(self):
+class TestMicroRamanView(unittest.TestCase):
+    def testCanWeConnectDebugSutter(self):
         self.stageDevice = phl.SutterDevice(portPath="debug")
-        
 
 
 if __name__ == '__main__':
