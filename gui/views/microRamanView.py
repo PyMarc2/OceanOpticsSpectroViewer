@@ -2,7 +2,7 @@ import numpy
 from PyQt5.QtWidgets import QWidget, QFileDialog
 from PyQt5.Qt import QPixmap
 import pyqtgraph as pg
-from PyQt5.QtCore import pyqtSignal, Qt, QObject, QThreadPool, QThread
+from PyQt5.QtCore import pyqtSignal, Qt, QThreadPool, QThread
 from PyQt5 import uic
 import os
 from gui.modules import mockSpectrometer as mock
@@ -28,7 +28,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
     s_data_changed = pyqtSignal(dict)
     s_data_acquisition_done = pyqtSignal()
 
-    def __init__(self, model=None, controller=None):
+    def __init__(self, model=None):
         super(MicroRamanView, self).__init__()
         self.setupUi(self)
         self.model = model
@@ -43,7 +43,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.height = 3
         self.width = 3
         self.step = 1
-        self.ordre = 1
+        self.order = 1
         self.direction = 'other'
         self.exposureTime = 50
         self.integrationTimeAcq = 3000
@@ -53,7 +53,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
 
         self.stageDevice = phl.SutterDevice(portPath="debug")
         self.specDevices = sb.list_devices()
-        if self.specDevices == []:
+        if not self.specDevices:
             self.spec = mock.MockSpectrometer()
         else:
             self.spec = sb.Spectrometer(self.specDevices[0])
@@ -172,13 +172,13 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
 
     def measure_unit(self):
         if self.cmb_magnitude.currentText() == 'mm':
-            self.ordre = 10**3
+            self.order = 10**3
 
         elif self.cmb_magnitude.currentText() == 'um':
-            self.ordre = 1
+            self.order = 1
 
         elif self.cmb_magnitude.currentText() == 'nm':
-            self.ordre = 10**(-3)
+            self.order = 10**(-3)
 
         else:
             print('What the hell is going on?!')
