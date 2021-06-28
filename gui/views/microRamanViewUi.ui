@@ -287,7 +287,7 @@
              <number>0</number>
             </property>
             <item>
-             <layout class="QGridLayout" name="gridLayout_3" columnstretch="0,1,0">
+             <layout class="QGridLayout" name="gridLayout_3" columnstretch="0,0,0">
               <property name="sizeConstraint">
                <enum>QLayout::SetNoConstraint</enum>
               </property>
@@ -297,6 +297,31 @@
               <property name="spacing">
                <number>9</number>
               </property>
+              <item row="3" column="1">
+               <widget class="QSpinBox" name="sb_acqTime">
+                <property name="minimumSize">
+                 <size>
+                  <width>0</width>
+                  <height>0</height>
+                 </size>
+                </property>
+                <property name="statusTip">
+                 <string>Sets the integration time on the SpectrumDevice.</string>
+                </property>
+                <property name="minimum">
+                 <number>10</number>
+                </property>
+                <property name="maximum">
+                 <number>999999</number>
+                </property>
+                <property name="singleStep">
+                 <number>100</number>
+                </property>
+                <property name="value">
+                 <number>3000</number>
+                </property>
+               </widget>
+              </item>
               <item row="1" column="1">
                <widget class="QSpinBox" name="sb_step">
                 <property name="value">
@@ -329,28 +354,10 @@
                 </item>
                </widget>
               </item>
-              <item row="3" column="1">
-               <widget class="QSpinBox" name="sb_acqTime">
-                <property name="minimumSize">
-                 <size>
-                  <width>0</width>
-                  <height>0</height>
-                 </size>
-                </property>
-                <property name="statusTip">
-                 <string>Sets the integration time on the SpectrumDevice.</string>
-                </property>
-                <property name="minimum">
-                 <number>10</number>
-                </property>
-                <property name="maximum">
-                 <number>999999</number>
-                </property>
-                <property name="singleStep">
-                 <number>100</number>
-                </property>
-                <property name="value">
-                 <number>3000</number>
+              <item row="2" column="0">
+               <widget class="QLabel" name="la_acqTime">
+                <property name="text">
+                 <string>Pixel Exposure Time:</string>
                 </property>
                </widget>
               </item>
@@ -382,13 +389,6 @@
                 </property>
                 <property name="value">
                  <number>50</number>
-                </property>
-               </widget>
-              </item>
-              <item row="2" column="0">
-               <widget class="QLabel" name="la_acqTime">
-                <property name="text">
-                 <string>Pixel Exposure Time:</string>
                 </property>
                </widget>
               </item>
@@ -470,6 +470,13 @@
                 </property>
                </widget>
               </item>
+              <item row="0" column="2">
+               <widget class="QLabel" name="label_4">
+                <property name="text">
+                 <string>pixels</string>
+                </property>
+               </widget>
+              </item>
               <item row="3" column="0">
                <widget class="QLabel" name="la_acqTime_3">
                 <property name="text">
@@ -481,13 +488,6 @@
                <widget class="QLabel" name="label">
                 <property name="text">
                  <string>Image Size</string>
-                </property>
-               </widget>
-              </item>
-              <item row="0" column="2">
-               <widget class="QLabel" name="label_4">
-                <property name="text">
-                 <string>pixels</string>
                 </property>
                </widget>
               </item>
@@ -520,6 +520,64 @@
             </item>
            </layout>
           </widget>
+         </item>
+         <item>
+          <layout class="QGridLayout" name="gridLayout_5">
+           <item row="1" column="0">
+            <widget class="QSlider" name="dSlider_red">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="2">
+            <widget class="QSlider" name="dSLider_blue">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QSlider" name="dSlider_green">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="QLabel" name="Green">
+             <property name="text">
+              <string>Green</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="2">
+            <widget class="QLabel" name="Blue">
+             <property name="text">
+              <string>Blue</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="0">
+            <widget class="QLabel" name="Red">
+             <property name="layoutDirection">
+              <enum>Qt::LeftToRight</enum>
+             </property>
+             <property name="text">
+              <string>Red</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+          </layout>
          </item>
          <item>
           <widget class="QGroupBox" name="g_acquisitionControl">

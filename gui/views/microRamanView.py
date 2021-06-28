@@ -14,6 +14,7 @@ import logging
 import copy
 import tools.sutterneeded.sutterdevice as phl
 import seabreeze.spectrometers as sb
+from gui.widgets import QDoubleSlider
 
 log = logging.getLogger(__name__)
 
@@ -81,6 +82,8 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.dataPixel = []
         self.liveAcquisitionData = []
 
+        self.dSlider_red = QDoubleSlider.DoubleSlider()
+
         self.img = None
 
         # Saving Data
@@ -125,6 +128,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.plotItem = self.graph_rgb.addViewBox()
         self.plotItem.enableAutoRange()
         self.plotItem.invertY(True)
+        self.plotItem.setAspectLocked()
 
     def create_matrixData(self):
         self.matrixData = np.zeros((self.height, self.width), dtype=object)
@@ -374,7 +378,8 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
                         if self.countHeight == self.height:
                             self.isSweepThreadAlive = False
                         else:
-                            self.move_stage()
+                            pass
+                           #self.move_stage()
                     else:
                         self.isSweepThreadAlive = False
                         raise Exception(
