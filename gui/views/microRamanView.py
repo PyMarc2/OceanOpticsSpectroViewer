@@ -14,7 +14,6 @@ import logging
 import copy
 import tools.sutterneeded.sutterdevice as phl
 import seabreeze.spectrometers as sb
-from gui.widgets import QDoubleSlider
 
 log = logging.getLogger(__name__)
 
@@ -81,8 +80,6 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.matrixRGB = None
         self.dataPixel = []
         self.liveAcquisitionData = []
-
-        self.dSlider_red = QDoubleSlider.DoubleSlider()
 
         self.img = None
 
