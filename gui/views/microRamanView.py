@@ -81,6 +81,20 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.dataPixel = []
         self.liveAcquisitionData = []
 
+        self.lowRed = 0
+        self.highRed = 85
+        self.lowGreen = 86
+        self.highGreen = 170
+        self.lowBlue = 171
+        self.highBlue = 255
+
+        self.dSlider_red.set_left_thumb_value(0)
+        self.dSlider_red.set_right_thumb_value(85)
+        self.dSlider_green.set_left_thumb_value(86)
+        self.dSlider_green.set_right_thumb_value(170)
+        self.dSlider_blue.set_left_thumb_value(171)
+        self.dSlider_blue.set_right_thumb_value(255)
+
         self.img = None
 
         # Saving Data
@@ -103,6 +117,10 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.sb_exposure.valueChanged.connect(self.set_exposure_time)
         self.tb_folderPath.clicked.connect(self.select_save_folder)
         self.pb_saveData.clicked.connect(self.save_capture_csv)
+
+        self.dSlider_red.valueChanged.connect(self.set_red_range)
+        self.dSlider_green.valueChanged.connect(self.set_green_range)
+        self.dSlider_blue.valueChanged.connect(self.set_blue_range)
 
     def connect_signals(self):
         #self.s_data_changed.connect(self.move_stage)
@@ -207,6 +225,24 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         #self.pb_sweepSame.setFlat(False)
         #self.pb_sweepAlternate.setFlat(False)
 
+    def set_red_range(self):
+        self.lowRed = self.dSlider_red.get_left_thumb_value()
+        self.highRed = self.dSlider_red.get_right_thumb_value()
+        print("lowRed:", self.lowRed)
+        print("highRed:", self.highRed)
+
+    def set_green_range(self):
+        self.lowGreen = self.dSlider_green.get_left_thumb_value()
+        self.highGreen = self.dSlider_green.get_right_thumb_value()
+        print("lowGreen:", self.lowGreen)
+        print("highGreen:", self.highGreen)
+
+    def set_blue_range(self):
+        self.lowBlue = self.dSlider_blue.get_left_thumb_value()
+        self.highBlue = self.dSlider_blue.get_right_thumb_value()
+        print("lowBlue:", self.lowBlue)
+        print("highBlue:", self.highBlue)
+
     def set_exposure_time(self, time_in_ms=None, update=True):
         if time_in_ms is not None:
             expositionTime = time_in_ms
@@ -299,12 +335,17 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
 
     def matrixRGB_replace(self):
         self.dataPixel = np.array(self.dataPixel) / max(self.dataPixel)
-        R, G, B = np.array_split(self.dataPixel, 3)
+        R = self.dataPixel[self.lowRed:self.highRed]
+        G = self.dataPixel[self.lowGreen:self.highGreen]
+        B = self.dataPixel[self.lowBlue:self.highBlue]
+        #R, G, B = np.array_split(self.dataPixel, 3)
+
         areaR = trapz(R, dx=1)
         areaG = trapz(G, dx=1)
         areaB = trapz(B, dx=1)
 
         areas = np.array([areaR, areaG, areaB])
+
         areas = (areas / max(areas))*255
         self.matrixRGB[self.countHeight, self.countWidth, :] = areas
 
