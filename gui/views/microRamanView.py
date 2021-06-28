@@ -321,7 +321,6 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
 
     def move_stage(self):
         self.positionSutter = self.stageDevice.position()
-        print(self.positionSutter)
         self.stageDevice.moveTo((self.positionSutter[0]+self.countWidth*self.step,
                                  self.positionSutter[1]+self.countHeight*self.step,
                                  self.positionSutter[2]))

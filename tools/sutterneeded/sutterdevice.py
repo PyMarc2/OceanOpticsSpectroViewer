@@ -46,7 +46,7 @@ class SutterDevice(PhysicalDevice):
                 raise PhysicalDeviceUnableToInitialize("Cannot allocate port {0}".format(self.portPath))
 
             self.port.open(baudRate=128000, timeout=10)
-            self.doGetPosition()
+            #self.doGetPosition()
 
         except Exception as error:
             if self.port is not None:
@@ -55,7 +55,6 @@ class SutterDevice(PhysicalDevice):
             raise PhysicalDeviceUnableToInitialize()
         except PhysicalDeviceUnableToInitialize as error:
             raise error
-        
 
     def doShutdownDevice(self):
         self.port.close()
@@ -149,8 +148,7 @@ class SutterDevice(PhysicalDevice):
         reply = unpack('<c', replyBytes)
         if reply != '\r':
             raise Exception(f"Expected carriage return, but got {reply} instead.")
-        
-        
+
     def work(self):
         self.home()
         commandBytes = pack('<cc', b'Y', b'\r')
