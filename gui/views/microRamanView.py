@@ -230,18 +230,21 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
     def set_red_range(self):
         self.lowRed = self.dSlider_red.get_left_thumb_value()
         self.highRed = self.dSlider_red.get_right_thumb_value()
+        self.matrixRGB_replace()
         print("lowRed:", self.lowRed)
         print("highRed:", self.highRed)
 
     def set_green_range(self):
         self.lowGreen = self.dSlider_green.get_left_thumb_value()
         self.highGreen = self.dSlider_green.get_right_thumb_value()
+        self.matrixRGB_replace()
         print("lowGreen:", self.lowGreen)
         print("highGreen:", self.highGreen)
 
     def set_blue_range(self):
         self.lowBlue = self.dSlider_blue.get_left_thumb_value()
         self.highBlue = self.dSlider_blue.get_right_thumb_value()
+        self.matrixRGB_replace()
         print("lowBlue:", self.lowBlue)
         print("highBlue:", self.highBlue)
 
@@ -330,17 +333,12 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.dataPixel = np.mean(np.array(self.movingIntegrationData()), 0)
         self.acquire_background()
 
-        self.dataPixel = []
-        self.s_data_changed.emit({f"{self.countSpectrums}": self.matrixData[self.countHeight][self.countWidth]})
-        # était avant à la fin de la fonction prédédente, soit spectrum_pixel_acq... ENFIN de retour lol
-
     def matrixData_replace(self):# Mettre le dataPixel au bon endroit dans la matrice
         self.matrixData[self.countHeight,self.countWidth,:] = np.array(self.dataPixel)
-        print(self.countHeight)
-        print(self.countWidth)
+        self.dataPixel = []
+        self.s_data_changed.emit({f"{self.countSpectrums}": self.matrixData[self.countHeight][self.countWidth]})
 
     def matrixRGB_replace(self):
-
         if self.isSweepThreadAlive:
             lowRed = round((self.lowRed / 255) * self.dataLength)
             highRed = round((self.highRed / 255) * self.dataLength)
