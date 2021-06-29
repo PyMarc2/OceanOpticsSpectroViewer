@@ -335,7 +335,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         # était avant à la fin de la fonction prédédente, soit spectrum_pixel_acq... ENFIN de retour lol
 
     def matrixData_replace(self):# Mettre le dataPixel au bon endroit dans la matrice
-        self.matrixData[self.countHeight,self.countWidth,:] = np.array(self.dataPixel)
+        self.matrixData[self.countHeight, self.countWidth, :] = np.array(self.dataPixel)
         print(self.countHeight)
         print(self.countWidth)
 
