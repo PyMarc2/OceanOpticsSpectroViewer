@@ -335,8 +335,9 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.dataPixel = np.mean(np.array(self.movingIntegrationData()), 0)
         self.acquire_background()
 
-    def matrixData_replace(self):# Mettre le dataPixel au bon endroit dans la matrice
-        self.matrixData[self.countHeight,self.countWidth,:] = np.array(self.dataPixel)
+    def matrixData_replace(self):
+        # Mettre le dataPixel au bon endroit dans la matrice
+        self.matrixData[self.countHeight, self.countWidth, :] = np.array(self.dataPixel)
         self.dataPixel = []
         self.s_data_changed.emit({f"{self.countSpectrums}": self.matrixData[self.countHeight][self.countWidth]})
 
