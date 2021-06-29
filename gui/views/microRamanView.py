@@ -80,7 +80,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.dataPixel = []
         self.liveAcquisitionData = []
 
-        self.dataLength = 2048 #On va la définir après là c'est la valeur du mock
+        self.dataLength = 2048 # On va la définir après là c'est la valeur du mock
 
         self.lowRed = 0
         self.highRed = 85
@@ -124,7 +124,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.dSlider_blue.valueChanged.connect(self.set_blue_range)
 
     def connect_signals(self):
-        #self.s_data_changed.connect(self.move_stage)
+        # self.s_data_changed.connect(self.move_stage)
         self.s_data_changed.connect(lambda: setattr(self, 'isEveryAcqDone', True))
         self.s_data_changed.connect(self.startSaveThread)
 
@@ -149,7 +149,8 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
     def create_matrixData(self):
         self.matrixData = np.zeros((self.height, self.width,self.dataLength))
 
-    def create_matrixRGB(self):# Pour voir le test il faut mettre du 3x3 pixels et activer les lignes de code ci-dessous
+    def create_matrixRGB(self):
+        # Pour voir le test il faut mettre du 3x3 pixels et activer les lignes de code ci-dessous
         self.matrixRGB = np.zeros((self.height, self.width, 3))
 
         #area = np.array([255, 0, 0])
@@ -212,8 +213,8 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.pb_sweepAlternate.setEnabled(False)
         self.sb_exposure.setEnabled(False)
         self.sb_acqTime.setEnabled(False)
-        #self.pb_sweepSame.setFlat(True)
-        #self.pb_sweepAlternate.setFlat(True)
+        # self.pb_sweepSame.setFlat(True)
+        # self.pb_sweepAlternate.setFlat(True)
 
     def enable_all_buttons(self):
         self.sb_height.setEnabled(True)
@@ -224,8 +225,8 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.pb_sweepAlternate.setEnabled(True)
         self.sb_exposure.setEnabled(True)
         self.sb_acqTime.setEnabled(True)
-        #self.pb_sweepSame.setFlat(False)
-        #self.pb_sweepAlternate.setFlat(False)
+        # self.pb_sweepSame.setFlat(False)
+        # self.pb_sweepAlternate.setFlat(False)
 
     def set_red_range(self):
         self.lowRed = self.dSlider_red.get_left_thumb_value()
@@ -319,7 +320,8 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
     def read_data_live(self, *args, **kwargs):
         return self.spec.intensities()[2:]
 
-    def spectrum_pixel_acquisition(self):#l'équivalent de manage_data_flow
+    def spectrum_pixel_acquisition(self):
+        # l'équivalent de manage_data_flow
         self.waves = self.spec.wavelengths()[2:]
         self.dataLen = len(self.waves)
         self.dataSep = (max(self.waves) - min(self.waves)) / len(self.waves)
@@ -334,13 +336,13 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.s_data_changed.emit({f"{self.countSpectrums}": self.matrixData[self.countHeight][self.countWidth]})
         # était avant à la fin de la fonction prédédente, soit spectrum_pixel_acq... ENFIN de retour lol
 
-    def matrixData_replace(self):# Mettre le dataPixel au bon endroit dans la matrice
+    def matrixData_replace(self):
+        # Mettre le dataPixel au bon endroit dans la matrice
         self.matrixData[self.countHeight, self.countWidth, :] = np.array(self.dataPixel)
         print(self.countHeight)
         print(self.countWidth)
 
     def matrixRGB_replace(self):
-
         if self.isSweepThreadAlive:
             lowRed = round((self.lowRed / 255) * self.dataLength)
             highRed = round((self.highRed / 255) * self.dataLength)
@@ -365,7 +367,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.stageDevice.moveTo((self.positionSutter[0]+self.countWidth*self.step,
                                  self.positionSutter[1]+self.countHeight*self.step,
                                  self.positionSutter[2]))
-        #va manquer à importer le fichier de commnucation avec le stage (hardwareLibrary)
+        # va manquer à importer le fichier de commnucation avec le stage (hardwareLibrary)
 
     def sweep(self, *args, **kwargs):
         self.countHeight = 0
@@ -379,7 +381,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
                 self.update_plot()
                 if self.direction == "same":
                     if self.countWidth < self.width-1:
-                        #wait for signal... (with a connect?)
+                        # wait for signal... (with a connect?)
                         self.countWidth += 1
                         self.move_stage()
                     elif self.countHeight < self.height and self.countWidth == self.width-1:
@@ -419,7 +421,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
                             self.isSweepThreadAlive = False
                         else:
                             pass
-                           #self.move_stage()
+                            # self.move_stage()
                     else:
                         self.isSweepThreadAlive = False
                         raise Exception(
@@ -429,14 +431,13 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
                 self.isSweepThreadAlive = False
                 self.enable_all_buttons()
 
-    def startSaveThread(self, data=None):
+    def start_save_thread(self, data=None):
         self.data = data
         self.saveThread.start()
 
-    def stopSaveThread(self):
+    def stop_save_thread(self):
         self.saveThread.sleep()
 
-    #on veut donc activer acquisitionthread
     def begin(self):
         if not self.isSweepThreadAlive:
             try:
@@ -490,7 +491,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
             else:
                 fixedData = copy.deepcopy(spectrum)
                 path = os.path.join(self.folderPath, f"{self.fileName}_{key}")
-                #print(key, spectrum)
+                # print(key, spectrum)
                 with open(path + ".csv", "w+") as f:
                     for i, x in enumerate(self.waves):
                         f.write(f"{x},{fixedData[i]}\n")
