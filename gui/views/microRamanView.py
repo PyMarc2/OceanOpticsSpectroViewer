@@ -80,6 +80,8 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.dataPixel = []
         self.liveAcquisitionData = []
 
+        self.dataLength = 2048 #On va la définir après là c'est la valeur du mock
+
         self.lowRed = 0
         self.highRed = 85
         self.lowGreen = 86
@@ -145,10 +147,10 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.plotItem.setAspectLocked()
 
     def create_matrixData(self):
-        self.matrixData = np.zeros((self.height, self.width), dtype=object)
+        self.matrixData = np.zeros((self.height, self.width,self.dataLength))
 
     def create_matrixRGB(self):# Pour voir le test il faut mettre du 3x3 pixels et activer les lignes de code ci-dessous
-        self.matrixRGB = np.zeros((self.height, self.width, 3), dtype=np.uint8)
+        self.matrixRGB = np.zeros((self.height, self.width, 3))
 
         #area = np.array([255, 0, 0])
         #area1 = np.array([0, 255, 0])
@@ -156,6 +158,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         #self.matrixRGB[0, 0, :] = area
         #self.matrixRGB[1, 1, :] = area1
         #self.matrixRGB[2, 2, :] = area2
+
 
     def initialize_buttons(self):
         self.pb_sweepSame.setIcons(QPixmap("./gui/misc/icons/sweep_same.png").scaled(50, 50,Qt.KeepAspectRatio, Qt.SmoothTransformation),
@@ -327,30 +330,31 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.dataPixel = np.mean(np.array(self.movingIntegrationData()), 0)
         self.acquire_background()
 
+        self.dataPixel = []
+        self.s_data_changed.emit({f"{self.countSpectrums}": self.matrixData[self.countHeight][self.countWidth]})
+        # était avant à la fin de la fonction prédédente, soit spectrum_pixel_acq... ENFIN de retour lol
+
     def matrixData_replace(self):# Mettre le dataPixel au bon endroit dans la matrice
-        self.matrixData[self.countHeight][self.countWidth] = np.array(self.dataPixel)
+        self.matrixData[self.countHeight,self.countWidth,:] = np.array(self.dataPixel)
         print(self.countHeight)
         print(self.countWidth)
 
     def matrixRGB_replace(self):
-        self.dataPixel = np.array(self.dataPixel) / max(self.dataPixel)
-        R = self.dataPixel[self.lowRed:self.highRed]
-        G = self.dataPixel[self.lowGreen:self.highGreen]
-        B = self.dataPixel[self.lowBlue:self.highBlue]
-        #R, G, B = np.array_split(self.dataPixel, 3)
 
-        areaR = trapz(R, dx=1)
-        areaG = trapz(G, dx=1)
-        areaB = trapz(B, dx=1)
+        if self.isSweepThreadAlive:
+            lowRed = round((self.lowRed / 255) * self.dataLength)
+            highRed = round((self.highRed / 255) * self.dataLength)
+            lowGreen = round((self.lowGreen / 255) * self.dataLength)
+            highGreen = round((self.highGreen / 255) * self.dataLength)
+            lowBlue = round((self.lowBlue / 255) * self.dataLength)
+            highBlue = round((self.highBlue / 255) * self.dataLength)
 
-        areas = np.array([areaR, areaG, areaB])
-
-        areas = (areas / max(areas))*255
-        self.matrixRGB[self.countHeight, self.countWidth, :] = areas
-
-        self.dataPixel = []
-        self.s_data_changed.emit({f"{self.countSpectrums}": self.matrixData[self.countHeight][self.countWidth]})
-                # était avant à la fin de la fonction prédédente, soit spectrum_pixel_acq...
+            self.matrixRGB[:, :, 0] = self.matrixData[:, :, lowRed:highRed].sum(axis=2)
+            self.matrixRGB[:, :, 1] = self.matrixData[:, :, lowGreen:highGreen].sum(axis=2)
+            self.matrixRGB[:, :, 2] = self.matrixData[:, :, lowBlue:highBlue].sum(axis=2)
+            self.matrixRGB = (self.matrixRGB / np.max(self.matrixRGB)) * 255
+        else:
+            pass
 
     def update_plot(self):
         img = pg.ImageItem(image=self.matrixRGB, levels=(0, 1))
