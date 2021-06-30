@@ -4,11 +4,10 @@ import pyqtgraph as pg
 from PyQt5.QtCore import pyqtSignal, Qt, QThreadPool, QThread
 from PyQt5 import uic
 import os
-from gui.modules import mockSpectrometer as mock
+from gui.modules import mockSpectrometer as Mock
 from tools.threadWorker import Worker
 from tools.CircularList import RingBuffer
 import numpy as np
-from numpy import trapz
 import logging
 import copy
 import tools.sutterneeded.sutterdevice as phl
@@ -47,13 +46,18 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.exposureTime = 50
         self.integrationTimeAcq = 3000
         self.acqTimeRemainder_ms = 0
+        self.countHeight = 0
+        self.countWidth = 0
+        self.countSpectrum = 0
+        self.data = None
         self.connect_widgets()
         self.create_threads()
 
         self.stageDevice = phl.SutterDevice(portPath="debug")
+        self.positionSutter = self.stageDevice.position()
         self.specDevices = sb.list_devices()
         if not self.specDevices:
-            self.spec = mock.MockSpectrometer()
+            self.spec = Mock.MockSpectrometer()
         else:
             self.spec = sb.Spectrometer(self.specDevices[0])
 
@@ -80,7 +84,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.dataPixel = []
         self.liveAcquisitionData = []
 
-        self.dataLength = 2048 # On va la définir après là c'est la valeur du mock
+        self.dataLength = 2048  # On va la définir après là c'est la valeur du mock
 
         self.lowRed = 0
         self.highRed = 85
@@ -146,30 +150,29 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.plotItem.invertY(True)
         self.plotItem.setAspectLocked()
 
-    def create_matrixData(self):
-        self.matrixData = np.zeros((self.height, self.width,self.dataLength))
+    def create_matrix_data(self):
+        self.matrixData = np.zeros((self.height, self.width, self.dataLength))
 
     def create_matrixRGB(self):
         # Pour voir le test il faut mettre du 3x3 pixels et activer les lignes de code ci-dessous
         self.matrixRGB = np.zeros((self.height, self.width, 3))
 
-        #area = np.array([255, 0, 0])
-        #area1 = np.array([0, 255, 0])
-        #area2 = np.array([0, 0, 255])
-        #self.matrixRGB[0, 0, :] = area
-        #self.matrixRGB[1, 1, :] = area1
-        #self.matrixRGB[2, 2, :] = area2
-
+        # area = np.array([255, 0, 0])
+        # area1 = np.array([0, 255, 0])
+        # area2 = np.array([0, 0, 255])
+        # self.matrixRGB[0, 0, :] = area
+        # self.matrixRGB[1, 1, :] = area1
+        # self.matrixRGB[2, 2, :] = area2
 
     def initialize_buttons(self):
-        self.pb_sweepSame.setIcons(QPixmap("./gui/misc/icons/sweep_same.png").scaled(50, 50,Qt.KeepAspectRatio, Qt.SmoothTransformation),
-                                   QPixmap("./gui/misc/icons/sweep_same_hover.png").scaled(50, 50,Qt.KeepAspectRatio, Qt.SmoothTransformation),
-                                   QPixmap("./gui/misc/icons/sweep_same_clicked.png").scaled(50, 50,Qt.KeepAspectRatio, Qt.SmoothTransformation),
-                                   QPixmap("./gui/misc/icons/sweep_same_selected.png").scaled(50, 50,Qt.KeepAspectRatio, Qt.SmoothTransformation))
-        self.pb_sweepAlternate.setIcons(QPixmap("./gui/misc/icons/sweep_alternate.png").scaled(50, 50,Qt.KeepAspectRatio, Qt.SmoothTransformation),
-                                   QPixmap("./gui/misc/icons/sweep_alternate_hover.png").scaled(50, 50,Qt.KeepAspectRatio, Qt.SmoothTransformation),
-                                   QPixmap("./gui/misc/icons/sweep_alternate_clicked.png").scaled(50, 50,Qt.KeepAspectRatio, Qt.SmoothTransformation),
-                                   QPixmap("./gui/misc/icons/sweep_alternate_selected.png").scaled(50, 50,Qt.KeepAspectRatio, Qt.SmoothTransformation))
+        self.pb_sweepSame.setIcons(QPixmap("./gui/misc/icons/sweep_same.png").scaled(50, 50, Qt.KeepAspectRatio, Qt.SmoothTransformation),
+                                   QPixmap("./gui/misc/icons/sweep_same_hover.png").scaled(50, 50, Qt.KeepAspectRatio, Qt.SmoothTransformation),
+                                   QPixmap("./gui/misc/icons/sweep_same_clicked.png").scaled(50, 50, Qt.KeepAspectRatio, Qt.SmoothTransformation),
+                                   QPixmap("./gui/misc/icons/sweep_same_selected.png").scaled(50, 50, Qt.KeepAspectRatio, Qt.SmoothTransformation))
+        self.pb_sweepAlternate.setIcons(QPixmap("./gui/misc/icons/sweep_alternate.png").scaled(50, 50, Qt.KeepAspectRatio, Qt.SmoothTransformation),
+                                        QPixmap("./gui/misc/icons/sweep_alternate_hover.png").scaled(50, 50, Qt.KeepAspectRatio, Qt.SmoothTransformation),
+                                        QPixmap("./gui/misc/icons/sweep_alternate_clicked.png").scaled(50, 50, Qt.KeepAspectRatio, Qt.SmoothTransformation),
+                                        QPixmap("./gui/misc/icons/sweep_alternate_selected.png").scaled(50, 50, Qt.KeepAspectRatio, Qt.SmoothTransformation))
 
     def disable_all_buttons(self):
         self.sb_height.setEnabled(False)
@@ -203,30 +206,6 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
 
         else:
             print('What the hell is going on?!')
-
-    def disable_all_buttons(self):
-        self.sb_height.setEnabled(False)
-        self.sb_width.setEnabled(False)
-        self.sb_step.setEnabled(False)
-        self.cmb_magnitude.setEnabled(False)
-        self.pb_sweepSame.setEnabled(False)
-        self.pb_sweepAlternate.setEnabled(False)
-        self.sb_exposure.setEnabled(False)
-        self.sb_acqTime.setEnabled(False)
-        # self.pb_sweepSame.setFlat(True)
-        # self.pb_sweepAlternate.setFlat(True)
-
-    def enable_all_buttons(self):
-        self.sb_height.setEnabled(True)
-        self.sb_width.setEnabled(True)
-        self.sb_step.setEnabled(True)
-        self.cmb_magnitude.setEnabled(True)
-        self.pb_sweepSame.setEnabled(True)
-        self.pb_sweepAlternate.setEnabled(True)
-        self.sb_exposure.setEnabled(True)
-        self.sb_acqTime.setEnabled(True)
-        # self.pb_sweepSame.setFlat(False)
-        # self.pb_sweepAlternate.setFlat(False)
 
     def set_red_range(self):
         self.lowRed = self.dSlider_red.get_left_thumb_value()
@@ -335,15 +314,11 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.dataPixel = np.mean(np.array(self.movingIntegrationData()), 0)
         self.acquire_background()
 
-    def matrixData_replace(self):
+    def matrix_data_replace(self):
         # Mettre le dataPixel au bon endroit dans la matrice
         self.matrixData[self.countHeight, self.countWidth, :] = np.array(self.dataPixel)
         self.dataPixel = []
-        self.s_data_changed.emit({f"{self.countSpectrums}": self.matrixData[self.countHeight][self.countWidth]})
-
-    def matrixData_replace(self):
-        # Mettre le dataPixel au bon endroit dans la matrice
-        self.matrixData[self.countHeight, self.countWidth, :] = np.array(self.dataPixel)
+        self.s_data_changed.emit({f"{self.countSpectrum}": self.matrixData[self.countHeight][self.countWidth]})
 
     def matrixRGB_replace(self):
         if self.isSweepThreadAlive:
@@ -358,6 +333,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
             self.matrixRGB[:, :, 1] = self.matrixData[:, :, lowGreen:highGreen].sum(axis=2)
             self.matrixRGB[:, :, 2] = self.matrixData[:, :, lowBlue:highBlue].sum(axis=2)
             self.matrixRGB = (self.matrixRGB / np.max(self.matrixRGB)) * 255
+
         else:
             pass
 
@@ -366,20 +342,16 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.plotItem.addItem(img)
 
     def move_stage(self):
-        self.positionSutter = self.stageDevice.position()
         self.stageDevice.moveTo((self.positionSutter[0]+self.countWidth*self.step,
                                  self.positionSutter[1]+self.countHeight*self.step,
                                  self.positionSutter[2]))
         # va manquer à importer le fichier de commnucation avec le stage (hardwareLibrary)
 
     def sweep(self, *args, **kwargs):
-        self.countHeight = 0
-        self.countWidth = 0
-        self.countSpectrums = 0
         while self.isSweepThreadAlive:
-            if self.countSpectrums < self.width*self.height:
+            if self.countSpectrum < self.width*self.height:
                 self.spectrum_pixel_acquisition()
-                self.matrixData_replace()
+                self.matrix_data_replace()
                 self.matrixRGB_replace()
                 self.update_plot()
                 if self.direction == "same":
@@ -388,7 +360,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
                         self.countWidth += 1
                         self.move_stage()
                     elif self.countHeight < self.height and self.countWidth == self.width-1:
-                        if self.countSpectrums < self.width*self.height-1:
+                        if self.countSpectrum < self.width*self.height-1:
                             # wait for signal...
                             self.countWidth = 0
                             self.countHeight += 1
@@ -429,7 +401,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
                         self.isSweepThreadAlive = False
                         raise Exception(
                             'Somehow, the loop is trying to create more columns or rows than asked on the GUI.')
-                self.countSpectrums += 1
+                self.countSpectrum += 1
             else:
                 self.isSweepThreadAlive = False
                 self.enable_all_buttons()
@@ -450,13 +422,13 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
                 self.graph_rgb.clear()
                 self.create_plot()
                 self.disable_all_buttons()
-                self.create_matrixData()
+                self.create_matrix_data()
                 self.create_matrixRGB()
                 self.sweepThread.start()
                 self.threadpool.start(self.sweepWorker)
 
             except Exception as e:
-                self.spec = mock.MockSpectrometer()
+                self.spec = Mock.MockSpectrometer()
 
         else:
             print('Sampling already started.')
