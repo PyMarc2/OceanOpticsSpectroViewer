@@ -88,7 +88,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.dataPixel = []
         self.liveAcquisitionData = []
 
-        self.dataLength = 2048  # Will need to be generalized, now created for the mock spectrometer specifically
+        self.dataLength = 2048  # TODO Will need to be generalized, now created for the mock spectrometer specifically
 
         self.lowRed = 0
         self.highRed = 85
@@ -154,7 +154,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.matrixData = np.zeros((self.height, self.width, self.dataLength))
 
     def create_matrixRGB(self):
-        # to see the test sequence, set 3x3 matrix and un-comment following lines
+        # TODO to see the test sequence, set 3x3 matrix and un-comment following lines
         self.matrixRGB = np.zeros((self.height, self.width, 3))
 
         # area = np.array([255, 0, 0])
@@ -315,7 +315,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.acquire_background()
 
     def matrix_data_replace(self):
-        # Insert dataPixel in the matrix, with the right indexes
+        # Inserts dataPixel in the matrix, with the right indexes
         self.matrixData[self.countHeight, self.countWidth, :] = np.array(self.dataPixel)
         self.dataPixel = []
         self.s_data_changed.emit({f"{self.countSpectrum}": self.matrixData[self.countHeight][self.countWidth]})
@@ -345,7 +345,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.stageDevice.moveTo((self.positionSutter[0]+self.countWidth*self.step,
                                  self.positionSutter[1]+self.countHeight*self.step,
                                  self.positionSutter[2]))
-        # we will need to import the communication file/module for any Sutter device (hardwareLibrary)
+        # TODO we will need to import the communication file/module for any Sutter device (hardwareLibrary)
 
     def sweep(self, *args, **kwargs):
         while self.isSweepThreadAlive:
@@ -406,13 +406,6 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
                 self.isSweepThreadAlive = False
                 self.enable_all_buttons()
 
-    def start_save_thread(self, data=None):
-        self.data = data
-        self.saveThread.start()
-
-    def stop_save_thread(self):
-        self.saveThread.wait()
-
     def begin(self):
         if not self.isSweepThreadAlive:
             try:
@@ -442,6 +435,13 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
             print('Sampling already stopped.')
 
         self.enable_all_buttons()
+
+    def start_save_thread(self, data=None):
+        self.data = data
+        self.saveThread.start()
+
+    def stop_save_thread(self):
+        self.saveThread.wait()
 
     def select_save_folder(self):
         self.folderPath = str(QFileDialog.getExistingDirectory(self, "Select Directory"))
