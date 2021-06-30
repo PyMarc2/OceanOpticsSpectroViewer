@@ -130,7 +130,6 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.dSlider_blue.valueChanged.connect(self.set_blue_range)
 
     def connect_signals(self):
-        # self.s_data_changed.connect(self.move_stage)
         self.s_data_changed.connect(lambda: setattr(self, 'isEveryAcqDone', True))
         self.s_data_changed.connect(self.startSaveThread)
 
@@ -152,15 +151,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.matrixData = np.zeros((self.height, self.width, self.dataLen))
 
     def create_matrixRGB(self):
-        # TODO to see the test sequence, set 3x3 matrix and un-comment following lines
         self.matrixRGB = np.zeros((self.height, self.width, 3))
-
-        # area = np.array([255, 0, 0])
-        # area1 = np.array([0, 255, 0])
-        # area2 = np.array([0, 0, 255])
-        # self.matrixRGB[0, 0, :] = area
-        # self.matrixRGB[1, 1, :] = area1
-        # self.matrixRGB[2, 2, :] = area2
 
     def initialize_buttons(self):
         self.pb_sweepSame.setIcons(QPixmap("./gui/misc/icons/sweep_same.png").scaled(50, 50, Qt.KeepAspectRatio, Qt.SmoothTransformation),
@@ -209,22 +200,16 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.lowRed = self.dSlider_red.get_left_thumb_value()
         self.highRed = self.dSlider_red.get_right_thumb_value()
         self.matrixRGB_replace()
-        print("lowRed:", self.lowRed)
-        print("highRed:", self.highRed)
 
     def set_green_range(self):
         self.lowGreen = self.dSlider_green.get_left_thumb_value()
         self.highGreen = self.dSlider_green.get_right_thumb_value()
         self.matrixRGB_replace()
-        print("lowGreen:", self.lowGreen)
-        print("highGreen:", self.highGreen)
 
     def set_blue_range(self):
         self.lowBlue = self.dSlider_blue.get_left_thumb_value()
         self.highBlue = self.dSlider_blue.get_right_thumb_value()
         self.matrixRGB_replace()
-        print("lowBlue:", self.lowBlue)
-        print("highBlue:", self.highBlue)
 
     def set_exposure_time(self, time_in_ms=None, update=True):
         if time_in_ms is not None:
@@ -305,7 +290,6 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         return self.spec.intensities()[2:]
 
     def spectrum_pixel_acquisition(self):
-        # manage_data_flow homologue
         self.waves = self.spec.wavelengths()[2:]
         self.dataLen = len(self.waves)
         self.dataSep = (max(self.waves) - min(self.waves)) / len(self.waves)
@@ -317,7 +301,6 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.acquire_background()
 
     def matrix_data_replace(self):
-        # Inserts dataPixel in the matrix, with the right indexes
         self.matrixData[self.countHeight, self.countWidth, :] = np.array(self.dataPixel)
         self.dataPixel = []
         self.s_data_changed.emit({f"{self.countSpectrum}": self.matrixData[self.countHeight][self.countWidth]})
@@ -325,11 +308,11 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
     def matrixRGB_replace(self):
         if self.isSweepThreadAlive:
             lowRed = round((self.lowRed / 255) * self.dataLength)
-            highRed = round((self.highRed / 255) * self.dataLength)
+            highRed = round((self.highRed+1 / 255) * self.dataLength)
             lowGreen = round((self.lowGreen / 255) * self.dataLength)
-            highGreen = round((self.highGreen / 255) * self.dataLength)
+            highGreen = round((self.highGreen+1 / 255) * self.dataLength)
             lowBlue = round((self.lowBlue / 255) * self.dataLength)
-            highBlue = round((self.highBlue / 255) * self.dataLength)
+            highBlue = round((self.highBlue+1 / 255) * self.dataLength)
 
             self.matrixRGB[:, :, 0] = self.matrixData[:, :, lowRed:highRed].sum(axis=2)
             self.matrixRGB[:, :, 1] = self.matrixData[:, :, lowGreen:highGreen].sum(axis=2)
@@ -401,7 +384,6 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
                             self.isSweepThreadAlive = False
                         else:
                             pass
-                            # self.move_stage()
                     else:
                         self.isSweepThreadAlive = False
                         raise Exception(
@@ -477,7 +459,6 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
             else:
                 fixedData = copy.deepcopy(spectrum)
                 path = os.path.join(self.folderPath, f"{self.fileName}_{key}")
-                # print(key, spectrum)
                 with open(path + ".csv", "w+") as f:
                     for i, x in enumerate(self.waves):
                         f.write(f"{x},{fixedData[i]}\n")
