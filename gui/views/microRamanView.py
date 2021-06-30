@@ -37,6 +37,10 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.threadpool = QThreadPool()
         self.isAcquisitionThreadAlive = False
         self.isSweepThreadAlive = False
+        self.sweepWorker = Worker(self.sweep)
+        self.sweepThread = QThread()
+        self.saveWorker = Worker(self.save_capture_csv)
+        self.saveThread = QThread()
 
         self.height = 3
         self.width = 3
@@ -133,13 +137,9 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.s_data_changed.connect(self.startSaveThread)
 
     def create_threads(self, *args):
-        self.sweepWorker = Worker(self.sweep)
-        self.sweepThread = QThread()
         self.sweepWorker.moveToThread(self.sweepThread)
         self.sweepThread.started.connect(self.sweepWorker.run)
 
-        self.saveWorker = Worker(self.save_capture_csv)
-        self.saveThread = QThread()
         self.saveWorker.moveToThread(self.saveThread)
         self.saveThread.started.connect(self.saveWorker.run)
 
@@ -411,7 +411,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.saveThread.start()
 
     def stop_save_thread(self):
-        self.saveThread.sleep()
+        self.saveThread.wait()
 
     def begin(self):
         if not self.isSweepThreadAlive:
