@@ -90,6 +90,9 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
 
         self.dataLength = 2048  # TODO Will need to be generalized, now created for the mock spectrometer specifically
 
+        self.exposureTest = 50
+
+
         self.lowRed = 0
         self.highRed = 85
         self.lowGreen = 86
@@ -333,7 +336,6 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
             self.matrixRGB[:, :, 1] = self.matrixData[:, :, lowGreen:highGreen].sum(axis=2)
             self.matrixRGB[:, :, 2] = self.matrixData[:, :, lowBlue:highBlue].sum(axis=2)
             self.matrixRGB = (self.matrixRGB / np.max(self.matrixRGB)) * 255
-
         else:
             pass
 
