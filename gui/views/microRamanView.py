@@ -84,7 +84,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.dataPixel = []
         self.liveAcquisitionData = []
 
-        self.dataLength = 2048  # On va la définir après là c'est la valeur du mock
+        self.dataLength = 2048  # Will need to be generalized, now created for the mock spectrometer specifically
 
         self.lowRed = 0
         self.highRed = 85
@@ -154,7 +154,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.matrixData = np.zeros((self.height, self.width, self.dataLength))
 
     def create_matrixRGB(self):
-        # Pour voir le test il faut mettre du 3x3 pixels et activer les lignes de code ci-dessous
+        # to see the test sequence, set 3x3 matrix and un-comment following lines
         self.matrixRGB = np.zeros((self.height, self.width, 3))
 
         # area = np.array([255, 0, 0])
@@ -303,7 +303,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         return self.spec.intensities()[2:]
 
     def spectrum_pixel_acquisition(self):
-        # l'équivalent de manage_data_flow
+        # manage_data_flow homologue
         self.waves = self.spec.wavelengths()[2:]
         self.dataLen = len(self.waves)
         self.dataSep = (max(self.waves) - min(self.waves)) / len(self.waves)
@@ -315,7 +315,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.acquire_background()
 
     def matrix_data_replace(self):
-        # Mettre le dataPixel au bon endroit dans la matrice
+        # Insert dataPixel in the matrix, with the right indexes
         self.matrixData[self.countHeight, self.countWidth, :] = np.array(self.dataPixel)
         self.dataPixel = []
         self.s_data_changed.emit({f"{self.countSpectrum}": self.matrixData[self.countHeight][self.countWidth]})
@@ -345,7 +345,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.stageDevice.moveTo((self.positionSutter[0]+self.countWidth*self.step,
                                  self.positionSutter[1]+self.countHeight*self.step,
                                  self.positionSutter[2]))
-        # va manquer à importer le fichier de commnucation avec le stage (hardwareLibrary)
+        # we will need to import the communication file/module for any Sutter device (hardwareLibrary)
 
     def sweep(self, *args, **kwargs):
         while self.isSweepThreadAlive:
