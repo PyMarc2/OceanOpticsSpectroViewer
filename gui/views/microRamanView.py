@@ -352,7 +352,10 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
     def sweep(self, *args, **kwargs):
         while self.isSweepThreadAlive:
             if self.countSpectrum < self.width*self.height:
-                self.spectrum_pixel_acquisition()
+                if self.countHeight == 0 and self.countWidth == 0:
+                    continue
+                else:
+                    self.spectrum_pixel_acquisition()
                 self.matrix_data_replace()
                 self.matrixRGB_replace()
                 self.update_plot()
@@ -447,6 +450,8 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
 
     def stop_save_thread(self):
         self.saveThread.wait()
+        # TODO test and perhaps I will need set/waitUntil functions...
+        # https://stackoverflow.com/questions/2785821/is-there-an-easy-way-in-python-to-wait-until-certain-condition-is-true/45498191
 
     def select_save_folder(self):
         self.folderPath = str(QFileDialog.getExistingDirectory(self, "Select Directory"))
