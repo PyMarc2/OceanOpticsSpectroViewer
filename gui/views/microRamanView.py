@@ -92,7 +92,6 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
 
         self.exposureTest = 50
 
-
         self.lowRed = 0
         self.highRed = 85
         self.lowGreen = 86
@@ -234,10 +233,11 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
     def set_exposure_time(self, time_in_ms=None, update=True):
         if time_in_ms is not None:
             expositionTime = time_in_ms
+
         else:
             expositionTime = self.exposureTime
-        self.spec.integration_time_micros(expositionTime * 1000)
 
+        self.spec.integration_time_micros(expositionTime * 1000)
         if update:
             self.set_integration_time()
 
@@ -247,6 +247,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
                 self.integrationCountAcq = self.integrationTimeAcq // self.exposureTime
                 self.integrationTimeAcqRemainder_ms = self.integrationTimeAcq - (
                             self.integrationCountAcq * self.exposureTime)
+
             else:
                 self.integrationCountAcq = 1
 
@@ -256,6 +257,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         if self.integrationTimeAcqRemainder_ms > 3:
             self.movingIntegrationData = RingBuffer(size_max=self.integrationCountAcq + 1)
             self.changeLastExposition = 1
+
         else:
             self.movingIntegrationData = RingBuffer(size_max=self.integrationCountAcq)
             self.changeLastExposition = 0
@@ -296,6 +298,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
             self.expositionCounter += 1
             if self.changeLastExposition:
                 self.set_exposure_time(self.integrationTimeAcqRemainder_ms, update=False)
+
         else:
             self.set_exposure_time(update=False)
             self.movingIntegrationData.append(self.liveAcquisitionData)
@@ -336,6 +339,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
             self.matrixRGB[:, :, 1] = self.matrixData[:, :, lowGreen:highGreen].sum(axis=2)
             self.matrixRGB[:, :, 2] = self.matrixData[:, :, lowBlue:highBlue].sum(axis=2)
             self.matrixRGB = (self.matrixRGB / np.max(self.matrixRGB)) * 255
+
         else:
             pass
 
@@ -404,6 +408,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
                         raise Exception(
                             'Somehow, the loop is trying to create more columns or rows than asked on the GUI.')
                 self.countSpectrum += 1
+
             else:
                 self.isSweepThreadAlive = False
                 self.enable_all_buttons()
@@ -433,6 +438,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
             self.sweepThread.terminate()
             self.saveThread.terminate()
             self.isSweepThreadAlive = False
+
         else:
             print('Sampling already stopped.')
 
@@ -456,6 +462,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
     def save_capture_csv(self, *args, **kwargs):
         if self.data is None:
             pass
+
         elif self.data is not None:
             key, spectrum = self.data.items()[0]
             self.fileName = self.le_fileName.text()
