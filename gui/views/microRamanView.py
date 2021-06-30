@@ -88,10 +88,6 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.dataPixel = []
         self.liveAcquisitionData = []
 
-        self.dataLength = 2048  # TODO Will need to be generalized, now created for the mock spectrometer specifically
-
-        self.exposureTest = 50
-
         self.lowRed = 0
         self.highRed = 85
         self.lowGreen = 86
@@ -153,7 +149,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.plotItem.setAspectLocked()
 
     def create_matrix_data(self):
-        self.matrixData = np.zeros((self.height, self.width, self.dataLength))
+        self.matrixData = np.zeros((self.height, self.width, self.dataLen))
 
     def create_matrixRGB(self):
         # TODO to see the test sequence, set 3x3 matrix and un-comment following lines
@@ -422,6 +418,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
                 self.graph_rgb.clear()
                 self.create_plot()
                 self.disable_all_buttons()
+                self.spectrum_pixel_acquisition()
                 self.create_matrix_data()
                 self.create_matrixRGB()
                 self.sweepThread.start()
