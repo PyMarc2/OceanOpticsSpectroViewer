@@ -476,6 +476,9 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
             self.sweepThread.terminate()
             self.saveThread.terminate()
             self.isSweepThreadAlive = False
+            self.countHeight = 0
+            self.countWidth = 0
+            self.countSpectrum = 0
 
         else:
             print('Sampling already stopped.')
