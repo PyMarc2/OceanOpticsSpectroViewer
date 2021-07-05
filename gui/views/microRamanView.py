@@ -457,7 +457,6 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
             try:
                 self.isSweepThreadAlive = True
                 self.set_integration_time()
-                self.graph_rgb.clear()
                 self.create_plot()
                 self.disable_all_buttons()
                 self.spectrum_pixel_acquisition()
