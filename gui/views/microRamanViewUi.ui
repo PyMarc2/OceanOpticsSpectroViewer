@@ -99,7 +99,7 @@
                </widget>
               </item>
               <item row="0" column="1">
-               <widget class="QPushButton" name="pb_connectDevice_3">
+               <widget class="QPushButton" name="pb_connectLight">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                   <horstretch>0</horstretch>
@@ -148,7 +148,7 @@
                </widget>
               </item>
               <item row="0" column="2">
-               <widget class="QComboBox" name="cmb_selectDevice_3">
+               <widget class="QComboBox" name="cmb_selectLight">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                   <horstretch>1</horstretch>
@@ -195,7 +195,7 @@
                </widget>
               </item>
               <item row="2" column="1">
-               <widget class="QPushButton" name="pb_connectDevice_2">
+               <widget class="QPushButton" name="pb_connectDetection">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                   <horstretch>0</horstretch>
@@ -208,7 +208,7 @@
                </widget>
               </item>
               <item row="2" column="2">
-               <widget class="QComboBox" name="cmb_selectDevice_2">
+               <widget class="QComboBox" name="cmb_selectDetection">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                   <horstretch>1</horstretch>
