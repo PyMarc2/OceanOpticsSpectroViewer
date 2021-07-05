@@ -42,10 +42,10 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.saveWorker = Worker(self.save_capture_csv)
         self.saveThread = QThread()
 
-        self.height = 3
-        self.width = 3
-        self.step = 1
-        self.order = 1
+        self.height = self.sb_height.value()
+        self.width = self.sb_width.value()
+        self.step = self.sb_step.value()
+        self.order = 10**3
         self.direction = 'other'
         self.exposureTime = 50
         self.integrationTimeAcq = 3000
@@ -60,10 +60,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.stageDevice = phl.SutterDevice(portPath="debug")
         self.positionSutter = self.stageDevice.position()
         self.specDevices = sb.list_devices()
-        if not self.specDevices:
-            self.spec = Mock.MockSpectrometer()
-        else:
-            self.spec = sb.Spectrometer(self.specDevices[0])
+        self.initialize_device_spectro()
 
         self.dataSep = 0
         self.countIntegrationWhile = 0
@@ -108,6 +105,21 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.folderPath = ""
         self.fileName = ""
         self.autoindexing = False
+
+    def initialize_device_spectro(self):
+        log.debug("Initializing devices...")
+        try:
+            devices = sb.list_devices()
+            self.spec = sb.Spectrometer(devices[0])
+            log.info("Devices:{}".format(devices))
+            self.deviceConnected = True
+        except IndexError as e:
+            log.warning("No SpectrumDevice was found. Try connecting manually.")
+            self.deviceConnected = False
+            self.spec = Mock.MockSpectrometer()
+            log.info("No device found; Mocking Spectrometer Enabled.")
+
+        self.set_exposure_time()
 
     def connect_widgets(self):
         self.sb_height.textChanged.connect(lambda: setattr(self, 'height', self.sb_height.value()))
@@ -307,12 +319,12 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
 
     def matrixRGB_replace(self):
         if self.isSweepThreadAlive:
-            lowRed = round((self.lowRed / 255) * self.dataLength)
-            highRed = round((self.highRed+1 / 255) * self.dataLength)
-            lowGreen = round((self.lowGreen / 255) * self.dataLength)
-            highGreen = round((self.highGreen+1 / 255) * self.dataLength)
-            lowBlue = round((self.lowBlue / 255) * self.dataLength)
-            highBlue = round((self.highBlue+1 / 255) * self.dataLength)
+            lowRed = round((self.lowRed / 255) * self.dataLen)
+            highRed = round((self.highRed+1 / 255) * self.dataLen)
+            lowGreen = round((self.lowGreen / 255) * self.dataLen)
+            highGreen = round((self.highGreen+1 / 255) * self.dataLen)
+            lowBlue = round((self.lowBlue / 255) * self.dataLen)
+            highBlue = round((self.highBlue+1 / 255) * self.dataLen)
 
             self.matrixRGB[:, :, 0] = self.matrixData[:, :, lowRed:highRed].sum(axis=2)
             self.matrixRGB[:, :, 1] = self.matrixData[:, :, lowGreen:highGreen].sum(axis=2)
@@ -334,10 +346,9 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
 
     def sweep(self, *args, **kwargs):
         while self.isSweepThreadAlive:
+            print('yo')
             if self.countSpectrum < self.width*self.height:
-                if self.countHeight == 0 and self.countWidth == 0:
-                    continue
-                else:
+                if self.countHeight != 0 or self.countWidth != 0:
                     self.spectrum_pixel_acquisition()
                 self.matrix_data_replace()
                 self.matrixRGB_replace()
@@ -399,7 +410,6 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
             try:
                 self.isSweepThreadAlive = True
                 self.set_integration_time()
-                self.set_exposure_time()
                 self.graph_rgb.clear()
                 self.create_plot()
                 self.disable_all_buttons()
@@ -407,7 +417,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
                 self.create_matrix_data()
                 self.create_matrixRGB()
                 self.sweepThread.start()
-                self.threadpool.start(self.sweepWorker)
+                self.sweepThread.start()
 
             except Exception as e:
                 self.spec = Mock.MockSpectrometer()
