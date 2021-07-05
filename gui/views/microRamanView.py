@@ -59,8 +59,12 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
 
         self.stageDevice = phl.SutterDevice(portPath="debug")
         self.positionSutter = self.stageDevice.position()
-        self.specDevices = sb.list_devices()
+        self.specDevices = sb.list_devices() # retourne une liste vide live
         self.initialize_device_spectro()
+
+        self.cmb_selectLight.addItems(["Era", "un", "barco", "pequeño"]) # Que faut-il mettre dedans?
+        self.cmb_selectStage.addItems(["Que", "nunca", "nunca", "nunca", "navegó"]) # Que faut-il mettre dedans?
+        self.cmb_selectDetection.addItems(["Oye", "oye", "..."]) # self.specDevices
 
         self.dataSep = 0
         self.countIntegrationWhile = 0
@@ -136,10 +140,18 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.sb_exposure.valueChanged.connect(self.set_exposure_time)
         self.tb_folderPath.clicked.connect(self.select_save_folder)
         self.pb_saveData.clicked.connect(self.save_capture_csv)
-
         self.dSlider_red.valueChanged.connect(self.set_red_range)
         self.dSlider_green.valueChanged.connect(self.set_green_range)
         self.dSlider_blue.valueChanged.connect(self.set_blue_range)
+
+        self.cmb_selectLight.currentTextChanged.connect(self.select_light)
+        self.cmb_selectStage.currentTextChanged.connect(self.select_stage)
+        self.cmb_selectDetection.currentTextChanged.connect(self.select_detection)
+
+        self.pb_connectLight.clicked.connect(self.select_light)
+        self.pb_connectStage.clicked.connect(self.select_stage)
+        self.pb_connectDetection.clicked.connect(self.select_detection)
+
 
     def connect_signals(self):
         self.s_data_changed.connect(lambda: setattr(self, 'isEveryAcqDone', True))
@@ -185,6 +197,14 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.sb_exposure.setEnabled(False)
         self.sb_acqTime.setEnabled(False)
 
+        self.cmb_selectLight.setEnabled(False)
+        self.cmb_selectStage.setEnabled(False)
+        self.cmb_selectDetection.setEnabled(False)
+
+        self.pb_connectLight.setEnabled(False)
+        self.pb_connectStage.setEnabled(False)
+        self.pb_connectDetection.setEnabled(False)
+
     def enable_all_buttons(self):
         self.sb_height.setEnabled(True)
         self.sb_width.setEnabled(True)
@@ -194,6 +214,32 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.pb_sweepAlternate.setEnabled(True)
         self.sb_exposure.setEnabled(True)
         self.sb_acqTime.setEnabled(True)
+
+        self.cmb_selectLight.setEnabled(True)
+        self.cmb_selectStage.setEnabled(True)
+        self.cmb_selectDetection.setEnabled(True)
+
+        self.pb_connectLight.setEnabled(True)
+        self.pb_connectStage.setEnabled(True)
+        self.pb_connectDetection.setEnabled(True)
+
+    def select_light(self): # select the light
+        pass
+
+    def select_stage(self): # select the light
+        pass
+
+    def select_detection(self): # select the light
+        pass
+
+    def connect_light(self): # Connect the light
+        pass
+
+    def connect_stage(self): # Connect the light
+        pass
+
+    def connect_detection(self): # Connect the light
+        pass
 
     def measure_unit(self):
         if self.cmb_magnitude.currentText() == 'mm':
