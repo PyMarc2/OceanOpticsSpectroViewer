@@ -316,6 +316,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.matrixData[self.countHeight, self.countWidth, :] = np.array(self.dataPixel)
         self.dataPixel = []
         self.s_data_changed.emit({f"{self.countSpectrum}": self.matrixData[self.countHeight][self.countWidth]})
+        # f"{self.countWidth}-{self.countHeight}"
 
     def matrixRGB_replace(self):
         if self.isSweepThreadAlive:

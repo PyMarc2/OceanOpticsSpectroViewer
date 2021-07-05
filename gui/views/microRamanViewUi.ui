@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1003</width>
-    <height>755</height>
+    <height>802</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -408,7 +408,7 @@
                   <number>0</number>
                  </property>
                  <item>
-                  <widget class="QSpinBox" name="sb_height">
+                  <widget class="QSpinBox" name="sb_width">
                    <property name="minimum">
                     <number>1</number>
                    </property>
@@ -434,7 +434,7 @@
                   </widget>
                  </item>
                  <item>
-                  <widget class="QSpinBox" name="sb_width">
+                  <widget class="QSpinBox" name="sb_height">
                    <property name="minimum">
                     <number>1</number>
                    </property>
