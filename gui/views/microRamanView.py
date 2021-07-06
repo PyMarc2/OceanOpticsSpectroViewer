@@ -59,12 +59,16 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
 
         self.stageDevice = phl.SutterDevice(portPath="debug")
         self.positionSutter = self.stageDevice.position()
+        self.lightDevices = ["None"]
+        self.stageDevices = [] # En attente de Justine
+        self.stageDevices.insert(0,"FakeStage")
         self.specDevices = sb.list_devices() # retourne une liste vide live
-        self.initialize_device_spectro()
+        self.specDevices.insert(0, "MockSpectrometer")
+        #self.initialize_device_spectro()
 
-        self.cmb_selectLight.addItems(["Era", "un", "barco", "pequeño"]) # Que faut-il mettre dedans?
-        self.cmb_selectStage.addItems(["Que", "nunca", "nunca", "nunca", "navegó"]) # Que faut-il mettre dedans?
-        self.cmb_selectDetection.addItems(["Oye", "oye", "..."]) # self.specDevices
+        self.cmb_selectLight.addItems(self.lightDevices)
+        self.cmb_selectStage.addItems(self.stageDevices)
+        self.cmb_selectDetection.addItems(self.specDevices)
 
         self.dataSep = 0
         self.countIntegrationWhile = 0
@@ -110,21 +114,6 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.fileName = ""
         self.autoindexing = False
 
-    def initialize_device_spectro(self):
-        log.debug("Initializing devices...")
-        try:
-            devices = sb.list_devices()
-            self.spec = sb.Spectrometer(devices[0])
-            log.info("Devices:{}".format(devices))
-            self.deviceConnected = True
-        except IndexError as e:
-            log.warning("No SpectrumDevice was found. Try connecting manually.")
-            self.deviceConnected = False
-            self.spec = Mock.MockSpectrometer()
-            log.info("No device found; Mocking Spectrometer Enabled.")
-
-        self.set_exposure_time()
-
     def connect_widgets(self):
         self.sb_height.textChanged.connect(lambda: setattr(self, 'height', self.sb_height.value()))
         self.sb_width.textChanged.connect(lambda: setattr(self, 'width', self.sb_width.value()))
@@ -144,13 +133,9 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.dSlider_green.valueChanged.connect(self.set_green_range)
         self.dSlider_blue.valueChanged.connect(self.set_blue_range)
 
-        self.cmb_selectLight.currentTextChanged.connect(self.select_light)
-        self.cmb_selectStage.currentTextChanged.connect(self.select_stage)
-        self.cmb_selectDetection.currentTextChanged.connect(self.select_detection)
-
-        self.pb_connectLight.clicked.connect(self.select_light)
-        self.pb_connectStage.clicked.connect(self.select_stage)
-        self.pb_connectDetection.clicked.connect(self.select_detection)
+        self.pb_connectLight.clicked.connect(self.connect_light)
+        self.pb_connectStage.clicked.connect(self.connect_stage)
+        self.pb_connectDetection.clicked.connect(self.connect_detection)
 
 
     def connect_signals(self):
@@ -223,23 +208,36 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.pb_connectStage.setEnabled(True)
         self.pb_connectDetection.setEnabled(True)
 
-    def select_light(self): # select the light
-        pass
-
-    def select_stage(self): # select the light
-        pass
-
-    def select_detection(self): # select the light
-        pass
-
     def connect_light(self): # Connect the light
-        pass
+        log.debug("Initializing devices...")
+        index = self.cmb_selectLight.currentIndex()
+        if index == 0:
+            # self.spec = Mock.MockSpectrometer()
+            log.info("No light connected")
+        else:
+            pass
 
     def connect_stage(self): # Connect the light
-        pass
+        log.debug("Initializing devices...")
+        index = self.cmb_selectStage.currentIndex()
+        if index == 0:
+            #self.spec = Mock.MockSpectrometer()
+            log.info("No stage connected; FakeStage Enabled.")
+        else:
+            pass
 
     def connect_detection(self): # Connect the light
-        pass
+        log.debug("Initializing devices...")
+        index = self.cmb_selectDetection.currentIndex()
+        if index == 0:
+            self.spec = Mock.MockSpectrometer()
+            log.info("No device connected; Mocking Spectrometer Enabled.")
+            self.deviceConnected = False
+        else:
+            self.spec = sb.Spectrometer(self.specDevices[index])
+            log.info("Devices:{}".format(self.specDevices))
+            self.deviceConnected = True
+        self.set_exposure_time()
 
     def measure_unit(self):
         if self.cmb_magnitude.currentText() == 'mm':
