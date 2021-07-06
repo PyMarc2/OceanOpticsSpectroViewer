@@ -31,6 +31,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.setupUi(self)
         self.model = model
         self.plotItem = None
+        self.plotViewBox = None
         self.dataPlotItem = None
         self.initialize_buttons()
 
@@ -65,6 +66,9 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.specDevices = sb.list_devices() # retourne une liste vide live
         self.specDevices.insert(0, "MockSpectrometer")
         #self.initialize_device_spectro()
+
+        self.mousePositionX = None
+        self.mousePositionY = None
 
         self.cmb_selectLight.addItems(self.lightDevices)
         self.cmb_selectStage.addItems(self.stageDevices)
@@ -137,10 +141,64 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.pb_connectStage.clicked.connect(self.connect_stage)
         self.pb_connectDetection.clicked.connect(self.connect_detection)
 
+        self.graph_rgb.scene().sigMouseMoved.connect(self.mouseMoved)
+
 
     def connect_signals(self):
         self.s_data_changed.connect(lambda: setattr(self, 'isEveryAcqDone', True))
         self.s_data_changed.connect(self.startSaveThread)
+
+    def connect_light(self): # Connect the light
+        log.debug("Initializing devices...")
+        index = self.cmb_selectLight.currentIndex()
+        if index == 0:
+            # self.spec = Mock.MockSpectrometer()
+            log.info("No light connected")
+        else:
+            pass
+
+    def connect_stage(self): # Connect the light
+        log.debug("Initializing devices...")
+        index = self.cmb_selectStage.currentIndex()
+        if index == 0:
+            #self.spec = Mock.MockSpectrometer()
+            log.info("No stage connected; FakeStage Enabled.")
+        else:
+            pass
+
+    def connect_detection(self): # Connect the light
+        log.debug("Initializing devices...")
+        index = self.cmb_selectDetection.currentIndex()
+        if index == 0:
+            self.spec = Mock.MockSpectrometer()
+            log.info("No device connected; Mocking Spectrometer Enabled.")
+            self.deviceConnected = False
+        else:
+            self.spec = sb.Spectrometer(self.specDevices[index])
+            log.info("Devices:{}".format(self.specDevices))
+            self.deviceConnected = True
+        self.set_exposure_time()
+
+    def mouseMoved(self, pos):
+        try:
+            test = self.plotViewBox.mapSceneToView(pos)
+            testSTR = str(test)
+            testMin = testSTR.find("(")
+            testMax = testSTR.find(")")
+            position = testSTR[testMin+1:testMax]
+            position = position.split(",")
+            positionX = int(float(position[0]))
+            positionY = int(float(position[1]))
+
+            if positionX <= -1 or positionY <= -1:
+                pass
+
+            else:
+                self.mousePositionX = positionX
+                self.mousePositionY = positionY
+                self.update_graph()
+        except:
+            pass
 
     def create_threads(self, *args):
         self.sweepWorker.moveToThread(self.sweepThread)
@@ -149,18 +207,25 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.saveWorker.moveToThread(self.saveThread)
         self.saveThread.started.connect(self.saveWorker.run)
 
-    def create_plot(self):
-        self.graph_rgb.clear()
-        self.plotItem = self.graph_rgb.addViewBox()
-        self.plotItem.enableAutoRange()
-        self.plotItem.invertY(True)
-        self.plotItem.setAspectLocked()
-
     def create_matrix_data(self):
         self.matrixData = np.zeros((self.height, self.width, self.dataLen))
 
     def create_matrixRGB(self):
         self.matrixRGB = np.zeros((self.height, self.width, 3))
+
+    def create_plot_rgb(self):
+        self.graph_rgb.clear()
+        self.plotViewBox = self.graph_rgb.addViewBox()
+        self.plotViewBox.enableAutoRange()
+        self.plotViewBox.invertY(True)
+        self.plotViewBox.setAspectLocked()
+
+    def create_plot_spectre(self):
+        self.graph_spectre.clear()
+        self.plotItem = self.graph_spectre.addPlot()
+        self.dataPlotItem = self.plotItem.plot()
+        self.plotItem.enableAutoRange()
+
 
     def initialize_buttons(self):
         self.pb_sweepSame.setIcons(QPixmap("./gui/misc/icons/sweep_same.png").scaled(50, 50, Qt.KeepAspectRatio, Qt.SmoothTransformation),
@@ -208,37 +273,6 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.pb_connectStage.setEnabled(True)
         self.pb_connectDetection.setEnabled(True)
 
-    def connect_light(self): # Connect the light
-        log.debug("Initializing devices...")
-        index = self.cmb_selectLight.currentIndex()
-        if index == 0:
-            # self.spec = Mock.MockSpectrometer()
-            log.info("No light connected")
-        else:
-            pass
-
-    def connect_stage(self): # Connect the light
-        log.debug("Initializing devices...")
-        index = self.cmb_selectStage.currentIndex()
-        if index == 0:
-            #self.spec = Mock.MockSpectrometer()
-            log.info("No stage connected; FakeStage Enabled.")
-        else:
-            pass
-
-    def connect_detection(self): # Connect the light
-        log.debug("Initializing devices...")
-        index = self.cmb_selectDetection.currentIndex()
-        if index == 0:
-            self.spec = Mock.MockSpectrometer()
-            log.info("No device connected; Mocking Spectrometer Enabled.")
-            self.deviceConnected = False
-        else:
-            self.spec = sb.Spectrometer(self.specDevices[index])
-            log.info("Devices:{}".format(self.specDevices))
-            self.deviceConnected = True
-        self.set_exposure_time()
-
     def measure_unit(self):
         if self.cmb_magnitude.currentText() == 'mm':
             self.order = 10**3
@@ -256,16 +290,19 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.lowRed = self.dSlider_red.get_left_thumb_value()
         self.highRed = self.dSlider_red.get_right_thumb_value()
         self.matrixRGB_replace()
+        self.update_plot()
 
     def set_green_range(self):
         self.lowGreen = self.dSlider_green.get_left_thumb_value()
         self.highGreen = self.dSlider_green.get_right_thumb_value()
         self.matrixRGB_replace()
+        self.update_plot()
 
     def set_blue_range(self):
         self.lowBlue = self.dSlider_blue.get_left_thumb_value()
         self.highBlue = self.dSlider_blue.get_right_thumb_value()
         self.matrixRGB_replace()
+        self.update_plot()
 
     def set_exposure_time(self, time_in_ms=None, update=True):
         if time_in_ms is not None:
@@ -363,25 +400,27 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         # f"{self.countWidth}-{self.countHeight}"
 
     def matrixRGB_replace(self):
-        if self.isSweepThreadAlive:
-            lowRed = round((self.lowRed / 255) * self.dataLen)
-            highRed = round((self.highRed+1 / 255) * self.dataLen)
-            lowGreen = round((self.lowGreen / 255) * self.dataLen)
-            highGreen = round((self.highGreen+1 / 255) * self.dataLen)
-            lowBlue = round((self.lowBlue / 255) * self.dataLen)
-            highBlue = round((self.highBlue+1 / 255) * self.dataLen)
+            lowRed = round((self.lowRed / 255) * len(self.waves))
+            highRed = round((self.highRed+1 / 255) * len(self.waves))
+            lowGreen = round((self.lowGreen / 255) * len(self.waves))
+            highGreen = round((self.highGreen+1 / 255) * len(self.waves))
+            lowBlue = round((self.lowBlue / 255) * len(self.waves))
+            highBlue = round((self.highBlue+1 / 255) * len(self.waves))
 
             self.matrixRGB[:, :, 0] = self.matrixData[:, :, lowRed:highRed].sum(axis=2)
             self.matrixRGB[:, :, 1] = self.matrixData[:, :, lowGreen:highGreen].sum(axis=2)
             self.matrixRGB[:, :, 2] = self.matrixData[:, :, lowBlue:highBlue].sum(axis=2)
-            self.matrixRGB = (self.matrixRGB / np.max(self.matrixRGB)) * 255
 
-        else:
-            pass
+            self.matrixRGB = (self.matrixRGB / np.max(self.matrixRGB)) * 255
+            self.matrixRGB = self.matrixRGB.round(0)
+
 
     def update_plot(self):
-        img = pg.ImageItem(image=self.matrixRGB, levels=(0, 1))
-        self.plotItem.addItem(img)
+        vb = pg.ImageItem(image=self.matrixRGB)
+        self.plotViewBox.addItem(vb)
+
+    def update_graph(self):
+        self.dataPlotItem.setData(self.waves, self.matrixData[self.mousePositionY, self.mousePositionX, :])
 
     def move_stage(self):
         self.stageDevice.moveTo((self.positionSutter[0]+self.countWidth*self.step,
@@ -453,9 +492,11 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
     def begin(self):
         if not self.isSweepThreadAlive:
             try:
+
                 self.isSweepThreadAlive = True
                 self.set_integration_time()
-                self.create_plot()
+                self.create_plot_rgb()
+                self.create_plot_spectre()
                 self.disable_all_buttons()
                 self.spectrum_pixel_acquisition()
                 self.create_matrix_data()
