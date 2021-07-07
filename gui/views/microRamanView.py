@@ -31,76 +31,77 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         super(MicroRamanView, self).__init__()
         self.setupUi(self)
         self.model = model
-        self.plotItem = None
-        self.plotViewBox = None
-        self.dataPlotItem = None
-        self.initialize_buttons()
 
-        self.threadpool = QThreadPool()
-        self.isAcquisitionThreadAlive = False
-        self.isSweepThreadAlive = False
-        self.sweepWorker = Worker(self.sweep)
-        self.sweepThread = QThread()
+        self.direction = 'other'
+
+        self.liveAcquisitionData = []
+        self.dataPixel = []
+
         self.saveWorker = Worker(self.save_capture_csv)
-        self.saveThread = QThread()
+        self.sweepWorker = Worker(self.sweep)
 
         self.height = self.sb_height.value()
         self.width = self.sb_width.value()
         self.step = self.sb_step.value()
-        self.order = 10**3
-        self.direction = 'other'
-        self.exposureTime = 50
-        self.integrationTimeAcq = 3000
-        self.acqTimeRemainder_ms = 0
-        self.countHeight = 0
-        self.countWidth = 0
-        self.countSpectrum = 0
-        self.data = None
+        self.threadpool = QThreadPool()
+        self.sweepThread = QThread()
+        self.saveThread = QThread()
+        self.initialize_buttons()
         self.connect_widgets()
         self.create_threads()
 
-        self.stageDevice = None
-        self.positionSutter = None
-        self.lightDevices = ["None"]
-        self.stageDevices = sepo.SerialPort.matchPorts(idVendor=4930, idProduct=1) # En attente de Justine
-        print(self.stageDevices)
-        self.stageDevices.insert(0,"Debug")
-        self.specDevices = sb.list_devices() # retourne une liste vide live
-        self.specDevices.insert(0, "MockSpectrometer")
+        self.integrationTimeAcqRemainder_ms = 0
+        self.integrationTimeAcq = 3000
+        self.countIntegrationWhile = 0
+        self.changeLastExposition = 0
+        self.acqTimeRemainder_ms = 0
+        self.integrationCountAcq = 0
+        self.expositionCounter = 0
+        self.exposureTime = 50
+        self.countSpectrum = 0
+        self.order = 10 ** 3
+        self.countHeight = 0
+        self.countWidth = 0
+        self.dataSep = 0
+
+        self.launchIntegrationAcquisition = False
+        self.isAcquisitionThreadAlive = False
+        self.isAcquiringIntegration = False
+        self.isAcquiringBackground = False
+        self.isBackgroundRemoved = False
+        self.isSweepThreadAlive = False
         self.detectionConnected = False
+        self.isAcquisitionDone = False
+        self.isEveryAcqDone = False
         self.lightConnected = False
         self.stageConnected = False
 
-        self.mousePositionX = None
-        self.mousePositionY = None
-
-        self.cmb_selectLight.addItems(self.lightDevices)
-        self.cmb_selectStage.addItems(self.stageDevices)
-        self.cmb_selectDetection.addItems(self.specDevices)
-
-        self.dataSep = 0
-        self.countIntegrationWhile = 0
-        self.integrationCountAcq = 0
-        self.expositionCounter = 0
-        self.integrationTimeAcqRemainder_ms = 0
-        self.changeLastExposition = 0
-        self.isAcquiringIntegration = False
-        self.isAcquisitionDone = False
-        self.isAcquiringBackground = False
-        self.isBackgroundRemoved = False
-        self.isEveryAcqDone = False
-        self.launchIntegrationAcquisition = False
         self.temporaryIntegrationData = None
         self.movingIntegrationData = None
         self.backgroundData = None
-        self.waves = None
-        self.dataLen = None
         self.actualPosition = None
+        self.mousePositionX = None
+        self.mousePositionY = None
+        self.positionSutter = None
+        self.dataPlotItem = None
+        self.stageDevice = None
+        self.plotViewBox = None
         self.matrixData = None
         self.matrixRGB = None
+        self.plotItem = None
+        self.dataLen = None
+        self.waves = None
+        self.data = None
         self.img = None
-        self.dataPixel = []
-        self.liveAcquisitionData = []
+
+        self.lightDevices = ["None"]
+        self.stageDevices = sepo.SerialPort.matchPorts(idVendor=4930, idProduct=1)
+        self.stageDevices.insert(0, "Debug")
+        self.specDevices = sb.list_devices()
+        self.specDevices.insert(0, "MockSpectrometer")
+        self.cmb_selectDetection.addItems(self.specDevices)
+        self.cmb_selectLight.addItems(self.lightDevices)
+        self.cmb_selectStage.addItems(self.stageDevices)
 
         self.lowRed = 0
         self.highRed = 85
@@ -121,31 +122,29 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.fileName = ""
         self.autoindexing = False
 
+    #Connect
     def connect_widgets(self):
-        self.sb_height.textChanged.connect(lambda: setattr(self, 'height', self.sb_height.value()))
-        self.sb_width.textChanged.connect(lambda: setattr(self, 'width', self.sb_width.value()))
-        self.sb_step.textChanged.connect(lambda: setattr(self, 'step', self.sb_step.value()))
-        self.cmb_magnitude.currentTextChanged.connect(self.measure_unit)
+        self.cmb_magnitude.currentTextChanged.connect(self.set_measure_unit)
+        self.dSlider_red.valueChanged.connect(self.set_red_range)
+        self.dSlider_green.valueChanged.connect(self.set_green_range)
+        self.dSlider_blue.valueChanged.connect(self.set_blue_range)
+        self.graph_rgb.scene().sigMouseMoved.connect(self.mouse_moved)
+        self.pb_saveData.clicked.connect(self.save_capture_csv)
         self.pb_sweepSame.clicked.connect(lambda: setattr(self, 'direction', 'same'))
         self.pb_sweepAlternate.clicked.connect(lambda: setattr(self, 'direction', 'other'))
         self.pb_reset.clicked.connect(self.stop_acq)
         self.pb_liveView.clicked.connect(self.begin)
+        self.pb_connectLight.clicked.connect(self.connect_light)
+        self.pb_connectStage.clicked.connect(self.connect_stage)
+        self.pb_connectDetection.clicked.connect(self.connect_detection)
+        self.sb_height.textChanged.connect(lambda: setattr(self, 'height', self.sb_height.value()))
+        self.sb_width.textChanged.connect(lambda: setattr(self, 'width', self.sb_width.value()))
+        self.sb_step.textChanged.connect(lambda: setattr(self, 'step', self.sb_step.value()))
         self.sb_acqTime.valueChanged.connect(lambda: setattr(self, 'integrationTimeAcq', self.sb_acqTime.value()))
         self.sb_acqTime.valueChanged.connect(self.set_integration_time)
         self.sb_exposure.valueChanged.connect(lambda: setattr(self, 'exposureTime', self.sb_exposure.value()))
         self.sb_exposure.valueChanged.connect(self.set_exposure_time)
         self.tb_folderPath.clicked.connect(self.select_save_folder)
-        self.pb_saveData.clicked.connect(self.save_capture_csv)
-        self.dSlider_red.valueChanged.connect(self.set_red_range)
-        self.dSlider_green.valueChanged.connect(self.set_green_range)
-        self.dSlider_blue.valueChanged.connect(self.set_blue_range)
-
-        self.pb_connectLight.clicked.connect(self.connect_light)
-        self.pb_connectStage.clicked.connect(self.connect_stage)
-        self.pb_connectDetection.clicked.connect(self.connect_detection)
-
-        self.graph_rgb.scene().sigMouseMoved.connect(self.mouse_moved)
-
 
     def connect_signals(self):
         self.s_data_changed.connect(lambda: setattr(self, 'isEveryAcqDone', True))
@@ -171,7 +170,6 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         else:
             self.stageDevice = None
             self.stageConnected = True
-
         self.positionSutter = self.stageDevice.position()
 
     def connect_detection(self): # Connect the light
@@ -208,6 +206,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         except:
             pass
 
+    #Create
     def create_threads(self, *args):
         self.sweepWorker.moveToThread(self.sweepThread)
         self.sweepThread.started.connect(self.sweepWorker.run)
@@ -234,7 +233,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.dataPlotItem = self.plotItem.plot()
         self.plotItem.enableAutoRange()
 
-
+    #Buttons
     def initialize_buttons(self):
         self.pb_sweepSame.setIcons(QPixmap("./gui/misc/icons/sweep_same.png").scaled(50, 50, Qt.KeepAspectRatio, Qt.SmoothTransformation),
                                    QPixmap("./gui/misc/icons/sweep_same_hover.png").scaled(50, 50, Qt.KeepAspectRatio, Qt.SmoothTransformation),
@@ -245,55 +244,39 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
                                         QPixmap("./gui/misc/icons/sweep_alternate_clicked.png").scaled(50, 50, Qt.KeepAspectRatio, Qt.SmoothTransformation),
                                         QPixmap("./gui/misc/icons/sweep_alternate_selected.png").scaled(50, 50, Qt.KeepAspectRatio, Qt.SmoothTransformation))
 
-    def disable_all_buttons(self):
-        self.sb_height.setEnabled(False)
-        self.sb_width.setEnabled(False)
-        self.sb_step.setEnabled(False)
-        self.cmb_magnitude.setEnabled(False)
-        self.pb_sweepSame.setEnabled(False)
-        self.pb_sweepAlternate.setEnabled(False)
-        self.sb_exposure.setEnabled(False)
-        self.sb_acqTime.setEnabled(False)
-
-        self.cmb_selectLight.setEnabled(False)
-        self.cmb_selectStage.setEnabled(False)
-        self.cmb_selectDetection.setEnabled(False)
-
-        self.pb_connectLight.setEnabled(False)
-        self.pb_connectStage.setEnabled(False)
-        self.pb_connectDetection.setEnabled(False)
-
     def enable_all_buttons(self):
+        self.cmb_selectDetection.setEnabled(True)
+        self.cmb_selectLight.setEnabled(True)
+        self.cmb_selectStage.setEnabled(True)
+        self.cmb_magnitude.setEnabled(True)
+        self.pb_connectDetection.setEnabled(True)
+        self.pb_sweepAlternate.setEnabled(True)
+        self.pb_connectLight.setEnabled(True)
+        self.pb_connectStage.setEnabled(True)
+        self.pb_sweepSame.setEnabled(True)
+        self.sb_exposure.setEnabled(True)
+        self.sb_acqTime.setEnabled(True)
         self.sb_height.setEnabled(True)
         self.sb_width.setEnabled(True)
         self.sb_step.setEnabled(True)
-        self.cmb_magnitude.setEnabled(True)
-        self.pb_sweepSame.setEnabled(True)
-        self.pb_sweepAlternate.setEnabled(True)
-        self.sb_exposure.setEnabled(True)
-        self.sb_acqTime.setEnabled(True)
 
-        self.cmb_selectLight.setEnabled(True)
-        self.cmb_selectStage.setEnabled(True)
-        self.cmb_selectDetection.setEnabled(True)
+    def disable_all_buttons(self):
+        self.cmb_selectDetection.setEnabled(False)
+        self.cmb_selectLight.setEnabled(False)
+        self.cmb_selectStage.setEnabled(False)
+        self.cmb_magnitude.setEnabled(False)
+        self.pb_connectDetection.setEnabled(False)
+        self.pb_sweepAlternate.setEnabled(False)
+        self.pb_connectLight.setEnabled(False)
+        self.pb_connectStage.setEnabled(False)
+        self.pb_sweepSame.setEnabled(False)
+        self.sb_exposure.setEnabled(False)
+        self.sb_acqTime.setEnabled(False)
+        self.sb_height.setEnabled(False)
+        self.sb_width.setEnabled(False)
+        self.sb_step.setEnabled(False)
 
-        self.pb_connectLight.setEnabled(True)
-        self.pb_connectStage.setEnabled(True)
-        self.pb_connectDetection.setEnabled(True)
-
-    def measure_unit(self):
-        if self.cmb_magnitude.currentText() == 'mm':
-            self.order = 10**3
-
-        elif self.cmb_magnitude.currentText() == 'um':
-            self.order = 1
-
-        elif self.cmb_magnitude.currentText() == 'nm':
-            self.order = 10**(-3)
-
-        else:
-            print('What the hell is going on?!')
-
+    #Set
     def set_red_range(self):
         self.lowRed = self.dSlider_red.get_left_thumb_value()
         self.highRed = self.dSlider_red.get_right_thumb_value()
@@ -311,6 +294,19 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.highBlue = self.dSlider_blue.get_right_thumb_value()
         self.matrixRGB_replace()
         self.update_plot()
+
+    def set_measure_unit(self):
+        if self.cmb_magnitude.currentText() == 'mm':
+            self.order = 10**3
+
+        elif self.cmb_magnitude.currentText() == 'um':
+            self.order = 1
+
+        elif self.cmb_magnitude.currentText() == 'nm':
+            self.order = 10**(-3)
+
+        else:
+            print('What the hell is going on?!')
 
     def set_exposure_time(self, time_in_ms=None, update=True):
         if time_in_ms is not None:
@@ -344,6 +340,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
             self.movingIntegrationData = RingBuffer(size_max=self.integrationCountAcq)
             self.changeLastExposition = 0
 
+    #Acquisition
     def launch_integration_acquisition(self):
         if self.launchIntegrationAcquisition and not self.isAcquiringIntegration:
             self.isAcquiringIntegration = True
@@ -355,6 +352,17 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
 
             elif self.isAcquisitionDone:
                 self.isAcquiringIntegration = False
+
+    def spectrum_pixel_acquisition(self):
+        self.waves = self.spec.wavelengths()[2:]
+        self.dataLen = len(self.waves)
+        self.dataSep = (max(self.waves) - min(self.waves)) / len(self.waves)
+
+        self.liveAcquisitionData = self.read_data_live().tolist()
+
+        self.integrate_data()
+        self.dataPixel = np.mean(np.array(self.movingIntegrationData()), 0)
+        self.acquire_background()
 
     def acquire_background(self):
         if self.isAcquiringBackground:
@@ -390,16 +398,28 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
     def read_data_live(self, *args, **kwargs):
         return self.spec.intensities()[2:]
 
-    def spectrum_pixel_acquisition(self):
-        self.waves = self.spec.wavelengths()[2:]
-        self.dataLen = len(self.waves)
-        self.dataSep = (max(self.waves) - min(self.waves)) / len(self.waves)
 
-        self.liveAcquisitionData = self.read_data_live().tolist()
+    def stop_acq(self):
+        if self.isSweepThreadAlive:
+            self.sweepThread.terminate()
+            self.saveThread.terminate()
+            self.isSweepThreadAlive = False
+            self.countHeight = 0
+            self.countWidth = 0
+            self.countSpectrum = 0
 
-        self.integrate_data()
-        self.dataPixel = np.mean(np.array(self.movingIntegrationData()), 0)
-        self.acquire_background()
+        else:
+            print('Sampling already stopped.')
+
+        self.enable_all_buttons()
+
+    #Update
+    def update_plot(self):
+        vb = pg.ImageItem(image=self.matrixRGB)
+        self.plotViewBox.addItem(vb)
+
+    def update_graph(self):
+        self.dataPlotItem.setData(self.waves, self.matrixData[self.mousePositionY, self.mousePositionX, :])
 
     def matrix_data_replace(self):
         self.matrixData[self.countHeight, self.countWidth, :] = np.array(self.dataPixel)
@@ -422,19 +442,31 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
             self.matrixRGB = (self.matrixRGB / np.max(self.matrixRGB)) * 255
             self.matrixRGB = self.matrixRGB.round(0)
 
+    #Boucle Begin
+    def begin(self):
+        if not self.isSweepThreadAlive:
+            try:
+                if self.detectionConnected == False or self.stageConnected == False:
+                    self.connect_detection()
+                    #self.connect_stage()
+                else:
+                    pass
+                self.isSweepThreadAlive = True
+                self.set_integration_time()
+                self.create_plot_rgb()
+                self.create_plot_spectre()
+                self.disable_all_buttons()
+                self.spectrum_pixel_acquisition()
+                self.create_matrix_data()
+                self.create_matrixRGB()
+                self.sweepThread.start()
+                self.sweepThread.start()
 
-    def update_plot(self):
-        vb = pg.ImageItem(image=self.matrixRGB)
-        self.plotViewBox.addItem(vb)
+            except Exception as e:
+                print("Encore une erreur")
 
-    def update_graph(self):
-        self.dataPlotItem.setData(self.waves, self.matrixData[self.mousePositionY, self.mousePositionX, :])
-
-    def move_stage(self):
-        self.stageDevice.moveTo((self.positionSutter[0]+self.countWidth*self.step,
-                                 self.positionSutter[1]+self.countHeight*self.step,
-                                 self.positionSutter[2]))
-        # TODO we will need to import the communication file/module for any Sutter device (hardwareLibrary)
+        else:
+            print('Sampling already started.')
 
     def sweep(self, *args, **kwargs):
         while self.isSweepThreadAlive:
@@ -496,46 +528,13 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
                 self.isSweepThreadAlive = False
                 self.enable_all_buttons()
 
-    def begin(self):
-        if not self.isSweepThreadAlive:
-            try:
-                print("hello")
-                if self.detectionConnected == False or self.stageConnected == False:
-                    self.connect_detection()
-                    #self.connect_stage()
-                else:
-                    pass
-                self.isSweepThreadAlive = True
-                self.set_integration_time()
-                self.create_plot_rgb()
-                self.create_plot_spectre()
-                self.disable_all_buttons()
-                self.spectrum_pixel_acquisition()
-                self.create_matrix_data()
-                self.create_matrixRGB()
-                self.sweepThread.start()
-                self.sweepThread.start()
+    def move_stage(self):
+        self.stageDevice.moveTo((self.positionSutter[0]+self.countWidth*self.step,
+                                 self.positionSutter[1]+self.countHeight*self.step,
+                                 self.positionSutter[2]))
+        # TODO we will need to import the communication file/module for any Sutter device (hardwareLibrary)
 
-            except Exception as e:
-                print("Encore une erreur")
-
-        else:
-            print('Sampling already started.')
-
-    def stop_acq(self):
-        if self.isSweepThreadAlive:
-            self.sweepThread.terminate()
-            self.saveThread.terminate()
-            self.isSweepThreadAlive = False
-            self.countHeight = 0
-            self.countWidth = 0
-            self.countSpectrum = 0
-
-        else:
-            print('Sampling already stopped.')
-
-        self.enable_all_buttons()
-
+    #Save
     def start_save_thread(self, data=None):
         self.data = data
         self.saveThread.start()
