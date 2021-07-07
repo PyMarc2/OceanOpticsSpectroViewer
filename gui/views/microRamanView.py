@@ -59,11 +59,12 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.connect_widgets()
         self.create_threads()
 
-        self.stageDevice = phl.SutterDevice(portPath="debug")
-        self.positionSutter = self.stageDevice.position()
+        self.stageDevice = None
+        self.positionSutter = None
         self.lightDevices = ["None"]
-        self.stageDevices = [] # En attente de Justine
-        self.stageDevices.insert(0,"FakeStage")
+        self.stageDevices = sepo.SerialPort.matchPorts(idVendor=4930, idProduct=1) # En attente de Justine
+        print(self.stageDevices)
+        self.stageDevices.insert(0,"Debug")
         self.specDevices = sb.list_devices() # retourne une liste vide live
         self.specDevices.insert(0, "MockSpectrometer")
         self.detectionConnected = False
@@ -165,9 +166,13 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         index = self.cmb_selectStage.currentIndex()
         if index == 0:
             log.info("No stage connected; FakeStage Enabled.")
+            self.stageDevice = phl.SutterDevice(portPath="debug")
             self.stageConnected = True
         else:
+            self.stageDevice = None
             self.stageConnected = True
+
+        self.positionSutter = self.stageDevice.position()
 
     def connect_detection(self): # Connect the light
         log.debug("Initializing devices...")
@@ -494,7 +499,12 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
     def begin(self):
         if not self.isSweepThreadAlive:
             try:
-
+                print("hello")
+                if self.detectionConnected == False or self.stageConnected == False:
+                    self.connect_detection()
+                    #self.connect_stage()
+                else:
+                    pass
                 self.isSweepThreadAlive = True
                 self.set_integration_time()
                 self.create_plot_rgb()
@@ -507,7 +517,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
                 self.sweepThread.start()
 
             except Exception as e:
-                self.spec = Mock.MockSpectrometer()
+                print("Encore une erreur")
 
         else:
             print('Sampling already started.')
