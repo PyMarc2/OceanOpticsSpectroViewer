@@ -11,6 +11,7 @@ import numpy as np
 import logging
 import copy
 from hardwarelibrary.motion import sutterdevice as phl
+import hardwarelibrary.communication.serialport as sepo
 import seabreeze.spectrometers as sb
 
 log = logging.getLogger(__name__)
