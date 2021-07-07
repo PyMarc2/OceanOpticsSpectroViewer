@@ -10,7 +10,7 @@ from tools.CircularList import RingBuffer
 import numpy as np
 import logging
 import copy
-import tools.sutterneeded.sutterdevice as phl
+from hardwarelibrary.motion import sutterdevice as phl
 import seabreeze.spectrometers as sb
 
 log = logging.getLogger(__name__)
