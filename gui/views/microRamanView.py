@@ -66,7 +66,9 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.stageDevices.insert(0,"FakeStage")
         self.specDevices = sb.list_devices() # retourne une liste vide live
         self.specDevices.insert(0, "MockSpectrometer")
-        #self.initialize_device_spectro()
+        self.detectionConnected = False
+        self.lightConnected = False
+        self.stageConnected = False
 
         self.mousePositionX = None
         self.mousePositionY = None
@@ -95,6 +97,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.actualPosition = None
         self.matrixData = None
         self.matrixRGB = None
+        self.img = None
         self.dataPixel = []
         self.liveAcquisitionData = []
 
@@ -111,8 +114,6 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.dSlider_green.set_right_thumb_value(170)
         self.dSlider_blue.set_left_thumb_value(171)
         self.dSlider_blue.set_right_thumb_value(255)
-
-        self.img = None
 
         # Saving Data
         self.folderPath = ""
@@ -142,7 +143,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.pb_connectStage.clicked.connect(self.connect_stage)
         self.pb_connectDetection.clicked.connect(self.connect_detection)
 
-        self.graph_rgb.scene().sigMouseMoved.connect(self.mouseMoved)
+        self.graph_rgb.scene().sigMouseMoved.connect(self.mouse_moved)
 
 
     def connect_signals(self):
@@ -155,17 +156,18 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         if index == 0:
             # self.spec = Mock.MockSpectrometer()
             log.info("No light connected")
+            self.lightConnected = False
         else:
-            pass
+            self.lightConnected = True
 
     def connect_stage(self): # Connect the light
         log.debug("Initializing devices...")
         index = self.cmb_selectStage.currentIndex()
         if index == 0:
-            #self.spec = Mock.MockSpectrometer()
             log.info("No stage connected; FakeStage Enabled.")
+            self.stageConnected = True
         else:
-            pass
+            self.stageConnected = True
 
     def connect_detection(self): # Connect the light
         log.debug("Initializing devices...")
@@ -173,14 +175,14 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         if index == 0:
             self.spec = Mock.MockSpectrometer()
             log.info("No device connected; Mocking Spectrometer Enabled.")
-            self.deviceConnected = False
+            self.detectionConnected = True
         else:
             self.spec = sb.Spectrometer(self.specDevices[index])
             log.info("Devices:{}".format(self.specDevices))
-            self.deviceConnected = True
+            self.detectionConnected = True
         self.set_exposure_time()
 
-    def mouseMoved(self, pos):
+    def mouse_moved(self, pos):
         try:
             test = self.plotViewBox.mapSceneToView(pos)
             testSTR = str(test)
@@ -431,7 +433,6 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
 
     def sweep(self, *args, **kwargs):
         while self.isSweepThreadAlive:
-            print('yo')
             if self.countSpectrum < self.width*self.height:
                 if self.countHeight != 0 or self.countWidth != 0:
                     self.spectrum_pixel_acquisition()
