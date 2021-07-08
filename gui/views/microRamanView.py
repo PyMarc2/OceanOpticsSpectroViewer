@@ -148,7 +148,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
 
     def connect_signals(self):
         self.s_data_changed.connect(lambda: setattr(self, 'isEveryAcqDone', True))
-        self.s_data_changed.connect(self.startSaveThread)
+        self.s_data_changed.connect(self.start_save_thread)
 
     def connect_light(self): # Connect the light
         log.debug("Initializing devices...")
