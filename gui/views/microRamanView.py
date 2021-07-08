@@ -1,7 +1,7 @@
 from PyQt5.QtWidgets import QWidget, QFileDialog
 from PyQt5.Qt import QPixmap
 import pyqtgraph as pg
-from PyQt5.QtCore import pyqtSignal, Qt, QThreadPool, QThread
+from PyQt5.QtCore import pyqtSignal, Qt, QThreadPool, QThread, QTimer
 from PyQt5 import uic
 import os
 from gui.modules import mockSpectrometer as Mock
@@ -13,6 +13,9 @@ import copy
 from hardwarelibrary.motion import sutterdevice as phl
 import hardwarelibrary.communication.serialport as sepo
 import seabreeze.spectrometers as sb
+
+from PyQt5.QtGui import QPalette, QColor
+import time
 
 log = logging.getLogger(__name__)
 
@@ -31,7 +34,9 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.setupUi(self)
         self.model = model
 
-        self.direction = 'other'
+        self.direction = "other"
+        self.folderPath = ""
+        self.fileName = ""
 
         self.liveAcquisitionData = []
         self.dataPixel = []
@@ -74,6 +79,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.isEveryAcqDone = False
         self.lightConnected = False
         self.stageConnected = False
+        self.autoindexing = False
 
         self.temporaryIntegrationData = None
         self.movingIntegrationData = None
@@ -87,6 +93,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.plotViewBox = None
         self.matrixData = None
         self.matrixRGB = None
+        self.countSave = None
         self.plotItem = None
         self.dataLen = None
         self.waves = None
@@ -115,11 +122,6 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.dSlider_green.set_right_thumb_value(170)
         self.dSlider_blue.set_left_thumb_value(171)
         self.dSlider_blue.set_right_thumb_value(255)
-
-        # Saving Data
-        self.folderPath = ""
-        self.fileName = ""
-        self.autoindexing = False
 
     #Connect
     def connect_widgets(self):
@@ -204,6 +206,10 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
                 self.update_spectrum_plot()
         except:
             pass
+
+    def error_folder_name(self):
+        self.le_folderPath.setStyleSheet("background-color: rgb(255, 0, 0)")
+        QTimer.singleShot(50, lambda: self.le_folderPath.setStyleSheet("background-color: rgb(255,255,255)"))
 
     #Create
     def create_threads(self, *args):
@@ -423,8 +429,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
     def matrix_data_replace(self):
         self.matrixData[self.countHeight, self.countWidth, :] = np.array(self.dataPixel)
         self.dataPixel = []
-        self.s_data_changed.emit({f"{self.countSpectrum}": self.matrixData[self.countHeight, self.countWidth, :]})
-        # f"{self.countWidth}-{self.countHeight}"
+        self.start_save_thread(self.matrixData[self.countHeight, self.countWidth, :], self.countSpectrum)
 
     def matrixRGB_replace(self):
             lowRed = round((self.lowRed / 255) * len(self.waves))
@@ -444,25 +449,28 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
     #Boucle Begin
     def begin(self):
         if not self.isSweepThreadAlive:
-            try:
-                if self.detectionConnected == False or self.stageConnected == False:
-                    self.connect_detection()
-                    #self.connect_stage()
-                else:
-                    pass
-                self.isSweepThreadAlive = True
-                self.set_integration_time()
-                self.create_plot_rgb()
-                self.create_plot_spectre()
-                self.disable_all_buttons()
-                self.spectrum_pixel_acquisition()
-                self.create_matrix_data()
-                self.create_matrixRGB()
-                self.sweepThread.start()
-                self.sweepThread.start()
+            if self.folderPath == "":
+                self.error_folder_name()
+            else:
+                try:
+                    if self.detectionConnected == False or self.stageConnected == False:
+                        self.connect_detection()
+                        #self.connect_stage()
+                    else:
+                        pass
+                    self.isSweepThreadAlive = True
+                    self.set_integration_time()
+                    self.create_plot_rgb()
+                    self.create_plot_spectre()
+                    self.disable_all_buttons()
+                    self.spectrum_pixel_acquisition()
+                    self.create_matrix_data()
+                    self.create_matrixRGB()
+                    self.sweepThread.start()
+                    self.sweepThread.start()
 
-            except Exception as e:
-                print("Encore une erreur")
+                except Exception as e:
+                    print("Encore une erreur")
 
         else:
             print('Sampling already started.')
@@ -534,12 +542,14 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         # TODO we will need to import the communication file/module for any Sutter device (hardwareLibrary)
 
     #Save
-    def start_save_thread(self, data=None):
+    def start_save_thread(self, data=None, count=None):
+        self.countSave = count
         self.data = data
         self.saveThread.start()
 
     def stop_save_thread(self):
-        self.saveThread.wait()
+        self.saveThread.terminate() # pour le moment
+        #self.saveThread.wait()
         # TODO test and perhaps I will need set/waitUntil functions...
         # https://stackoverflow.com/questions/2785821/is-there-an-easy-way-in-python-to-wait-until-certain-condition-is-true/45498191
 
@@ -554,9 +564,9 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
     def save_capture_csv(self, *args, **kwargs):
         if self.data is None:
             pass
-
         else:
-            key, spectrum = self.data.items()[0]
+            spectrum = self.data
+            key = self.countSave
             self.fileName = self.le_fileName.text()
             if self.fileName == "":
                 self.fileName = f"spectrum_{self.direction}"
@@ -570,24 +580,4 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
                 for i, x in enumerate(self.waves):
                     f.write(f"{x},{fixedData[i]}\n")
                 f.close()
-
-    #def save_capture_csv(self, *args, **kwargs):
-        #if self.data is None:
-            #pass
-
-        #else:
-            #key, spectrum = self.data.items()[0]
-            #self.fileName = self.le_fileName.text()
-            #if self.fileName == "":
-                #self.fileName = f"spectrum_{self.direction}"
-
-            #if self.folderPath == "":
-                #self.folderPath = os.path.abspath("saves")
-
-            #else:
-                #fixedData = copy.deepcopy(spectrum)
-                #path = os.path.join(self.folderPath, f"{self.fileName}_{key}")
-                #with open(path + ".csv", "w+") as f:
-                    #for i, x in enumerate(self.waves):
-                        #f.write(f"{x},{fixedData[i]}\n")
-                    #f.close()
+        self.stop_save_thread()
