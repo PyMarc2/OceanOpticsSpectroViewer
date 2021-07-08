@@ -23,7 +23,6 @@ Ui_microRamanView, QtBaseClass = uic.loadUiType(microRamanViewUiPath)
 
 
 class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
-
     s_data_changed = pyqtSignal(dict)
     s_data_acquisition_done = pyqtSignal()
 
@@ -202,7 +201,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
             else:
                 self.mousePositionX = positionX
                 self.mousePositionY = positionY
-                self.update_graph()
+                self.update_spectrum_plot()
         except:
             pass
 
@@ -281,19 +280,19 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.lowRed = self.dSlider_red.get_left_thumb_value()
         self.highRed = self.dSlider_red.get_right_thumb_value()
         self.matrixRGB_replace()
-        self.update_plot()
+        self.update_rgb_plot()
 
     def set_green_range(self):
         self.lowGreen = self.dSlider_green.get_left_thumb_value()
         self.highGreen = self.dSlider_green.get_right_thumb_value()
         self.matrixRGB_replace()
-        self.update_plot()
+        self.update_rgb_plot()
 
     def set_blue_range(self):
         self.lowBlue = self.dSlider_blue.get_left_thumb_value()
         self.highBlue = self.dSlider_blue.get_right_thumb_value()
         self.matrixRGB_replace()
-        self.update_plot()
+        self.update_rgb_plot()
 
     def set_measure_unit(self):
         if self.cmb_magnitude.currentText() == 'mm':
@@ -414,17 +413,17 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.enable_all_buttons()
 
     #Update
-    def update_plot(self):
+    def update_rgb_plot(self):
         vb = pg.ImageItem(image=self.matrixRGB)
         self.plotViewBox.addItem(vb)
 
-    def update_graph(self):
+    def update_spectrum_plot(self):
         self.dataPlotItem.setData(self.waves, self.matrixData[self.mousePositionY, self.mousePositionX, :])
 
     def matrix_data_replace(self):
         self.matrixData[self.countHeight, self.countWidth, :] = np.array(self.dataPixel)
         self.dataPixel = []
-        self.s_data_changed.emit({f"{self.countSpectrum}": self.matrixData[self.countHeight][self.countWidth]})
+        self.s_data_changed.emit({f"{self.countSpectrum}": self.matrixData[self.countHeight, self.countWidth, :]})
         # f"{self.countWidth}-{self.countHeight}"
 
     def matrixRGB_replace(self):
@@ -475,7 +474,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
                     self.spectrum_pixel_acquisition()
                 self.matrix_data_replace()
                 self.matrixRGB_replace()
-                self.update_plot()
+                self.update_rgb_plot()
                 if self.direction == "same":
                     if self.countWidth < self.width-1:
                         # wait for signal... (with a connect?)
@@ -556,21 +555,39 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         if self.data is None:
             pass
 
-        elif self.data is not None:
+        else:
             key, spectrum = self.data.items()[0]
             self.fileName = self.le_fileName.text()
             if self.fileName == "":
                 self.fileName = f"spectrum_{self.direction}"
 
             if self.folderPath == "":
-                pass
+                self.folderPath = os.path.abspath("saves")
 
-            else:
-                fixedData = copy.deepcopy(spectrum)
-                path = os.path.join(self.folderPath, f"{self.fileName}_{key}")
-                with open(path + ".csv", "w+") as f:
-                    for i, x in enumerate(self.waves):
-                        f.write(f"{x},{fixedData[i]}\n")
-                    f.close()
+            fixedData = copy.deepcopy(spectrum)
+            path = os.path.join(self.folderPath, f"{self.fileName}_{key}")
+            with open(path + ".csv", "w+") as f:
+                for i, x in enumerate(self.waves):
+                    f.write(f"{x},{fixedData[i]}\n")
+                f.close()
 
-            self.stopSaveThread()
+    #def save_capture_csv(self, *args, **kwargs):
+        #if self.data is None:
+            #pass
+
+        #else:
+            #key, spectrum = self.data.items()[0]
+            #self.fileName = self.le_fileName.text()
+            #if self.fileName == "":
+                #self.fileName = f"spectrum_{self.direction}"
+
+            #if self.folderPath == "":
+                #self.folderPath = os.path.abspath("saves")
+
+            #else:
+                #fixedData = copy.deepcopy(spectrum)
+                #path = os.path.join(self.folderPath, f"{self.fileName}_{key}")
+                #with open(path + ".csv", "w+") as f:
+                    #for i, x in enumerate(self.waves):
+                        #f.write(f"{x},{fixedData[i]}\n")
+                    #f.close()
