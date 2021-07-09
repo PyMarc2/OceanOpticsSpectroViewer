@@ -12,6 +12,7 @@ import logging
 import copy
 from hardwarelibrary.motion import sutterdevice as phl
 import hardwarelibrary.communication.serialport as sepo
+import hardwarelibrary.motion.sutterdevice as sutter
 import seabreeze.spectrometers as sb
 
 from PyQt5.QtGui import QPalette, QColor
@@ -165,14 +166,16 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
 
     def connect_stage(self): # Connect the light
         log.debug("Initializing devices...")
-        index = self.cmb_selectStage.currentIndex()
-        if index == 0:
-            log.info("No stage connected; FakeStage Enabled.")
-            self.stageDevice = phl.SutterDevice(portPath="debug")
-            self.stageConnected = True
-        else:
-            self.stageDevice = None
-            self.stageConnected = True
+        self.stageDevice = sutter.SutterDevice()
+        self.stageDevice.doInitializeDevice()
+        # index = self.cmb_selectStage.currentIndex()
+        # if index == 0:
+            # log.info("No stage connected; FakeStage Enabled.")
+            # self.stageDevice = phl.SutterDevice(portPath="debug")
+            # self.stageConnected = True
+        # else:
+            # self.stageDevice = None
+            # self.stageConnected = True
         self.positionSutter = self.stageDevice.position()
 
     def connect_detection(self): # Connect the light
