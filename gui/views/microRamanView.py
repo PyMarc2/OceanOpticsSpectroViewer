@@ -555,9 +555,6 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
 
     def stop_save_thread(self):
         self.saveThread.terminate() # pour le moment
-        #self.saveThread.wait()
-        # TODO test and perhaps I will need set/waitUntil functions...
-        # https://stackoverflow.com/questions/2785821/is-there-an-easy-way-in-python-to-wait-until-certain-condition-is-true/45498191
 
     def select_save_folder(self):
         self.folderPath = str(QFileDialog.getExistingDirectory(self, "Select Directory"))
