@@ -96,6 +96,8 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.countSave = None
         self.plotItem = None
         self.dataLen = None
+        self.Height = None
+        self.Width = None
         self.waves = None
         self.data = None
         self.img = None
@@ -429,7 +431,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
     def matrix_data_replace(self):
         self.matrixData[self.countHeight, self.countWidth, :] = np.array(self.dataPixel)
         self.dataPixel = []
-        self.start_save_thread(self.matrixData[self.countHeight, self.countWidth, :], self.countSpectrum)
+        self.start_save_thread(self.matrixData[self.countHeight, self.countWidth, :], self.countHeight, self.countWidth)
 
     def matrixRGB_replace(self):
             lowRed = round((self.lowRed / 255) * len(self.waves))
@@ -542,8 +544,9 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         # TODO we will need to import the communication file/module for any Sutter device (hardwareLibrary)
 
     #Save
-    def start_save_thread(self, data=None, count=None):
-        self.countSave = count
+    def start_save_thread(self, data=None, countHeight=None, countWidth=None):
+        self.Height = countHeight
+        self.Width = countWidth
         self.data = data
         self.saveThread.start()
 
@@ -566,16 +569,12 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
             pass
         else:
             spectrum = self.data
-            key = self.countSave
             self.fileName = self.le_fileName.text()
             if self.fileName == "":
-                self.fileName = f"spectrum_{self.direction}"
-
-            if self.folderPath == "":
-                self.folderPath = os.path.abspath("saves")
+                self.fileName = f"spectrum_"
 
             fixedData = copy.deepcopy(spectrum)
-            path = os.path.join(self.folderPath, f"{self.fileName}_{key}")
+            path = os.path.join(self.folderPath, f"{self.fileName}x{self.Width}_y{self.Height}")
             with open(path + ".csv", "w+") as f:
                 for i, x in enumerate(self.waves):
                     f.write(f"{x},{fixedData[i]}\n")
