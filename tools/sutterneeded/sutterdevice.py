@@ -49,7 +49,7 @@ class SutterDevice(PhysicalDevice):
             if self.port is not None:
                 if self.port.isOpen:
                     self.port.close()
-            print(error)
+            # print(error)
             raise PhysicalDeviceUnableToInitialize(error)
         except PhysicalDeviceUnableToInitialize as error:
             raise error
