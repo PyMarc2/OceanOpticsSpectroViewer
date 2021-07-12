@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1003</width>
+    <width>1590</width>
     <height>802</height>
    </rect>
   </property>
@@ -545,38 +545,28 @@
          </item>
          <item>
           <layout class="QGridLayout" name="gridLayout_5">
-           <item row="1" column="0">
+           <item row="1" column="1">
             <widget class="QRangeSlider" name="dSlider_red">
              <property name="orientation">
               <enum>Qt::Horizontal</enum>
              </property>
             </widget>
            </item>
-           <item row="1" column="2">
+           <item row="1" column="7">
             <widget class="QRangeSlider" name="dSlider_blue">
              <property name="orientation">
               <enum>Qt::Horizontal</enum>
              </property>
             </widget>
            </item>
-           <item row="1" column="1">
+           <item row="1" column="4">
             <widget class="QRangeSlider" name="dSlider_green">
              <property name="orientation">
               <enum>Qt::Horizontal</enum>
              </property>
             </widget>
            </item>
-           <item row="0" column="1">
-            <widget class="QLabel" name="Green">
-             <property name="text">
-              <string>Green</string>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignCenter</set>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="2">
+           <item row="0" column="7">
             <widget class="QLabel" name="Blue">
              <property name="text">
               <string>Blue</string>
@@ -586,7 +576,7 @@
              </property>
             </widget>
            </item>
-           <item row="0" column="0">
+           <item row="0" column="1">
             <widget class="QLabel" name="Red">
              <property name="layoutDirection">
               <enum>Qt::LeftToRight</enum>
@@ -596,6 +586,121 @@
              </property>
              <property name="alignment">
               <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="4">
+            <widget class="QLabel" name="Green">
+             <property name="text">
+              <string>Green</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="5">
+            <widget class="QSpinBox" name="sb_highGreen">
+             <property name="enabled">
+              <bool>true</bool>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>45</width>
+               <height>16777215</height>
+              </size>
+             </property>
+             <property name="maximum">
+              <number>255</number>
+             </property>
+             <property name="value">
+              <number>170</number>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="3">
+            <widget class="QSpinBox" name="sb_lowGreen">
+             <property name="maximumSize">
+              <size>
+               <width>38</width>
+               <height>16777215</height>
+              </size>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+             <property name="maximum">
+              <number>255</number>
+             </property>
+             <property name="value">
+              <number>86</number>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="2">
+            <widget class="QSpinBox" name="sb_highRed">
+             <property name="maximumSize">
+              <size>
+               <width>45</width>
+               <height>16777215</height>
+              </size>
+             </property>
+             <property name="maximum">
+              <number>255</number>
+             </property>
+             <property name="value">
+              <number>85</number>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0">
+            <widget class="QSpinBox" name="sb_lowRed">
+             <property name="maximumSize">
+              <size>
+               <width>45</width>
+               <height>16777215</height>
+              </size>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+             <property name="maximum">
+              <number>255</number>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="8">
+            <widget class="QSpinBox" name="sb_highBlue">
+             <property name="maximumSize">
+              <size>
+               <width>45</width>
+               <height>16777215</height>
+              </size>
+             </property>
+             <property name="maximum">
+              <number>255</number>
+             </property>
+             <property name="value">
+              <number>255</number>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="6">
+            <widget class="QSpinBox" name="sb_lowBlue">
+             <property name="maximumSize">
+              <size>
+               <width>45</width>
+               <height>16777215</height>
+              </size>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+             <property name="maximum">
+              <number>255</number>
+             </property>
+             <property name="value">
+              <number>171</number>
              </property>
             </widget>
            </item>

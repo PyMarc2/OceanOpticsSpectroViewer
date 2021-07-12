@@ -115,19 +115,13 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.cmb_selectLight.addItems(self.lightDevices)
         self.cmb_selectStage.addItems(self.stageDevices)
 
-        self.lowRed = 0
-        self.highRed = 85
-        self.lowGreen = 86
-        self.highGreen = 170
-        self.lowBlue = 171
-        self.highBlue = 255
+        self.update_slider_status()
 
-        self.dSlider_red.set_left_thumb_value(0)
-        self.dSlider_red.set_right_thumb_value(85)
-        self.dSlider_green.set_left_thumb_value(86)
-        self.dSlider_green.set_right_thumb_value(170)
-        self.dSlider_blue.set_left_thumb_value(171)
-        self.dSlider_blue.set_right_thumb_value(255)
+        #self.test = np.zeros(len(self.waves))
+
+
+
+
 
     #Connect
     def connect_widgets(self):
@@ -152,6 +146,18 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.sb_exposure.valueChanged.connect(lambda: setattr(self, 'exposureTime', self.sb_exposure.value()))
         self.sb_exposure.valueChanged.connect(self.set_exposure_time)
         self.tb_folderPath.clicked.connect(self.select_save_folder)
+
+        self.sb_highRed.valueChanged.connect(self.update_slider_status)
+        self.sb_lowRed.valueChanged.connect(self.update_slider_status)
+        self.sb_highGreen.valueChanged.connect(self.update_slider_status)
+        self.sb_lowGreen.valueChanged.connect(self.update_slider_status)
+        self.sb_highBlue.valueChanged.connect(self.update_slider_status)
+        self.sb_lowBlue.valueChanged.connect(self.update_slider_status)
+
+
+
+
+
 
     def connect_signals(self):
         self.s_data_changed.connect(lambda: setattr(self, 'isEveryAcqDone', True))
@@ -294,8 +300,8 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
 
     #Set
     def set_red_range(self):
-        self.lowRed = self.dSlider_red.get_left_thumb_value()
-        self.highRed = self.dSlider_red.get_right_thumb_value()
+        self.sb_lowRed.setValue(self.dSlider_red.get_left_thumb_value())
+        self.sb_highRed.setValue(self.dSlider_red.get_right_thumb_value())
         try:
             self.matrixRGB_replace()
             self.update_rgb_plot()
@@ -303,8 +309,8 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
             pass
 
     def set_green_range(self):
-        self.lowGreen = self.dSlider_green.get_left_thumb_value()
-        self.highGreen = self.dSlider_green.get_right_thumb_value()
+        self.sb_lowGreen.setValue(self.dSlider_green.get_left_thumb_value())
+        self.sb_highGreen.setValue(self.dSlider_green.get_right_thumb_value())
         try:
             self.matrixRGB_replace()
             self.update_rgb_plot()
@@ -312,8 +318,8 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
             pass
 
     def set_blue_range(self):
-        self.lowBlue = self.dSlider_blue.get_left_thumb_value()
-        self.highBlue = self.dSlider_blue.get_right_thumb_value()
+        self.sb_lowBlue.setValue(self.dSlider_blue.get_left_thumb_value())
+        self.sb_highBlue.setValue(self.dSlider_blue.get_right_thumb_value())
         try:
             self.matrixRGB_replace()
             self.update_rgb_plot()
@@ -444,6 +450,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.plotViewBox.addItem(vb)
 
     def update_spectrum_plot(self):
+        #self.dataPlotItem.setData(self.waves, self.test)
         self.dataPlotItem.setData(self.waves, self.matrixData[self.mousePositionY, self.mousePositionX, :])
 
     def matrix_data_replace(self):
@@ -452,12 +459,12 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.start_save_thread(self.matrixData[self.countHeight, self.countWidth, :], self.countHeight, self.countWidth)
 
     def matrixRGB_replace(self):
-            lowRed = round((self.lowRed / 255) * len(self.waves))
-            highRed = round((self.highRed+1 / 255) * len(self.waves))
-            lowGreen = round((self.lowGreen / 255) * len(self.waves))
-            highGreen = round((self.highGreen+1 / 255) * len(self.waves))
-            lowBlue = round((self.lowBlue / 255) * len(self.waves))
-            highBlue = round((self.highBlue+1 / 255) * len(self.waves))
+            lowRed = round((self.sb_lowRed.value() / 255) * len(self.waves))
+            highRed = round((self.sb_highRed.value()+1 / 255) * len(self.waves))
+            lowGreen = round((self.sb_lowGreen.value() / 255) * len(self.waves))
+            highGreen = round((self.sb_highGreen.value()+1 / 255) * len(self.waves))
+            lowBlue = round((self.sb_lowBlue.value() / 255) * len(self.waves))
+            highBlue = round((self.sb_highBlue.value()+1 / 255) * len(self.waves))
 
             self.matrixRGB[:, :, 0] = self.matrixData[:, :, lowRed:highRed].sum(axis=2)
             self.matrixRGB[:, :, 1] = self.matrixData[:, :, lowGreen:highGreen].sum(axis=2)
@@ -465,6 +472,19 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
 
             self.matrixRGB = (self.matrixRGB / np.max(self.matrixRGB)) * 255
             self.matrixRGB = self.matrixRGB.round(0)
+
+    def update_slider_status(self):
+        self.dSlider_red.set_left_thumb_value(self.sb_lowRed.value())
+        self.dSlider_red.set_right_thumb_value(self.sb_highRed.value())
+        self.dSlider_green.set_left_thumb_value(self.sb_lowGreen.value())
+        self.dSlider_green.set_right_thumb_value(self.sb_highGreen.value())
+        self.dSlider_blue.set_left_thumb_value(self.sb_lowBlue.value())
+        self.dSlider_blue.set_right_thumb_value(self.sb_highBlue.value())
+        try:
+            self.matrixRGB_replace()
+            self.update_rgb_plot()
+        except:
+            pass
 
     #Boucle Begin
     def begin(self):
