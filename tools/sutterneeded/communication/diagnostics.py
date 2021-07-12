@@ -6,7 +6,6 @@ from stat import *
 from os.path import isfile, join, exists, isfile
 import re
 from typing import NamedTuple
-from .serialport import SerialPort
 
 class USBParameters(NamedTuple):
     configuration : int = None

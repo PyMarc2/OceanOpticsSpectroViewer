@@ -1,7 +1,7 @@
 from struct import *
 import time
 import serial
-from .serialport import SerialPort
+from serial import SerialPort
 
 
 class SutterDevice:
