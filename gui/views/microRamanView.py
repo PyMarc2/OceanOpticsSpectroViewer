@@ -293,20 +293,29 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
     def set_red_range(self):
         self.lowRed = self.dSlider_red.get_left_thumb_value()
         self.highRed = self.dSlider_red.get_right_thumb_value()
-        self.matrixRGB_replace()
-        self.update_rgb_plot()
+        try:
+            self.matrixRGB_replace()
+            self.update_rgb_plot()
+        except:
+            pass
 
     def set_green_range(self):
         self.lowGreen = self.dSlider_green.get_left_thumb_value()
         self.highGreen = self.dSlider_green.get_right_thumb_value()
-        self.matrixRGB_replace()
-        self.update_rgb_plot()
+        try:
+            self.matrixRGB_replace()
+            self.update_rgb_plot()
+        except:
+            pass
 
     def set_blue_range(self):
         self.lowBlue = self.dSlider_blue.get_left_thumb_value()
         self.highBlue = self.dSlider_blue.get_right_thumb_value()
-        self.matrixRGB_replace()
-        self.update_rgb_plot()
+        try:
+            self.matrixRGB_replace()
+            self.update_rgb_plot()
+        except:
+            pass
 
     def set_measure_unit(self):
         if self.cmb_magnitude.currentText() == 'mm':
