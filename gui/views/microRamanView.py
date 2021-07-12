@@ -179,7 +179,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
             # self.stageDevice = None
             # self.stageConnected = True
         self.positionSutter = self.stageDevice.position()
-        print(self.positionSutter)
+        # print(self.positionSutter)
 
     def connect_detection(self): # Connect the light
         log.debug("Initializing devices...")
