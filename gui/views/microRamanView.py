@@ -387,7 +387,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
 
         self.integrate_data()
         self.dataPixel = np.mean(np.array(self.movingIntegrationData()), 0)
-        self.acquire_background()
+        # self.acquire_background()
 
     def acquire_background(self):
         if self.isAcquiringBackground:
@@ -483,6 +483,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
                     self.create_plot_rgb()
                     self.create_plot_spectre()
                     self.disable_all_buttons()
+                    self.acquire_background()
                     self.spectrum_pixel_acquisition()
                     self.create_matrix_data()
                     self.create_matrixRGB()
