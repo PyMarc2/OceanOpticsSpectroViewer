@@ -1,22 +1,25 @@
-from PyQt5.QtWidgets import QWidget, QFileDialog
-from PyQt5.Qt import QPixmap
-import pyqtgraph as pg
 from PyQt5.QtCore import pyqtSignal, Qt, QThreadPool, QThread, QTimer
+from PyQt5.QtWidgets import QWidget, QFileDialog
+from PyQt5.QtGui import QPalette, QColor
+from PyQt5.Qt import QPixmap
 from PyQt5 import uic
-import os
-from gui.modules import mockSpectrometer as Mock
-from tools.threadWorker import Worker
-from tools.CircularList import RingBuffer
-import numpy as np
-import logging
-import copy
-from hardwarelibrary.motion import sutterdevice as phl
+
 import tools.sutterneeded.communication.serialport as sepo
 import tools.sutterneeded.sutterdevice as sutter
+from tools.CircularList import RingBuffer
+from tools.threadWorker import Worker
+
+from gui.modules import mockSpectrometer as Mock
 import seabreeze.spectrometers as sb
 
-from PyQt5.QtGui import QPalette, QColor
+import pyqtgraph as pg
+import numpy as np
+import logging
 import time
+import copy
+import os
+
+
 
 log = logging.getLogger(__name__)
 
