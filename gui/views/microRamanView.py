@@ -547,29 +547,32 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
                             pass
                     else:
                         self.isSweepThreadAlive = False
+                        self.enable_all_buttons()
                         raise Exception(
                             'Somehow, the loop is trying to create more columns or rows than asked on the GUI.')
                 self.countSpectrum += 1
 
             else:
-                self.isSweepThreadAlive = False
                 self.enable_all_buttons()
+                self.isSweepThreadAlive = False
 
     def move_stage(self):
         self.stageDevice.moveTo((self.positionSutter[0]+self.countWidth*self.step,
                                  self.positionSutter[1]+self.countHeight*self.step,
                                  self.positionSutter[2]))
-        # TODO we will need to import the communication file/module for any Sutter device (hardwareLibrary)
 
     #Save
     def start_save_thread(self, data=None, countHeight=None, countWidth=None):
         self.Height = countHeight
         self.Width = countWidth
         self.data = data
-        self.saveThread.start()
+        # self.saveThread.start()
+        # QThread.moveToThread(self, self.saveThread)
+        self.save_capture_csv()
 
     def stop_save_thread(self):
-        self.saveThread.terminate() # pour le moment
+        # self.saveThread.wait()  # pour le moment
+        QThread.moveToThread(self, self.sweepThread)
 
     def select_save_folder(self):
         self.folderPath = str(QFileDialog.getExistingDirectory(self, "Select Directory"))
@@ -579,19 +582,33 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
     def toggle_autoindexing(self):
         pass
 
-    def save_capture_csv(self, *args, **kwargs):
+    def save_capture_csv(self):
         if self.data is None:
             pass
         else:
             spectrum = self.data
             self.fileName = self.le_fileName.text()
             if self.fileName == "":
-                self.fileName = f"spectrum_"
+                self.fileName = "spectrum"
 
             fixedData = copy.deepcopy(spectrum)
-            path = os.path.join(self.folderPath, f"{self.fileName}x{self.Width}_y{self.Height}")
+            path = os.path.join(self.folderPath, f"{self.fileName}_x{self.Width}_y{self.Height}")
             with open(path + ".csv", "w+") as f:
                 for i, x in enumerate(self.waves):
                     f.write(f"{x},{fixedData[i]}\n")
                 f.close()
-        self.stop_save_thread()
+
+        if self.countSpectrum == self.width*self.height-1:
+            spectra = self.matrixData
+            self.fileName = self.le_fileName.text()
+            if self.fileName == "":
+                self.fileName = "acquisitions"
+
+            fixedData = copy.deepcopy(spectra)
+            path = os.path.join(self.folderPath, f"{self.fileName}_matrixData")
+            with open(path + ".csv", "w+") as f:
+                for i, x in enumerate(self.waves):
+                    f.write(f"{x},{fixedData[i]}\n")
+                f.close()
+
+        # self.stop_save_thread()
