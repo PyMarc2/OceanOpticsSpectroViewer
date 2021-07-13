@@ -518,7 +518,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
 
     def sweep(self, *args, **kwargs):
         while self.isSweepThreadAlive:
-            if self.countSpectrum < self.width*self.height:
+            if self.countSpectrum < self.width * self.height:
                 if self.countHeight != 0 or self.countWidth != 0:
                     self.spectrum_pixel_acquisition()
                 self.matrix_data_replace()
@@ -540,37 +540,34 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
                             self.enable_all_buttons()
                     else:
                         self.isSweepThreadAlive = False
+                        self.enable_all_buttons()
                         raise Exception(
                             'Somehow, the loop is trying to create more row or columns than asked on the GUI.')
 
                 elif self.direction == "other":
-                    if self.countWidth < self.width - 1 and self.countHeight % 2 == 0:
-                        # wait for signal...
-                        self.countWidth += 1
-                        self.move_stage()
-                    elif self.countWidth == self.width - 1 and self.countHeight % 2 == 0:
-                        # wait for signal...
-                        self.countHeight += 1
-                        if self.countHeight == self.height:
-                            self.isSweepThreadAlive = False
-                        else:
-                            self.move_stage()
-                    elif 0 < self.countWidth < self.width and self.countHeight % 2 == 1:
-                        # wait for signal...
-                        self.countWidth -= 1
-                        self.move_stage()
-                    elif self.countWidth == 0 and self.countHeight % 2 == 1:
-                        # wait for signal...
-                        self.countHeight += 1
-                        if self.countHeight == self.height:
-                            self.isSweepThreadAlive = False
-                        else:
-                            pass
+                    if self.countSpectrum < self.width * self.height - 1:
+                        if self.countHeight % 2 == 0:
+                            if self.countWidth < self.width - 1:
+                                # wait for signal...
+                                self.countWidth += 1
+                                self.move_stage()
+                            elif self.countWidth == self.width - 1:
+                                # wait for signal...
+                                self.countHeight += 1
+                                self.move_stage()
+                        elif self.countHeight % 2 == 1:
+                            if self.countWidth > 0:
+                                # wait for signal...
+                                self.countWidth -= 1
+                                self.move_stage()
+                            elif self.countWidth == 0:
+                                # wait for signal...
+                                self.countHeight += 1
+                                self.move_stage()
                     else:
                         self.isSweepThreadAlive = False
                         self.enable_all_buttons()
-                        raise Exception(
-                            'Somehow, the loop is trying to create more columns or rows than asked on the GUI.')
+
                 self.countSpectrum += 1
 
             else:
@@ -613,7 +610,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
                 self.fileName = "spectrum"
 
             fixedData = copy.deepcopy(spectrum)
-            path = os.path.join(self.folderPath, f"{self.fileName}_x{self.Width}_y{self.Height}")
+            path = os.path.join(self.folderPath, f"{self.fileName}_x{self.width}_y{self.height}")
             with open(path + ".csv", "w+") as f:
                 for i, x in enumerate(self.waves):
                     f.write(f"{x},{fixedData[i]}\n")
