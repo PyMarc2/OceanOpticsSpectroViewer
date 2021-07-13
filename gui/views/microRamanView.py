@@ -108,11 +108,17 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.lightDevices = ["None"]
         self.stageDevices = sepo.SerialPort.matchPorts(idVendor=4930, idProduct=1)
         self.stageDevices.insert(0, "Debug")
+        self.listStageDevices = []
+        for el in self.stageDevices:
+            self.listStageDevices.append(str(el))
         self.specDevices = sb.list_devices()
         self.specDevices.insert(0, "MockSpectrometer")
-        self.cmb_selectDetection.addItems(self.specDevices)
+        self.listSpecDevices = []
+        for el in self.specDevices:
+            self.listSpecDevices.append(str(el))
+        self.cmb_selectDetection.addItems(self.listSpecDevices)
         self.cmb_selectLight.addItems(self.lightDevices)
-        self.cmb_selectStage.addItems(self.stageDevices)
+        self.cmb_selectStage.addItems(self.listStageDevices)
 
         self.redRange = None
         self.greenRange = None
@@ -442,7 +448,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
     def stop_acq(self):
         if self.isSweepThreadAlive:
             self.sweepThread.terminate()
-            self.saveThread.terminate()
+            # self.saveThread.terminate()
             self.isSweepThreadAlive = False
             self.countHeight = 0
             self.countWidth = 0
@@ -518,7 +524,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
 
         self.matrixRGB = (self.matrixRGB / np.max(self.matrixRGB)) * 255
         self.matrixRGB = self.matrixRGB.round(0)
-        self.matrixRGB.transpose()
+        # self.matrixRGB.transpose()
 
     def update_slider_status(self):
         self.dSlider_red.set_left_thumb_value(self.sb_lowRed.value())
@@ -570,7 +576,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
 
     def sweep(self, *args, **kwargs):
         while self.isSweepThreadAlive:
-            if self.countSpectrum < self.width*self.height:
+            if self.countSpectrum < (self.width*self.height):
                 if self.countHeight != 0 or self.countWidth != 0:
                     self.spectrum_pixel_acquisition()
                 self.matrix_data_replace()
@@ -578,70 +584,63 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
                 self.update_rgb_plot()
                 if self.direction == "same":
                     try:
-                        if self.countWidth < self.width-1:
+                        if self.countWidth < (self.width-1):
                             # wait for signal... (with a connect?)
                             self.countWidth += 1
                             self.move_stage()
-                        elif self.countHeight < self.height and self.countWidth == self.width-1:
-                            if self.countSpectrum < self.width*self.height-1:
-                                # wait for signal...
-                                self.countWidth = 0
-                                self.countHeight += 1
-                                self.move_stage()
-                            else:
-                                self.isSweepThreadAlive = False
-                                self.enable_all_buttons()
+                        elif self.countHeight < (self.height-1) and self.countWidth == (self.width-1):
+                            # wait for signal...
+                            self.countWidth = 0
+                            self.countHeight += 1
+                            self.move_stage()
                         else:
-                            self.isSweepThreadAlive = False
-                            self.enable_all_buttons()
-                            raise Exception(
-                                'Somehow, the loop is trying to create more row or columns than asked on the GUI.')
+                            self.stop_acq()
 
                     except Exception as e:
                         print(f'error in sweep same: {e}')
-                        self.isSweepThreadAlive = False
-                        self.enable_all_buttons()
+                        self.stop_acq()
 
                 elif self.direction == "other":
-                    if self.countSpectrum < self.width * self.height - 1:
+                    if self.countSpectrum < (self.width*self.height - 1):
                         try:
                             if self.countHeight % 2 == 0:
-                                if self.countWidth < self.width - 1:
+                                if self.countWidth < (self.width-1):
                                     # wait for signal...
                                     self.countWidth += 1
                                     self.move_stage()
-                                elif self.countWidth == self.width - 1:
+                                elif self.countWidth == (self.width-1) and self.countHeight < (self.height-1):
                                     # wait for signal...
                                     self.countHeight += 1
                                     self.move_stage()
+                                else:
+                                    self.stop_acq()
                             elif self.countHeight % 2 == 1:
                                 if self.countWidth > 0:
                                     # wait for signal...
                                     self.countWidth -= 1
                                     self.move_stage()
-                                elif self.countWidth == 0:
+                                elif self.countWidth == 0 and self.countHeight < (self.height-1):
                                     # wait for signal...
                                     self.countHeight += 1
                                     self.move_stage()
+                                else:
+                                    self.stop_acq()
                         except Exception as e:
                             print(f'error in sweep other: {e}')
-                            self.isSweepThreadAlive = False
-                            self.enable_all_buttons()
+                            self.stop_acq()
                     else:
-                        self.isSweepThreadAlive = False
-                        self.enable_all_buttons()
-                        raise Exception(
-                            'Somehow, the loop is trying to create more columns or rows than asked on the GUI.')
+                        self.stop_acq()
+
                 self.countSpectrum += 1
 
             else:
-                self.enable_all_buttons()
-                self.isSweepThreadAlive = False
+                self.stop_acq()
 
     def move_stage(self):
         self.stageDevice.moveTo((self.positionSutter[0]+self.countWidth*self.step,
                                  self.positionSutter[1]+self.countHeight*self.step,
                                  self.positionSutter[2]))
+        # TODO add the order to the step
 
     # Save
     def start_save_thread(self, data=None, countHeight=None, countWidth=None):
