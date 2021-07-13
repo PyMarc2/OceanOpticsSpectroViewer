@@ -17,22 +17,6 @@
    <string notr="true">font: 10pt;</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="2" column="0">
-    <widget class="GraphicsLayoutWidget" name="graph_rgb">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-       <horstretch>0</horstretch>
-       <verstretch>1</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="minimumSize">
-      <size>
-       <width>0</width>
-       <height>400</height>
-      </size>
-     </property>
-    </widget>
-   </item>
    <item row="1" column="0">
     <widget class="QFrame" name="w_controls">
      <property name="frameShape">
@@ -545,10 +529,38 @@
          </item>
          <item>
           <layout class="QGridLayout" name="gridLayout_5">
-           <item row="1" column="1">
-            <widget class="QRangeSlider" name="dSlider_red">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
+           <item row="1" column="6">
+            <widget class="QSpinBox" name="sb_lowBlue">
+             <property name="maximumSize">
+              <size>
+               <width>45</width>
+               <height>16777215</height>
+              </size>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+             <property name="maximum">
+              <number>255</number>
+             </property>
+             <property name="value">
+              <number>171</number>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="8">
+            <widget class="QSpinBox" name="sb_highBlue">
+             <property name="maximumSize">
+              <size>
+               <width>45</width>
+               <height>16777215</height>
+              </size>
+             </property>
+             <property name="maximum">
+              <number>255</number>
+             </property>
+             <property name="value">
+              <number>255</number>
              </property>
             </widget>
            </item>
@@ -561,18 +573,18 @@
            </item>
            <item row="1" column="4">
             <widget class="QRangeSlider" name="dSlider_green">
+             <property name="styleSheet">
+              <string notr="true"/>
+             </property>
              <property name="orientation">
               <enum>Qt::Horizontal</enum>
              </property>
             </widget>
            </item>
-           <item row="0" column="7">
-            <widget class="QLabel" name="Blue">
-             <property name="text">
-              <string>Blue</string>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignCenter</set>
+           <item row="1" column="1">
+            <widget class="QRangeSlider" name="dSlider_red">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
              </property>
             </widget>
            </item>
@@ -589,6 +601,27 @@
              </property>
             </widget>
            </item>
+           <item row="0" column="7">
+            <widget class="QLabel" name="Blue">
+             <property name="font">
+              <font>
+               <pointsize>10</pointsize>
+               <weight>50</weight>
+               <italic>false</italic>
+               <bold>false</bold>
+              </font>
+             </property>
+             <property name="text">
+              <string>Blue</string>
+             </property>
+             <property name="scaledContents">
+              <bool>false</bool>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
            <item row="0" column="4">
             <widget class="QLabel" name="Green">
              <property name="text">
@@ -596,25 +629,6 @@
              </property>
              <property name="alignment">
               <set>Qt::AlignCenter</set>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="5">
-            <widget class="QSpinBox" name="sb_highGreen">
-             <property name="enabled">
-              <bool>true</bool>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>45</width>
-               <height>16777215</height>
-              </size>
-             </property>
-             <property name="maximum">
-              <number>255</number>
-             </property>
-             <property name="value">
-              <number>170</number>
              </property>
             </widget>
            </item>
@@ -637,8 +651,11 @@
              </property>
             </widget>
            </item>
-           <item row="1" column="2">
-            <widget class="QSpinBox" name="sb_highRed">
+           <item row="1" column="5">
+            <widget class="QSpinBox" name="sb_highGreen">
+             <property name="enabled">
+              <bool>true</bool>
+             </property>
              <property name="maximumSize">
               <size>
                <width>45</width>
@@ -649,7 +666,7 @@
               <number>255</number>
              </property>
              <property name="value">
-              <number>85</number>
+              <number>170</number>
              </property>
             </widget>
            </item>
@@ -669,8 +686,8 @@
              </property>
             </widget>
            </item>
-           <item row="1" column="8">
-            <widget class="QSpinBox" name="sb_highBlue">
+           <item row="1" column="2">
+            <widget class="QSpinBox" name="sb_highRed">
              <property name="maximumSize">
               <size>
                <width>45</width>
@@ -681,26 +698,7 @@
               <number>255</number>
              </property>
              <property name="value">
-              <number>255</number>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="6">
-            <widget class="QSpinBox" name="sb_lowBlue">
-             <property name="maximumSize">
-              <size>
-               <width>45</width>
-               <height>16777215</height>
-              </size>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-             </property>
-             <property name="maximum">
-              <number>255</number>
-             </property>
-             <property name="value">
-              <number>171</number>
+              <number>85</number>
              </property>
             </widget>
            </item>
@@ -815,6 +813,9 @@
       <item>
        <widget class="QWidget" name="w_captureControls" native="true">
         <layout class="QGridLayout" name="gridLayout_8">
+         <item row="2" column="0">
+          <widget class="GraphicsLayoutWidget" name="graph_spectre"/>
+         </item>
          <item row="1" column="0">
           <widget class="QGroupBox" name="g_captureControls">
            <property name="sizePolicy">
@@ -968,7 +969,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QPushButton" name="pushButton">
+             <widget class="QPushButton" name="pb_saveImage">
               <property name="text">
                <string>Save Image</string>
               </property>
@@ -977,13 +978,36 @@
            </layout>
           </widget>
          </item>
-         <item row="2" column="0">
-          <widget class="GraphicsLayoutWidget" name="graph_spectre"/>
+         <item row="3" column="0">
+          <widget class="QCheckBox" name="cb_colorRangeView">
+           <property name="text">
+            <string>Enable colorRange view</string>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
          </item>
         </layout>
        </widget>
       </item>
      </layout>
+    </widget>
+   </item>
+   <item row="2" column="0">
+    <widget class="GraphicsLayoutWidget" name="graph_rgb">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+       <horstretch>0</horstretch>
+       <verstretch>1</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>400</height>
+      </size>
+     </property>
     </widget>
    </item>
   </layout>
