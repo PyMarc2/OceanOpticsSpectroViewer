@@ -537,6 +537,9 @@
                <height>16777215</height>
               </size>
              </property>
+             <property name="styleSheet">
+              <string notr="true">background-color: rgb(183, 190, 255);</string>
+             </property>
              <property name="alignment">
               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
              </property>
@@ -555,6 +558,9 @@
                <width>45</width>
                <height>16777215</height>
               </size>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">background-color: rgb(183, 190, 255);</string>
              </property>
              <property name="maximum">
               <number>255</number>
@@ -593,11 +599,14 @@
              <property name="layoutDirection">
               <enum>Qt::LeftToRight</enum>
              </property>
+             <property name="styleSheet">
+              <string notr="true">font: 75 12pt &quot;MS Shell Dlg 2&quot;;</string>
+             </property>
              <property name="text">
               <string>Red</string>
              </property>
              <property name="alignment">
-              <set>Qt::AlignCenter</set>
+              <set>Qt::AlignBottom|Qt::AlignHCenter</set>
              </property>
             </widget>
            </item>
@@ -605,11 +614,15 @@
             <widget class="QLabel" name="Blue">
              <property name="font">
               <font>
-               <pointsize>10</pointsize>
-               <weight>50</weight>
+               <family>MS Shell Dlg 2</family>
+               <pointsize>12</pointsize>
+               <weight>9</weight>
                <italic>false</italic>
                <bold>false</bold>
               </font>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">font: 75 12pt &quot;MS Shell Dlg 2&quot;;</string>
              </property>
              <property name="text">
               <string>Blue</string>
@@ -618,17 +631,20 @@
               <bool>false</bool>
              </property>
              <property name="alignment">
-              <set>Qt::AlignCenter</set>
+              <set>Qt::AlignBottom|Qt::AlignHCenter</set>
              </property>
             </widget>
            </item>
            <item row="0" column="4">
             <widget class="QLabel" name="Green">
+             <property name="styleSheet">
+              <string notr="true">font: 75 12pt &quot;MS Shell Dlg 2&quot;;</string>
+             </property>
              <property name="text">
               <string>Green</string>
              </property>
              <property name="alignment">
-              <set>Qt::AlignCenter</set>
+              <set>Qt::AlignBottom|Qt::AlignHCenter</set>
              </property>
             </widget>
            </item>
@@ -639,6 +655,9 @@
                <width>38</width>
                <height>16777215</height>
               </size>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">background-color: rgb(143, 208, 142);</string>
              </property>
              <property name="alignment">
               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -662,6 +681,9 @@
                <height>16777215</height>
               </size>
              </property>
+             <property name="styleSheet">
+              <string notr="true">background-color: rgb(143, 208, 142);</string>
+             </property>
              <property name="maximum">
               <number>255</number>
              </property>
@@ -678,6 +700,9 @@
                <height>16777215</height>
               </size>
              </property>
+             <property name="styleSheet">
+              <string notr="true">background-color: rgb(255, 149, 149);</string>
+             </property>
              <property name="alignment">
               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
              </property>
@@ -693,6 +718,9 @@
                <width>45</width>
                <height>16777215</height>
               </size>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">background-color: rgb(255, 149, 149);</string>
              </property>
              <property name="maximum">
               <number>255</number>
