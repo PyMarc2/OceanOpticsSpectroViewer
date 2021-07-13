@@ -572,6 +572,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
             print('Sampling already started.')
 
     def sweep(self, *args, **kwargs):
+        # TODO correct the last index in height which seems to go higher than asked for
         while self.isSweepThreadAlive:
             if self.countSpectrum < (self.width*self.height):
                 if self.countHeight != 0 or self.countWidth != 0:
