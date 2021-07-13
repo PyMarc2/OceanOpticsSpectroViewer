@@ -310,8 +310,8 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
             self.matrixRGB_replace()
             self.update_rgb_plot()
             self.update_spectrum_plot()
-        except Exception as e:
-            print(f'Error in set_red_range : {e}')
+        except:
+            pass
 
     def set_green_range(self):
         self.sb_lowGreen.setValue(self.dSlider_green.get_left_thumb_value())
@@ -320,8 +320,8 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
             self.matrixRGB_replace()
             self.update_rgb_plot()
             self.update_spectrum_plot()
-        except Exception as e:
-            print(f'Error in set_green_range : {e}')
+        except:
+            pass
 
     def set_blue_range(self):
         self.sb_lowBlue.setValue(self.dSlider_blue.get_left_thumb_value())
@@ -330,8 +330,8 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
             self.matrixRGB_replace()
             self.update_rgb_plot()
             self.update_spectrum_plot()
-        except Exception as e:
-            print(f'Error in set_blue_range : {e}')
+        except:
+            pass
 
     def set_measure_unit(self):
         if self.cmb_magnitude.currentText() == 'mm':
@@ -533,7 +533,10 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.dSlider_green.set_right_thumb_value(self.sb_highGreen.value())
         self.dSlider_blue.set_left_thumb_value(self.sb_lowBlue.value())
         self.dSlider_blue.set_right_thumb_value(self.sb_highBlue.value())
-        self.update_spectrum_plot()
+        try:
+            self.update_spectrum_plot()
+        except:
+            pass
 
 
     def colorRangeView_status(self):
@@ -543,8 +546,9 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
             self.colorRangeViewEnable = False
         try:
             self.update_spectrum_plot()
-        except Exception as e:
-            print(f'Error in colorRangeView_status : {e}')
+        except:
+            pass
+
 
     # Begin loop
     def begin(self):
