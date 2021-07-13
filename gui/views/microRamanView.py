@@ -228,7 +228,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
     def create_matrix_data(self):
         self.matrixData = np.zeros((self.height, self.width, self.dataLen))
 
-    def create_matrixRGB(self):
+    def create_matrix_rgb(self):
         self.matrixRGB = np.zeros((self.height, self.width, 3))
 
     def create_plot_rgb(self):
@@ -413,7 +413,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
             self.isAcquisitionDone = True
             self.expositionCounter = 0
 
-    def read_data_live(self, *args, **kwargs):
+    def read_data_live(self):
         return self.spec.intensities()[2:]
 
     def stop_acq(self):
@@ -490,7 +490,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
                     self.disable_all_buttons()
                     self.spectrum_pixel_acquisition()
                     self.create_matrix_data()
-                    self.create_matrixRGB()
+                    self.create_matrix_rgb()
                     self.sweepThread.start()
 
                 except Exception as e:
@@ -499,7 +499,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         else:
             print('Sampling already started.')
 
-    def sweep(self):
+    def sweep(self, *args, **kwargs):
         while self.isSweepThreadAlive:
             if self.countSpectrum < self.width * self.height:
                 if self.countHeight != 0 or self.countWidth != 0:
@@ -508,45 +508,56 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
                 self.matrixRGB_replace()
                 self.update_rgb_plot()
                 if self.direction == "same":
-                    if self.countWidth < self.width-1:
-                        # wait for signal... (with a connect?)
-                        self.countWidth += 1
-                        self.move_stage()
-                    elif self.countHeight < self.height and self.countWidth == self.width-1:
-                        if self.countSpectrum < self.width*self.height-1:
-                            # wait for signal...
-                            self.countWidth = 0
-                            self.countHeight += 1
+                    try:
+                        if self.countWidth < self.width-1:
+                            # wait for signal... (with a connect?)
+                            self.countWidth += 1
                             self.move_stage()
+                        elif self.countHeight < self.height and self.countWidth == self.width-1:
+                            if self.countSpectrum < self.width*self.height-1:
+                                # wait for signal...
+                                self.countWidth = 0
+                                self.countHeight += 1
+                                self.move_stage()
+                            else:
+                                self.isSweepThreadAlive = False
+                                self.enable_all_buttons()
                         else:
                             self.isSweepThreadAlive = False
                             self.enable_all_buttons()
-                    else:
+                            raise Exception(
+                                'Somehow, the loop is trying to create more row or columns than asked on the GUI.')
+
+                    except Exception as e:
+                        print(f'error: {e}')
                         self.isSweepThreadAlive = False
                         self.enable_all_buttons()
-                        raise Exception(
-                            'Somehow, the loop is trying to create more row or columns than asked on the GUI.')
 
                 elif self.direction == "other":
                     if self.countSpectrum < self.width * self.height - 1:
-                        if self.countHeight % 2 == 0:
-                            if self.countWidth < self.width - 1:
-                                # wait for signal...
-                                self.countWidth += 1
-                                self.move_stage()
-                            elif self.countWidth == self.width - 1:
-                                # wait for signal...
-                                self.countHeight += 1
-                                self.move_stage()
-                        elif self.countHeight % 2 == 1:
-                            if self.countWidth > 0:
-                                # wait for signal...
-                                self.countWidth -= 1
-                                self.move_stage()
-                            elif self.countWidth == 0:
-                                # wait for signal...
-                                self.countHeight += 1
-                                self.move_stage()
+                        try:
+                            if self.countHeight % 2 == 0:
+                                if self.countWidth < self.width - 1:
+                                    # wait for signal...
+                                    self.countWidth += 1
+                                    self.move_stage()
+                                elif self.countWidth == self.width - 1:
+                                    # wait for signal...
+                                    self.countHeight += 1
+                                    self.move_stage()
+                            elif self.countHeight % 2 == 1:
+                                if self.countWidth > 0:
+                                    # wait for signal...
+                                    self.countWidth -= 1
+                                    self.move_stage()
+                                elif self.countWidth == 0:
+                                    # wait for signal...
+                                    self.countHeight += 1
+                                    self.move_stage()
+                        except Exception as e:
+                            print(f'error: {e}')
+                            self.isSweepThreadAlive = False
+                            self.enable_all_buttons()
                     else:
                         self.isSweepThreadAlive = False
                         self.enable_all_buttons()
