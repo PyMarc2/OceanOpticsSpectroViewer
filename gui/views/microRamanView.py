@@ -114,12 +114,11 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.cmb_selectLight.addItems(self.lightDevices)
         self.cmb_selectStage.addItems(self.stageDevices)
 
-        self.update_slider_status()
-
         self.redRange = None
         self.greenRange = None
         self.blueRange = None
         self.colorRangeViewEnable = True
+
 
     # Connect
     def connect_widgets(self):
@@ -528,13 +527,8 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.dSlider_green.set_right_thumb_value(self.sb_highGreen.value())
         self.dSlider_blue.set_left_thumb_value(self.sb_lowBlue.value())
         self.dSlider_blue.set_right_thumb_value(self.sb_highBlue.value())
-        if self.isSweepThreadAlive:
-            try:
-                self.matrixRGB_replace()
-                self.update_rgb_plot()
-                self.update_spectrum_plot()
-            except Exception as e:
-                print(f'Error in update_slider_status : {e}')
+        self.update_spectrum_plot()
+
 
     def colorRangeView_status(self):
         if self.cb_colorRangeView.checkState() == 2:
