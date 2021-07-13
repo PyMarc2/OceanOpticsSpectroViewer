@@ -210,8 +210,8 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
                 self.mousePositionX = positionX
                 self.mousePositionY = positionY
                 self.update_spectrum_plot()
-        except Exception as e:
-            print(f'Error : {e}')
+        except Exception:
+            pass
 
     def error_folder_name(self):
         self.le_folderPath.setStyleSheet("background-color: rgb(255, 0, 0)")
@@ -299,7 +299,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
             self.matrixRGB_replace()
             self.update_rgb_plot()
         except Exception as e:
-            print(f'Error : {e}')
+            print(f'Error in set_red_range : {e}')
 
     def set_green_range(self):
         self.sb_lowGreen.setValue(self.dSlider_green.get_left_thumb_value())
@@ -308,7 +308,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
             self.matrixRGB_replace()
             self.update_rgb_plot()
         except Exception as e:
-            print(f'Error : {e}')
+            print(f'Error in set_green_range : {e}')
 
     def set_blue_range(self):
         self.sb_lowBlue.setValue(self.dSlider_blue.get_left_thumb_value())
@@ -317,7 +317,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
             self.matrixRGB_replace()
             self.update_rgb_plot()
         except Exception as e:
-            print(f'Error : {e}')
+            print(f'Error in set_blue_range : {e}')
 
     def set_measure_unit(self):
         if self.cmb_magnitude.currentText() == 'mm':
@@ -379,13 +379,13 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
     def acquire_background(self):
         if self.folderPath == "":
             self.error_folder_name()
+
+        if not self.detectionConnected or not self.stageConnected:
+            self.connect_detection()
+            # self.connect_stage()
+
         else:
             try:
-                if not self.detectionConnected or not self.stageConnected:
-                    self.connect_detection()
-                    # self.connect_stage()
-                else:
-                    pass
                 self.disable_all_buttons()
                 self.set_integration_time()
                 self.spectrum_pixel_acquisition()
@@ -393,7 +393,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
                 self.enable_all_buttons()
 
             except Exception as e:
-                print(f"Error : {e}")
+                print(f"Error in acquire_background: {e}")
 
     def integrate_data(self):
         self.isAcquisitionDone = False
@@ -466,11 +466,12 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.dSlider_green.set_right_thumb_value(self.sb_highGreen.value())
         self.dSlider_blue.set_left_thumb_value(self.sb_lowBlue.value())
         self.dSlider_blue.set_right_thumb_value(self.sb_highBlue.value())
-        try:
-            self.matrixRGB_replace()
-            self.update_rgb_plot()
-        except Exception as e:
-            print(f'Error : {e}')
+        if self.isSweepThreadAlive:
+            try:
+                self.matrixRGB_replace()
+                self.update_rgb_plot()
+            except Exception as e:
+                print(f'Error in update_slider_status : {e}')
 
     # Begin loop
     def begin(self):
@@ -494,7 +495,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
                     self.sweepThread.start()
 
                 except Exception as e:
-                    print(f"Error : {e}")
+                    print(f"Error in begin: {e}")
 
         else:
             print('Sampling already started.')
@@ -529,7 +530,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
                                 'Somehow, the loop is trying to create more row or columns than asked on the GUI.')
 
                     except Exception as e:
-                        print(f'error: {e}')
+                        print(f'error in sweep same: {e}')
                         self.isSweepThreadAlive = False
                         self.enable_all_buttons()
 
@@ -555,7 +556,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
                                     self.countHeight += 1
                                     self.move_stage()
                         except Exception as e:
-                            print(f'error: {e}')
+                            print(f'error in sweep other: {e}')
                             self.isSweepThreadAlive = False
                             self.enable_all_buttons()
                     else:
