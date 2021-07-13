@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1590</width>
-    <height>802</height>
+    <height>804</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -746,6 +746,13 @@
                </property>
                <item>
                 <layout class="QHBoxLayout" name="lay_main">
+                 <item>
+                  <widget class="QPushButton" name="pb_background">
+                   <property name="text">
+                    <string>Acquire background</string>
+                   </property>
+                  </widget>
+                 </item>
                  <item>
                   <widget class="QFlashButton" name="pb_liveView">
                    <property name="sizePolicy">
