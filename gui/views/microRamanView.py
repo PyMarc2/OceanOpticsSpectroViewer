@@ -567,7 +567,6 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
                     self.create_matrix_data()
                     self.create_matrix_rgb()
                     self.sweepThread.start()
-                    self.sweepThread.start()
 
                 except Exception as e:
                     print(f"Error in begin: {e}")
