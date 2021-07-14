@@ -399,9 +399,14 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.liveAcquisitionData = self.read_data_live().tolist()
 
         self.integrate_data()
-        self.dataPixel = np.mean(np.array(self.movingIntegrationData()), 0)
+
+        if not self.isAcquiringBackground:
+            self.dataPixel = np.mean(np.array(self.movingIntegrationData()), 0)
+        else:
+            self.backgroundData = np.mean(np.array(self.movingIntegrationData()), 0)
 
     def acquire_background(self):
+        self.isAcquiringBackground = True
         if self.folderPath == "":
             self.error_folder_name()
 
@@ -411,15 +416,15 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
 
         try:
             self.disable_all_buttons()
-            self.set_exposure_time()
             self.set_integration_time()
-            self.launch_integration_acquisition()
             self.spectrum_pixel_acquisition()
-            self.start_save_thread(data=self.dataPixel)
+            self.start_save_thread(data=self.backgroundData)
             self.enable_all_buttons()
 
         except Exception as e:
             print(f"Error in acquire_background: {e}")
+
+        self.isAcquiringBackground = False
 
     def integrate_data(self):
         self.isAcquisitionDone = False
@@ -553,7 +558,6 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         except:
             pass
 
-
     # Begin loop
     def begin(self):
         if not self.isSweepThreadAlive:
@@ -590,6 +594,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
                 self.matrix_data_replace()
                 self.matrixRGB_replace()
                 self.update_rgb_plot()
+
                 if self.direction == "same":
                     try:
                         if self.countWidth < (self.width-1):
