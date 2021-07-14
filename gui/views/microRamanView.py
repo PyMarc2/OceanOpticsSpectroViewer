@@ -237,7 +237,6 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.sb_lowBlue.setValue(round((self.rangeLen*(2/3)) + self.minWaveLength+1))
         self.sb_highBlue.setValue(self.maxWaveLength)
 
-
     def mouse_moved(self, pos):
         try:
             value = self.plotViewBox.mapSceneToView(pos)
@@ -246,8 +245,8 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
             valueMax = valueSTR.find(")")
             position = valueSTR[valueMin+1:valueMax]
             position = position.split(",")
-            positionX = int(float(position[0]))
-            positionY = int(float(position[1]))
+            positionX = int(float(position[1]))
+            positionY = int(float(position[0]))
 
             if positionX <= -1 or positionY <= -1:
                 pass
