@@ -52,10 +52,13 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.acqTimeRemainder_ms = 0
         self.integrationCountAcq = 0
         self.expositionCounter = 0
+        self.maxWaveLength = 255
+        self.minWaveLength = 0
         self.exposureTime = 50
         self.countSpectrum = 0
         self.order = 10 ** 3
         self.countHeight = 0
+        self.rangeLen = 255
         self.countWidth = 0
         self.dataSep = 0
 
@@ -204,6 +207,39 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
             self.detectionConnected = True
         self.set_exposure_time()
 
+        self.set_range_to_wave_length()
+
+
+    def set_range_to_wave_length(self):
+
+        waveLength = self.spec.wavelengths()[2:]
+        self.minWaveLength = round(waveLength[0])
+        self.maxWaveLength = round(waveLength[-1])
+
+        self.rangeLen = self.maxWaveLength - self.minWaveLength
+
+        self.sb_highRed.setMaximum(self.maxWaveLength)
+        self.sb_lowRed.setMaximum(self.maxWaveLength-1)
+        self.sb_highGreen.setMaximum(self.maxWaveLength)
+        self.sb_lowGreen.setMaximum(self.maxWaveLength-1)
+        self.sb_highBlue.setMaximum(self.maxWaveLength)
+        self.sb_lowBlue.setMaximum(self.maxWaveLength-1)
+
+        self.sb_highRed.setMinimum(self.minWaveLength)
+        self.sb_lowRed.setMinimum(self.minWaveLength)
+        self.sb_highGreen.setMinimum(self.minWaveLength)
+        self.sb_lowGreen.setMinimum(self.minWaveLength)
+        self.sb_highBlue.setMinimum(self.minWaveLength)
+        self.sb_lowBlue.setMinimum(self.minWaveLength)
+
+        self.sb_lowRed.setValue(self.minWaveLength)
+        self.sb_highRed.setValue(round(self.rangeLen/3) + self.minWaveLength)
+        self.sb_lowGreen.setValue(round(self.rangeLen/3) + self.minWaveLength + 1)
+        self.sb_highGreen.setValue(round((self.rangeLen*(2/3)) + self.minWaveLength))
+        self.sb_lowBlue.setValue(round((self.rangeLen*(2/3)) + self.minWaveLength+1))
+        self.sb_highBlue.setValue(self.maxWaveLength)
+
+
     def mouse_moved(self, pos):
         try:
             value = self.plotViewBox.mapSceneToView(pos)
@@ -305,8 +341,8 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
 
     # Set
     def set_red_range(self):
-        self.sb_lowRed.setValue(self.dSlider_red.get_left_thumb_value())
-        self.sb_highRed.setValue(self.dSlider_red.get_right_thumb_value())
+        self.sb_lowRed.setValue(self.mapping_on_spinBox(self.dSlider_red.get_left_thumb_value()))
+        self.sb_highRed.setValue(self.mapping_on_spinBox(self.dSlider_red.get_right_thumb_value()))
         try:
             self.matrixRGB_replace()
             self.update_rgb_plot()
@@ -315,8 +351,8 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
             pass
 
     def set_green_range(self):
-        self.sb_lowGreen.setValue(self.dSlider_green.get_left_thumb_value())
-        self.sb_highGreen.setValue(self.dSlider_green.get_right_thumb_value())
+        self.sb_lowGreen.setValue(self.mapping_on_spinBox(self.dSlider_green.get_left_thumb_value()))
+        self.sb_highGreen.setValue(self.mapping_on_spinBox(self.dSlider_green.get_right_thumb_value()))
         try:
             self.matrixRGB_replace()
             self.update_rgb_plot()
@@ -325,8 +361,8 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
             pass
 
     def set_blue_range(self):
-        self.sb_lowBlue.setValue(self.dSlider_blue.get_left_thumb_value())
-        self.sb_highBlue.setValue(self.dSlider_blue.get_right_thumb_value())
+        self.sb_lowBlue.setValue(self.mapping_on_spinBox(self.dSlider_blue.get_left_thumb_value()))
+        self.sb_highBlue.setValue(self.mapping_on_spinBox(self.dSlider_blue.get_right_thumb_value()))
         try:
             self.matrixRGB_replace()
             self.update_rgb_plot()
@@ -461,8 +497,8 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
 
     # Update
     def update_rgb_plot(self):
-        #matrix = self.matrixRGB.transpose()
-        vb = pg.ImageItem(image=self.matrixRGB)
+        transpose = np.transpose(self.matrixRGB, (1, 0, 2))
+        vb = pg.ImageItem(image=transpose)
         self.plotViewBox.addItem(vb)
 
     def update_spectrum_plot(self):
@@ -474,12 +510,12 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
             minimum = 0
 
         if self.colorRangeViewEnable:
-            lowRed = round((self.sb_lowRed.value() / 255) * (len(self.waves) - 1))
-            highRed = round((self.sb_highRed.value() / 255) * (len(self.waves) - 1))
-            lowGreen = round((self.sb_lowGreen.value() / 255) * (len(self.waves) - 1))
-            highGreen = round((self.sb_highGreen.value() / 255) * (len(self.waves) - 1))
-            lowBlue = round((self.sb_lowBlue.value() / 255) * (len(self.waves) - 1))
-            highBlue = round((self.sb_highBlue.value() / 255) * (len(self.waves) - 1))
+            lowRed = int(((self.sb_lowRed.value() - self.minWaveLength) / self.rangeLen) * len(self.waves))
+            highRed = int(((self.sb_highRed.value() - self.minWaveLength) / self.rangeLen) * len(self.waves)-1)
+            lowGreen = int(((self.sb_lowGreen.value() - self.minWaveLength) / self.rangeLen) * len(self.waves))
+            highGreen = int(((self.sb_highGreen.value() - self.minWaveLength) / self.rangeLen) * len(self.waves)-1)
+            lowBlue = int(((self.sb_lowBlue.value() - self.minWaveLength) / self.rangeLen) * len(self.waves))
+            highBlue = int(((self.sb_highBlue.value() - self.minWaveLength) / self.rangeLen) * len(self.waves) - 1)
 
             self.redRange = np.full(len(self.waves), minimum)
             self.redRange[lowRed] = maximum
@@ -512,12 +548,12 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.start_save_thread(self.matrixData[self.countHeight, self.countWidth, :], self.countHeight, self.countWidth)
 
     def matrixRGB_replace(self):
-        lowRed = round((self.sb_lowRed.value() / 255) * (len(self.waves)-1))
-        highRed = round((self.sb_highRed.value() / 255) * (len(self.waves)-1))+1
-        lowGreen = round((self.sb_lowGreen.value() / 255) * (len(self.waves)-1))
-        highGreen = round((self.sb_highGreen.value() / 255) * (len(self.waves)-1))+1
-        lowBlue = round((self.sb_lowBlue.value() / 255) * (len(self.waves)-1))
-        highBlue = round((self.sb_highBlue.value() / 255) * (len(self.waves)-1))+1
+        lowRed = self.sb_lowRed.value()
+        highRed = self.sb_highRed.value()+1
+        lowGreen = self.sb_lowGreen.value()
+        highGreen = self.sb_highGreen.value()+1
+        lowBlue = self.sb_lowBlue.value()
+        highBlue = self.sb_highBlue.value()+1
 
         self.matrixRGB[:, :, 0] = self.matrixData[:, :, lowRed:highRed].sum(axis=2)
         self.matrixRGB[:, :, 1] = self.matrixData[:, :, lowGreen:highGreen].sum(axis=2)
@@ -527,13 +563,20 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.matrixRGB = self.matrixRGB.round(0)
         # self.matrixRGB.transpose()
 
+    def mapping_on_slider(self, value):
+        return round(((value - self.minWaveLength)/self.rangeLen) * 255)
+
+    def mapping_on_spinBox(self, value):
+        return round((value/255) * self.rangeLen+self.minWaveLength)
+
     def update_slider_status(self):
-        self.dSlider_red.set_left_thumb_value(self.sb_lowRed.value())
-        self.dSlider_red.set_right_thumb_value(self.sb_highRed.value())
-        self.dSlider_green.set_left_thumb_value(self.sb_lowGreen.value())
-        self.dSlider_green.set_right_thumb_value(self.sb_highGreen.value())
-        self.dSlider_blue.set_left_thumb_value(self.sb_lowBlue.value())
-        self.dSlider_blue.set_right_thumb_value(self.sb_highBlue.value())
+
+        self.dSlider_red.set_left_thumb_value(self.mapping_on_slider(self.sb_lowRed.value()))
+        self.dSlider_red.set_right_thumb_value(self.mapping_on_slider(self.sb_highRed.value()))
+        self.dSlider_green.set_left_thumb_value(self.mapping_on_slider(self.sb_lowGreen.value()))
+        self.dSlider_green.set_right_thumb_value(self.mapping_on_slider(self.sb_highGreen.value()))
+        self.dSlider_blue.set_left_thumb_value(self.mapping_on_slider(self.sb_lowBlue.value()))
+        self.dSlider_blue.set_right_thumb_value(self.mapping_on_slider(self.sb_highBlue.value()))
 
         if self.doSliderPositionAreInitialize:
             try:
