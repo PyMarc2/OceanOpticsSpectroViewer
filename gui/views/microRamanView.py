@@ -543,12 +543,12 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.start_save_thread(self.matrixData[self.countHeight, self.countWidth, :], self.countHeight, self.countWidth)
 
     def matrixRGB_replace(self):
-        lowRed = self.sb_lowRed.value()
-        highRed = self.sb_highRed.value()+1
-        lowGreen = self.sb_lowGreen.value()
-        highGreen = self.sb_highGreen.value()+1
-        lowBlue = self.sb_lowBlue.value()
-        highBlue = self.sb_highBlue.value()+1
+        lowRed = int(((self.sb_lowRed.value() - self.minWaveLength) / self.rangeLen) * len(self.waves))
+        highRed = int(((self.sb_highRed.value() - self.minWaveLength) / self.rangeLen) * len(self.waves))
+        lowGreen = int(((self.sb_lowGreen.value() - self.minWaveLength) / self.rangeLen) * len(self.waves))
+        highGreen = int(((self.sb_highGreen.value() - self.minWaveLength) / self.rangeLen) * len(self.waves))
+        lowBlue = int(((self.sb_lowBlue.value() - self.minWaveLength) / self.rangeLen) * len(self.waves))
+        highBlue = int(((self.sb_highBlue.value() - self.minWaveLength) / self.rangeLen) * len(self.waves))
 
         self.matrixRGB[:, :, 0] = self.matrixData[:, :, lowRed:highRed].sum(axis=2)
         self.matrixRGB[:, :, 1] = self.matrixData[:, :, lowGreen:highGreen].sum(axis=2)
