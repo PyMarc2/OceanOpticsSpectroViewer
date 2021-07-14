@@ -52,6 +52,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.acqTimeRemainder_ms = 0
         self.integrationCountAcq = 0
         self.expositionCounter = 0
+        self.exposureTime = 50
         self.countSpectrum = 0
         self.order = 10 ** 3
         self.countHeight = 0
