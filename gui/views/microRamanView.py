@@ -207,9 +207,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
 
         self.set_range_to_wave_length()
 
-
     def set_range_to_wave_length(self):
-
         waveLength = self.spec.wavelengths()[2:]
         self.minWaveLength = round(waveLength[0])
         self.maxWaveLength = round(waveLength[-1])
@@ -735,7 +733,13 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
             fixedData = copy.deepcopy(spectra)
             path = os.path.join(self.folderPath, f"{self.fileName}_matrixData")
             with open(path + ".csv", "w+") as f:
-                f.write(f"{fixedData}")
+                f.write("[")
+                for i, x in enumerate(fixedData):
+                    if i != len(fixedData)-1:
+                        f.write(f"{x}\n")
+                    else:
+                        f.write(f"{x}]")
+
                 f.close()
 
         # self.stop_save_thread()
