@@ -552,7 +552,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
 
         self.matrixRGB[:, :, 0] = self.matrixData[:, :, lowRed:highRed].sum(axis=2)
         self.matrixRGB[:, :, 1] = self.matrixData[:, :, lowGreen:highGreen].sum(axis=2)
-        self.matrixRGB[:, :, 2] = self.matrixData[:, :, lowBlue:highBlue].sum(axis=2)
+        self.matrixRGB[:, :, 2] = self.matrixData[:, :, lowBlue:highBlue].sum(axis=2)             
 
         self.matrixRGB = (self.matrixRGB / np.max(self.matrixRGB)) * 255
         self.matrixRGB = self.matrixRGB.round(0)
