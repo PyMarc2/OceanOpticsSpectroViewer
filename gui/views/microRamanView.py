@@ -128,8 +128,6 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.cmb_selectLight.addItems(self.lightDevices)
         self.cmb_selectStage.addItems(self.listStageDevices)
 
-
-
     # Connect
     def connect_widgets(self):
         self.cmb_magnitude.currentTextChanged.connect(self.set_measure_unit)
@@ -189,7 +187,6 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
             # self.stageDevice = None
             # self.stageConnected = True
         self.positionSutter = self.stageDevice.position()
-        # print(self.positionSutter)
 
     def connect_detection(self):  # Connect the light
         log.debug("Initializing devices...")
@@ -411,9 +408,8 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         if self.folderPath == "":
             self.error_folder_name()
 
-        if self.stageDevice is None or self.spec is None:
+        if self.spec is None:
             self.connect_detection()
-            self.connect_stage()
 
         try:
             self.disable_all_buttons()
@@ -450,14 +446,15 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
 
     def stop_acq(self):
         if self.isSweepThreadAlive:
-            self.sweepThread.terminate()
+            self.sweepThread.quit()
+            # self.sweepThread.wait()
             # self.saveThread.terminate()
             self.isSweepThreadAlive = False
             self.countHeight = 0
             self.countWidth = 0
             self.countSpectrum = 0
-            self.stageDevice = None
-            self.spec = None
+            # self.stageDevice = None
+            # self.spec = None
 
         else:
             print('Sampling already stopped.')
@@ -466,7 +463,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
 
     # Update
     def update_rgb_plot(self):
-        #matrix = self.matrixRGB.transpose()
+        # matrix = self.matrixRGB.transpose()
         vb = pg.ImageItem(image=self.matrixRGB)
         self.plotViewBox.addItem(vb)
 
@@ -565,23 +562,23 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
             if self.folderPath == "":
                 self.error_folder_name()
             else:
-                try:
-                    if self.stageDevice is None or self.spec is None:
-                        self.connect_detection()
-                        self.connect_stage()
+                # try:
+                if self.stageDevice is None or self.spec is None:
+                    self.connect_detection()
+                    self.connect_stage()
 
-                    self.isSweepThreadAlive = True
-                    self.set_integration_time()
-                    self.create_plot_rgb()
-                    self.create_plot_spectrum()
-                    self.disable_all_buttons()
-                    self.spectrum_pixel_acquisition()
-                    self.create_matrix_data()
-                    self.create_matrix_rgb()
-                    self.sweepThread.start()
+                self.isSweepThreadAlive = True
+                self.set_integration_time()
+                self.create_plot_rgb()
+                self.create_plot_spectrum()
+                self.disable_all_buttons()
+                self.spectrum_pixel_acquisition()
+                self.create_matrix_data()
+                self.create_matrix_rgb()
+                self.sweepThread.start()
 
-                except Exception as e:
-                    print(f"Error in begin: {e}")
+                # except Exception as e:
+                    # print(f"Error in begin: {e}")
 
         else:
             print('Sampling already started.')
@@ -686,9 +683,10 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
                 self.fileName = "spectrum"
 
             fixedData = copy.deepcopy(spectrum)
-            path = os.path.join(self.folderPath, f"{self.fileName}_x{self.widthId}_y{self.heightId}")
             if self.heightId is None and self.widthId is None:
                 path = os.path.join(self.folderPath, f"{self.fileName}_background")
+            else:
+                path = os.path.join(self.folderPath, f"{self.fileName}_x{self.widthId}_y{self.heightId}")
             with open(path + ".csv", "w+") as f:
                 for i, x in enumerate(self.waves):
                     f.write(f"{x},{fixedData[i]}\n")
@@ -703,8 +701,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
             fixedData = copy.deepcopy(spectra)
             path = os.path.join(self.folderPath, f"{self.fileName}_matrixData")
             with open(path + ".csv", "w+") as f:
-                for i, x in enumerate(self.waves):
-                    f.write(f"{x},{fixedData[i]}\n")
+                f.write(f"{fixedData}")
                 f.close()
 
         # self.stop_save_thread()
