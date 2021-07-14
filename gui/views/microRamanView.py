@@ -635,10 +635,9 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
                 self.stop_acq()
 
     def move_stage(self):
-        self.stageDevice.moveTo((self.positionSutter[0]+self.countWidth*self.step,
-                                 self.positionSutter[1]+self.countHeight*self.step,
+        self.stageDevice.moveTo((self.positionSutter[0]+self.countWidth*self.step*self.order,
+                                 self.positionSutter[1]+self.countHeight*self.step*self.order,
                                  self.positionSutter[2]))
-        # TODO add the order to the step
 
     # Save
     def start_save_thread(self, data=None, countHeight=None, countWidth=None):

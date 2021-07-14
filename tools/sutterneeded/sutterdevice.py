@@ -121,16 +121,16 @@ class SutterDevice(PhysicalDevice):
 
     def moveTo(self, position):
         """ Move to a position in microns """
-        x, y, z  = position
+        x, y, z = position
         positionInMicrosteps = (x*self.microstepsPerMicrons, 
                                 y*self.microstepsPerMicrons,
                                 z*self.microstepsPerMicrons)
         self.moveInMicrostepsTo(positionInMicrosteps)
 
     def moveBy(self, delta) -> bool:
-        #Move by a delta displacement (dx, dy, dz) from current position in microns
-        dx,dy,dz  = delta
-        x,y,z = self.position()
+        # Move by a delta displacement (dx, dy, dz) from current position in microns
+        dx, dy, dz = delta
+        x, y, z = self.position()
         if x is not None:
             self.moveTo((x+dx, y+dy, z+dz))
         else:
