@@ -44,16 +44,6 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.saveWorker = Worker(self.save_capture_csv)
         self.sweepWorker = Worker(self.sweep)
 
-        self.exposureTime = self.sb_exposure.value()
-        self.height = self.sb_height.value()
-        self.width = self.sb_width.value()
-        self.step = self.sb_step.value()
-        # self.threadpool = QThreadPool()
-        self.sweepThread = QThread()
-        # self.saveThread = QThread()
-        self.initialize_buttons()
-        self.connect_widgets()
-        self.create_threads()
 
         self.integrationTimeAcqRemainder_ms = 0
         self.integrationTimeAcq = 3000
@@ -68,6 +58,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.countWidth = 0
         self.dataSep = 0
 
+        self.doSliderPositionAreInitialize = False
         self.launchIntegrationAcquisition = False
         self.isAcquisitionThreadAlive = False
         self.isAcquiringIntegration = False
@@ -81,6 +72,8 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.stageConnected = False
         self.autoindexing = False
 
+        self.colorRangeViewEnable = True
+
         self.temporaryIntegrationData = None
         self.movingIntegrationData = None
         self.backgroundData = None
@@ -92,9 +85,12 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.stageDevice = None
         self.plotViewBox = None
         self.matrixData = None
+        self.greenRange = None
+        self.blueRange = None
         self.matrixRGB = None
         self.countSave = None
         self.plotItem = None
+        self.redRange = None
         self.heightId = None
         self.widthId = None
         self.dataLen = None
@@ -104,6 +100,17 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.spec = None
         self.data = None
         self.img = None
+
+        self.height = self.sb_height.value()
+        self.width = self.sb_width.value()
+        self.step = self.sb_step.value()
+        self.threadpool = QThreadPool()
+        self.sweepThread = QThread()
+        self.update_slider_status()
+        self.saveThread = QThread()
+        self.initialize_buttons()
+        self.connect_widgets()
+        self.create_threads()
 
         self.lightDevices = ["None"]
         self.stageDevices = sepo.SerialPort.matchPorts(idVendor=4930, idProduct=1)
@@ -120,10 +127,6 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.cmb_selectLight.addItems(self.lightDevices)
         self.cmb_selectStage.addItems(self.listStageDevices)
 
-        self.redRange = None
-        self.greenRange = None
-        self.blueRange = None
-        self.colorRangeViewEnable = True
 
 
     # Connect
@@ -156,6 +159,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.sb_lowGreen.valueChanged.connect(self.update_slider_status)
         self.sb_highBlue.valueChanged.connect(self.update_slider_status)
         self.sb_lowBlue.valueChanged.connect(self.update_slider_status)
+
 
         self.cb_colorRangeView.stateChanged.connect(self.colorRangeView_status)
 
@@ -456,6 +460,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
 
     # Update
     def update_rgb_plot(self):
+        #matrix = self.matrixRGB.transpose()
         vb = pg.ImageItem(image=self.matrixRGB)
         self.plotViewBox.addItem(vb)
 
@@ -528,10 +533,15 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.dSlider_green.set_right_thumb_value(self.sb_highGreen.value())
         self.dSlider_blue.set_left_thumb_value(self.sb_lowBlue.value())
         self.dSlider_blue.set_right_thumb_value(self.sb_highBlue.value())
-        try:
-            self.update_spectrum_plot()
-        except:
-            pass
+
+        if self.doSliderPositionAreInitialize:
+            try:
+                self.update_spectrum_plot()
+            except:
+                pass
+        else:
+            self.doSliderPositionAreInitialize = True
+
 
     def colorRangeView_status(self):
         if self.cb_colorRangeView.checkState() == 2:
