@@ -11,6 +11,7 @@ from tools.threadWorker import Worker
 from gui.modules import mockSpectrometer as Mock
 import seabreeze.spectrometers as sb
 
+import matplotlib.pyplot as plt
 import pyqtgraph as pg
 import numpy as np
 import logging
@@ -139,7 +140,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.dSlider_blue.valueChanged.connect(self.set_blue_range)
         self.graph_rgb.scene().sigMouseMoved.connect(self.mouse_moved)
         self.pb_background.clicked.connect(self.acquire_background)
-        self.pb_saveData.clicked.connect(self.save_capture_csv)
+        self.pb_saveData.clicked.connect(self.save_matrixRGB)
         self.pb_sweepSame.clicked.connect(lambda: setattr(self, 'direction', 'same'))
         self.pb_sweepAlternate.clicked.connect(lambda: setattr(self, 'direction', 'other'))
         self.pb_reset.clicked.connect(self.stop_acq)
@@ -163,8 +164,33 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.sb_highBlue.valueChanged.connect(self.update_slider_status)
         self.sb_lowBlue.valueChanged.connect(self.update_slider_status)
 
+        self.cb_set_maximum.currentIndexChanged.connect(self.update_color)
+        self.pb_saveImage.clicked.connect(self.save_image)
+
+
 
         self.cb_colorRangeView.stateChanged.connect(self.colorRangeView_status)
+
+    def save_image(self):
+        path = self.folderPath + "/"
+        img = self.matrixRGB.astype(np.uint8)
+        if self.fileName == "":
+            plt.imsave(path + "matrixRGB.png", img)
+        else:
+            plt.imsave(path + self.fileName + "_matrixRGB.png", img)
+
+    def save_matrixRGB(self):
+        print("Justine va le faire:)")
+
+        # path = self.folderPath + "/"
+        # data = copy.deepcopy(self.matrixRGB)
+        # if self.fileName == "":
+        #     with open(path + "matrixRGB.csv", "w+") as f:
+        #         f.write(data)
+        # else:
+        #     with open(path + self.fileName + "_matrixRGB.csv", "w+") as f:
+        #         f.write(str(data))
+
 
     def connect_light(self):  # Connect the light
         log.debug("Initializing devices...")
@@ -315,32 +341,23 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
     def set_red_range(self):
         self.sb_lowRed.setValue(self.mapping_on_spinBox(self.dSlider_red.get_left_thumb_value()))
         self.sb_highRed.setValue(self.mapping_on_spinBox(self.dSlider_red.get_right_thumb_value()))
-        try:
-            self.matrixRGB_replace()
-            self.update_rgb_plot()
-            self.update_spectrum_plot()
-        except:
-            pass
+
+        self.update_color()
+
 
     def set_green_range(self):
         self.sb_lowGreen.setValue(self.mapping_on_spinBox(self.dSlider_green.get_left_thumb_value()))
         self.sb_highGreen.setValue(self.mapping_on_spinBox(self.dSlider_green.get_right_thumb_value()))
-        try:
-            self.matrixRGB_replace()
-            self.update_rgb_plot()
-            self.update_spectrum_plot()
-        except:
-            pass
+
+        self.update_color()
+
 
     def set_blue_range(self):
         self.sb_lowBlue.setValue(self.mapping_on_spinBox(self.dSlider_blue.get_left_thumb_value()))
         self.sb_highBlue.setValue(self.mapping_on_spinBox(self.dSlider_blue.get_right_thumb_value()))
-        try:
-            self.matrixRGB_replace()
-            self.update_rgb_plot()
-            self.update_spectrum_plot()
-        except:
-            pass
+
+        self.update_color()
+
 
     def set_measure_unit(self):
         if self.cmb_magnitude.currentText() == 'mm':
@@ -489,6 +506,14 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.enable_all_buttons()
 
     # Update
+    def update_color(self):
+        try:
+            self.matrixRGB_replace()
+            self.update_rgb_plot()
+            self.update_spectrum_plot()
+        except:
+            pass
+
     def update_rgb_plot(self):
         # matrix = self.matrixRGB.transpose()
         vb = pg.ImageItem(image=self.matrixRGB)
@@ -552,9 +577,18 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.matrixRGB[:, :, 1] = self.matrixData[:, :, lowGreen:highGreen].sum(axis=2)
         self.matrixRGB[:, :, 2] = self.matrixData[:, :, lowBlue:highBlue].sum(axis=2)             
 
-        self.matrixRGB = (self.matrixRGB / np.max(self.matrixRGB)) * 255
+        if self.cb_set_maximum.currentIndex() == 0:
+            self.matrixRGB = (self.matrixRGB / np.max(self.matrixRGB)) * 255
+
+        elif self.cb_set_maximum.currentIndex() == 1:
+            maxima = self.matrixRGB.max(axis=2)
+            maxima = np.dstack((maxima,) * 3)
+            np.seterr(divide='ignore', invalid='ignore')
+            self.matrixRGB /= maxima
+            self.matrixRGB[np.isnan(self.matrixRGB)] = 0
+            self.matrixRGB *= 255
+
         self.matrixRGB = self.matrixRGB.round(0)
-        # self.matrixRGB.transpose()
 
     def mapping_on_slider(self, value):
         return round(((value - self.minWaveLength)/self.rangeLen) * 255)
@@ -602,6 +636,8 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
                     self.connect_stage()
 
                 self.isSweepThreadAlive = True
+                self.pb_saveData.setEnabled(True)
+                self.pb_saveImage.setEnabled(True)
                 self.disable_all_buttons()
                 self.set_integration_time()
                 self.create_plot_rgb()
