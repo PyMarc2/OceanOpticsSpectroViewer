@@ -736,16 +736,22 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
             with open(path + ".csv", "w+") as f:
                 f.write("[")
                 for i, x in enumerate(fixedData):
-                    f.write("[")
-                    for ii, y in enumerate(x):
+                    if i == 0:
                         f.write("[")
+                    else:
+                        f.write("\n\n[")
+                    for ii, y in enumerate(x):
+                        if ii == 0:
+                            f.write("[")
+                        else:
+                            f.write("\n[")
                         for iii, z, in enumerate(y):
                             if i != len(y)-1:
                                 f.write(f"{z}, ")
                             else:
                                 f.write(f"{z}")
-                        f.write("]\n")
-                    f.write("]\n\n")
+                        f.write("]")
+                    f.write("]")
                 f.write("]")
 
                 f.close()
