@@ -206,34 +206,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.set_exposure_time()
 
         self.set_range_to_wave_length()
-
-    def set_range_to_wave_length(self):
-        waveLength = self.spec.wavelengths()[2:]
-        self.minWaveLength = round(waveLength[0])
-        self.maxWaveLength = round(waveLength[-1])
-
-        self.rangeLen = self.maxWaveLength - self.minWaveLength
-
-        self.sb_highRed.setMaximum(self.maxWaveLength)
-        self.sb_lowRed.setMaximum(self.maxWaveLength-1)
-        self.sb_highGreen.setMaximum(self.maxWaveLength)
-        self.sb_lowGreen.setMaximum(self.maxWaveLength-1)
-        self.sb_highBlue.setMaximum(self.maxWaveLength)
-        self.sb_lowBlue.setMaximum(self.maxWaveLength-1)
-
-        self.sb_highRed.setMinimum(self.minWaveLength)
-        self.sb_lowRed.setMinimum(self.minWaveLength)
-        self.sb_highGreen.setMinimum(self.minWaveLength)
-        self.sb_lowGreen.setMinimum(self.minWaveLength)
-        self.sb_highBlue.setMinimum(self.minWaveLength)
-        self.sb_lowBlue.setMinimum(self.minWaveLength)
-
-        self.sb_lowRed.setValue(self.minWaveLength)
-        self.sb_highRed.setValue(round(self.rangeLen/3) + self.minWaveLength)
-        self.sb_lowGreen.setValue(round(self.rangeLen/3) + self.minWaveLength + 1)
-        self.sb_highGreen.setValue(round((self.rangeLen*(2/3)) + self.minWaveLength))
-        self.sb_lowBlue.setValue(round((self.rangeLen*(2/3)) + self.minWaveLength+1))
-        self.sb_highBlue.setValue(self.maxWaveLength)
+        self.backgroundData = np.zeros(len(self.spec.wavelengths()[2:]))
 
     def mouse_moved(self, pos):
         try:
@@ -413,6 +386,34 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         else:
             self.movingIntegrationData = RingBuffer(size_max=self.integrationCountAcq)
             self.changeLastExposition = 0
+
+    def set_range_to_wave_length(self):
+        waveLength = self.spec.wavelengths()[2:]
+        self.minWaveLength = round(waveLength[0])
+        self.maxWaveLength = round(waveLength[-1])
+
+        self.rangeLen = self.maxWaveLength - self.minWaveLength
+
+        self.sb_highRed.setMaximum(self.maxWaveLength)
+        self.sb_lowRed.setMaximum(self.maxWaveLength-1)
+        self.sb_highGreen.setMaximum(self.maxWaveLength)
+        self.sb_lowGreen.setMaximum(self.maxWaveLength-1)
+        self.sb_highBlue.setMaximum(self.maxWaveLength)
+        self.sb_lowBlue.setMaximum(self.maxWaveLength-1)
+
+        self.sb_highRed.setMinimum(self.minWaveLength)
+        self.sb_lowRed.setMinimum(self.minWaveLength)
+        self.sb_highGreen.setMinimum(self.minWaveLength)
+        self.sb_lowGreen.setMinimum(self.minWaveLength)
+        self.sb_highBlue.setMinimum(self.minWaveLength)
+        self.sb_lowBlue.setMinimum(self.minWaveLength)
+
+        self.sb_lowRed.setValue(self.minWaveLength)
+        self.sb_highRed.setValue(round(self.rangeLen/3) + self.minWaveLength)
+        self.sb_lowGreen.setValue(round(self.rangeLen/3) + self.minWaveLength + 1)
+        self.sb_highGreen.setValue(round((self.rangeLen*(2/3)) + self.minWaveLength))
+        self.sb_lowBlue.setValue(round((self.rangeLen*(2/3)) + self.minWaveLength+1))
+        self.sb_highBlue.setValue(self.maxWaveLength)
 
     # Acquisition
     def spectrum_pixel_acquisition(self):
