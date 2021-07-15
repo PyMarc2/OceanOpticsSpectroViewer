@@ -535,7 +535,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.plotSpectrum.setData(self.waves, self.matrixData[self.mousePositionY, self.mousePositionX, :])
 
     def matrix_data_replace(self):
-        self.matrixData[self.countHeight, self.countWidth, :] = np.array(self.dataPixel)
+        self.matrixData[self.countHeight, self.countWidth, :] = np.array(self.dataPixel) - np.array(self.backgroundData)
         self.dataPixel = []
         self.start_save_thread(self.matrixData[self.countHeight, self.countWidth, :], self.countHeight, self.countWidth)
 
@@ -735,10 +735,17 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
             with open(path + ".csv", "w+") as f:
                 f.write("[")
                 for i, x in enumerate(fixedData):
-                    if i != len(fixedData)-1:
-                        f.write(f"{x}\n")
-                    else:
-                        f.write(f"{x}]")
+                    f.write("[")
+                    for ii, y in enumerate(x):
+                        f.write("[")
+                        for iii, z, in enumerate(y):
+                            if i != len(y)-1:
+                                f.write(f"{z}, ")
+                            else:
+                                f.write(f"{z}")
+                        f.write("]\n")
+                    f.write("]\n\n")
+                f.write("]")
 
                 f.close()
 
