@@ -180,17 +180,54 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
             plt.imsave(path + self.fileName + "_matrixRGB.png", img)
 
     def save_matrixRGB(self):
-        print("Justine va le faire:)")
+        path = self.folderPath + "/"
+        fixedData = copy.deepcopy(self.matrixRGB)
+        if self.fileName == "":
+            with open(path + "matrixRGB.csv", "w+") as f:
+                f.write("[")
+                for i, x in enumerate(fixedData):
+                    if i == 0:
+                        f.write("[")
+                    else:
+                        f.write("\n\n[")
+                    for ii, y in enumerate(x):
+                        if ii == 0:
+                            f.write("[")
+                        else:
+                            f.write("\n[")
+                        for iii, z, in enumerate(y):
+                            if i != len(y) - 1:
+                                f.write(f"{z}, ")
+                            else:
+                                f.write(f"{z}")
+                        f.write("]")
+                    f.write("]")
+                f.write("]")
 
-        # path = self.folderPath + "/"
-        # data = copy.deepcopy(self.matrixRGB)
-        # if self.fileName == "":
-        #     with open(path + "matrixRGB.csv", "w+") as f:
-        #         f.write(data)
-        # else:
-        #     with open(path + self.fileName + "_matrixRGB.csv", "w+") as f:
-        #         f.write(str(data))
+                f.close()
+        else:
+            with open(path + self.fileName + "_matrixRGB.csv", "w+") as f:
+                f.write("[")
+                for i, x in enumerate(fixedData):
+                    if i == 0:
+                        f.write("[")
+                    else:
+                        f.write("\n\n[")
+                    for ii, y in enumerate(x):
+                        if ii == 0:
+                            f.write("[")
+                        else:
+                            f.write("\n[")
+                        for iii, z, in enumerate(y):
+                            if i != len(y) - 1:
+                                f.write(f"{z}, ")
+                            else:
+                                f.write(f"{z}")
+                        f.write("]")
+                    f.write("]")
+                f.write("]")
 
+                f.close()
 
     def connect_light(self):  # Connect the light
         log.debug("Initializing devices...")
