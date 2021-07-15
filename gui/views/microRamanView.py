@@ -269,10 +269,10 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         # self.saveThread.started.connect(self.saveWorker.run)
 
     def create_matrix_data(self):
-        self.matrixData = np.zeros((self.height, self.width, self.dataLen))
+        self.matrixData = np.zeros((self.width, self.height, self.dataLen))
 
     def create_matrix_rgb(self):
-        self.matrixRGB = np.zeros((self.height, self.width, 3))
+        self.matrixRGB = np.zeros((self.width, self.height, 3))
 
     def create_plot_rgb(self):
         self.graph_rgb.clear()
