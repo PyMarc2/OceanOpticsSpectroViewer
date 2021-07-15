@@ -1,9 +1,7 @@
-from hardwarelibrary.physicaldevice import *
-from hardwarelibrary.motion.linearmotiondevice import *
-from hardwarelibrary.communication.communicationport import *
-from hardwarelibrary.communication.usbport import USBPort
-from hardwarelibrary.communication.serialport import SerialPort
-from hardwarelibrary.communication.commands import DataCommand
+from tools.sutterneeded.physicaldevice import *
+from tools.sutterneeded.communication.communicationport import *
+from tools.sutterneeded.communication.serialport import SerialPort
+from tools.sutterneeded.communication.commands import DataCommand
 
 import numpy as np
 import re
