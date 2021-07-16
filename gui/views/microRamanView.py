@@ -692,7 +692,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
 
     def sweep(self, *args, **kwargs):
         while self.isSweepThreadAlive:
-            if self.countSpectrum < (self.width*self.height):
+            if self.countSpectrum <= (self.width*self.height):
                 if self.countHeight != 0 or self.countWidth != 0:
                     self.spectrum_pixel_acquisition()
                 self.matrix_data_replace()
@@ -710,8 +710,6 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
                             self.countWidth = 0
                             self.countHeight += 1
                             self.move_stage()
-                        elif self.countHeight == self.height-1 and self.countWidth == (self.width-1):
-                            continue
                         else:
                             self.stop_acq()
 
@@ -720,34 +718,31 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
                         self.stop_acq()
 
                 elif self.direction == "other":
-                    if self.countSpectrum < (self.width*self.height - 1):
-                        try:
-                            if self.countHeight % 2 == 0:
-                                if self.countWidth < (self.width-1):
-                                    # wait for signal...
-                                    self.countWidth += 1
-                                    self.move_stage()
-                                elif self.countWidth == (self.width-1) and self.countHeight < (self.height-1):
-                                    # wait for signal...
-                                    self.countHeight += 1
-                                    self.move_stage()
-                                else:
-                                    self.stop_acq()
-                            elif self.countHeight % 2 == 1:
-                                if self.countWidth > 0:
-                                    # wait for signal...
-                                    self.countWidth -= 1
-                                    self.move_stage()
-                                elif self.countWidth == 0 and self.countHeight < (self.height-1):
-                                    # wait for signal...
-                                    self.countHeight += 1
-                                    self.move_stage()
-                                else:
-                                    self.stop_acq()
-                        except Exception as e:
-                            print(f'error in sweep other: {e}')
-                            self.stop_acq()
-                    else:
+                    try:
+                        if self.countHeight % 2 == 0:
+                            if self.countWidth < (self.width-1):
+                                # wait for signal...
+                                self.countWidth += 1
+                                self.move_stage()
+                            elif self.countWidth == (self.width-1) and self.countHeight < (self.height-1):
+                                # wait for signal...
+                                self.countHeight += 1
+                                self.move_stage()
+                            else:
+                                self.stop_acq()
+                        elif self.countHeight % 2 == 1:
+                            if self.countWidth > 0:
+                                # wait for signal...
+                                self.countWidth -= 1
+                                self.move_stage()
+                            elif self.countWidth == 0 and self.countHeight < (self.height-1):
+                                # wait for signal...
+                                self.countHeight += 1
+                                self.move_stage()
+                            else:
+                                self.stop_acq()
+                    except Exception as e:
+                        print(f'error in sweep other: {e}')
                         self.stop_acq()
 
                 self.countSpectrum += 1
@@ -830,5 +825,3 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
                 f.write("]")
 
                 f.close()
-
-        # self.stop_save_thread()
