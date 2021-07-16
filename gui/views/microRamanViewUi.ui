@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1572</width>
-    <height>1053</height>
+    <height>1047</height>
    </rect>
   </property>
   <property name="maximumSize">
@@ -427,6 +427,9 @@
            <item>
             <layout class="QVBoxLayout" name="verticalLayout_10">
              <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_14"/>
+             </item>
+             <item>
               <spacer name="verticalSpacer">
                <property name="orientation">
                 <enum>Qt::Vertical</enum>
@@ -448,7 +451,7 @@
                 <string>Background Controls</string>
                </property>
                <property name="alignment">
-                <set>Qt::AlignCenter</set>
+                <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
                </property>
                <layout class="QGridLayout" name="gridLayout_7">
                 <item row="1" column="0">
@@ -470,6 +473,54 @@
                     </property>
                     <property name="text">
                      <string>Save Data Without Background</string>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
+                </item>
+               </layout>
+              </widget>
+             </item>
+             <item>
+              <widget class="QGroupBox" name="groupBox_2">
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>70</height>
+                </size>
+               </property>
+               <property name="title">
+                <string>Info Laser</string>
+               </property>
+               <layout class="QVBoxLayout" name="verticalLayout_9">
+                <item>
+                 <layout class="QHBoxLayout" name="horizontalLayout_18">
+                  <property name="spacing">
+                   <number>0</number>
+                  </property>
+                  <item>
+                   <widget class="QLabel" name="label_11">
+                    <property name="text">
+                     <string>Laser WaveLength</string>
+                    </property>
+                    <property name="alignment">
+                     <set>Qt::AlignCenter</set>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QLineEdit" name="le_laser">
+                    <property name="minimumSize">
+                     <size>
+                      <width>50</width>
+                      <height>0</height>
+                     </size>
+                    </property>
+                    <property name="maximumSize">
+                     <size>
+                      <width>50</width>
+                      <height>16777215</height>
+                     </size>
                     </property>
                    </widget>
                   </item>
@@ -1122,6 +1173,23 @@
          <item row="5" column="0">
           <layout class="QHBoxLayout" name="horizontalLayout_13">
            <item>
+            <widget class="QComboBox" name="cmb_wave">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+             <item>
+              <property name="text">
+               <string>WaveNumber</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>WaveLength</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+           <item>
             <widget class="QComboBox" name="cmb_set_maximum">
              <property name="minimumSize">
               <size>
@@ -1156,19 +1224,6 @@
               <bool>true</bool>
              </property>
             </widget>
-           </item>
-           <item>
-            <spacer name="horizontalSpacer_3">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>40</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
            </item>
           </layout>
          </item>
