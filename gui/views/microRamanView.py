@@ -312,7 +312,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.pb_connectLight.setEnabled(True)
         self.pb_connectStage.setEnabled(True)
         self.pb_sweepSame.setEnabled(True)
-        self.pb_background(True)
+        self.pb_background.setEnabled(True)
         self.sb_exposure.setEnabled(True)
         self.sb_acqTime.setEnabled(True)
         self.sb_height.setEnabled(True)
@@ -333,7 +333,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.pb_connectLight.setEnabled(False)
         self.pb_connectStage.setEnabled(False)
         self.pb_sweepSame.setEnabled(False)
-        self.pb_background(False)
+        self.pb_background.setEnabled(False)
         self.sb_exposure.setEnabled(False)
         self.sb_acqTime.setEnabled(False)
         self.sb_height.setEnabled(False)
@@ -569,6 +569,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.plotSpectrum.setData(self.waves, matrix[self.mousePositionY, self.mousePositionX, :])
 
     def matrix_raw_data_replace(self):
+        self.matrixRawData[self.countHeight, self.countWidth, :] = np.array(self.dataPixel)
         self.dataPixel = []
         self.start_save(self.matrixRawData[self.countHeight, self.countWidth, :], self.countHeight, self.countWidth)
 
@@ -590,10 +591,10 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.matrixRGB[:, :, 1] = matrix[:, :, lowGreen:highGreen].sum(axis=2)
         self.matrixRGB[:, :, 2] = matrix[:, :, lowBlue:highBlue].sum(axis=2)
 
-        if self.cb_set_maximum.currentIndex() == 0:
+        if self.cmb_set_maximum.currentIndex() == 0:
             self.matrixRGB = (self.matrixRGB / np.max(self.matrixRGB)) * 255
 
-        elif self.cb_set_maximum.currentIndex() == 1:
+        elif self.cmb_set_maximum.currentIndex() == 1:
             maxima = self.matrixRGB.max(axis=2)
             maxima = np.dstack((maxima,) * 3)
             np.seterr(divide='ignore', invalid='ignore')
@@ -672,6 +673,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
                 if self.countHeight != 0 or self.countWidth != 0:
                     self.spectrum_pixel_acquisition()
                 self.matrix_raw_data_replace()
+
                 self.matrixRGB_replace()
                 self.update_rgb_plot()
 
