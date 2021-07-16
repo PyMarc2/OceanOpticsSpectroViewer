@@ -1175,16 +1175,16 @@
            <item>
             <widget class="QComboBox" name="cmb_wave">
              <property name="enabled">
-              <bool>false</bool>
+              <bool>true</bool>
              </property>
              <item>
               <property name="text">
-               <string>WaveNumber</string>
+               <string>WaveLength</string>
               </property>
              </item>
              <item>
               <property name="text">
-               <string>WaveLength</string>
+               <string>WaveNumber</string>
               </property>
              </item>
             </widget>

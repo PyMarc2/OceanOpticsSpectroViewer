@@ -108,6 +108,9 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.data = None
         self.img = None
 
+        self.waveNumber = None
+        self.laser = None
+
         self.height = self.sb_height.value()
         self.width = self.sb_width.value()
         self.step = self.sb_step.value()
@@ -211,20 +214,29 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.positionSutter = self.stageDevice.position()
 
     def connect_detection(self):  # Connect the light
-        log.debug("Initializing devices...")
-        index = self.cmb_selectDetection.currentIndex()
-        if index == 0:
-            self.spec = Mock.MockSpectrometer()
-            log.info("No device connected; Mocking Spectrometer Enabled.")
-            self.detectionConnected = True
+        if self.le_laser.text() == "":
+            self.error_laser_wavelength()
         else:
-            self.spec = sb.Spectrometer(self.specDevices[index])
-            log.info("Devices:{}".format(self.specDevices))
-            self.detectionConnected = True
-        self.set_exposure_time()
+            try:
+                self.laser = int(self.le_laser.text())
+                log.debug("Initializing devices...")
+                index = self.cmb_selectDetection.currentIndex()
+                if index == 0:
+                    self.spec = Mock.MockSpectrometer()
+                    log.info("No device connected; Mocking Spectrometer Enabled.")
+                    self.detectionConnected = True
+                else:
+                    self.spec = sb.Spectrometer(self.specDevices[index])
+                    log.info("Devices:{}".format(self.specDevices))
+                    self.detectionConnected = True
+                self.set_exposure_time()
 
-        self.set_range_to_wave_length()
-        self.backgroundData = np.zeros(len(self.spec.wavelengths()[2:]))
+                # self.set_range_to_wave_number()
+                self.set_range_to_wave_length()
+                self.cmb_wave.setEnabled(True)
+                self.backgroundData = np.zeros(len(self.spec.wavelengths()[2:]))
+            except:
+                self.error_laser_wavelength()
 
     def mouse_moved(self, pos):
         try:
@@ -250,6 +262,10 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
     def error_folder_name(self):
         self.le_folderPath.setStyleSheet("background-color: rgb(255, 0, 0)")
         QTimer.singleShot(50, lambda: self.le_folderPath.setStyleSheet("background-color: rgb(255,255,255)"))
+
+    def error_laser_wavelength(self):
+        self.le_laser.setStyleSheet("background-color: rgb(255, 0, 0)")
+        QTimer.singleShot(50, lambda: self.le_laser.setStyleSheet("background-color: rgb(255,255,255)"))
 
     # Create
     def create_threads(self):
@@ -284,7 +300,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
 
     def create_matrix_data_without_background(self):
         background = self.backgroundData
-        background = yo.reshape((1, 1, len(background)))
+        background = background.reshape((1, 1, len(background)))
         background = np.vstack((background, ) * self.height)
         background = np.hstack((background, ) * self.width)
         self.matrixDataWithoutBackground = self.matrixRawData - background
@@ -435,6 +451,36 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.sb_lowGreen.setValue(round(self.rangeLen/3) + self.minWaveLength + 1)
         self.sb_highGreen.setValue(round((self.rangeLen*(2/3)) + self.minWaveLength))
         self.sb_lowBlue.setValue(round((self.rangeLen*(2/3)) + self.minWaveLength+1))
+        self.sb_highBlue.setValue(self.maxWaveLength)
+
+    def set_range_to_wave_number(self):
+        self.waveNumber = self.spec.wavelengths()[2:]
+        self.waveNumber = ((1 / self.laser) - (1 / self.waveNumber)) * 10 ** 7
+
+        self.minWaveLength = np.round(self.waveNumber[0], 0)
+        self.maxWaveLength = np.round(self.waveNumber[-1], 0)
+
+        self.rangeLen = self.maxWaveLength - self.minWaveLength
+
+        self.sb_highRed.setMaximum(self.maxWaveLength)
+        self.sb_lowRed.setMaximum(self.maxWaveLength - 1)
+        self.sb_highGreen.setMaximum(self.maxWaveLength)
+        self.sb_lowGreen.setMaximum(self.maxWaveLength - 1)
+        self.sb_highBlue.setMaximum(self.maxWaveLength)
+        self.sb_lowBlue.setMaximum(self.maxWaveLength - 1)
+
+        self.sb_highRed.setMinimum(self.minWaveLength)
+        self.sb_lowRed.setMinimum(self.minWaveLength)
+        self.sb_highGreen.setMinimum(self.minWaveLength)
+        self.sb_lowGreen.setMinimum(self.minWaveLength)
+        self.sb_highBlue.setMinimum(self.minWaveLength)
+        self.sb_lowBlue.setMinimum(self.minWaveLength)
+
+        self.sb_lowRed.setValue(self.minWaveLength)
+        self.sb_highRed.setValue(round(self.rangeLen / 3) + self.minWaveLength)
+        self.sb_lowGreen.setValue(round(self.rangeLen / 3) + self.minWaveLength + 1)
+        self.sb_highGreen.setValue(round((self.rangeLen * (2 / 3)) + self.minWaveLength))
+        self.sb_lowBlue.setValue(round((self.rangeLen * (2 / 3)) + self.minWaveLength + 1))
         self.sb_highBlue.setValue(self.maxWaveLength)
 
     # Acquisition
@@ -643,6 +689,8 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         if not self.isSweepThreadAlive:
             if self.folderPath == "":
                 self.error_folder_name()
+            elif self.le_laser.text() == "":
+                self.error_laser_wavelength()
             else:
                 # try:
                 if self.stageDevice is None or self.spec is None:
