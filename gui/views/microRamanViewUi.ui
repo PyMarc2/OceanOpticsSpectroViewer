@@ -455,6 +455,9 @@
                  <layout class="QVBoxLayout" name="verticalLayout_7">
                   <item>
                    <widget class="QCheckBox" name="cb_delete_background">
+                    <property name="enabled">
+                     <bool>false</bool>
+                    </property>
                     <property name="text">
                      <string>Delete Background</string>
                     </property>
@@ -462,6 +465,9 @@
                   </item>
                   <item>
                    <widget class="QPushButton" name="pb_save_without_background">
+                    <property name="enabled">
+                     <bool>false</bool>
+                    </property>
                     <property name="text">
                      <string>Save Data Without Background</string>
                     </property>
@@ -1116,7 +1122,7 @@
          <item row="5" column="0">
           <layout class="QHBoxLayout" name="horizontalLayout_13">
            <item>
-            <widget class="QComboBox" name="cb_set_maximum">
+            <widget class="QComboBox" name="cmb_set_maximum">
              <property name="minimumSize">
               <size>
                <width>160</width>

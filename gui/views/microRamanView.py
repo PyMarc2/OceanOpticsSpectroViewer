@@ -42,7 +42,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.liveAcquisitionData = []
         self.dataPixel = []
 
-        self.saveWorker = Worker(self.save_capture_csv)
+        self.saveWorker = Worker(self.save_data_without_background)
         self.sweepWorker = Worker(self.sweep)
 
 
@@ -66,6 +66,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.doSliderPositionAreInitialize = False
         self.launchIntegrationAcquisition = False
         self.isAcquisitionThreadAlive = False
+        self.visualWithoutBackground = False
         self.isAcquiringIntegration = False
         self.isAcquiringBackground = False
         self.isBackgroundRemoved = False
@@ -79,6 +80,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
 
         self.colorRangeViewEnable = True
 
+        self.matrixDataWithoutBackground = None
         self.temporaryIntegrationData = None
         self.movingIntegrationData = None
         self.backgroundData = None
@@ -89,7 +91,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.plotSpectrum = None
         self.stageDevice = None
         self.plotViewBox = None
-        self.matrixData = None
+        self.matrixRawData = None
         self.greenRange = None
         self.blueRange = None
         self.matrixRGB = None
@@ -132,6 +134,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.cmb_selectLight.addItems(self.lightDevices)
         self.cmb_selectStage.addItems(self.listStageDevices)
 
+
     # Connect
     def connect_widgets(self):
         self.cmb_magnitude.currentTextChanged.connect(self.set_measure_unit)
@@ -164,70 +167,22 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.sb_highBlue.valueChanged.connect(self.update_slider_status)
         self.sb_lowBlue.valueChanged.connect(self.update_slider_status)
 
-        self.cb_set_maximum.currentIndexChanged.connect(self.update_color)
+        self.cmb_set_maximum.currentIndexChanged.connect(self.update_color)
         self.pb_saveImage.clicked.connect(self.save_image)
-
-
-
         self.cb_colorRangeView.stateChanged.connect(self.colorRangeView_status)
 
-    def save_image(self):
-        path = self.folderPath + "/"
-        img = self.matrixRGB.astype(np.uint8)
-        if self.fileName == "":
-            plt.imsave(path + "matrixRGB.png", img)
-        else:
-            plt.imsave(path + self.fileName + "_matrixRGB.png", img)
+        self.cb_delete_background.stateChanged.connect(self.update_without_background)
 
-    def save_matrixRGB(self):
-        path = self.folderPath + "/"
-        fixedData = copy.deepcopy(self.matrixRGB)
-        if self.fileName == "":
-            with open(path + "matrixRGB.csv", "w+") as f:
-                f.write("[")
-                for i, x in enumerate(fixedData):
-                    if i == 0:
-                        f.write("[")
-                    else:
-                        f.write("\n\n[")
-                    for ii, y in enumerate(x):
-                        if ii == 0:
-                            f.write("[")
-                        else:
-                            f.write("\n[")
-                        for iii, z, in enumerate(y):
-                            if i != len(y) - 1:
-                                f.write(f"{z}, ")
-                            else:
-                                f.write(f"{z}")
-                        f.write("]")
-                    f.write("]")
-                f.write("]")
+        self.pb_save_without_background.clicked.connect(self.save_matrix_data_without_background)
 
-                f.close()
-        else:
-            with open(path + self.fileName + "_matrixRGB.csv", "w+") as f:
-                f.write("[")
-                for i, x in enumerate(fixedData):
-                    if i == 0:
-                        f.write("[")
-                    else:
-                        f.write("\n\n[")
-                    for ii, y in enumerate(x):
-                        if ii == 0:
-                            f.write("[")
-                        else:
-                            f.write("\n[")
-                        for iii, z, in enumerate(y):
-                            if i != len(y) - 1:
-                                f.write(f"{z}, ")
-                            else:
-                                f.write(f"{z}")
-                        f.write("]")
-                    f.write("]")
-                f.write("]")
 
-                f.close()
+    def update_without_background(self):
+        self.create_matrix_data_without_background()
+        if self.cb_delete_background.checkState() == 2:
+            self.visualWithoutBackground = True
+        if self.cb_delete_background.checkState() == 0:
+            self.visualWithoutBackground = False
+        self.update_color()
 
     def connect_light(self):  # Connect the light
         log.debug("Initializing devices...")
@@ -301,11 +256,11 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.sweepWorker.moveToThread(self.sweepThread)
         self.sweepThread.started.connect(self.sweepWorker.run)
 
-        # self.saveWorker.moveToThread(self.saveThread)
-        # self.saveThread.started.connect(self.saveWorker.run)
+        self.saveWorker.moveToThread(self.saveThread)
+        self.saveThread.started.connect(self.saveWorker.run)
 
-    def create_matrix_data(self):
-        self.matrixData = np.zeros((self.width, self.height, self.dataLen))
+    def create_matrix_raw_data(self):
+        self.matrixRawData = np.zeros((self.width, self.height, self.dataLen))
 
     def create_matrix_rgb(self):
         self.matrixRGB = np.zeros((self.width, self.height, 3))
@@ -327,6 +282,13 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.plotBlack = self.plotItem.plot()
         self.plotItem.enableAutoRange()
 
+    def create_matrix_data_without_background(self):
+        background = self.backgroundData
+        background = yo.reshape((1, 1, len(background)))
+        background = np.vstack((background, ) * self.height)
+        background = np.hstack((background, ) * self.width)
+        self.matrixDataWithoutBackground = self.matrixRawData - background
+
     # Buttons
     def initialize_buttons(self):
         self.pb_sweepSame.setIcons(QPixmap("./gui/misc/icons/sweep_same.png").scaled(50, 50, Qt.KeepAspectRatio, Qt.SmoothTransformation),
@@ -339,15 +301,18 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
                                         QPixmap("./gui/misc/icons/sweep_alternate_selected.png").scaled(50, 50, Qt.KeepAspectRatio, Qt.SmoothTransformation))
 
     def enable_all_buttons(self):
+        self.cb_delete_background.setEnabled(True)
         self.cmb_selectDetection.setEnabled(True)
         self.cmb_selectLight.setEnabled(True)
         self.cmb_selectStage.setEnabled(True)
         self.cmb_magnitude.setEnabled(True)
+        self.pb_save_without_background.setEnabled(True)
         self.pb_connectDetection.setEnabled(True)
         self.pb_sweepAlternate.setEnabled(True)
         self.pb_connectLight.setEnabled(True)
         self.pb_connectStage.setEnabled(True)
         self.pb_sweepSame.setEnabled(True)
+        self.pb_background(True)
         self.sb_exposure.setEnabled(True)
         self.sb_acqTime.setEnabled(True)
         self.sb_height.setEnabled(True)
@@ -357,15 +322,18 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.le_fileName.setEnabled(True)
 
     def disable_all_buttons(self):
+        self.cb_delete_background.setEnabled(False)
         self.cmb_selectDetection.setEnabled(False)
         self.cmb_selectLight.setEnabled(False)
         self.cmb_selectStage.setEnabled(False)
         self.cmb_magnitude.setEnabled(False)
+        self.pb_save_without_background.setEnabled(False)
         self.pb_connectDetection.setEnabled(False)
         self.pb_sweepAlternate.setEnabled(False)
         self.pb_connectLight.setEnabled(False)
         self.pb_connectStage.setEnabled(False)
         self.pb_sweepSame.setEnabled(False)
+        self.pb_background(False)
         self.sb_exposure.setEnabled(False)
         self.sb_acqTime.setEnabled(False)
         self.sb_height.setEnabled(False)
@@ -496,7 +464,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
             self.disable_all_buttons()
             self.set_integration_time()
             self.spectrum_pixel_acquisition()
-            self.start_save_thread(data=self.backgroundData)
+            self.start_save(data=self.backgroundData)
             self.enable_all_buttons()
 
         except Exception as e:
@@ -552,14 +520,17 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
             pass
 
     def update_rgb_plot(self):
-        # matrix = self.matrixRGB.transpose()
         vb = pg.ImageItem(image=self.matrixRGB)
         self.plotViewBox.addItem(vb)
 
     def update_spectrum_plot(self):
+        if self.visualWithoutBackground == True:
+            matrix = self.matrixDataWithoutBackground
+        else:
+            matrix = self.matrixRawData
         try:
-            maximum = max(self.matrixData[self.mousePositionY, self.mousePositionX, :])
-            minimum = min(self.matrixData[self.mousePositionY, self.mousePositionX, :]) - 1
+            maximum = max(matrix[self.mousePositionY, self.mousePositionX, :])
+            minimum = min(matrix[self.mousePositionY, self.mousePositionX, :]) - 1
         except Exception:
             maximum = 1
             minimum = 0
@@ -595,14 +566,19 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
             self.plotBlueRange.setData(self.waves, np.full(len(self.waves), minimum), pen=(0, 0, 0))
             self.plotBlack.setData(self.waves, np.full(len(self.waves), minimum), pen=(0, 0, 0))
 
-        self.plotSpectrum.setData(self.waves, self.matrixData[self.mousePositionY, self.mousePositionX, :])
+        self.plotSpectrum.setData(self.waves, matrix[self.mousePositionY, self.mousePositionX, :])
 
-    def matrix_data_replace(self):
-        self.matrixData[self.countHeight, self.countWidth, :] = np.array(self.dataPixel) - np.array(self.backgroundData)
+    def matrix_raw_data_replace(self):
         self.dataPixel = []
-        self.start_save_thread(self.matrixData[self.countHeight, self.countWidth, :], self.countHeight, self.countWidth)
+        self.start_save(self.matrixRawData[self.countHeight, self.countWidth, :], self.countHeight, self.countWidth)
 
     def matrixRGB_replace(self):
+        if self.visualWithoutBackground == True:
+            matrix = self.matrixDataWithoutBackground
+        else:
+            matrix = self.matrixRawData
+
+
         lowRed = int(((self.sb_lowRed.value() - self.minWaveLength) / self.rangeLen) * len(self.waves))
         highRed = int(((self.sb_highRed.value() - self.minWaveLength) / self.rangeLen) * len(self.waves))
         lowGreen = int(((self.sb_lowGreen.value() - self.minWaveLength) / self.rangeLen) * len(self.waves))
@@ -610,9 +586,9 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         lowBlue = int(((self.sb_lowBlue.value() - self.minWaveLength) / self.rangeLen) * len(self.waves))
         highBlue = int(((self.sb_highBlue.value() - self.minWaveLength) / self.rangeLen) * len(self.waves))
 
-        self.matrixRGB[:, :, 0] = self.matrixData[:, :, lowRed:highRed].sum(axis=2)
-        self.matrixRGB[:, :, 1] = self.matrixData[:, :, lowGreen:highGreen].sum(axis=2)
-        self.matrixRGB[:, :, 2] = self.matrixData[:, :, lowBlue:highBlue].sum(axis=2)             
+        self.matrixRGB[:, :, 0] = matrix[:, :, lowRed:highRed].sum(axis=2)
+        self.matrixRGB[:, :, 1] = matrix[:, :, lowGreen:highGreen].sum(axis=2)
+        self.matrixRGB[:, :, 2] = matrix[:, :, lowBlue:highBlue].sum(axis=2)
 
         if self.cb_set_maximum.currentIndex() == 0:
             self.matrixRGB = (self.matrixRGB / np.max(self.matrixRGB)) * 255
@@ -680,7 +656,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
                 self.create_plot_rgb()
                 self.create_plot_spectrum()
                 self.spectrum_pixel_acquisition()
-                self.create_matrix_data()
+                self.create_matrix_raw_data()
                 self.create_matrix_rgb()
                 self.sweepThread.start()
 
@@ -695,7 +671,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
             if self.countSpectrum < (self.width*self.height):
                 if self.countHeight != 0 or self.countWidth != 0:
                     self.spectrum_pixel_acquisition()
-                self.matrix_data_replace()
+                self.matrix_raw_data_replace()
                 self.matrixRGB_replace()
                 self.update_rgb_plot()
 
@@ -759,7 +735,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
                                  self.positionSutter[2]))
 
     # Save
-    def start_save_thread(self, data=None, countHeight=None, countWidth=None):
+    def start_save(self, data=None, countHeight=None, countWidth=None):
         self.heightId = countHeight
         self.widthId = countWidth
         self.data = data
@@ -767,9 +743,6 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         # self.saveThread.start()
         self.save_capture_csv()
 
-    def stop_save_thread(self):
-        self.saveThread.wait()
-        self.sweepThread.start()
 
     def select_save_folder(self):
         self.folderPath = str(QFileDialog.getExistingDirectory(self, "Select Directory"))
@@ -799,13 +772,13 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
                 f.close()
 
         if self.countSpectrum == self.width*self.height-1 and self.isSweepThreadAlive:
-            spectra = self.matrixData
+            spectra = self.matrixRawData
             self.fileName = self.le_fileName.text()
             if self.fileName == "":
                 self.fileName = "acquisitions"
 
             fixedData = copy.deepcopy(spectra)
-            path = os.path.join(self.folderPath, f"{self.fileName}_matrixData")
+            path = os.path.join(self.folderPath, f"{self.fileName}_matrixRawData")
             with open(path + ".csv", "w+") as f:
                 f.write("[")
                 for i, x in enumerate(fixedData):
@@ -829,4 +802,130 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
 
                 f.close()
 
+    def save_image(self):
+        path = self.folderPath + "/"
+        img = self.matrixRGB.astype(np.uint8)
+        if self.fileName == "":
+            plt.imsave(path + "matrixRGB.png", img)
+        else:
+            plt.imsave(path + self.fileName + "_matrixRGB.png", img)
+
+    def save_matrixRGB(self):
+        path = self.folderPath + "/"
+        fixedData = copy.deepcopy(self.matrixRGB)
+        if self.fileName == "":
+            with open(path + "matrixRGB.csv", "w+") as f:
+                f.write("[")
+                for i, x in enumerate(fixedData):
+                    if i == 0:
+                        f.write("[")
+                    else:
+                        f.write("\n\n[")
+                    for ii, y in enumerate(x):
+                        if ii == 0:
+                            f.write("[")
+                        else:
+                            f.write("\n[")
+                        for iii, z, in enumerate(y):
+                            if i != len(y) - 1:
+                                f.write(f"{z}, ")
+                            else:
+                                f.write(f"{z}")
+                        f.write("]")
+                    f.write("]")
+                f.write("]")
+
+                f.close()
+        else:
+            with open(path + self.fileName + "_matrixRGB.csv", "w+") as f:
+                f.write("[")
+                for i, x in enumerate(fixedData):
+                    if i == 0:
+                        f.write("[")
+                    else:
+                        f.write("\n\n[")
+                    for ii, y in enumerate(x):
+                        if ii == 0:
+                            f.write("[")
+                        else:
+                            f.write("\n[")
+                        for iii, z, in enumerate(y):
+                            if i != len(y) - 1:
+                                f.write(f"{z}, ")
+                            else:
+                                f.write(f"{z}")
+                        f.write("]")
+                    f.write("]")
+                f.write("]")
+
+                f.close()
+
+    def save_matrix_data_without_background(self):
+        self.pb_save_without_background.setEnabled(False)
+        self.create_matrix_data_without_background()
+        self.saveThread.start()
+
+    def save_data_without_background(self):
+        matrix = self.matrixDataWithoutBackground
+        for i in range(self.height):
+            for j in range(self.width):
+                spectrum = matrix[i, j, :]
+                self.fileName = self.le_fileName.text()
+                if self.fileName == "":
+                    self.fileName = "spectrum"
+                path = os.path.join(self.folderPath, f"{self.fileName}_WithoutBackground_x{i}_y{j}")
+                with open(path + ".csv", "w+") as f:
+                    for i, x in enumerate(self.waves):
+                        f.write(f"{x},{spectrum[i]}\n")
+                    f.close()
+
+        path = self.folderPath + "/"
+        fixedData = matrix
+        if self.fileName == "":
+            with open(path + "matrixDataWithoutBackground.csv", "w+") as f:
+                f.write("[")
+                for i, x in enumerate(fixedData):
+                    if i == 0:
+                        f.write("[")
+                    else:
+                        f.write("\n\n[")
+                    for ii, y in enumerate(x):
+                        if ii == 0:
+                            f.write("[")
+                        else:
+                            f.write("\n[")
+                        for iii, z, in enumerate(y):
+                            if i != len(y) - 1:
+                                f.write(f"{z}, ")
+                            else:
+                                f.write(f"{z}")
+                        f.write("]")
+                    f.write("]")
+                f.write("]")
+
+                f.close()
+        else:
+            with open(path + self.fileName + "_matrixDataWithoutBackground.csv", "w+") as f:
+                f.write("[")
+                for i, x in enumerate(fixedData):
+                    if i == 0:
+                        f.write("[")
+                    else:
+                        f.write("\n\n[")
+                    for ii, y in enumerate(x):
+                        if ii == 0:
+                            f.write("[")
+                        else:
+                            f.write("\n[")
+                        for iii, z, in enumerate(y):
+                            if i != len(y) - 1:
+                                f.write(f"{z}, ")
+                            else:
+                                f.write(f"{z}")
+                        f.write("]")
+                    f.write("]")
+                f.write("]")
+
+                f.close()
+        self.pb_save_without_background.setEnabled(False)
         # self.stop_save_thread()
