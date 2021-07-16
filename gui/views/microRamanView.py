@@ -710,6 +710,8 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
                             self.countWidth = 0
                             self.countHeight += 1
                             self.move_stage()
+                        elif self.countHeight == self.height-1 and self.countWidth == (self.width-1):
+                            continue
                         else:
                             self.stop_acq()
 
