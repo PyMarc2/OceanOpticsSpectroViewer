@@ -108,7 +108,6 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.data = None
         self.img = None
 
-        self.waveNumber = None
         self.laser = None
 
         self.height = self.sb_height.value()
@@ -178,6 +177,15 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
 
         self.pb_save_without_background.clicked.connect(self.save_matrix_data_without_background)
 
+        self.cmb_wave.currentIndexChanged.connect(self.set_wave)
+
+    def set_wave(self):
+        if self.cmb_wave.currentIndex() == 0:
+            self.waves = ((1 / self.laser) - (1 / self.spec.wavelengths()[2:])) * 10 ** 7
+        if self.cmb_wave.currentIndex() == 1:
+            self.waves = self.spec.wavelengths()[2:]
+        self.update_color()
+        self.set_range_to_wave()
 
     def update_without_background(self):
         self.create_matrix_data_without_background()
@@ -229,10 +237,15 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
                     self.spec = sb.Spectrometer(self.specDevices[index])
                     log.info("Devices:{}".format(self.specDevices))
                     self.detectionConnected = True
+                if self.cmb_wave.currentIndex() == 0:
+                    self.waves = ((1 / self.laser) - (1 / self.spec.wavelengths()[2:])) * 10 ** 7
+                if self.cmb_wave.currentIndex() == 1:
+                    self.waves = self.spec.wavelengths()[2:]
+                self.cmb_wave.setEnabled(True)
                 self.set_exposure_time()
 
                 # self.set_range_to_wave_number()
-                self.set_range_to_wave_length()
+                self.set_range_to_wave()
                 self.cmb_wave.setEnabled(True)
                 self.backgroundData = np.zeros(len(self.spec.wavelengths()[2:]))
             except:
@@ -425,10 +438,9 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
             self.movingIntegrationData = RingBuffer(size_max=self.integrationCountAcq)
             self.changeLastExposition = 0
 
-    def set_range_to_wave_length(self):
-        waveLength = self.spec.wavelengths()[2:]
-        self.minWaveLength = round(waveLength[0])
-        self.maxWaveLength = round(waveLength[-1])
+    def set_range_to_wave(self):
+        self.minWaveLength = round(self.waves[0])
+        self.maxWaveLength = round(self.waves[-1])
 
         self.rangeLen = self.maxWaveLength - self.minWaveLength
 
@@ -445,7 +457,6 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.sb_lowGreen.setMinimum(self.minWaveLength)
         self.sb_highBlue.setMinimum(self.minWaveLength)
         self.sb_lowBlue.setMinimum(self.minWaveLength)
-
         self.sb_lowRed.setValue(self.minWaveLength)
         self.sb_highRed.setValue(round(self.rangeLen/3) + self.minWaveLength)
         self.sb_lowGreen.setValue(round(self.rangeLen/3) + self.minWaveLength + 1)
@@ -453,39 +464,10 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.sb_lowBlue.setValue(round((self.rangeLen*(2/3)) + self.minWaveLength+1))
         self.sb_highBlue.setValue(self.maxWaveLength)
 
-    def set_range_to_wave_number(self):
-        self.waveNumber = self.spec.wavelengths()[2:]
-        self.waveNumber = ((1 / self.laser) - (1 / self.waveNumber)) * 10 ** 7
 
-        self.minWaveLength = np.round(self.waveNumber[0], 0)
-        self.maxWaveLength = np.round(self.waveNumber[-1], 0)
-
-        self.rangeLen = self.maxWaveLength - self.minWaveLength
-
-        self.sb_highRed.setMaximum(self.maxWaveLength)
-        self.sb_lowRed.setMaximum(self.maxWaveLength - 1)
-        self.sb_highGreen.setMaximum(self.maxWaveLength)
-        self.sb_lowGreen.setMaximum(self.maxWaveLength - 1)
-        self.sb_highBlue.setMaximum(self.maxWaveLength)
-        self.sb_lowBlue.setMaximum(self.maxWaveLength - 1)
-
-        self.sb_highRed.setMinimum(self.minWaveLength)
-        self.sb_lowRed.setMinimum(self.minWaveLength)
-        self.sb_highGreen.setMinimum(self.minWaveLength)
-        self.sb_lowGreen.setMinimum(self.minWaveLength)
-        self.sb_highBlue.setMinimum(self.minWaveLength)
-        self.sb_lowBlue.setMinimum(self.minWaveLength)
-
-        self.sb_lowRed.setValue(self.minWaveLength)
-        self.sb_highRed.setValue(round(self.rangeLen / 3) + self.minWaveLength)
-        self.sb_lowGreen.setValue(round(self.rangeLen / 3) + self.minWaveLength + 1)
-        self.sb_highGreen.setValue(round((self.rangeLen * (2 / 3)) + self.minWaveLength))
-        self.sb_lowBlue.setValue(round((self.rangeLen * (2 / 3)) + self.minWaveLength + 1))
-        self.sb_highBlue.setValue(self.maxWaveLength)
 
     # Acquisition
     def spectrum_pixel_acquisition(self):
-        self.waves = self.spec.wavelengths()[2:]
         self.dataLen = len(self.waves)
         self.dataSep = (max(self.waves) - min(self.waves)) / len(self.waves)
 
@@ -548,6 +530,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
             self.countHeight = 0
             self.countWidth = 0
             self.countSpectrum = 0
+            self.cmb_wave.setEnabled(True)
             # self.stageDevice = None
             # self.spec = None
 
@@ -700,6 +683,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
                 self.isSweepThreadAlive = True
                 self.pb_saveData.setEnabled(True)
                 self.pb_saveImage.setEnabled(True)
+                self.cmb_wave.setEnabled(False)
                 self.disable_all_buttons()
                 self.set_integration_time()
                 self.create_plot_rgb()

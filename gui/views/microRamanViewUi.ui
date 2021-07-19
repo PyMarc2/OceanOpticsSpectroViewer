@@ -971,7 +971,7 @@
             <widget class="QSpinBox" name="sb_lowGreen">
              <property name="minimumSize">
               <size>
-               <width>50</width>
+               <width>55</width>
                <height>0</height>
               </size>
              </property>
@@ -1012,7 +1012,7 @@
              </property>
              <property name="minimumSize">
               <size>
-               <width>50</width>
+               <width>55</width>
                <height>0</height>
               </size>
              </property>
@@ -1046,7 +1046,7 @@
               <widget class="QSpinBox" name="sb_lowBlue">
                <property name="minimumSize">
                 <size>
-                 <width>50</width>
+                 <width>55</width>
                  <height>0</height>
                 </size>
                </property>
@@ -1081,7 +1081,7 @@
               <widget class="QSpinBox" name="sb_highBlue">
                <property name="minimumSize">
                 <size>
-                 <width>50</width>
+                 <width>55</width>
                  <height>0</height>
                 </size>
                </property>
@@ -1112,7 +1112,7 @@
             <widget class="QSpinBox" name="sb_lowRed">
              <property name="minimumSize">
               <size>
-               <width>50</width>
+               <width>55</width>
                <height>0</height>
               </size>
              </property>
@@ -1147,7 +1147,7 @@
             <widget class="QSpinBox" name="sb_highRed">
              <property name="minimumSize">
               <size>
-               <width>50</width>
+               <width>55</width>
                <height>0</height>
               </size>
              </property>
@@ -1175,16 +1175,16 @@
            <item>
             <widget class="QComboBox" name="cmb_wave">
              <property name="enabled">
-              <bool>true</bool>
+              <bool>false</bool>
              </property>
              <item>
               <property name="text">
-               <string>WaveLength</string>
+               <string>WaveNumber</string>
               </property>
              </item>
              <item>
               <property name="text">
-               <string>WaveNumber</string>
+               <string>WaveLength</string>
               </property>
              </item>
             </widget>
