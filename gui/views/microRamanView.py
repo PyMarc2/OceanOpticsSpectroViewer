@@ -42,10 +42,6 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.liveAcquisitionData = []
         self.dataPixel = []
 
-        self.saveWorker = Worker(self.save_data_without_background)
-        self.sweepWorker = Worker(self.sweep)
-
-
         self.integrationTimeAcqRemainder_ms = 0
         self.integrationTimeAcq = 3000
         self.countIntegrationWhile = 0
@@ -153,8 +149,11 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.sb_height.textChanged.connect(lambda: setattr(self, 'height', self.sb_height.value()))
         self.sb_width.textChanged.connect(lambda: setattr(self, 'width', self.sb_width.value()))
         self.sb_step.textChanged.connect(lambda: setattr(self, 'step', self.sb_step.value()))
+
+        self.sb_acqTime.valueChanged.connect(lambda: setattr(self, 'movingIntegrationData', None))
         self.sb_acqTime.valueChanged.connect(lambda: setattr(self, 'integrationTimeAcq', self.sb_acqTime.value()))
         self.sb_acqTime.valueChanged.connect(self.set_integration_time)
+
         self.sb_exposure.valueChanged.connect(lambda: setattr(self, 'exposureTime', self.sb_exposure.value()))
         self.sb_exposure.valueChanged.connect(self.set_exposure_time)
         self.tb_folderPath.clicked.connect(self.select_save_folder)
@@ -183,7 +182,6 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
             self.waves = self.spec.wavelengths()[2:]
         self.update_color()
         self.update_range_to_wave()
-        #self.set_range_to_wave()
         self.update_slider_status()
 
     def update_without_background(self):
@@ -279,10 +277,12 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         QTimer.singleShot(50, lambda: self.le_laser.setStyleSheet("background-color: rgb(255,255,255)"))
 
     # Create
-    def create_threads(self):
+    def create_threads(self, *args):
+        self.sweepWorker = Worker(self.sweep, *args)
         self.sweepWorker.moveToThread(self.sweepThread)
         self.sweepThread.started.connect(self.sweepWorker.run)
 
+        self.saveWorker = Worker(self.save_data_without_background, *args)
         self.saveWorker.moveToThread(self.saveThread)
         self.saveThread.started.connect(self.saveWorker.run)
 
@@ -426,7 +426,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
             self.sb_acqTime.setStyleSheet('color: red')
 
         if self.integrationTimeAcqRemainder_ms > 3:
-            self.movingIntegrationData = RingBuffer(size_max=self.integrationCountAcq + 1)
+            self.movingIntegrationData = RingBuffer(size_max=self.integrationCountAcq+1)
             self.changeLastExposition = 1
 
         else:
