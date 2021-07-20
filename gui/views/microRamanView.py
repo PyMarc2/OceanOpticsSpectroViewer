@@ -76,7 +76,6 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.isEveryAcqDone = False
         self.lightConnected = False
         self.stageConnected = False
-        self.autoindexing = False
 
         self.colorRangeViewEnable = True
 
@@ -88,10 +87,10 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.mousePositionX = None
         self.mousePositionY = None
         self.positionSutter = None
+        self.matrixRawData = None
         self.plotSpectrum = None
         self.stageDevice = None
         self.plotViewBox = None
-        self.matrixRawData = None
         self.greenRange = None
         self.blueRange = None
         self.matrixRGB = None
@@ -464,8 +463,6 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.sb_lowBlue.setValue(round((self.rangeLen*(2/3)) + self.minWaveLength+1))
         self.sb_highBlue.setValue(self.maxWaveLength)
 
-
-
     # Acquisition
     def spectrum_pixel_acquisition(self):
         self.dataLen = len(self.waves)
@@ -623,7 +620,6 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.sb_lowBlue.setValue(round((self.rangeLen * (2 / 3)) + self.minWaveLength + 1))
         self.sb_highBlue.setValue(self.maxWaveLength)
 
-
     def matrix_raw_data_replace(self):
         self.matrixRawData[self.countHeight, self.countWidth, :] = np.array(self.dataPixel)
         self.dataPixel = []
@@ -634,7 +630,6 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
             matrix = self.matrixDataWithoutBackground
         else:
             matrix = self.matrixRawData
-
 
         lowRed = int(((self.sb_lowRed.value() - self.minWaveLength) / self.rangeLen) * len(self.waves))
         highRed = int(((self.sb_highRed.value() - self.minWaveLength) / self.rangeLen) * len(self.waves))
@@ -682,7 +677,6 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
                 pass
         else:
             self.doSliderPositionAreInitialize = True
-
 
     def colorRangeView_status(self):
         if self.cb_colorRangeView.checkState() == 2:
@@ -801,14 +795,10 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         # self.saveThread.start()
         self.save_capture_csv()
 
-
     def select_save_folder(self):
         self.folderPath = str(QFileDialog.getExistingDirectory(self, "Select Directory"))
         if self.folderPath != "":
             self.le_folderPath.setText(self.folderPath)
-
-    def toggle_autoindexing(self):
-        pass
 
     def save_capture_csv(self):
         if self.data is None:
@@ -820,10 +810,12 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
                 self.fileName = "spectrum"
 
             fixedData = copy.deepcopy(spectrum)
+            newPath = self.folderPath + "/" + "RawData"
+            os.makedirs(newPath)
             if self.heightId is None and self.widthId is None:
-                path = os.path.join(self.folderPath, f"{self.fileName}_background")
+                path = os.path.join(newPath, f"{self.fileName}_background")
             else:
-                path = os.path.join(self.folderPath, f"{self.fileName}_x{self.widthId}_y{self.heightId}")
+                path = os.path.join(newPath, f"{self.fileName}_x{self.widthId}_y{self.heightId}")
             with open(path + ".csv", "w+") as f:
                 for i, x in enumerate(self.waves):
                     f.write(f"{x},{fixedData[i]}\n")
@@ -836,7 +828,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
                 self.fileName = "acquisitions"
 
             fixedData = copy.deepcopy(spectra)
-            path = os.path.join(self.folderPath, f"{self.fileName}_matrixRawData")
+            path = os.path.join(newPath, f"{self.fileName}_matrixRawData")
             with open(path + ".csv", "w+") as f:
                 f.write("[")
                 for i, x in enumerate(fixedData):
@@ -925,19 +917,21 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
 
     def save_data_without_background(self):
         matrix = self.matrixDataWithoutBackground
+        newPath = self.folderPath + "/" + "UnrawData"
+        os.makedirs(newPath)
         for i in range(self.height):
             for j in range(self.width):
                 spectrum = matrix[i, j, :]
                 self.fileName = self.le_fileName.text()
                 if self.fileName == "":
                     self.fileName = "spectrum"
-                path = os.path.join(self.folderPath, f"{self.fileName}_WithoutBackground_x{i}_y{j}")
+                path = os.path.join(newPath, f"{self.fileName}_WithoutBackground_x{i}_y{j}")
                 with open(path + ".csv", "w+") as f:
                     for i, x in enumerate(self.waves):
                         f.write(f"{x},{spectrum[i]}\n")
                     f.close()
 
-        path = self.folderPath + "/"
+        path = newPath + "/"
         fixedData = matrix
         if self.fileName == "":
             with open(path + "matrixDataWithoutBackground.csv", "w+") as f:
