@@ -520,15 +520,11 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
     def stop_acq(self):
         if self.isSweepThreadAlive:
             self.sweepThread.quit()
-            # self.sweepThread.wait()
-            # self.saveThread.terminate()
             self.isSweepThreadAlive = False
             self.countHeight = 0
             self.countWidth = 0
             self.countSpectrum = 0
             self.cmb_wave.setEnabled(True)
-            # self.stageDevice = None
-            # self.spec = None
 
         else:
             print('Sampling already stopped.')
@@ -790,8 +786,6 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.heightId = countHeight
         self.widthId = countWidth
         self.data = data
-        # self.sweepThread.wait()
-        # self.saveThread.start()
         self.save_capture_csv()
 
     def select_save_folder(self):
@@ -910,7 +904,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
                 f.close()
 
     def save_matrix_data_without_background(self):
-        self.pb_save_without_background.setEnabled(False)
+        self.disable_all_buttons()
         self.create_matrix_data_without_background()
         self.saveThread.start()
 
@@ -924,7 +918,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
                 self.fileName = self.le_fileName.text()
                 if self.fileName == "":
                     self.fileName = "spectrum"
-                path = os.path.join(newPath, f"{self.fileName}_WithoutBackground_x{i}_y{j}")
+                path = os.path.join(self.folderPath, f"{self.fileName}_withoutBackground_x{i}_y{j}")
                 with open(path + ".csv", "w+") as f:
                     for i, x in enumerate(self.waves):
                         f.write(f"{x},{spectrum[i]}\n")
@@ -978,5 +972,5 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
                 f.write("]")
 
                 f.close()
-        self.pb_save_without_background.setEnabled(False)
+        self.enable_all_buttons()
         # self.stop_save_thread()
