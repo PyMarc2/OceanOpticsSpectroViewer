@@ -925,52 +925,33 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
                     f.close()
 
         path = newPath + "/"
-        fixedData = matrix
         if self.fileName == "":
-            with open(path + "matrixDataWithoutBackground.csv", "w+") as f:
-                f.write("[")
-                for i, x in enumerate(fixedData):
-                    if i == 0:
-                        f.write("[")
-                    else:
-                        f.write("\n\n[")
-                    for ii, y in enumerate(x):
-                        if ii == 0:
-                            f.write("[")
-                        else:
-                            f.write("\n[")
-                        for iii, z, in enumerate(y):
-                            if i != len(y) - 1:
-                                f.write(f"{z}, ")
-                            else:
-                                f.write(f"{z}")
-                        f.write("]")
-                    f.write("]")
-                f.write("]")
-
-                f.close()
+            file = "matrixDataWithoutBackground.csv"
         else:
-            with open(path + self.fileName + "_matrixDataWithoutBackground.csv", "w+") as f:
-                f.write("[")
-                for i, x in enumerate(fixedData):
-                    if i == 0:
+            file = self.fileName + "_matrixDataWithoutBackground.csv"
+
+        with open(path + file, "w+") as f:
+            f.write("[")
+            for i, x in enumerate(matrix):
+                if i == 0:
+                    f.write("[")
+                else:
+                    f.write("\n\n[")
+                for ii, y in enumerate(x):
+                    if ii == 0:
                         f.write("[")
                     else:
-                        f.write("\n\n[")
-                    for ii, y in enumerate(x):
-                        if ii == 0:
-                            f.write("[")
+                        f.write("\n[")
+                    for iii, z, in enumerate(y):
+                        if i != len(y) - 1:
+                            f.write(f"{z}, ")
                         else:
-                            f.write("\n[")
-                        for iii, z, in enumerate(y):
-                            if i != len(y) - 1:
-                                f.write(f"{z}, ")
-                            else:
-                                f.write(f"{z}")
-                        f.write("]")
+                            f.write(f"{z}")
                     f.write("]")
                 f.write("]")
+            f.write("]")
 
-                f.close()
+            f.close()
+
         self.enable_all_buttons()
         # self.stop_save_thread()
