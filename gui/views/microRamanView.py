@@ -134,7 +134,6 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.cmb_selectLight.addItems(self.lightDevices)
         self.cmb_selectStage.addItems(self.listStageDevices)
 
-
     # Connect
     def connect_widgets(self):
         self.cmb_magnitude.currentTextChanged.connect(self.set_measure_unit)
