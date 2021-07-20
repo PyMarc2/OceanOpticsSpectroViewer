@@ -1,16 +1,24 @@
 # **How to Install the Optics-Id App on any computer**
 
+------
+
 This tutorial should help you to install correctly the Optics-Id app, but more specificaly the microRamanView window. The first window, or filterView window, shall work on its own when the aforementioned installation is done.
 
 ## What is the Optics-Id app?
+
+------
 
 The Optics-Id app is your new best friend! It is designed to control simultaneously a stage, spectrometer and a light source of any kind. Its main purpose it to scan a sample of your choice and render an hyperspectrale image of said sample. The user interface is quite intuitive, and will give you access to saved spectra, matrices, background information, a preview of the data, etc.
 
 ## How to use the UI?
 
+------
+
 Once the program is rightfully installed, you can access [HOWTO-OpticsId](https://github.com/PyMarc2/Optics-ID) for more information on fonctionnalities and particularities of the app.
 
 ## How to install Optics-Id on your computer?
+
+------
 
 1. First, you need to make sure that everything is up-to-date on your computer. In this version of the program, we are using a python interpreter 3.9 or 3.8, pycharm version 2021.1.3 (community option), and BigSur on Mac or Windows 10 on a PC;
 
