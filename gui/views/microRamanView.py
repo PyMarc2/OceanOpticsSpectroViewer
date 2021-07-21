@@ -40,6 +40,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.fileName = ""
 
         self.liveAcquisitionData = []
+        self.backgroundData = []
         self.dataPixel = []
 
         self.integrationTimeAcqRemainder_ms = 0
@@ -78,7 +79,6 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.matrixDataWithoutBackground = None
         self.temporaryIntegrationData = None
         self.movingIntegrationData = None
-        self.backgroundData = None
         self.actualPosition = None
         self.mousePositionX = None
         self.mousePositionY = None
@@ -185,12 +185,18 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.update_slider_status()
 
     def update_without_background(self):
-        self.create_matrix_data_without_background()
-        if self.cb_delete_background.checkState() == 2:
-            self.visualWithoutBackground = True
-        if self.cb_delete_background.checkState() == 0:
-            self.visualWithoutBackground = False
-        self.update_color()
+        if self.backgroundData == []:
+            self.error_background()
+            if self.cb_delete_background.checkState() == 2:
+                QTimer.singleShot(1, lambda: self.cb_delete_background.setCheckState(0))
+
+        else:
+            self.create_matrix_data_without_background()
+            if self.cb_delete_background.checkState() == 2:
+                self.visualWithoutBackground = True
+            if self.cb_delete_background.checkState() == 0:
+                self.visualWithoutBackground = False
+            self.update_color()
 
     def connect_light(self):  # Connect the light
         log.debug("Initializing devices...")
@@ -275,6 +281,10 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
     def error_laser_wavelength(self):
         self.le_laser.setStyleSheet("background-color: rgb(255, 0, 0)")
         QTimer.singleShot(50, lambda: self.le_laser.setStyleSheet("background-color: rgb(255,255,255)"))
+
+    def error_background(self):
+        self.pb_background.setStyleSheet("background-color: rgb(255, 0, 0)")
+        QTimer.singleShot(50, lambda: self.pb_background.setStyleSheet("background-color: rgb(244,244,244)"))
 
     # Create
     def create_threads(self, *args):
@@ -877,9 +887,12 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
             f.close()
 
     def save_matrix_data_without_background(self):
-        self.disable_all_buttons()
-        self.create_matrix_data_without_background()
-        self.saveThread.start()
+        if self.backgroundData == []:
+            self.error_background()
+        else:
+            self.disable_all_buttons()
+            self.create_matrix_data_without_background()
+            self.saveThread.start()
 
     def save_data_without_background(self, *args, **kwargs):
         matrix = self.matrixDataWithoutBackground
