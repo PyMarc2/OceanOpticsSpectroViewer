@@ -74,7 +74,7 @@ Once the program is rightfully installed, you can access [HOWTO-OpticsId](https:
 
    ### For windows
 
-   Use the option that applies to you between 1, 2 and 3, then follow 4 easy steps.
+   Use the option that applies to you, then follow 4 easy steps.
 
    1. Install libusb on a 64bits system and Python 64bits
 
