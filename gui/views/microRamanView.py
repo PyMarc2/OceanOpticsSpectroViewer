@@ -485,12 +485,13 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
 
     def acquire_background(self):
         self.isAcquiringBackground = True
+        if self.spec is None:
+            self.connect_detection()
+
         if self.folderPath == "":
             self.error_folder_name()
 
-        elif self.spec is None:
-            self.connect_detection()
-
+        else:
             try:
                 self.disable_all_buttons()
                 self.set_integration_time()
@@ -904,7 +905,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
                 self.fileName = self.le_fileName.text()
                 if self.fileName == "":
                     self.fileName = "spectrum"
-                path = os.path.join(self.folderPath, f"{self.fileName}_withoutBackground_x{i}_y{j}")
+                path = os.path.join(newPath, f"{self.fileName}_withoutBackground_x{i}_y{j}")
                 with open(path + ".csv", "w+") as f:
                     for ind, x in enumerate(self.waves):
                         f.write(f"{x},{spectrum[ind]}\n")
