@@ -22,7 +22,7 @@ Once the program is rightfully installed, you can access [HOWTO-OpticsId](https:
 
 1. First, you need to make sure that everything is up-to-date on your computer. In this version of the program, we are using a python interpreter 3.9 or 3.8, pycharm version 2021.1.3 (community edition), and BigSur (version 11.4) on macOS (click on the apple in the top-left corner of your screen, and then "about this Mac") or Windows 10 on a PC;
 
-2. Once you have acces to the code and you have cloned your repository on your computer, make sure to create and install a virtual environment with the requirements given in the repository (if needed, here is the [HOWTO-venv](https://github.com/DCC-Lab/Documentation/blob/master/HOWTO/HOWTO-PythonVirtualEnvironment(venv).md) made by DCC-Lab);
+2. Once you have acces to the code and you have cloned your repository to your computer, make sure to create and install a virtual environment with the requirements given in the repository (if needed, here is the [HOWTO-venv](https://github.com/DCC-Lab/Documentation/blob/master/HOWTO/HOWTO-PythonVirtualEnvironment(venv).md) made by DCC-Lab);
 
 3. Activate the venv;
 
