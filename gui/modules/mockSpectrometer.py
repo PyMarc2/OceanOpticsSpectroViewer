@@ -18,7 +18,7 @@ class MockSpectrometer:
         self.exposureTime = integration_time_micros
 
     def wavelengths(self) -> np.ndarray:
-        return np.linspace(785.24, 1022.28, 2048)
+        return np.linspace(339.24, 1022.28, 2048)
 
     def intensities(self) -> np.ndarray:
         t = time.time()
@@ -47,11 +47,11 @@ def gaussian(x, mu, sig):
 
 
 def halogen_spectrum():
-    x = np.linspace(785.24, 1022.28, 2048)
+    x = np.linspace(339.24, 1022.28, 2048)
     return gaussian(x, mu=600, sig=100) * 0.7 + gaussian(x, mu=700, sig=70) * 0.3
 
 
 def background_spectrum():
-    x = np.linspace(785.24, 1022.28, 2048)
+    x = np.linspace(339.24, 1022.28, 2048)
     return gaussian(x, mu=550, sig=5) * 1 + gaussian(x, mu=610, sig=8) * 0.7 + \
            gaussian(x, mu=480, sig=15) * 0.2 + gaussian(x, mu=550, sig=200) * 0.1
