@@ -114,8 +114,9 @@ Once the program is rightfully installed, you can access [HOWTO-OpticsId](https:
 
 You can now proceed with your research and let our app marvel you, as well as awaken your curiosity.
 
-![raman8](/Users/justinemajor/Documents/Captures/raman8.png)
+![GUI](https://github.com/PyMarc2/Optics-ID/blob/benjustine-microraman/docs/images/raman12.png)
 
 ------
 
 ** Even if you already have git installed on your computer, you will need it in your homebrew in order for libusb to work and connect with the pyusb module.
+
