@@ -22,19 +22,21 @@ Once the program is rightfully installed, you can access [HOWTO-OpticsId](https:
 
 1. First, you need to make sure that everything is up-to-date on your computer. In this version of the program, we are using a python interpreter 3.9 or 3.8, pycharm version 2021.1.3 (community edition), and BigSur (version 11.4) on macOS (click on the apple in the top-left corner of your screen, and then "about this Mac") or Windows 10 on a PC;
 
-2. Once you have acces to the code and you have cloned your repository to your computer, make sure to create and install a virtual environment with the requirements given in the repository (if needed, here is the [HOWTO-venv](https://github.com/DCC-Lab/Documentation/blob/master/HOWTO/HOWTO-PythonVirtualEnvironment(venv).md) made by DCC-Lab);
+2. Once you have acces to the code and you have cloned your repository to your computer, make sure to create and install a virtual environment with the requirements given in the repository (if needed, here is the [HOWTO-venv](https://github.com/DCC-Lab/Documentation/blob/master/HOWTO/HOWTO-PythonVirtualEnvironment(venv).md) made by DCC-Lab). Then, activate it;
 
-3. Activate the venv;
-
-4. One essential python module, installed in your virtual environment by the command presented hereunder, is pyusb.
+3. One essential python module, installed in your virtual environment by the command presented hereunder, is pyusb.
 
    ```bash
    $ pip install -r requirements.txt
    ```
 
-   However, since you probably created a brand new venv for the project, you will need to get the usb library as well, which can be tricky. Perhaps, the libusb is already downloaded on your computer, in which case you won't need to follow the next steps - directly skip to the step 5 - in order for your app to work perfectly. Otherwise, here are a few additional steps for you to read carefully. You will also need to install git on your computer (see steps 3.1-3.2).
+   However, since you probably created a brand new venv for the project, you will need to get the usb library as well, which can be tricky. Perhaps, the libusb is already downloaded on your computer, in which case you won't need to follow the next steps - directly skip to the step 4 - in order for your app to work perfectly. Otherwise, here are a few additional steps for you to read carefully. You will also need to install git.
 
-   3.1* - Before downloading libusb, you will need [Homebrew](https://brew.sh/), a package manager complementary to pip. To install, simply write in your terminal (for macOS or Linux only):
+   ------
+
+   ### For macOS
+
+   3.1 - Before downloading libusb, you will need [Homebrew](https://brew.sh/), a package manager complementary to pip. To install, simply write in your terminal (for macOS or Linux only):
 
    ```bash
    $ /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
@@ -68,14 +70,53 @@ Once the program is rightfully installed, you can access [HOWTO-OpticsId](https:
    $ brew link --overwrite libusb
    ```
 
-5. Now that Homebrew, libusb and every module cited in requirements.txt has been acquired, your work is done. All you have to do now is activate the virtual environment, run the opt-id file and admire your beautiful results!
+   ------
+
+   ### For windows
+
+   Use the option that applies to you, then follow 4 easy steps.
+
+   1. Install libusb on a 64bits system and Python 64bits
+
+      1. Go to https://libusb.info/ in the Downloads tab and click on Latest Windows Binaries
+
+      2. Unzip the file, if you don't have 7zip go download it on https://www.7-zip.org/ (take the second download link)
+
+      3. In this same directory, go in the most recent (here VS20XX\MS64\dll) and copy "libusb-1.0.dll" to paste it in C:\Windows\System32
+
+      4. Go to the most recent VS20XXMS64 and copy "libusb-1.0.lib" to paste it in C:\UsersNameAppDataLocalProgramsPythonPython3X\libs
+
+      *Small note* If you don't see AppData, just go to display and check the "Hidden items" option.
+
+   2. Install libusb on a 64bits system and Python 32bits
+      1. Go to https://libusb.info/ in the Downloads tab and click on Latest Windows Binaries
+      2. Unzip the file in a directory, if you don't have 7zip go download it on https://www.7-zip.org/ (take the second download link)
+      3. In this same directory, go in the most recent (here VS20XX\MS32\dll) and copy "libusb-1.0.dll" to paste it in C:\Windows\SysWOW64
+      4. Go to the most recent VS20XX\MS32\dll and copy "libusb-1.0.lib" to paste it in C:\Users\NameAppDataLocalPrograms\Python\Python3X\libs
+
+      *Small note* If you don't see AppData, just go to display and check the "Hidden items" option.
+
+   3. Install libusb on a 32bits system and Python 32bits
+
+      1. Go to https://libusb.info/ in the Downloads tab and click on Latest Windows Binaries
+
+      2. Unzip the file in a directory, if you don't have 7zip go download it on https://www.7-zip.org/ (take the first download link)
+
+      3. In this same directory, go in the most recent (here, VS20XX\MS32\dll) and copy "libusb-1.0.dll" to paste it in C:\Windows\System32
+
+      4. Go to the most recent VS20XX\MS32\dll and copy "libusb-1.0.lib" to paste it in C:\Users\NameAppDataLocalPrograms\Python\Python3X\libs
+
+      *Small note* If you don't see AppData, just go to display and check the "Hidden items" option.
+
+   ------
+
+4. Now that Homebrew, libusb and every module cited in requirements.txt has been acquired, your work is done. All you have to do now is activate the virtual environment, run the opt-id file and admire your beautiful results!
 
 You can now proceed with your research and let our app marvel you, as well as awaken your curiosity.
 
-![raman8](/Users/justinemajor/Documents/Captures/raman8.png)
+![GUI](https://github.com/PyMarc2/Optics-ID/blob/benjustine-microraman/docs/images/raman12.png)
 
 ------
 
-\* The following steps are designed to work on macOS specifically. The principal difference should lie in the protocol to download libusb.
-
 ** Even if you already have git installed on your computer, you will need it in your homebrew in order for libusb to work and connect with the pyusb module.
+
