@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1572</width>
-    <height>1047</height>
+    <width>1348</width>
+    <height>736</height>
    </rect>
   </property>
   <property name="maximumSize">
@@ -69,472 +69,476 @@
        </widget>
       </item>
       <item>
-       <widget class="QGroupBox" name="g_connection">
-        <property name="title">
-         <string>Device Connection</string>
-        </property>
-        <layout class="QVBoxLayout" name="verticalLayout_6">
-         <item>
-          <layout class="QGridLayout" name="gridLayout_6">
-           <property name="topMargin">
-            <number>0</number>
-           </property>
-           <item row="1" column="7">
-            <spacer name="horizontalSpacer">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>40</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-           <item row="0" column="6">
-            <widget class="QWidget" name="widget_3" native="true">
-             <layout class="QHBoxLayout" name="horizontalLayout_3">
-              <property name="leftMargin">
-               <number>0</number>
-              </property>
-              <property name="topMargin">
-               <number>0</number>
-              </property>
-              <property name="rightMargin">
-               <number>0</number>
-              </property>
-              <property name="bottomMargin">
-               <number>0</number>
-              </property>
-             </layout>
-            </widget>
-           </item>
-           <item row="0" column="1">
-            <widget class="QLabel" name="label_5">
-             <property name="text">
-              <string>Light Source Device:</string>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="2">
-            <widget class="QPushButton" name="pb_connectLight">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="text">
-              <string>Connect</string>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="6">
-            <widget class="QWidget" name="widget_2" native="true">
-             <layout class="QHBoxLayout" name="horizontalLayout_2">
-              <property name="leftMargin">
-               <number>0</number>
-              </property>
-              <property name="topMargin">
-               <number>0</number>
-              </property>
-              <property name="rightMargin">
-               <number>0</number>
-              </property>
-              <property name="bottomMargin">
-               <number>0</number>
-              </property>
-             </layout>
-            </widget>
-           </item>
-           <item row="1" column="6">
-            <widget class="QWidget" name="w_stage" native="true">
-             <layout class="QHBoxLayout" name="horizontalLayout">
-              <property name="leftMargin">
-               <number>0</number>
-              </property>
-              <property name="topMargin">
-               <number>0</number>
-              </property>
-              <property name="rightMargin">
-               <number>0</number>
-              </property>
-              <property name="bottomMargin">
-               <number>0</number>
-              </property>
-             </layout>
-            </widget>
-           </item>
-           <item row="1" column="3">
-            <widget class="QComboBox" name="cmb_selectStage">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-               <horstretch>1</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="1">
-            <widget class="QLabel" name="label_6">
-             <property name="text">
-              <string>Stage Device: </string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="2">
-            <widget class="QPushButton" name="pb_connectStage">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="text">
-              <string>Connect</string>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="3">
-            <widget class="QComboBox" name="cmb_selectLight">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-               <horstretch>1</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="3">
-            <widget class="QComboBox" name="cmb_selectDetection">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-               <horstretch>1</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="2">
-            <widget class="QPushButton" name="pb_connectDetection">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="text">
-              <string>Connect</string>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="1">
-            <widget class="QLabel" name="label_7">
-             <property name="text">
-              <string>Detection Device:</string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="8">
-            <spacer name="horizontalSpacer_2">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>40</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_11">
+       <layout class="QVBoxLayout" name="verticalLayout_11">
+        <item>
+         <widget class="QGroupBox" name="g_connection">
+          <property name="title">
+           <string>Device Connection</string>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_6">
            <item>
-            <widget class="QGroupBox" name="g_captureControls">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
-               <horstretch>1</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
+            <layout class="QGridLayout" name="gridLayout_6">
+             <property name="topMargin">
+              <number>0</number>
              </property>
-             <property name="minimumSize">
-              <size>
-               <width>0</width>
-               <height>0</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>300</width>
-               <height>170</height>
-              </size>
-             </property>
-             <property name="autoFillBackground">
-              <bool>false</bool>
-             </property>
-             <property name="styleSheet">
-              <string notr="true">border-color: rgb(0, 0, 0);</string>
-             </property>
-             <property name="title">
-              <string>Capture controls</string>
-             </property>
-             <layout class="QVBoxLayout" name="verticalLayout_3">
-              <property name="spacing">
-               <number>0</number>
-              </property>
-              <item>
-               <layout class="QGridLayout" name="gridLayout_4">
+             <item row="1" column="7">
+              <spacer name="horizontalSpacer">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item row="0" column="6">
+              <widget class="QWidget" name="widget_3" native="true">
+               <layout class="QHBoxLayout" name="horizontalLayout_3">
                 <property name="leftMargin">
                  <number>0</number>
                 </property>
                 <property name="topMargin">
                  <number>0</number>
                 </property>
+                <property name="rightMargin">
+                 <number>0</number>
+                </property>
                 <property name="bottomMargin">
-                 <number>9</number>
+                 <number>0</number>
                 </property>
-                <property name="spacing">
-                 <number>9</number>
-                </property>
-                <item row="1" column="0">
-                 <widget class="QLabel" name="la_fileName">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="text">
-                   <string>File Name:</string>
-                  </property>
-                  <property name="alignment">
-                   <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                  </property>
-                 </widget>
-                </item>
-                <item row="0" column="2">
-                 <widget class="QLineEdit" name="le_folderPath">
-                  <property name="enabled">
-                   <bool>true</bool>
-                  </property>
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                    <horstretch>2</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="readOnly">
-                   <bool>true</bool>
-                  </property>
-                  <property name="clearButtonEnabled">
-                   <bool>false</bool>
-                  </property>
-                 </widget>
-                </item>
-                <item row="1" column="2">
-                 <widget class="QLineEdit" name="le_fileName">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                    <horstretch>2</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="statusTip">
-                   <string>Set the name of the file that will be saved.</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="1" column="3">
-                 <widget class="QCheckBox" name="cb_index">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="toolTip">
-                   <string/>
-                  </property>
-                  <property name="statusTip">
-                   <string>Autoindexing?</string>
-                  </property>
-                  <property name="whatsThis">
-                   <string/>
-                  </property>
-                  <property name="layoutDirection">
-                   <enum>Qt::LeftToRight</enum>
-                  </property>
-                  <property name="text">
-                   <string/>
-                  </property>
-                 </widget>
-                </item>
-                <item row="0" column="3">
-                 <widget class="QToolButton" name="tb_folderPath">
-                  <property name="text">
-                   <string>...</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="0" column="0">
-                 <widget class="QLabel" name="la_folderPath">
-                  <property name="text">
-                   <string>Folder Path:</string>
-                  </property>
-                 </widget>
-                </item>
                </layout>
-              </item>
-              <item>
-               <widget class="QPushButton" name="pb_saveData">
-                <property name="enabled">
-                 <bool>false</bool>
-                </property>
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="statusTip">
-                 <string>Saves data as a .csv</string>
-                </property>
-                <property name="text">
-                 <string>Save Image Data</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QPushButton" name="pb_saveImage">
-                <property name="enabled">
-                 <bool>false</bool>
-                </property>
-                <property name="text">
-                 <string>Save Image</string>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </widget>
-           </item>
-           <item>
-            <layout class="QVBoxLayout" name="verticalLayout_10">
-             <item>
-              <layout class="QHBoxLayout" name="horizontalLayout_14"/>
+              </widget>
              </item>
-             <item>
-              <spacer name="verticalSpacer">
-               <property name="orientation">
-                <enum>Qt::Vertical</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>20</width>
-                 <height>40</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-             <item>
-              <widget class="QGroupBox" name="g_backgroundControls">
-               <property name="layoutDirection">
-                <enum>Qt::LeftToRight</enum>
-               </property>
-               <property name="title">
-                <string>Background Controls</string>
+             <item row="0" column="1">
+              <widget class="QLabel" name="label_5">
+               <property name="text">
+                <string>Light Source Device:</string>
                </property>
                <property name="alignment">
                 <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
                </property>
-               <layout class="QGridLayout" name="gridLayout_7">
-                <item row="1" column="0">
-                 <layout class="QVBoxLayout" name="verticalLayout_7">
-                  <item>
-                   <widget class="QCheckBox" name="cb_delete_background">
-                    <property name="enabled">
-                     <bool>false</bool>
-                    </property>
-                    <property name="text">
-                     <string>Delete Background</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QPushButton" name="pb_save_without_background">
-                    <property name="enabled">
-                     <bool>false</bool>
-                    </property>
-                    <property name="text">
-                     <string>Save Data Without Background</string>
-                    </property>
-                   </widget>
-                  </item>
-                 </layout>
-                </item>
+              </widget>
+             </item>
+             <item row="1" column="6">
+              <widget class="QWidget" name="w_stage" native="true">
+               <layout class="QHBoxLayout" name="horizontalLayout">
+                <property name="leftMargin">
+                 <number>0</number>
+                </property>
+                <property name="topMargin">
+                 <number>0</number>
+                </property>
+                <property name="rightMargin">
+                 <number>0</number>
+                </property>
+                <property name="bottomMargin">
+                 <number>0</number>
+                </property>
                </layout>
               </widget>
              </item>
-             <item>
-              <widget class="QGroupBox" name="groupBox_2">
-               <property name="minimumSize">
+             <item row="2" column="6">
+              <widget class="QWidget" name="widget_2" native="true">
+               <layout class="QHBoxLayout" name="horizontalLayout_2">
+                <property name="leftMargin">
+                 <number>0</number>
+                </property>
+                <property name="topMargin">
+                 <number>0</number>
+                </property>
+                <property name="rightMargin">
+                 <number>0</number>
+                </property>
+                <property name="bottomMargin">
+                 <number>0</number>
+                </property>
+               </layout>
+              </widget>
+             </item>
+             <item row="0" column="2">
+              <widget class="QPushButton" name="pb_connectLight">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string>Connect</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="2">
+              <widget class="QPushButton" name="pb_connectStage">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string>Connect</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="1">
+              <widget class="QLabel" name="label_6">
+               <property name="text">
+                <string>Stage Device: </string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="3">
+              <widget class="QComboBox" name="cmb_selectStage">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                 <horstretch>1</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="8">
+              <spacer name="horizontalSpacer_2">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
                 <size>
-                 <width>0</width>
-                 <height>70</height>
+                 <width>40</width>
+                 <height>20</height>
                 </size>
                </property>
-               <property name="title">
-                <string>Info Laser</string>
+              </spacer>
+             </item>
+             <item row="0" column="3">
+              <widget class="QComboBox" name="cmb_selectLight">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                 <horstretch>1</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
                </property>
-               <layout class="QVBoxLayout" name="verticalLayout_9">
-                <item>
-                 <layout class="QHBoxLayout" name="horizontalLayout_18">
-                  <property name="spacing">
-                   <number>0</number>
-                  </property>
-                  <item>
-                   <widget class="QLabel" name="label_11">
-                    <property name="text">
-                     <string>Laser WaveLength</string>
-                    </property>
-                    <property name="alignment">
-                     <set>Qt::AlignCenter</set>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QLineEdit" name="le_laser">
-                    <property name="minimumSize">
-                     <size>
-                      <width>50</width>
-                      <height>0</height>
-                     </size>
-                    </property>
-                    <property name="maximumSize">
-                     <size>
-                      <width>50</width>
-                      <height>16777215</height>
-                     </size>
-                    </property>
-                   </widget>
-                  </item>
-                 </layout>
-                </item>
-               </layout>
+              </widget>
+             </item>
+             <item row="2" column="2">
+              <widget class="QPushButton" name="pb_connectDetection">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string>Connect</string>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="3">
+              <widget class="QComboBox" name="cmb_selectDetection">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                 <horstretch>1</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="1">
+              <widget class="QLabel" name="label_7">
+               <property name="text">
+                <string>Detection Device:</string>
+               </property>
               </widget>
              </item>
             </layout>
            </item>
           </layout>
-         </item>
-        </layout>
-       </widget>
+         </widget>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="g_capture_and_background">
+          <item>
+           <widget class="QGroupBox" name="g_captureControls">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+              <horstretch>1</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>300</width>
+              <height>170</height>
+             </size>
+            </property>
+            <property name="autoFillBackground">
+             <bool>false</bool>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">border-color: rgb(0, 0, 0);</string>
+            </property>
+            <property name="title">
+             <string>Capture Controls</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+            </property>
+            <layout class="QVBoxLayout" name="verticalLayout_3">
+             <property name="spacing">
+              <number>0</number>
+             </property>
+             <item>
+              <layout class="QGridLayout" name="gridLayout_4">
+               <property name="leftMargin">
+                <number>0</number>
+               </property>
+               <property name="topMargin">
+                <number>0</number>
+               </property>
+               <property name="bottomMargin">
+                <number>9</number>
+               </property>
+               <property name="spacing">
+                <number>9</number>
+               </property>
+               <item row="1" column="0">
+                <widget class="QLabel" name="la_fileName">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="text">
+                  <string>File Name:</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="2">
+                <widget class="QLineEdit" name="le_folderPath">
+                 <property name="enabled">
+                  <bool>true</bool>
+                 </property>
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                   <horstretch>2</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="readOnly">
+                  <bool>true</bool>
+                 </property>
+                 <property name="clearButtonEnabled">
+                  <bool>false</bool>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="2">
+                <widget class="QLineEdit" name="le_fileName">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                   <horstretch>2</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="statusTip">
+                  <string>Set the name of the file that will be saved.</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="3">
+                <widget class="QCheckBox" name="cb_index">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="toolTip">
+                  <string/>
+                 </property>
+                 <property name="statusTip">
+                  <string>Autoindexing?</string>
+                 </property>
+                 <property name="whatsThis">
+                  <string/>
+                 </property>
+                 <property name="layoutDirection">
+                  <enum>Qt::LeftToRight</enum>
+                 </property>
+                 <property name="text">
+                  <string/>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="3">
+                <widget class="QToolButton" name="tb_folderPath">
+                 <property name="text">
+                  <string>...</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="0">
+                <widget class="QLabel" name="la_folderPath">
+                 <property name="text">
+                  <string>Folder Path:</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <widget class="QPushButton" name="pb_saveData">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="statusTip">
+                <string>Saves data as a .csv</string>
+               </property>
+               <property name="text">
+                <string>Save Image Data</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="pb_saveImage">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="text">
+                <string>Save Image</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item>
+           <layout class="QVBoxLayout" name="g_background_and_info">
+            <item>
+             <spacer name="verticalSpacer">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>40</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QGroupBox" name="g_backgroundControls">
+              <property name="layoutDirection">
+               <enum>Qt::LeftToRight</enum>
+              </property>
+              <property name="title">
+               <string>Background Controls</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+              </property>
+              <layout class="QGridLayout" name="gridLayout_7">
+               <item row="1" column="0">
+                <layout class="QVBoxLayout" name="g_pb_and_cb_background">
+                 <item>
+                  <widget class="QCheckBox" name="cb_delete_background">
+                   <property name="enabled">
+                    <bool>false</bool>
+                   </property>
+                   <property name="text">
+                    <string>Delete Background</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="pb_save_without_background">
+                   <property name="enabled">
+                    <bool>false</bool>
+                   </property>
+                   <property name="text">
+                    <string>Save Data Without Background</string>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+              </layout>
+             </widget>
+            </item>
+            <item>
+             <widget class="QGroupBox" name="g_info_laser">
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>70</height>
+               </size>
+              </property>
+              <property name="title">
+               <string>Info Laser</string>
+              </property>
+              <layout class="QVBoxLayout" name="verticalLayout_9">
+               <item>
+                <layout class="QHBoxLayout" name="laser_wavelength">
+                 <property name="spacing">
+                  <number>0</number>
+                 </property>
+                 <item>
+                  <widget class="QLabel" name="l_laser_wavelength">
+                   <property name="text">
+                    <string>Laser WaveLength</string>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignCenter</set>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLineEdit" name="le_laser">
+                   <property name="minimumSize">
+                    <size>
+                     <width>50</width>
+                     <height>0</height>
+                    </size>
+                   </property>
+                   <property name="maximumSize">
+                    <size>
+                     <width>50</width>
+                     <height>16777215</height>
+                    </size>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+              </layout>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </item>
+       </layout>
       </item>
       <item>
        <widget class="QWidget" name="w_acquisitionControls" native="true">
@@ -566,7 +570,7 @@
             <string notr="true">border-color: rgb(0, 0, 0);</string>
            </property>
            <property name="title">
-            <string>Image Acquisition settings</string>
+            <string>Image Acquisition Settings</string>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_2">
             <property name="spacing">
@@ -583,41 +587,38 @@
               <property name="spacing">
                <number>9</number>
               </property>
-              <item row="3" column="1">
-               <widget class="QSpinBox" name="sb_acqTime">
-                <property name="minimumSize">
-                 <size>
-                  <width>0</width>
-                  <height>0</height>
-                 </size>
-                </property>
-                <property name="statusTip">
-                 <string>Sets the integration time on the SpectrumDevice.</string>
-                </property>
-                <property name="minimum">
-                 <number>10</number>
-                </property>
-                <property name="maximum">
-                 <number>999999</number>
-                </property>
-                <property name="singleStep">
-                 <number>100</number>
-                </property>
-                <property name="value">
-                 <number>3000</number>
+              <item row="3" column="2">
+               <widget class="QLabel" name="label_3">
+                <property name="text">
+                 <string>ms</string>
                 </property>
                </widget>
               </item>
-              <item row="1" column="1">
-               <widget class="QSpinBox" name="sb_step">
-                <property name="minimum">
-                 <number>1</number>
+              <item row="1" column="0">
+               <widget class="QLabel" name="label_9">
+                <property name="text">
+                 <string>Displacement Step</string>
                 </property>
-                <property name="maximum">
-                 <number>999</number>
+               </widget>
+              </item>
+              <item row="0" column="2">
+               <widget class="QLabel" name="label_4">
+                <property name="text">
+                 <string>Pixels</string>
                 </property>
-                <property name="value">
-                 <number>1</number>
+               </widget>
+              </item>
+              <item row="3" column="0">
+               <widget class="QLabel" name="la_acqTime_3">
+                <property name="text">
+                 <string>Pixel Integration Time:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="0">
+               <widget class="QLabel" name="label">
+                <property name="text">
+                 <string>Image Size</string>
                 </property>
                </widget>
               </item>
@@ -644,6 +645,19 @@
                   <string>nm</string>
                  </property>
                 </item>
+               </widget>
+              </item>
+              <item row="1" column="1">
+               <widget class="QSpinBox" name="sb_step">
+                <property name="minimum">
+                 <number>1</number>
+                </property>
+                <property name="maximum">
+                 <number>999</number>
+                </property>
+                <property name="value">
+                 <number>1</number>
+                </property>
                </widget>
               </item>
               <item row="2" column="0">
@@ -748,38 +762,28 @@
                 </property>
                </widget>
               </item>
-              <item row="3" column="2">
-               <widget class="QLabel" name="label_3">
-                <property name="text">
-                 <string>ms</string>
+              <item row="3" column="1">
+               <widget class="QSpinBox" name="sb_acqTime">
+                <property name="minimumSize">
+                 <size>
+                  <width>0</width>
+                  <height>0</height>
+                 </size>
                 </property>
-               </widget>
-              </item>
-              <item row="1" column="0">
-               <widget class="QLabel" name="label_9">
-                <property name="text">
-                 <string>Displacement Step</string>
+                <property name="statusTip">
+                 <string>Sets the integration time on the SpectrumDevice.</string>
                 </property>
-               </widget>
-              </item>
-              <item row="0" column="2">
-               <widget class="QLabel" name="label_4">
-                <property name="text">
-                 <string>Pixels</string>
+                <property name="minimum">
+                 <number>10</number>
                 </property>
-               </widget>
-              </item>
-              <item row="3" column="0">
-               <widget class="QLabel" name="la_acqTime_3">
-                <property name="text">
-                 <string>Pixel Integration Time:</string>
+                <property name="maximum">
+                 <number>999999</number>
                 </property>
-               </widget>
-              </item>
-              <item row="0" column="0">
-               <widget class="QLabel" name="label">
-                <property name="text">
-                 <string>Image Size</string>
+                <property name="singleStep">
+                 <number>100</number>
+                </property>
+                <property name="value">
+                 <number>3000</number>
                 </property>
                </widget>
               </item>
@@ -963,7 +967,10 @@
        </widget>
       </item>
       <item>
-       <widget class="QWidget" name="g_RGB_control" native="true">
+       <widget class="QGroupBox" name="g_RGB_control">
+        <property name="title">
+         <string>RGB Controls</string>
+        </property>
         <layout class="QGridLayout" name="gridLayout_8">
          <item row="2" column="0">
           <layout class="QHBoxLayout" name="horizontalLayout_9">
