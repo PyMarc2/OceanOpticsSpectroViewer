@@ -570,7 +570,7 @@
             <string notr="true">border-color: rgb(0, 0, 0);</string>
            </property>
            <property name="title">
-            <string>Image Acquisition Settings</string>
+            <string>Acquisition Settings</string>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_2">
             <property name="spacing">
@@ -850,7 +850,7 @@
             <string notr="true">border-color: rgb(0, 0, 0);</string>
            </property>
            <property name="title">
-            <string>Image Acquisition Control</string>
+            <string>Acquisition Control</string>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout">
             <item>
@@ -967,9 +967,9 @@
        </widget>
       </item>
       <item>
-       <widget class="QGroupBox" name="g_RGB_control">
+       <widget class="QGroupBox" name="g_image_control">
         <property name="title">
-         <string>RGB Controls</string>
+         <string>Image Controls</string>
         </property>
         <layout class="QGridLayout" name="gridLayout_8">
          <item row="2" column="0">
