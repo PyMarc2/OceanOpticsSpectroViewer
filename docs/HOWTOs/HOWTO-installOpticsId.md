@@ -30,19 +30,17 @@ Once the program is rightfully installed, you can access [HOWTO-OpticsId](https:
    $ pip install -r requirements.txt
    ```
 
-   However, since you probably created a brand new venv for the project, you will need to get the usb library as well, which can be tricky. Perhaps, the libusb is already downloaded on your computer, in which case you won't need to follow the next steps - directly skip to the step 4 - in order for your app to work perfectly. Otherwise, here are a few additional steps for you to read carefully. You will also need to install git.
+   However, since you probably created a brand new venv for the project, you will need to get the usb library as well, which can be tricky. Perhaps, the libusb is already downloaded on your computer, in which case you won't need to follow the next steps - directly skip to the step 4 - in order for your app to work perfectly. Otherwise, here are a few additional steps for you to read carefully. You will also need to install git. If you are not sure wheter or not you have libusb, homebrew or git installed, you can consider that they are in fact not on your computer and follow the next steps accordingly.
 
    ------
 
-   ### For macOS
+   ### For macOS - Intel chip
 
-   3.1 - Before downloading libusb, you will need [Homebrew](https://brew.sh/), a package manager complementary to pip. To install, simply write in your terminal (for macOS or Linux only):
+   3.1 - Before downloading libusb, you will need [Homebrew](https://brew.sh/), a package manager complementary to pip. To install, simply write in your terminal, in any directory:
 
    ```bash
    $ /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
    ```
-
-   Please note that steps 3.1 and 3.2 are exectuted while the venv is activated.
 
    3.2** - Then, install git.
 
@@ -69,6 +67,12 @@ Once the program is rightfully installed, you can access [HOWTO-OpticsId](https:
    ```bash
    $ brew link --overwrite libusb
    ```
+
+   ------
+
+   ### For macOS - M1 chip
+
+   1. ... https://stackoverflow.com/questions/66666134/how-to-install-homebrew-on-m1-mac
 
    ------
 
