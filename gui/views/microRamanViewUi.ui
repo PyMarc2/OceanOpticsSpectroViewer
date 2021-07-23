@@ -69,7 +69,7 @@
        </widget>
       </item>
       <item>
-       <layout class="QVBoxLayout" name="verticalLayout_11">
+       <layout class="QVBoxLayout" name="g_device_capture_background">
         <item>
          <widget class="QGroupBox" name="g_connection">
           <property name="title">
@@ -77,11 +77,11 @@
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_6">
            <item>
-            <layout class="QGridLayout" name="gridLayout_6">
+            <layout class="QGridLayout" name="g_connection_grid">
              <property name="topMargin">
               <number>0</number>
              </property>
-             <item row="1" column="7">
+             <item row="1" column="6">
               <spacer name="horizontalSpacer">
                <property name="orientation">
                 <enum>Qt::Horizontal</enum>
@@ -94,80 +94,20 @@
                </property>
               </spacer>
              </item>
-             <item row="0" column="6">
-              <widget class="QWidget" name="widget_3" native="true">
-               <layout class="QHBoxLayout" name="horizontalLayout_3">
-                <property name="leftMargin">
-                 <number>0</number>
-                </property>
-                <property name="topMargin">
-                 <number>0</number>
-                </property>
-                <property name="rightMargin">
-                 <number>0</number>
-                </property>
-                <property name="bottomMargin">
-                 <number>0</number>
-                </property>
-               </layout>
-              </widget>
-             </item>
-             <item row="0" column="1">
-              <widget class="QLabel" name="label_5">
+             <item row="1" column="1">
+              <widget class="QLabel" name="la_stage">
                <property name="text">
-                <string>Light Source Device:</string>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+                <string>Stage Device: </string>
                </property>
               </widget>
              </item>
-             <item row="1" column="6">
-              <widget class="QWidget" name="w_stage" native="true">
-               <layout class="QHBoxLayout" name="horizontalLayout">
-                <property name="leftMargin">
-                 <number>0</number>
-                </property>
-                <property name="topMargin">
-                 <number>0</number>
-                </property>
-                <property name="rightMargin">
-                 <number>0</number>
-                </property>
-                <property name="bottomMargin">
-                 <number>0</number>
-                </property>
-               </layout>
-              </widget>
-             </item>
-             <item row="2" column="6">
-              <widget class="QWidget" name="widget_2" native="true">
-               <layout class="QHBoxLayout" name="horizontalLayout_2">
-                <property name="leftMargin">
-                 <number>0</number>
-                </property>
-                <property name="topMargin">
-                 <number>0</number>
-                </property>
-                <property name="rightMargin">
-                 <number>0</number>
-                </property>
-                <property name="bottomMargin">
-                 <number>0</number>
-                </property>
-               </layout>
-              </widget>
-             </item>
-             <item row="0" column="2">
-              <widget class="QPushButton" name="pb_connectLight">
+             <item row="1" column="3">
+              <widget class="QComboBox" name="cmb_selectStage">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
+                 <horstretch>1</horstretch>
                  <verstretch>0</verstretch>
                 </sizepolicy>
-               </property>
-               <property name="text">
-                <string>Connect</string>
                </property>
               </widget>
              </item>
@@ -184,15 +124,8 @@
                </property>
               </widget>
              </item>
-             <item row="1" column="1">
-              <widget class="QLabel" name="label_6">
-               <property name="text">
-                <string>Stage Device: </string>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="3">
-              <widget class="QComboBox" name="cmb_selectStage">
+             <item row="0" column="3">
+              <widget class="QComboBox" name="cmb_selectLight">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                  <horstretch>1</horstretch>
@@ -201,21 +134,8 @@
                </property>
               </widget>
              </item>
-             <item row="1" column="8">
-              <spacer name="horizontalSpacer_2">
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>40</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-             <item row="0" column="3">
-              <widget class="QComboBox" name="cmb_selectLight">
+             <item row="2" column="3">
+              <widget class="QComboBox" name="cmb_selectDetection">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                  <horstretch>1</horstretch>
@@ -237,20 +157,33 @@
                </property>
               </widget>
              </item>
-             <item row="2" column="3">
-              <widget class="QComboBox" name="cmb_selectDetection">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                 <horstretch>1</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
+             <item row="2" column="1">
+              <widget class="QLabel" name="la_detection">
+               <property name="text">
+                <string>Detection Device:</string>
                </property>
               </widget>
              </item>
-             <item row="2" column="1">
-              <widget class="QLabel" name="label_7">
+             <item row="0" column="1">
+              <widget class="QLabel" name="la_light">
                <property name="text">
-                <string>Detection Device:</string>
+                <string>Light Source Device:</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="2">
+              <widget class="QPushButton" name="pb_connectLight">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string>Connect</string>
                </property>
               </widget>
              </item>
@@ -298,7 +231,7 @@
               <number>0</number>
              </property>
              <item>
-              <layout class="QGridLayout" name="gridLayout_4">
+              <layout class="QGridLayout" name="g_path_fileName">
                <property name="leftMargin">
                 <number>0</number>
                </property>
@@ -516,7 +449,7 @@
        </layout>
       </item>
       <item>
-       <widget class="QWidget" name="w_acquisitionControls" native="true">
+       <widget class="QWidget" name="w_acquisition_controls_and_settings" native="true">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
           <horstretch>1</horstretch>
@@ -552,7 +485,7 @@
              <number>0</number>
             </property>
             <item>
-             <layout class="QGridLayout" name="gridLayout_3" columnstretch="0,0,0">
+             <layout class="QGridLayout" name="g_settings" columnstretch="0,0,0">
               <property name="sizeConstraint">
                <enum>QLayout::SetNoConstraint</enum>
               </property>
@@ -563,21 +496,21 @@
                <number>9</number>
               </property>
               <item row="3" column="2">
-               <widget class="QLabel" name="label_3">
+               <widget class="QLabel" name="la_integ_measure">
                 <property name="text">
                  <string>ms</string>
                 </property>
                </widget>
               </item>
               <item row="1" column="0">
-               <widget class="QLabel" name="label_9">
+               <widget class="QLabel" name="la_step">
                 <property name="text">
                  <string>Displacement Step</string>
                 </property>
                </widget>
               </item>
               <item row="0" column="2">
-               <widget class="QLabel" name="label_4">
+               <widget class="QLabel" name="la_pixel">
                 <property name="text">
                  <string>Pixels</string>
                 </property>
@@ -591,7 +524,7 @@
                </widget>
               </item>
               <item row="0" column="0">
-               <widget class="QLabel" name="label">
+               <widget class="QLabel" name="la_size">
                 <property name="text">
                  <string>Image Size</string>
                 </property>
@@ -674,7 +607,7 @@
                </widget>
               </item>
               <item row="0" column="1">
-               <widget class="QWidget" name="widget" native="true">
+               <widget class="QWidget" name="hlayout_grid" native="true">
                 <layout class="QHBoxLayout" name="horizontalLayout_7">
                  <property name="leftMargin">
                   <number>0</number>
@@ -702,7 +635,7 @@
                   </widget>
                  </item>
                  <item>
-                  <widget class="QLabel" name="label_8">
+                  <widget class="QLabel" name="la_x">
                    <property name="sizePolicy">
                     <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
                      <horstretch>0</horstretch>
@@ -731,7 +664,7 @@
                </widget>
               </item>
               <item row="2" column="2">
-               <widget class="QLabel" name="label_2">
+               <widget class="QLabel" name="la_expo_measure">
                 <property name="text">
                  <string>ms</string>
                 </property>
@@ -763,14 +696,14 @@
                </widget>
               </item>
               <item row="4" column="0">
-               <widget class="QLabel" name="label_10">
+               <widget class="QLabel" name="la_sweep">
                 <property name="text">
                  <string>Sweep Direction</string>
                 </property>
                </widget>
               </item>
               <item row="4" column="1">
-               <layout class="QHBoxLayout" name="horizontalLayout_5">
+               <layout class="QHBoxLayout" name="layout_sweep">
                 <item>
                  <widget class="QIconButton" name="pb_sweepSame">
                   <property name="minimumSize">
@@ -947,8 +880,132 @@
          <string>Image Controls</string>
         </property>
         <layout class="QGridLayout" name="gridLayout_8">
-         <item row="2" column="0">
-          <layout class="QHBoxLayout" name="horizontalLayout_9">
+         <item row="0" column="0">
+          <widget class="GraphicsLayoutWidget" name="graph_spectre"/>
+         </item>
+         <item row="1" column="0">
+          <layout class="QHBoxLayout" name="hlayout_red_slide">
+           <item>
+            <widget class="QSpinBox" name="sb_lowRed">
+             <property name="minimumSize">
+              <size>
+               <width>55</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>50</width>
+               <height>16777215</height>
+              </size>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">background-color: rgb(255, 149, 149);</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+             <property name="minimum">
+              <number>0</number>
+             </property>
+             <property name="maximum">
+              <number>255</number>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QRangeSlider" name="dSlider_red">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QSpinBox" name="sb_highRed">
+             <property name="minimumSize">
+              <size>
+               <width>55</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>50</width>
+               <height>16777215</height>
+              </size>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">background-color: rgb(255, 149, 149);</string>
+             </property>
+             <property name="maximum">
+              <number>255</number>
+             </property>
+             <property name="value">
+              <number>85</number>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item row="5" column="0">
+          <layout class="QHBoxLayout" name="hlayout_color_settings">
+           <item>
+            <widget class="QComboBox" name="cmb_wave">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+             <item>
+              <property name="text">
+               <string>WaveNumber</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>WaveLength</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+           <item>
+            <widget class="QComboBox" name="cmb_set_maximum">
+             <property name="minimumSize">
+              <size>
+               <width>160</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>170</width>
+               <height>16777215</height>
+              </size>
+             </property>
+             <item>
+              <property name="text">
+               <string>Set to Global Maximum</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Set to Local Maximum</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="cb_colorRangeView">
+             <property name="text">
+              <string>Enable ColorRange View</string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item row="3" column="0">
+          <layout class="QHBoxLayout" name="hlayout_green_slide">
            <item>
             <widget class="QSpinBox" name="sb_lowGreen">
              <property name="minimumSize">
@@ -1017,81 +1074,10 @@
            </item>
           </layout>
          </item>
-         <item row="0" column="0">
-          <widget class="GraphicsLayoutWidget" name="graph_spectre"/>
-         </item>
-         <item row="3" column="0">
-          <layout class="QVBoxLayout" name="verticalLayout_8">
+         <item row="4" column="0">
+          <layout class="QHBoxLayout" name="hlayout_blue_slide">
            <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_8">
-             <item>
-              <widget class="QSpinBox" name="sb_lowBlue">
-               <property name="minimumSize">
-                <size>
-                 <width>55</width>
-                 <height>0</height>
-                </size>
-               </property>
-               <property name="maximumSize">
-                <size>
-                 <width>50</width>
-                 <height>16777215</height>
-                </size>
-               </property>
-               <property name="styleSheet">
-                <string notr="true">background-color: rgb(183, 190, 255);</string>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-               </property>
-               <property name="maximum">
-                <number>255</number>
-               </property>
-               <property name="value">
-                <number>171</number>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QRangeSlider" name="dSlider_blue">
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QSpinBox" name="sb_highBlue">
-               <property name="minimumSize">
-                <size>
-                 <width>55</width>
-                 <height>0</height>
-                </size>
-               </property>
-               <property name="maximumSize">
-                <size>
-                 <width>50</width>
-                 <height>16777215</height>
-                </size>
-               </property>
-               <property name="styleSheet">
-                <string notr="true">background-color: rgb(183, 190, 255);</string>
-               </property>
-               <property name="maximum">
-                <number>255</number>
-               </property>
-               <property name="value">
-                <number>255</number>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </item>
-          </layout>
-         </item>
-         <item row="1" column="0">
-          <layout class="QHBoxLayout" name="horizontalLayout_10">
-           <item>
-            <widget class="QSpinBox" name="sb_lowRed">
+            <widget class="QSpinBox" name="sb_lowBlue">
              <property name="minimumSize">
               <size>
                <width>55</width>
@@ -1105,28 +1091,28 @@
               </size>
              </property>
              <property name="styleSheet">
-              <string notr="true">background-color: rgb(255, 149, 149);</string>
+              <string notr="true">background-color: rgb(183, 190, 255);</string>
              </property>
              <property name="alignment">
               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
              </property>
-             <property name="minimum">
-              <number>0</number>
-             </property>
              <property name="maximum">
               <number>255</number>
+             </property>
+             <property name="value">
+              <number>171</number>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QRangeSlider" name="dSlider_red">
+            <widget class="QRangeSlider" name="dSlider_blue">
              <property name="orientation">
               <enum>Qt::Horizontal</enum>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QSpinBox" name="sb_highRed">
+            <widget class="QSpinBox" name="sb_highBlue">
              <property name="minimumSize">
               <size>
                <width>55</width>
@@ -1140,70 +1126,13 @@
               </size>
              </property>
              <property name="styleSheet">
-              <string notr="true">background-color: rgb(255, 149, 149);</string>
+              <string notr="true">background-color: rgb(183, 190, 255);</string>
              </property>
              <property name="maximum">
               <number>255</number>
              </property>
              <property name="value">
-              <number>85</number>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item row="5" column="0">
-          <layout class="QHBoxLayout" name="horizontalLayout_13">
-           <item>
-            <widget class="QComboBox" name="cmb_wave">
-             <property name="enabled">
-              <bool>false</bool>
-             </property>
-             <item>
-              <property name="text">
-               <string>WaveNumber</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>WaveLength</string>
-              </property>
-             </item>
-            </widget>
-           </item>
-           <item>
-            <widget class="QComboBox" name="cmb_set_maximum">
-             <property name="minimumSize">
-              <size>
-               <width>160</width>
-               <height>0</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>170</width>
-               <height>16777215</height>
-              </size>
-             </property>
-             <item>
-              <property name="text">
-               <string>Set to Global Maximum</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>Set to Local Maximum</string>
-              </property>
-             </item>
-            </widget>
-           </item>
-           <item>
-            <widget class="QCheckBox" name="cb_colorRangeView">
-             <property name="text">
-              <string>Enable ColorRange View</string>
-             </property>
-             <property name="checked">
-              <bool>true</bool>
+              <number>255</number>
              </property>
             </widget>
            </item>
