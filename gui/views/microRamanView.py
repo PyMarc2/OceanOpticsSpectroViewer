@@ -470,7 +470,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.sb_highBlue.setValue(self.maxWaveLength)
 
     # Acquisition
-    def spectrum_pixel_acquisition(self):
+    def spectrum_pixel_acquisition(self):  # Model
         # self.set_exposure_time()
         self.isAcquisitionDone = False
 
@@ -483,18 +483,17 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
             self.integrate_data()
             self.dataPixel = np.mean(np.array(self.movingIntegrationData()), 0)
 
-    def acquire_background(self): # Model
-        self.isAcquiringBackground = True
-        self.backgroundData = self.spectrum_pixel_acquisition()
-
+    def acquire_background(self):  # Model
         if self.folderPath == "":
             self.error_folder_name()
 
         else:
             try:
                 self.disable_all_buttons()
-                self.set_integration_time()
+                self.set_exposure_time()
+                self.isAcquiringBackground = True
                 self.spectrum_pixel_acquisition()
+                self.backgroundData = self.dataPixel
                 self.start_save(data=self.backgroundData)
                 self.enable_all_buttons()
 
@@ -503,7 +502,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
 
         self.isAcquiringBackground = False
 
-    def integrate_data(self): # Model
+    def integrate_data(self):  # Model
         self.isAcquisitionDone = False
         if self.expositionCounter < self.integrationCountAcq - 2:
             self.movingIntegrationData.append(self.liveAcquisitionData)
