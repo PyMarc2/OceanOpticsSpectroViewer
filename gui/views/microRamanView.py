@@ -427,16 +427,16 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
             if self.integrationTimeAcq >= self.exposureTime:
                 self.integrationCountAcq = self.integrationTimeAcq // self.exposureTime
                 self.integrationTimeAcqRemainder_ms = self.integrationTimeAcq - (
-                            self.integrationCountAcq * self.exposureTime)
+                        self.integrationCountAcq * self.exposureTime)
 
             else:
                 self.integrationCountAcq = 1
 
         except ValueError:
-            self.sb_acqTime.setStyleSheet('color: red')
+            print('nope, wrong value of integration:D')
 
         if self.integrationTimeAcqRemainder_ms > 3:
-            self.movingIntegrationData = RingBuffer(size_max=self.integrationCountAcq+1)
+            self.movingIntegrationData = RingBuffer(size_max=self.integrationCountAcq + 1)
             self.changeLastExposition = 1
 
         else:
@@ -470,32 +470,30 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.sb_highBlue.setValue(self.maxWaveLength)
 
     # Acquisition
-    def spectrum_pixel_acquisition(self): # Model
+    def spectrum_pixel_acquisition(self):  # Model
+        # self.set_exposure_time()
+        self.isAcquisitionDone = False
+
+        self.waves = self.spec.wavelengths()[2:]
         self.dataLen = len(self.waves)
         self.dataSep = (max(self.waves) - min(self.waves)) / len(self.waves)
 
-        self.liveAcquisitionData = self.read_data_live().tolist()
-
-        self.integrate_data()
-
-        if not self.isAcquiringBackground:
+        while not self.isAcquisitionDone:
+            self.liveAcquisitionData = self.read_data_live().tolist()
+            self.integrate_data()
             self.dataPixel = np.mean(np.array(self.movingIntegrationData()), 0)
-        else:
-            self.backgroundData = np.mean(np.array(self.movingIntegrationData()), 0)
 
-    def acquire_background(self): # Model
-        self.isAcquiringBackground = True
-        if self.spec is None:
-            self.connect_detection()
-
+    def acquire_background(self):  # Model
         if self.folderPath == "":
             self.error_folder_name()
 
         else:
             try:
                 self.disable_all_buttons()
-                self.set_integration_time()
+                self.set_exposure_time()
+                self.isAcquiringBackground = True
                 self.spectrum_pixel_acquisition()
+                self.backgroundData = self.dataPixel
                 self.start_save(data=self.backgroundData)
                 self.enable_all_buttons()
 
@@ -504,13 +502,13 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
 
         self.isAcquiringBackground = False
 
-    def integrate_data(self): # Model
+    def integrate_data(self):  # Model
         self.isAcquisitionDone = False
-        if self.expositionCounter < self.integrationCountAcq - 1:
+        if self.expositionCounter < self.integrationCountAcq - 2:
             self.movingIntegrationData.append(self.liveAcquisitionData)
             self.expositionCounter += 1
 
-        elif self.expositionCounter == self.integrationCountAcq - 1:
+        elif self.expositionCounter == self.integrationCountAcq - 2:
             self.movingIntegrationData.append(self.liveAcquisitionData)
             self.expositionCounter += 1
             if self.changeLastExposition:
@@ -522,7 +520,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
             self.isAcquisitionDone = True
             self.expositionCounter = 0
 
-    def read_data_live(self): # Model
+    def read_data_live(self):
         return self.spec.intensities()[2:]
 
     def stop_acq(self): # Model
@@ -707,9 +705,9 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
                 self.pb_saveImage.setEnabled(True)
                 self.cmb_wave.setEnabled(False)
                 self.disable_all_buttons()
-                self.set_integration_time()
                 self.create_plot_rgb()
                 self.create_plot_spectrum()
+                self.set_exposure_time()
                 self.spectrum_pixel_acquisition()
                 self.create_matrix_raw_data()
                 self.create_matrix_rgb()
@@ -723,8 +721,8 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
             if self.countSpectrum <= (self.width*self.height):
                 if self.countHeight != 0 or self.countWidth != 0:
                     self.spectrum_pixel_acquisition()
-                self.matrix_raw_data_replace()
 
+                self.matrix_raw_data_replace()
                 self.matrixRGB_replace()
                 self.update_rgb_plot()
 

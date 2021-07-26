@@ -387,11 +387,11 @@ class SpectraView(QWidget, Ui_spectraView):
 
     def integrate_data(self):
         self.isAcquisitionDone = False
-        if self.expositionCounter < self.integrationCountAcq - 1:
+        if self.expositionCounter < self.integrationCountAcq - 2:
             self.movingIntegrationData.append(self.liveAcquisitionData)
             self.expositionCounter += 1
 
-        elif self.expositionCounter == self.integrationCountAcq - 1:
+        elif self.expositionCounter == self.integrationCountAcq - 2:
             self.movingIntegrationData.append(self.liveAcquisitionData)
             self.expositionCounter += 1
             if self.changeLastExposition:
