@@ -6,17 +6,19 @@ from gui.modules import mockSpectrometer as Mock
 
 class Integration:
     def __init__(self):
-        self.waves =Mock.MockSpectrometer().wavelengths()[2:]
+        self.waves = Mock.MockSpectrometer().wavelengths()[2:]
         self.spec = Mock.MockSpectrometer()
         self.expositionCounter = 0
         self.exposureTime = 1000
-        self.integrationTimeAcq = 3000
+        self.integrationTimeAcq = 5000
         self.integrationCountAcq = 0
         self.movingIntegrationData = None
         self.isAcquiringBackground = False
         self.dataPixel = []
         self.liveAcquisitionData = []
         self.integrationTimeAcqRemainder_ms = 0
+        self.isAcquisitionDone = False
+        self.changeLastExposition = 0
 
     # SETTINGS
     def set_exposure_time(self, time_in_ms=None, update=True):
@@ -41,7 +43,7 @@ class Integration:
                 self.integrationCountAcq = 1
 
         except ValueError:
-            self.sb_acqTime.setStyleSheet('color: red')
+            print('nope, wrong value of integration:D')
 
         if self.integrationTimeAcqRemainder_ms > 3:
             self.movingIntegrationData = RingBuffer(size_max=self.integrationCountAcq + 1)
@@ -54,39 +56,34 @@ class Integration:
     # ACQUISITION
     def spectrum_pixel_acquisition(self):
         self.set_exposure_time()
+        self.isAcquisitionDone = False
 
+        self.waves = self.spec.wavelengths()[2:]
         self.dataLen = len(self.waves)
         self.dataSep = (max(self.waves) - min(self.waves)) / len(self.waves)
 
-        self.liveAcquisitionData = self.read_data_live().tolist()
-
-        self.integrate_data()
-
-        if not self.isAcquiringBackground:
-            self.dataPixel = np.mean(np.array(self.movingIntegrationData.get()), 0)
-        else:
-            self.backgroundData = np.mean(np.array(self.movingIntegrationData.get()), 0)
+        # counter = 0
+        while not self.isAcquisitionDone:
+            self.liveAcquisitionData = self.read_data_live().tolist()
+            self.integrate_data()
+            self.dataPixel = np.mean(np.array(self.movingIntegrationData()), 0)
+            # counter += 1
+        # print(counter)
 
         return self.dataPixel
 
-    # def acquire_background(self):
-    #     self.isAcquiringBackground = True
-    #     try:
-    #         self.set_integration_time()
-    #         self.spectrum_pixel_acquisition()
-    #
-    #     except Exception as e:
-    #         print(f"Error in acquire_background: {e}")
-    #
-    #     self.isAcquiringBackground = False
+    def acquire_background(self):
+        self.isAcquiringBackground = True
+        self.backgroundData = self.spectrum_pixel_acquisition()
+        return self.backgroundData
 
     def integrate_data(self):
         self.isAcquisitionDone = False
-        if self.expositionCounter < self.integrationCountAcq - 1:
+        if self.expositionCounter < self.integrationCountAcq - 2:
             self.movingIntegrationData.append(self.liveAcquisitionData)
             self.expositionCounter += 1
 
-        elif self.expositionCounter == self.integrationCountAcq - 1:
+        elif self.expositionCounter == self.integrationCountAcq - 2:
             self.movingIntegrationData.append(self.liveAcquisitionData)
             self.expositionCounter += 1
             if self.changeLastExposition:
@@ -104,6 +101,9 @@ class Integration:
 
 if __name__ == "__main__":
     # On essaye de lancer l'acquisition
+    tic = time.perf_counter()
     print(Integration().spectrum_pixel_acquisition())
+    toc = time.perf_counter()
+    print(toc-tic)
 
 

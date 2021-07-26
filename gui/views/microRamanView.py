@@ -427,16 +427,16 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
             if self.integrationTimeAcq >= self.exposureTime:
                 self.integrationCountAcq = self.integrationTimeAcq // self.exposureTime
                 self.integrationTimeAcqRemainder_ms = self.integrationTimeAcq - (
-                            self.integrationCountAcq * self.exposureTime)
+                        self.integrationCountAcq * self.exposureTime)
 
             else:
                 self.integrationCountAcq = 1
 
         except ValueError:
-            self.sb_acqTime.setStyleSheet('color: red')
+            print('nope, wrong value of integration:D')
 
         if self.integrationTimeAcqRemainder_ms > 3:
-            self.movingIntegrationData = RingBuffer(size_max=self.integrationCountAcq+1)
+            self.movingIntegrationData = RingBuffer(size_max=self.integrationCountAcq + 1)
             self.changeLastExposition = 1
 
         else:
@@ -471,22 +471,23 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
 
     # Acquisition
     def spectrum_pixel_acquisition(self):
+        self.set_exposure_time()
+        self.isAcquisitionDone = False
+
+        self.waves = self.spec.wavelengths()[2:]
         self.dataLen = len(self.waves)
         self.dataSep = (max(self.waves) - min(self.waves)) / len(self.waves)
 
-        self.liveAcquisitionData = self.read_data_live().tolist()
-
-        self.integrate_data()
-
-        if not self.isAcquiringBackground:
+        while not self.isAcquisitionDone:
+            self.liveAcquisitionData = self.read_data_live().tolist()
+            self.integrate_data()
             self.dataPixel = np.mean(np.array(self.movingIntegrationData()), 0)
-        else:
-            self.backgroundData = np.mean(np.array(self.movingIntegrationData()), 0)
+
+        return self.dataPixel
 
     def acquire_background(self):
         self.isAcquiringBackground = True
-        if self.spec is None:
-            self.connect_detection()
+        self.backgroundData = self.spectrum_pixel_acquisition()
 
         if self.folderPath == "":
             self.error_folder_name()
@@ -506,11 +507,11 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
 
     def integrate_data(self):
         self.isAcquisitionDone = False
-        if self.expositionCounter < self.integrationCountAcq - 1:
+        if self.expositionCounter < self.integrationCountAcq - 2:
             self.movingIntegrationData.append(self.liveAcquisitionData)
             self.expositionCounter += 1
 
-        elif self.expositionCounter == self.integrationCountAcq - 1:
+        elif self.expositionCounter == self.integrationCountAcq - 2:
             self.movingIntegrationData.append(self.liveAcquisitionData)
             self.expositionCounter += 1
             if self.changeLastExposition:
@@ -521,6 +522,25 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
             self.movingIntegrationData.append(self.liveAcquisitionData)
             self.isAcquisitionDone = True
             self.expositionCounter = 0
+
+    def launch_integration_acquisition(self):
+        if self.launchIntegrationAcquisition and not self.isAcquiringIntegration:
+            self.expositionCounter = 0
+            self.isAcquiringIntegration = True
+            self.launchIntegrationAcquisition = False
+            log.info("Integration Acquiring...")
+
+        elif self.isAcquiringIntegration:
+            if not self.isAcquisitionDone:
+                percent = int(self.expositionCounter * 100 / self.integrationCountAcq)
+                if percent in [25, 50, 75, 100]:
+                    log.debug(
+                    "Acquisition frame: {} over {} : {}%".format(self.expositionCounter, self.integrationCountAcq,
+                                                                int(self.expositionCounter * 100 / self.integrationCountAcq)))
+            elif self.isAcquisitionDone:
+                self.temporaryIntegrationData = np.mean(np.array(self.movingIntegrationData()), 0)
+                self.isAcquiringIntegration = False
+                log.debug("Integration acquired.")
 
     def read_data_live(self):
         return self.spec.intensities()[2:]
