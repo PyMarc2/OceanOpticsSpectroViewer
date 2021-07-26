@@ -471,7 +471,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
 
     # Acquisition
     def spectrum_pixel_acquisition(self):
-        self.set_exposure_time()
+        # self.set_exposure_time()
         self.isAcquisitionDone = False
 
         self.waves = self.spec.wavelengths()[2:]
@@ -482,8 +482,6 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
             self.liveAcquisitionData = self.read_data_live().tolist()
             self.integrate_data()
             self.dataPixel = np.mean(np.array(self.movingIntegrationData()), 0)
-
-        return self.dataPixel
 
     def acquire_background(self): # Model
         self.isAcquiringBackground = True
