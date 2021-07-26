@@ -15,7 +15,7 @@ PyQt5-stubs==5.15.2.0
 pyqtgraph==0.11.1
 pyserial==3.5
 python-dateutil==2.8.1
-pyusb==1.1.1
+pyusb==1.2.1
 seabreeze==1.3.0
 six==1.16.0
 usb==0.0.83.dev0
