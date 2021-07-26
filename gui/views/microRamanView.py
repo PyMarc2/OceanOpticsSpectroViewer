@@ -52,7 +52,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.expositionCounter = 0
         self.maxWaveLength = 255
         self.minWaveLength = 0
-        self.exposureTime = 50
+        self.exposureTime = 500
         self.countSpectrum = 0
         self.order = 10 ** 3
         self.countHeight = 0
