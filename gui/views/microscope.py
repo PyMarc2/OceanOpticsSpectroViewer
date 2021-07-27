@@ -57,20 +57,17 @@ class Microscope:
 
     # ACQUISITION
     def spectrum_pixel_acquisition(self):
-        self.set_exposure_time()
+        # self.set_exposure_time()
         self.isAcquisitionDone = False
 
         self.waves = self.spec.wavelengths()[2:]
         self.dataLen = len(self.waves)
         self.dataSep = (max(self.waves) - min(self.waves)) / len(self.waves)
 
-        # counter = 0
         while not self.isAcquisitionDone:
             self.liveAcquisitionData = self.read_data_live().tolist()
             self.integrate_data()
             self.dataPixel = np.mean(np.array(self.movingIntegrationData()), 0)
-            # counter += 1
-        # print(counter)
 
         return self.dataPixel
 
