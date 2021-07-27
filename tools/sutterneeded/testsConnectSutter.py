@@ -13,7 +13,7 @@ class TestConnectSutter(unittest.TestCase):
         self.assertIsNotNone(position[1])
         self.assertIsNotNone(position[2])
 
-    def testMoveToDebugSutter(self):
+    def testMoveToWithDebugSutter(self):
         sutter = sd.SutterDevice("debug")
         self.assertIsNotNone(sutter.port)
         sutter.moveTo((0, 100, 4000))
