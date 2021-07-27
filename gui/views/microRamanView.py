@@ -180,6 +180,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
             self.waves = ((1 / self.laser) - (1 / self.spec.wavelengths()[2:])) * 10 ** 7
         if self.cmb_wave.currentIndex() == 1:
             self.waves = self.spec.wavelengths()[2:]
+        self.dataSep = (max(self.waves) - min(self.waves)) / self.dataLen
         self.update_color()
         self.update_range_to_wave()
         self.update_slider_status()
@@ -244,6 +245,8 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
                     self.waves = ((1 / self.laser) - (1 / self.spec.wavelengths()[2:])) * 10 ** 7
                 if self.cmb_wave.currentIndex() == 1:
                     self.waves = self.spec.wavelengths()[2:]
+                self.dataLen = len(self.waves)
+                self.dataSep = (max(self.waves) - min(self.waves)) / self.dataLen
                 self.cmb_wave.setEnabled(True)
                 self.set_exposure_time()
                 self.set_range_to_wave()
@@ -474,10 +477,6 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         # self.set_exposure_time()
         self.isAcquisitionDone = False
 
-        self.waves = self.spec.wavelengths()[2:]
-        self.dataLen = len(self.waves)
-        self.dataSep = (max(self.waves) - min(self.waves)) / len(self.waves)
-
         while not self.isAcquisitionDone:
             self.liveAcquisitionData = self.read_data_live().tolist()
             self.integrate_data()
@@ -563,35 +562,35 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
             minimum = 0
 
         if self.colorRangeViewEnable:
-            lowRed = int(((self.sb_lowRed.value() - self.minWaveLength) / self.rangeLen) * len(self.waves))
-            highRed = int(((self.sb_highRed.value() - self.minWaveLength) / self.rangeLen) * len(self.waves)-1)
-            lowGreen = int(((self.sb_lowGreen.value() - self.minWaveLength) / self.rangeLen) * len(self.waves))
-            highGreen = int(((self.sb_highGreen.value() - self.minWaveLength) / self.rangeLen) * len(self.waves)-1)
-            lowBlue = int(((self.sb_lowBlue.value() - self.minWaveLength) / self.rangeLen) * len(self.waves))
-            highBlue = int(((self.sb_highBlue.value() - self.minWaveLength) / self.rangeLen) * len(self.waves) - 1)
+            lowRed = int(((self.sb_lowRed.value() - self.minWaveLength) / self.rangeLen) * self.dataLen)
+            highRed = int(((self.sb_highRed.value() - self.minWaveLength) / self.rangeLen) * self.dataLen-1)
+            lowGreen = int(((self.sb_lowGreen.value() - self.minWaveLength) / self.rangeLen) * self.dataLen)
+            highGreen = int(((self.sb_highGreen.value() - self.minWaveLength) / self.rangeLen) * self.dataLen-1)
+            lowBlue = int(((self.sb_lowBlue.value() - self.minWaveLength) / self.rangeLen) * self.dataLen)
+            highBlue = int(((self.sb_highBlue.value() - self.minWaveLength) / self.rangeLen) * self.dataLen - 1)
 
-            self.redRange = np.full(len(self.waves), minimum)
+            self.redRange = np.full(self.dataLen, minimum)
             self.redRange[lowRed] = maximum
             self.redRange[highRed] = maximum
 
-            self.greenRange = np.full(len(self.waves), minimum)
+            self.greenRange = np.full(self.dataLen, minimum)
             self.greenRange[lowGreen] = maximum
             self.greenRange[highGreen] = maximum
 
-            self.blueRange = np.full(len(self.waves), minimum)
+            self.blueRange = np.full(self.dataLen, minimum)
             self.blueRange[lowBlue] = maximum
             self.blueRange[highBlue] = maximum
 
             self.plotRedRange.setData(self.waves, self.redRange, pen=(255, 0, 0))
             self.plotGreenRange.setData(self.waves, self.greenRange, pen=(0, 255, 0))
             self.plotBlueRange.setData(self.waves, self.blueRange, pen=(0, 0, 255))
-            self.plotBlack.setData(self.waves, np.full(len(self.waves), minimum), pen=(0, 0, 0))
+            self.plotBlack.setData(self.waves, np.full(self.dataLen, minimum), pen=(0, 0, 0))
 
         if not self.colorRangeViewEnable:
-            self.plotRedRange.setData(self.waves, np.full(len(self.waves), minimum), pen=(0, 0, 0))
-            self.plotGreenRange.setData(self.waves, np.full(len(self.waves), minimum), pen=(0, 0, 0))
-            self.plotBlueRange.setData(self.waves, np.full(len(self.waves), minimum), pen=(0, 0, 0))
-            self.plotBlack.setData(self.waves, np.full(len(self.waves), minimum), pen=(0, 0, 0))
+            self.plotRedRange.setData(self.waves, np.full(self.dataLen, minimum), pen=(0, 0, 0))
+            self.plotGreenRange.setData(self.waves, np.full(self.dataLen, minimum), pen=(0, 0, 0))
+            self.plotBlueRange.setData(self.waves, np.full(self.dataLen, minimum), pen=(0, 0, 0))
+            self.plotBlack.setData(self.waves, np.full(self.dataLen, minimum), pen=(0, 0, 0))
 
         self.plotSpectrum.setData(self.waves, matrix[self.mousePositionY, self.mousePositionX, :])
 
@@ -632,12 +631,12 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         else:
             matrix = self.matrixRawData
 
-        lowRed = int(((self.sb_lowRed.value() - self.minWaveLength) / self.rangeLen) * len(self.waves))
-        highRed = int(((self.sb_highRed.value() - self.minWaveLength) / self.rangeLen) * len(self.waves))
-        lowGreen = int(((self.sb_lowGreen.value() - self.minWaveLength) / self.rangeLen) * len(self.waves))
-        highGreen = int(((self.sb_highGreen.value() - self.minWaveLength) / self.rangeLen) * len(self.waves))
-        lowBlue = int(((self.sb_lowBlue.value() - self.minWaveLength) / self.rangeLen) * len(self.waves))
-        highBlue = int(((self.sb_highBlue.value() - self.minWaveLength) / self.rangeLen) * len(self.waves))
+        lowRed = int(((self.sb_lowRed.value() - self.minWaveLength) / self.rangeLen) * self.dataLen)
+        highRed = int(((self.sb_highRed.value() - self.minWaveLength) / self.rangeLen) * self.dataLen)
+        lowGreen = int(((self.sb_lowGreen.value() - self.minWaveLength) / self.rangeLen) * self.dataLen)
+        highGreen = int(((self.sb_highGreen.value() - self.minWaveLength) / self.rangeLen) * self.dataLen)
+        lowBlue = int(((self.sb_lowBlue.value() - self.minWaveLength) / self.rangeLen) * self.dataLen)
+        highBlue = int(((self.sb_highBlue.value() - self.minWaveLength) / self.rangeLen) * self.dataLen)
 
         self.matrixRGB[:, :, 0] = matrix[:, :, lowRed:highRed].sum(axis=2)
         self.matrixRGB[:, :, 1] = matrix[:, :, lowGreen:highGreen].sum(axis=2)
