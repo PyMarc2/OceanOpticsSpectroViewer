@@ -1,5 +1,4 @@
 import numpy as np
-import time
 from tools.CircularList import RingBuffer
 from gui.modules import mockSpectrometer as Mock
 
@@ -19,6 +18,9 @@ class Integration:
         self.integrationTimeAcqRemainder_ms = 0
         self.isAcquisitionDone = False
         self.changeLastExposition = 0
+        self.dataSep = 0
+        self.dataLen = 0
+        self.backgroundData = []
 
     # SETTINGS
     def set_exposure_time(self, time_in_ms=None, update=True):
@@ -99,11 +101,8 @@ class Integration:
         return self.spec.intensities()[2:]
 
 
-if __name__ == "__main__":
-    # On essaye de lancer l'acquisition
-    tic = time.perf_counter()
-    print(Integration().spectrum_pixel_acquisition())
-    toc = time.perf_counter()
-    print(toc-tic)
-
-
+# if __name__ == "__main__":
+#     tic = time.perf_counter()
+#     print(Integration().spectrum_pixel_acquisition())
+#     toc = time.perf_counter()
+#     print(toc-tic)

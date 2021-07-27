@@ -185,7 +185,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.update_slider_status()
 
     def update_without_background(self):  # Controller
-        if self.backgroundData == []:
+        if not list(self.backgroundData):
             self.error_background()
             if self.cb_delete_background.checkState() == 2:
                 QTimer.singleShot(1, lambda: self.cb_delete_background.setCheckState(0))
@@ -309,7 +309,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.plotViewBox.invertY(True)
         self.plotViewBox.setAspectLocked()
 
-    def create_plot_spectrum(self): # GUI
+    def create_plot_spectrum(self):  # GUI
         self.graph_spectre.clear()
         self.plotItem = self.graph_spectre.addPlot()
         self.plotSpectrum = self.plotItem.plot()
@@ -543,7 +543,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
             self.matrixRGB_replace()
             self.update_rgb_plot()
             self.update_spectrum_plot()
-        except:
+        except Exception:
             pass
 
     def update_rgb_plot(self):  # GUI
@@ -621,7 +621,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.sb_lowBlue.setValue(round((self.rangeLen * (2 / 3)) + self.minWaveLength + 1))
         self.sb_highBlue.setValue(self.maxWaveLength)
 
-    def matrix_raw_data_replace(self): # Model
+    def matrix_raw_data_replace(self):  # Model
         self.matrixRawData[self.countHeight, self.countWidth, :] = np.array(self.dataPixel)
         self.dataPixel = []
         self.start_save(self.matrixRawData[self.countHeight, self.countWidth, :], self.countHeight, self.countWidth)
@@ -673,7 +673,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         if self.doSliderPositionAreInitialize:
             try:
                 self.update_spectrum_plot()
-            except:
+            except Exception:
                 pass
         else:
             self.doSliderPositionAreInitialize = True
@@ -685,7 +685,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
             self.colorRangeViewEnable = False
         try:
             self.update_spectrum_plot()
-        except:
+        except Exception:
             pass
 
     # Begin loop
@@ -886,7 +886,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
             f.close()
 
     def save_matrix_data_without_background(self):  # Model
-        if self.backgroundData == []:
+        if not list(self.backgroundData):
             self.error_background()
         else:
             self.disable_all_buttons()
