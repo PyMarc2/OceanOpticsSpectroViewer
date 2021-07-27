@@ -707,7 +707,6 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
                 self.create_plot_rgb()
                 self.create_plot_spectrum()
                 self.set_exposure_time()
-                self.spectrum_pixel_acquisition()
                 self.create_matrix_raw_data()
                 self.create_matrix_rgb()
                 self.sweepThread.start()
@@ -718,9 +717,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
     def sweep(self, *args, **kwargs):  # Model
         while self.isSweepThreadAlive:
             if self.countSpectrum <= (self.width*self.height):
-                if self.countHeight != 0 or self.countWidth != 0:
-                    self.spectrum_pixel_acquisition()
-
+                self.spectrum_pixel_acquisition()
                 self.matrix_raw_data_replace()
                 self.matrixRGB_replace()
                 self.update_rgb_plot()
