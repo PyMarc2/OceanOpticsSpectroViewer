@@ -23,8 +23,12 @@ class TestConnectSutter(unittest.TestCase):
         self.assertTrue(position[2] == 4000)
 
     def testListStageDevices(self):
-        ports = s_ports.SerialPort.matchPorts(idVendor=4930, idProduct=1)
+        sp = s_ports.SerialPort()
+        ports = sp.matchPorts(idVendor=4930, idProduct=1)
         self.assertIsInstance(ports, list)
         self.assertTrue(ports)
         print(ports)
-        # then we would try to match the port using the selected index. There is no function for that yet
+        # then we would try to match a port using the selected index. There is no function for that yet.
+        sp.portPath = ports[0]
+        sp.open()
+        self.assertIsNotNone(sp.port)  # self.assertTrue(sp.isOpen())
