@@ -22,7 +22,27 @@ Once the program is rightfully installed, you can access [HOWTO-OpticsId](https:
 
 1. First, you need to make sure that everything is up-to-date on your computer. In this version of the program, we are using a python interpreter 3.9 or 3.8, pycharm version 2021.1.3 (community edition), and BigSur (version 11.4) on macOS (click on the apple in the top-left corner of your screen, and then "about this Mac") or Windows 10 on a PC;
 
-2. Once you have acces to the code and you have cloned your repository to your computer, make sure to create and install a virtual environment with the requirements given in the repository (if needed, here is the [HOWTO-venv](https://github.com/DCC-Lab/Documentation/blob/master/HOWTO/HOWTO-PythonVirtualEnvironment(venv).md) made by DCC-Lab). Then, activate it;
+2. Once you have acces to the code and you have cloned your repository to your computer, make sure to create and install a virtual environment with the requirements given in the repository (if needed, here is the [HOWTO-venv](https://github.com/DCC-Lab/Documentation/blob/master/HOWTO/HOWTO-PythonVirtualEnvironment(venv).md) made by DCC-Lab). Then, activate it. 
+
+   1. Using the following line in your terminal should create the folder *venv*, but make sure you are in the right directory* first (in Optics-ID). 
+
+   ```bash
+   $ python3 -m venv venv
+   ```
+
+   ​	*You can use the commands "cd [directory]" and "ls" to navigate your documents and folders.
+
+   2. Once the virtual environment is created, you can activate it by writing in your command prompt
+
+   ```bash
+   $ source venv/bin/activate
+   ```
+
+   3. You will know that you have been successful when you can read "(venv)" at the beginning of the command line.
+
+      ![venv](/Users/justinemajor/Documents/Captures/venv.png)
+
+      This means that your venv exists and is activated.
 
 3. One essential python module, installed in your virtual environment by the command presented hereunder, is pyusb.
 
