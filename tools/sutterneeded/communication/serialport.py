@@ -67,7 +67,7 @@ class SerialPort(CommunicationPort):
         # or              idVendor and idProduct
         # or              idVendor
 
-        # We must add custom vendors when rewquired
+        # We must add custom vendors when required
         try:
             if idVendor is not None and idProduct is not None:
                 print("Adding custom product")
@@ -87,7 +87,7 @@ class SerialPort(CommunicationPort):
         portObjects = []
         allPorts = comports()            # From PySerial
         ftdiPorts = cls.ftdiPorts()
-        print(ftdiPorts)
+        # print(ftdiPorts)
         allPorts.extend(ftdiPorts) # From pyftdi
 
         for port in allPorts:
