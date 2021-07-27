@@ -35,7 +35,7 @@ class SutterDevice(PhysicalDevice):
                 self.port = SutterDebugSerialPort()
             else:
                 self.port = SerialPort(portPath="ftdi://0x1342:0x0001:SI8YCLBE/1")
-                print(self.port)
+                # print(self.port)
                 self.port.open(baudRate=128000, timeout=10)
 
             if self.port is None:

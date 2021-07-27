@@ -30,5 +30,22 @@ class TestConnectSutter(unittest.TestCase):
         print(ports)
         # then we would try to match a port using the selected index. There is no function for that yet.
         sp.portPath = ports[0]
-        sp.open()
+        sp.open(baudRate=128000)
         self.assertIsNotNone(sp.port)  # self.assertTrue(sp.isOpen())
+        sp.close()
+
+    def testConnectRealSutterWithSutterDeviceClass(self):
+        sutter = sd.SutterDevice()
+        sp = s_ports.SerialPort()
+        ports = sp.matchPorts(idVendor=4930, idProduct=1)
+        portPath = ports[0]
+        sutter.port = sp(portPath=portPath)  # we will have to generalize the method sutter.doInitializeDevice
+        self.assertIsNotNone(sutter.port)
+        sutter.port.open()
+        self.assertIsNotNone(sp.port)
+        sutter.moveTo((10, 4000, 100))
+        position = sutter.position()
+        self.assertTrue(position[0] == 10)
+        self.assertTrue(position[1] == 4000)
+        self.assertTrue(position[2] == 100)
+        sutter.doShutdownDevice()
