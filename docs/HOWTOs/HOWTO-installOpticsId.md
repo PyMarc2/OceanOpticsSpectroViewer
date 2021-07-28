@@ -86,7 +86,7 @@ Once the program is rightfully installed, you can access [HOWTO-OpticsId](https:
 
    ------
 
-   ### For macOS - M1 chip
+   ### For macOS - M1 chip (or if your default interactive shell is now zsh)
 
    1. Go to your home directory by using the "cd" command once and without any arguments.
 
