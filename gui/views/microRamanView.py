@@ -714,7 +714,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         else:
             print('Sampling already started.')
 
-    def sweep(self, *args, **kwargs):  # Model
+    def sweep(self, *args, **kwargs):  # TODO Controller?
         while self.isSweepThreadAlive:
             if self.countSpectrum <= (self.width*self.height):
                 self.spectrum_pixel_acquisition()
