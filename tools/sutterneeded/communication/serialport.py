@@ -67,7 +67,7 @@ class SerialPort(CommunicationPort):
         # or              idVendor and idProduct
         # or              idVendor
 
-        # We must add custom vendors when rewquired
+        # We must add custom vendors when required
         try:
             if idVendor is not None and idProduct is not None:
                 print("Adding custom product")
@@ -87,7 +87,7 @@ class SerialPort(CommunicationPort):
         portObjects = []
         allPorts = comports()            # From PySerial
         ftdiPorts = cls.ftdiPorts()
-        print(ftdiPorts)
+        # print(ftdiPorts)
         allPorts.extend(ftdiPorts) # From pyftdi
 
         for port in allPorts:
@@ -155,7 +155,7 @@ class SerialPort(CommunicationPort):
             if self.portPathIsURL:
                 # See https://eblot.github.io/pyftdi/api/uart.html
                 # self.portPath = re.match(r"^ftdi://0x1342:0x1/1")
-                print(self.portPath)
+                # print(self.portPath)
                 self.port = pyftdi.serialext.serial_for_url(self.portPath, baudrate=baudRate, timeout=timeout)
             else:
                 self.port = serial.Serial(self.portPath, baudRate, timeout=timeout)
