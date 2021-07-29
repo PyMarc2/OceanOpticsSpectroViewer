@@ -375,7 +375,7 @@
                     <bool>false</bool>
                    </property>
                    <property name="text">
-                    <string>Delete Background</string>
+                    <string>Subtract Background</string>
                    </property>
                   </widget>
                  </item>
@@ -823,6 +823,9 @@
                      <width>16777215</width>
                      <height>16777215</height>
                     </size>
+                   </property>
+                   <property name="toolTip">
+                    <string extracomment="test1">allo</string>
                    </property>
                    <property name="statusTip">
                     <string>Starts data reading from the SpectrumDevice</string>
