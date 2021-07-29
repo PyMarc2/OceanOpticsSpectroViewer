@@ -374,8 +374,11 @@
                    <property name="enabled">
                     <bool>false</bool>
                    </property>
+                   <property name="toolTip">
+                    <string/>
+                   </property>
                    <property name="text">
-                    <string>Subtract Background</string>
+                    <string>Substract Background</string>
                    </property>
                   </widget>
                  </item>
@@ -413,6 +416,9 @@
                  </property>
                  <item>
                   <widget class="QLabel" name="l_laser_wavelength">
+                   <property name="toolTip">
+                    <string>Enter the laser wavelength used in your setup.</string>
+                   </property>
                    <property name="text">
                     <string>Laser WaveLength</string>
                    </property>
@@ -434,6 +440,9 @@
                      <width>50</width>
                      <height>16777215</height>
                     </size>
+                   </property>
+                   <property name="toolTip">
+                    <string>Enter the laser wavelength used in your setup.</string>
                    </property>
                   </widget>
                  </item>
@@ -589,6 +598,9 @@
                   <height>0</height>
                  </size>
                 </property>
+                <property name="toolTip">
+                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The exposure time is the uninterrupted time in which the spectrometer aquires data, or counts photons. After the time has passed, the shutter of the spectrometer blinks and the acquisition starts again from zero.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                </property>
                 <property name="statusTip">
                  <string>Sets exposure time one the SpectrumDevice.</string>
                 </property>
@@ -623,6 +635,9 @@
                  </property>
                  <item>
                   <widget class="QSpinBox" name="sb_width">
+                   <property name="toolTip">
+                    <string>Choose the width you want your image to be</string>
+                   </property>
                    <property name="minimum">
                     <number>1</number>
                    </property>
@@ -649,6 +664,9 @@
                  </item>
                  <item>
                   <widget class="QSpinBox" name="sb_height">
+                   <property name="toolTip">
+                    <string>Choose the height you want your image to be</string>
+                   </property>
                    <property name="minimum">
                     <number>1</number>
                    </property>
@@ -677,6 +695,9 @@
                   <width>0</width>
                   <height>0</height>
                  </size>
+                </property>
+                <property name="toolTip">
+                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The integration time is the complete time lapse before your acquisition is done. It can be the same as the exposure time, or a sum of many exposure sequences. It allows you to get a good signal and a high count, without sarurating the spectrometer.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                 </property>
                 <property name="statusTip">
                  <string>Sets the integration time on the SpectrumDevice.</string>
