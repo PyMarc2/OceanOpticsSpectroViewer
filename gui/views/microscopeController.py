@@ -1,5 +1,5 @@
-import tools.sutterneeded.communication.serialport as sepo
-import tools.sutterneeded.sutterdevice as sutter
+import hardwarelibrary.communication.serialport as sepo
+import hardwarelibrary.motion.sutterdevice as sutter
 from tools.CircularList import RingBuffer
 
 from gui.modules import mockSpectrometer as Mock
@@ -10,7 +10,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 import copy
 import os
-
 
 class MicroscopeControl:
     def __init__(self):
@@ -32,6 +31,7 @@ class MicroscopeControl:
         self.dataLen = 0
         # self.backgroundData = []
         # self.matrixRawData = None
+        self.positionSutter = None
 
     # SETTINGS
     def set_exposure_time(self, time_in_ms=None, update=True):
@@ -144,7 +144,19 @@ class MicroscopeControl:
                 pass
 
     def connect_stage(self):
-        pass
+        self.microscope.stage = sutter.SutterDevice()
+        self.microscope.stage.doInitializeDevice()
+        if self.microscope.stage is None:
+            raise Exception('The sutter is not connected!')
+        # index = self.cmb_selectStage.currentIndex()
+        # if index == 0:
+            # log.info("No stage connected; FakeStage Enabled.")
+            # self.stageDevice = phl.SutterDevice(portPath="debug")
+            # self.stageConnected = True
+        # else:
+            # self.stageDevice = None
+            # self.stageConnected = True
+        self.positionSutter = self.microscope.stage.position()
 
     def create_matrix_raw_data(self):
         self.matrixRawData = np.zeros((self.height, self.width, self.dataLen))

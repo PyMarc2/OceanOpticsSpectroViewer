@@ -3,8 +3,8 @@ from PyQt5.QtWidgets import QWidget, QFileDialog
 from PyQt5.Qt import QPixmap
 from PyQt5 import uic
 
-import tools.sutterneeded.communication.serialport as sepo
-import tools.sutterneeded.sutterdevice as sutter
+import hardwarelibrary.communication.serialport as sepo
+import hardwarelibrary.motion.sutterdevice as sutter
 from tools.CircularList import RingBuffer
 from tools.threadWorker import Worker
 

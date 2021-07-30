@@ -1,5 +1,6 @@
 from typing import NamedTuple
 import seabreeze as sb
+import hardwarelibrary
 
 
 class DataTuple(NamedTuple):
@@ -14,12 +15,18 @@ class BackgroundTuple(NamedTuple):
 
 
 class Model:
+    stageDevices = []  # find list from hardware...
+    stageDevices.insert(0, "Debug")
+    stageIndex = 0
+    stageLink = stageDevices[stageIndex]
     stage = None
+
     specDevices = sb.list_devices()
     specDevices.insert(0, "MockSpectrometer")
     specIndex = 0
     spectroLink = specDevices[specIndex]
     spec = None
+
     folderPath: str = None
     fileName: str = None
     laserWavelength: int = None
