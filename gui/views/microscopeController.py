@@ -4,6 +4,7 @@ from tools.CircularList import RingBuffer
 
 from gui.modules import mockSpectrometer as Mock
 import seabreeze.spectrometers as sb
+from microscopeModel import Model
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -11,25 +12,26 @@ import copy
 import os
 
 
-class Microscope:
+class MicroscopeControl:
     def __init__(self):
-        self.waves = Mock.MockSpectrometer().wavelengths()[2:]
-        self.spec = Mock.MockSpectrometer()
+        self.microscope = Model()
+        # self.waves = Mock.MockSpectrometer().wavelengths()[2:]
+        # self.spec = Mock.MockSpectrometer()
         self.expositionCounter = 0
-        self.exposureTime = 1000
-        self.integrationTimeAcq = 5000
+        # self.exposureTime = 1000
+        # self.integrationTimeAcq = 5000
         self.integrationCountAcq = 0
         self.movingIntegrationData = None
-        self.isAcquiringBackground = False
-        self.dataPixel = []
+        # self.isAcquiringBackground = False
+        # self.dataPixel = []
         self.liveAcquisitionData = []
         self.integrationTimeAcqRemainder_ms = 0
-        self.isAcquisitionDone = False
+        # self.isAcquisitionDone = False
         self.changeLastExposition = 0
         self.dataSep = 0
         self.dataLen = 0
-        self.backgroundData = []
-        self.matrixRawData = None
+        # self.backgroundData = []
+        # self.matrixRawData = None
 
     # SETTINGS
     def set_exposure_time(self, time_in_ms=None, update=True):
@@ -37,18 +39,18 @@ class Microscope:
             expositionTime = time_in_ms
 
         else:
-            expositionTime = self.exposureTime
+            expositionTime = self.microscope.exposureTime
 
-        self.spec.integration_time_micros(expositionTime * 1000)
+        self.microscope.spec.integration_time_micros(expositionTime * 1000)
         if update:
             self.set_integration_time()
 
     def set_integration_time(self):
         try:
-            if self.integrationTimeAcq >= self.exposureTime:
-                self.integrationCountAcq = self.integrationTimeAcq // self.exposureTime
-                self.integrationTimeAcqRemainder_ms = self.integrationTimeAcq - (
-                        self.integrationCountAcq * self.exposureTime)
+            if self.microscope.integrationTime >= self.microscope.exposureTime:
+                self.integrationCountAcq = self.microscope.integrationTime // self.microscope.exposureTime
+                self.integrationTimeAcqRemainder_ms = self.microscope.integrationTime - (
+                        self.integrationCountAcq * self.microscope.exposureTime)
 
             else:
                 self.integrationCountAcq = 1
@@ -67,40 +69,38 @@ class Microscope:
     # ACQUISITION
     def spectrum_pixel_acquisition(self):
         # self.set_exposure_time()
-        self.isAcquisitionDone = False
+        self.microscope.isAcquisitionDone = False
 
-        self.waves = self.spec.wavelengths()[2:]
-        self.dataLen = len(self.waves)
+        self.microscope.waves = self.spec.wavelengths()[2:]
+        self.dataLen = len(self.microscope.waves)
         self.dataSep = (max(self.waves) - min(self.waves)) / len(self.waves)
 
         while not self.isAcquisitionDone:
             self.liveAcquisitionData = self.read_data_live().tolist()
             self.integrate_data()
-            self.dataPixel = np.mean(np.array(self.movingIntegrationData()), 0)
+            self.microscope.dataPixel = np.mean(np.array(self.movingIntegrationData()), 0)
 
         return self.dataPixel
 
-    def acquire_background(self):
-        if self.folderPath == "":
-            self.error_folder_name()
+    def acquire_background(self):  # bypass spectrum pixel acq??? TODO
+        if self.microscope.folderPath == "":
+            # call self.error_folder_name()
+            pass
 
         else:
             try:
-                self.disable_all_buttons()
+                # call self.disable_all_buttons()
                 self.set_exposure_time()
-                self.isAcquiringBackground = True
                 self.spectrum_pixel_acquisition()
-                self.backgroundData = self.dataPixel
+                self.microscope.backgroundData = self.microscope.dataPixel
                 self.start_save(data=self.backgroundData)
-                self.enable_all_buttons()
+                # call self.enable_all_buttons()
 
             except Exception as e:
                 print(f"Error in acquire_background: {e}")
 
-        self.isAcquiringBackground = False
-
     def integrate_data(self):
-        self.isAcquisitionDone = False
+        self.microscope.isAcquisitionDone = False
         if self.expositionCounter < self.integrationCountAcq - 2:
             self.movingIntegrationData.append(self.liveAcquisitionData)
             self.expositionCounter += 1
@@ -118,10 +118,30 @@ class Microscope:
             self.expositionCounter = 0
 
     def read_data_live(self):
-        return self.spec.intensities()[2:]
+        return self.microscope.spec.intensities()[2:]
 
     def connect_detection(self):
-        pass
+        if self.le_laser.text() == "":
+            # call self.error_laser_wavelength()
+            pass
+        else:
+            try:
+                if self.microscope.spectroLink == "MockSpectrometer":
+                    self.microscope.spec = Mock.MockSpectrometer()
+                    self.detectionConnected = True
+                else:
+                    self.microscope.spec = sb.Spectrometer(self.microscope.spectroLink)
+                    self.detectionConnected = True
+                self.dataLen = len(self.waves)
+                self.dataSep = (max(self.waves) - min(self.waves)) / self.dataLen
+                # call self.cmb_wave.setEnabled(True)
+                self.set_exposure_time()
+                # call self.set_range_to_wave()
+                # call self.update_slider_status()
+                # call self.cmb_wave.setEnabled(True)
+            except:
+                # call self.error_laser_wavelength()
+                pass
 
     def connect_stage(self):
         pass
