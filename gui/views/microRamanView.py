@@ -118,6 +118,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.lightDevices = ["None"]
         self.stageDevices = []  # sepo.SerialPort.matchPorts(idVendor=4930, idProduct=1)
         self.stageDevices.insert(0, "Debug")
+        self.stageDevices.append("real sutter")
         self.listStageDevices = []
         for el in self.stageDevices:
             self.listStageDevices.append(str(el))

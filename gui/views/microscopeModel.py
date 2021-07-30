@@ -17,6 +17,7 @@ class BackgroundTuple(NamedTuple):
 class Model:
     stageDevices = []  # find list from hardware...
     stageDevices.insert(0, "Debug")
+    stageDevices.append("real Sutter")
     stageIndex = 0
     stageLink = stageDevices[stageIndex]
     stage = None

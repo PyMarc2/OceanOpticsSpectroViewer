@@ -146,19 +146,15 @@ class MicroscopeControl:
                 pass
 
     def connect_stage(self):
-        self.acq.stage = sutter.SutterDevice()
-        self.acq.stage.doInitializeDevice()
+        if self.acq.stageIndex == 0:
+            self.acq.stage = sutter.SutterDevice(serialNumber="debug")
+            self.acq.stage.doInitializeDevice()
+        else:
+            # TODO will update with list provided by sepo.SerialPort.matchPorts(idVendor=4930, idProduct=1)...
+            self.acq.stage = sutter.SutterDevice()
+            self.acq.stage.doInitializeDevice()
         if self.acq.stage is None:
             raise Exception('The sutter is not connected!')
-        # TODO see connect_detection function and follow the same design model
-        # index = self.cmb_selectStage.currentIndex()
-        # if index == 0:
-            # log.info("No stage connected; FakeStage Enabled.")
-            # self.stageDevice = phl.SutterDevice(portPath="debug")
-            # self.stageConnected = True
-        # else:
-            # self.stageDevice = None
-            # self.stageConnected = True
         self.positionSutter = self.acq.stage.position()
 
     def stop_acq(self):
