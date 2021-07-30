@@ -13,7 +13,7 @@ import os
 
 class MicroscopeControl:
     def __init__(self):
-        self.microscope = Model()
+        self.acq = Model()
         # self.waves = Mock.MockSpectrometer().wavelengths()[2:]
         # self.spec = Mock.MockSpectrometer()
         self.expositionCounter = 0
@@ -32,6 +32,12 @@ class MicroscopeControl:
         # self.backgroundData = []
         # self.matrixRawData = None
         self.positionSutter = None
+        self.countSpectrum = 0
+        self.countHeight = 0
+        self.countWidth = 0
+        self.heightId = None
+        self.widthId = None
+        self.saveData = None
 
     # SETTINGS
     def set_exposure_time(self, time_in_ms=None, update=True):
@@ -39,18 +45,18 @@ class MicroscopeControl:
             expositionTime = time_in_ms
 
         else:
-            expositionTime = self.microscope.exposureTime
+            expositionTime = self.acq.exposureTime
 
-        self.microscope.spec.integration_time_micros(expositionTime * 1000)
+        self.acq.spec.integration_time_micros(expositionTime * 1000)
         if update:
             self.set_integration_time()
 
     def set_integration_time(self):
         try:
-            if self.microscope.integrationTime >= self.microscope.exposureTime:
-                self.integrationCountAcq = self.microscope.integrationTime // self.microscope.exposureTime
-                self.integrationTimeAcqRemainder_ms = self.microscope.integrationTime - (
-                        self.integrationCountAcq * self.microscope.exposureTime)
+            if self.acq.integrationTime >= self.acq.exposureTime:
+                self.integrationCountAcq = self.acq.integrationTime // self.acq.exposureTime
+                self.integrationTimeAcqRemainder_ms = self.acq.integrationTime - (
+                        self.integrationCountAcq * self.acq.exposureTime)
 
             else:
                 self.integrationCountAcq = 1
@@ -69,21 +75,19 @@ class MicroscopeControl:
     # ACQUISITION
     def spectrum_pixel_acquisition(self):
         # self.set_exposure_time()
-        self.microscope.isAcquisitionDone = False
+        self.acq.isAcquisitionDone = False
 
-        self.microscope.waves = self.spec.wavelengths()[2:]
-        self.dataLen = len(self.microscope.waves)
-        self.dataSep = (max(self.waves) - min(self.waves)) / len(self.waves)
+        self.acq.waves = self.acq.spec.wavelengths()[2:]
+        self.dataLen = len(self.acq.waves)
+        self.dataSep = (max(self.acq.waves) - min(self.acq.waves)) / len(self.acq.waves)
 
-        while not self.isAcquisitionDone:
+        while not self.acq.isAcquisitionDone:
             self.liveAcquisitionData = self.read_data_live().tolist()
             self.integrate_data()
-            self.microscope.dataPixel = np.mean(np.array(self.movingIntegrationData()), 0)
-
-        return self.dataPixel
+            self.acq.dataPixel = np.mean(np.array(self.movingIntegrationData()), 0)
 
     def acquire_background(self):  # bypass spectrum pixel acq??? TODO
-        if self.microscope.folderPath == "":
+        if self.acq.folderPath == "":
             # call self.error_folder_name()
             pass
 
@@ -92,15 +96,15 @@ class MicroscopeControl:
                 # call self.disable_all_buttons()
                 self.set_exposure_time()
                 self.spectrum_pixel_acquisition()
-                self.microscope.backgroundData = self.microscope.dataPixel
-                self.start_save(data=self.backgroundData)
+                self.acq.backgroundData = self.acq.dataPixel
+                self.start_save(data=self.acq.backgroundData)
                 # call self.enable_all_buttons()
 
             except Exception as e:
                 print(f"Error in acquire_background: {e}")
 
     def integrate_data(self):
-        self.microscope.isAcquisitionDone = False
+        self.acq.isAcquisitionDone = False
         if self.expositionCounter < self.integrationCountAcq - 2:
             self.movingIntegrationData.append(self.liveAcquisitionData)
             self.expositionCounter += 1
@@ -114,26 +118,24 @@ class MicroscopeControl:
         else:
             self.set_exposure_time(update=False)
             self.movingIntegrationData.append(self.liveAcquisitionData)
-            self.isAcquisitionDone = True
+            self.acq.isAcquisitionDone = True
             self.expositionCounter = 0
 
     def read_data_live(self):
-        return self.microscope.spec.intensities()[2:]
+        return self.acq.spec.intensities()[2:]
 
     def connect_detection(self):
-        if self.le_laser.text() == "":
+        if self.acq.laserWavelength == "":
             # call self.error_laser_wavelength()
             pass
         else:
             try:
-                if self.microscope.spectroLink == "MockSpectrometer":
-                    self.microscope.spec = Mock.MockSpectrometer()
-                    self.detectionConnected = True
+                if self.acq.spectroLink == "MockSpectrometer":
+                    self.acq.spec = Mock.MockSpectrometer()
                 else:
-                    self.microscope.spec = sb.Spectrometer(self.microscope.spectroLink)
-                    self.detectionConnected = True
-                self.dataLen = len(self.waves)
-                self.dataSep = (max(self.waves) - min(self.waves)) / self.dataLen
+                    self.acq.spec = sb.Spectrometer(self.acq.spectroLink)
+                self.dataLen = len(self.acq.waves)
+                self.dataSep = (max(self.acq.waves) - min(self.acq.waves)) / self.dataLen
                 # call self.cmb_wave.setEnabled(True)
                 self.set_exposure_time()
                 # call self.set_range_to_wave()
@@ -144,10 +146,11 @@ class MicroscopeControl:
                 pass
 
     def connect_stage(self):
-        self.microscope.stage = sutter.SutterDevice()
-        self.microscope.stage.doInitializeDevice()
-        if self.microscope.stage is None:
+        self.acq.stage = sutter.SutterDevice()
+        self.acq.stage.doInitializeDevice()
+        if self.acq.stage is None:
             raise Exception('The sutter is not connected!')
+        # TODO see connect_detection function and follow the same design model
         # index = self.cmb_selectStage.currentIndex()
         # if index == 0:
             # log.info("No stage connected; FakeStage Enabled.")
@@ -156,136 +159,143 @@ class MicroscopeControl:
         # else:
             # self.stageDevice = None
             # self.stageConnected = True
-        self.positionSutter = self.microscope.stage.position()
+        self.positionSutter = self.acq.stage.position()
 
-    def create_matrix_raw_data(self):
-        self.matrixRawData = np.zeros((self.height, self.width, self.dataLen))
-
-    def stop_acq(self):  # TODO here?
-        if self.isSweepThreadAlive:
-            self.sweepThread.quit()
-            self.isSweepThreadAlive = False
-            self.countHeight = 0
-            self.countWidth = 0
-            self.countSpectrum = 0
-            self.cmb_wave.setEnabled(True)
-
-        else:
-            print('Sampling already stopped.')
+    def stop_acq(self):
+        pass
+        # TODO update function
+        # if self.isSweepThreadAlive:
+        #     self.sweepThread.quit()
+        #     self.isSweepThreadAlive = False
+        #     self.countHeight = 0
+        #     self.countWidth = 0
+        #     self.countSpectrum = 0
+        #     self.cmb_wave.setEnabled(True)
+        #
+        # else:
+        #     print('Sampling already stopped.')
 
         # self.enable_all_buttons()
 
-    def matrix_raw_data_replace(self):
-        self.matrixRawData[self.countHeight, self.countWidth, :] = np.array(self.dataPixel)
-        self.dataPixel = []
-        # self.start_save(self.matrixRawData[self.countHeight, self.countWidth, :], self.countHeight, self.countWidth)
-
     # Begin loop
-    def begin(self):  # TODO here?
-        if not self.isSweepThreadAlive:
-            if self.folderPath == "":
-                self.error_folder_name()
-            elif self.le_laser.text() == "":
-                self.error_laser_wavelength()
+    def begin(self):
+        if not self.isSweepThreadAlive:  # TODO change the variable and in controller or model init?
+            if self.acq.folderPath == "":
+                # call self.error_folder_name()
+                pass
+            elif self.acq.laserWavelength == "":
+                # call self.error_laser_wavelength()
+                pass
             else:
-                if self.stageDevice is None or self.spec is None:
+                if self.acq.stage is None or self.acq.spec is None:
                     self.connect_detection()
                     self.connect_stage()
 
-                self.isSweepThreadAlive = True
-                self.pb_saveData.setEnabled(True)
-                self.pb_saveImage.setEnabled(True)
-                self.cmb_wave.setEnabled(False)
-                self.disable_all_buttons()
-                self.create_plot_rgb()
-                self.create_plot_spectrum()
+                self.isSweepThreadAlive = True  # TODO change variable... see earlier TODOS
+                # self.pb_saveData.setEnabled(True)
+                # self.pb_saveImage.setEnabled(True)
+                # self.cmb_wave.setEnabled(False)
+                # self.disable_all_buttons()
+                # self.create_plot_rgb()
+                # self.create_plot_spectrum()
                 self.set_exposure_time()
-                self.create_matrix_raw_data()
-                self.create_matrix_rgb()
-                self.sweepThread.start()
+                # self.create_matrix_raw_data()
+                # self.create_matrix_rgb()
+                self.countSpectrum = 0
+                self.countHeight = 0
+                self.countWidth = 0
+                self.sweep()
 
         else:
             print('Sampling already started.')
 
+    def sweep(self):
+        while self.isSweepThreadAlive:  # TODO change variable name
+            if self.countSpectrum <= (self.acq.width * self.acq.height):
+                self.spectrum_pixel_acquisition()
+                # self.matrix_raw_data_replace()
+                # self.matrixRGB_replace()
+                # self.update_rgb_plot()
+
+                if self.acq.direction == "same":
+                    try:
+                        if self.countWidth < (self.acq.width - 1):
+                            # wait for signal...
+                            self.countWidth += 1
+                            self.move_stage()
+                        elif self.countHeight < (self.acq.height - 1) and self.countWidth == (self.acq.width - 1):
+                            # wait for signal...
+                            self.countWidth = 0
+                            self.countHeight += 1
+                            self.move_stage()
+                        else:
+                            self.stop_acq()
+
+                    except Exception as e:
+                        print(f'error in sweep same: {e}')
+                        self.stop_acq()
+
+                elif self.acq.direction == "other":
+                    try:
+                        if self.countHeight % 2 == 0:
+                            if self.countWidth < (self.acq.width - 1):
+                                # wait for signal...
+                                self.countWidth += 1
+                                self.move_stage()
+                            elif self.countWidth == (self.acq.width - 1) and self.countHeight < (self.acq.height - 1):
+                                # wait for signal...
+                                self.countHeight += 1
+                                self.move_stage()
+                            else:
+                                self.stop_acq()
+                        elif self.countHeight % 2 == 1:
+                            if self.countWidth > 0:
+                                # wait for signal...
+                                self.countWidth -= 1
+                                self.move_stage()
+                            elif self.countWidth == 0 and self.countHeight < (self.acq.height - 1):
+                                # wait for signal...
+                                self.countHeight += 1
+                                self.move_stage()
+                            else:
+                                self.stop_acq()
+                    except Exception as e:
+                        print(f'error in sweep other: {e}')
+                        self.stop_acq()
+
+                self.countSpectrum += 1
+
+            else:
+                self.stop_acq()
+
     def move_stage(self):
-        self.stageDevice.moveTo((self.positionSutter[0] + self.countWidth * self.step * self.order,
-                                 self.positionSutter[1] + self.countHeight * self.step * self.order,
-                                 self.positionSutter[2]))
+        self.acq.stage.moveTo((self.positionSutter[0] + self.countWidth * self.acq.step * self.acq.stepMeasureUnit,
+                               self.positionSutter[1] + self.countHeight * self.acq.step * self.acq.stepMeasureUnit,
+                               self.positionSutter[2]))
 
     # Save
     def start_save(self, data=None, countHeight=None, countWidth=None):
         self.heightId = countHeight
         self.widthId = countWidth
-        self.data = data
+        self.saveData = data
         self.save_capture_csv()
 
-    def select_save_folder(self):
-        self.folderPath = self.directory  # str(QFileDialog.getExistingDirectory(self, "Select Directory"))
-        if self.folderPath != "":
-            self.le_folderPath.setText(self.folderPath)
-
-    def save_capture_csv(self):
-        if self.data is None:
+    def save_capture_csv(self):  # TODO generalize the save function(s)
+        if self.saveData is None:
             pass
         else:
-            spectrum = self.data
-            self.fileName = self.le_fileName.text()
-            if self.fileName == "":
-                self.fileName = "spectrum"
+            spectrum = self.saveData
+            if not self.acq.fileName:
+                self.acq.fileName = "spectrum"
 
             fixedData = copy.deepcopy(spectrum)
-            newPath = self.folderPath + "/" + "RawData"
+            newPath = self.acq.folderPath + "/" + "RawData"
             os.makedirs(newPath, exist_ok=True)
             if self.heightId is None and self.widthId is None:
-                path = os.path.join(newPath, f"{self.fileName}_background")
+                path = os.path.join(newPath, f"{self.acq.fileName}_background")
             else:
-                path = os.path.join(newPath, f"{self.fileName}_x{self.widthId}_y{self.heightId}")
+                path = os.path.join(newPath, f"{self.acq.fileName}_x{self.widthId}_y{self.heightId}")
             with open(path + ".csv", "w+") as f:
-                for i, x in enumerate(self.waves):
+                for i, x in enumerate(self.acq.waves):
                     f.write(f"{x},{fixedData[i]}\n")
                 f.close()
-
-    def save_data_without_background(self, *args, **kwargs):
-        matrix = self.matrixDataWithoutBackground
-        newPath = self.folderPath + "/" + "UnrawData"
-        os.makedirs(newPath, exist_ok=True)
-        for i in range(self.height):
-            for j in range(self.width):
-                spectrum = matrix[i, j, :]
-                self.fileName = self.le_fileName.text()
-                if self.fileName == "":
-                    self.fileName = "spectrum"
-                path = os.path.join(newPath, f"{self.fileName}_withoutBackground_x{i}_y{j}")
-                with open(path + ".csv", "w+") as f:
-                    for ind, x in enumerate(self.waves):
-                        f.write(f"{x},{spectrum[ind]}\n")
-                    f.close()
-
-        path = newPath + "/"
-        if self.fileName == "":
-            file = "matrixDataWithoutBackground.csv"
-        else:
-            file = self.fileName + "_matrixDataWithoutBackground.csv"
-
-        with open(path + file, "w+") as f:
-            f.write("[")
-            for i, x in enumerate(matrix):
-                if i == 0:
-                    f.write("[")
-                else:
-                    f.write("\n\n[")
-                for ii, y in enumerate(x):
-                    if ii == 0:
-                        f.write("[")
-                    else:
-                        f.write("\n[")
-                    for iii, z, in enumerate(y):
-                        if iii != len(y) - 1:
-                            f.write(f"{z}, ")
-                        else:
-                            f.write(f"{z}")
-                    f.write("]")
-                f.write("]")
-            f.write("]")
-
-            f.close()

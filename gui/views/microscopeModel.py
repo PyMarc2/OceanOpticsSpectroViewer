@@ -1,5 +1,5 @@
 from typing import NamedTuple
-import seabreeze as sb
+import seabreeze.spectrometers as sb
 import hardwarelibrary
 
 
@@ -41,6 +41,7 @@ class Model:
     backgroundData: tuple = None
     waves: list = None
     dataPixel: list = None
+    direction = "same"  # or "other"
 
     def createDataPixelTuple(self, x: int, y: int, spectrum: list):
         return DataTuple(x, y, spectrum)
