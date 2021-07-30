@@ -211,18 +211,20 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
 
     def connect_stage(self):  # Model
         log.debug("Initializing devices...")
-        self.stageDevice = sutter.SutterDevice()
-        self.stageDevice.doInitializeDevice()
+        index = self.cmb_selectStage.currentIndex()
+        if index == 0:
+            log.info("No stage connected; FakeStage Enabled.")
+            self.stageDevice = sutter.SutterDevice(serialNumber="debug")
+            self.stageDevice.doInitializeDevice()
+            self.stageConnected = True
+        else:
+            # TODO will update with list provided by sepo.SerialPort.matchPorts(idVendor=4930, idProduct=1)...
+            # self.stageDevice = None
+            self.stageDevice = sutter.SutterDevice()
+            self.stageDevice.doInitializeDevice()
+            self.stageConnected = True
         if self.stageDevice is None:
             raise Exception('The sutter is not connected!')
-        # index = self.cmb_selectStage.currentIndex()
-        # if index == 0:
-            # log.info("No stage connected; FakeStage Enabled.")
-            # self.stageDevice = phl.SutterDevice(portPath="debug")
-            # self.stageConnected = True
-        # else:
-            # self.stageDevice = None
-            # self.stageConnected = True
         self.positionSutter = self.stageDevice.position()
 
     def connect_detection(self):  # Model
