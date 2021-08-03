@@ -476,7 +476,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
 
     # Acquisition
     def spectrum_pixel_acquisition(self):  # Model
-        # self.set_exposure_time()
+        # self.setExposureTime()
         self.isAcquisitionDone = False
 
         while not self.isAcquisitionDone:
@@ -499,7 +499,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
                 self.enable_all_buttons()
 
             except Exception as e:
-                print(f"Error in acquire_background: {e}")
+                print(f"Error in acquireBackground: {e}")
 
         self.isAcquiringBackground = False
 

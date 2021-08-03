@@ -103,6 +103,6 @@ class Integration:
 
 # if __name__ == "__main__":
 #     tic = time.perf_counter()
-#     print(Integration().spectrum_pixel_acquisition())
+#     print(Integration().spectrumPixelAcquisition())
 #     toc = time.perf_counter()
 #     print(toc-tic)
