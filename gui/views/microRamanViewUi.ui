@@ -540,7 +540,7 @@
                </widget>
               </item>
               <item row="1" column="2">
-               <widget class="QComboBox" name="cmb_magnitude">
+               <widget class="QComboBox" name="cmb_measureUnit">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                   <horstretch>0</horstretch>
@@ -826,7 +826,7 @@
                   </widget>
                  </item>
                  <item>
-                  <widget class="QFlashButton" name="pb_liveView">
+                  <widget class="QFlashButton" name="pb_launch">
                    <property name="sizePolicy">
                     <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                      <horstretch>1</horstretch>
@@ -860,7 +860,7 @@
                   </widget>
                  </item>
                  <item>
-                  <widget class="QPushButton" name="pb_reset">
+                  <widget class="QPushButton" name="pb_stop">
                    <property name="sizePolicy">
                     <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                      <horstretch>1</horstretch>

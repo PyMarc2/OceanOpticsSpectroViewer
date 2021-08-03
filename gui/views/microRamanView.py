@@ -133,7 +133,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
 
     # Connect
     def connect_widgets(self):  # GUI
-        self.cmb_magnitude.currentTextChanged.connect(self.set_measure_unit)
+        self.cmb_measureUnit.currentTextChanged.connect(self.set_measure_unit)
         self.dSlider_red.valueChanged.connect(self.set_red_range)
         self.dSlider_green.valueChanged.connect(self.set_green_range)
         self.dSlider_blue.valueChanged.connect(self.set_blue_range)
@@ -142,8 +142,8 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.pb_saveData.clicked.connect(self.save_matrixRGB)
         self.pb_sweepSame.clicked.connect(lambda: setattr(self, 'direction', 'same'))
         self.pb_sweepAlternate.clicked.connect(lambda: setattr(self, 'direction', 'other'))
-        self.pb_reset.clicked.connect(self.stop_acq)
-        self.pb_liveView.clicked.connect(self.begin)
+        self.pb_stop.clicked.connect(self.stop_acq)
+        self.pb_launch.clicked.connect(self.begin)
         self.pb_connectLight.clicked.connect(self.connect_light)
         self.pb_connectStage.clicked.connect(self.connect_stage)
         self.pb_connectDetection.clicked.connect(self.connect_detection)
