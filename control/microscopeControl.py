@@ -4,33 +4,23 @@ from tools.CircularList import RingBuffer
 
 from gui.modules import mockSpectrometer as Mock
 import seabreeze.spectrometers as sb
-from microscopeModel import Model
+from model.microscopeModel import Model
 
 import matplotlib.pyplot as plt
 import numpy as np
 import copy
 import os
 
+
 class MicroscopeControl:
     def __init__(self):
         self.acq = Model()
-        # self.waves = Mock.MockSpectrometer().wavelengths()[2:]
-        # self.spec = Mock.MockSpectrometer()
         self.expositionCounter = 0
-        # self.exposureTime = 1000
-        # self.integrationTimeAcq = 5000
         self.integrationCountAcq = 0
-        self.movingIntegrationData = None
-        # self.isAcquiringBackground = False
-        # self.dataPixel = []
         self.liveAcquisitionData = []
         self.integrationTimeAcqRemainder_ms = 0
-        # self.isAcquisitionDone = False
         self.changeLastExposition = 0
-        self.dataSep = 0
-        self.dataLen = 0
-        # self.backgroundData = []
-        # self.matrixRawData = None
+        self.movingIntegrationData = None
         self.positionSutter = None
         self.countSpectrum = 0
         self.countHeight = 0
@@ -38,9 +28,13 @@ class MicroscopeControl:
         self.heightId = None
         self.widthId = None
         self.saveData = None
+        self.isAcquisitionDone = False
 
     # SETTINGS
-    def set_exposure_time(self, time_in_ms=None, update=True):
+    def resetMovingIntegrationData(self):
+        self.movingIntegrationData = None
+
+    def setExposureTime(self, time_in_ms=None, update=True):
         if time_in_ms is not None:
             expositionTime = time_in_ms
 
@@ -49,9 +43,9 @@ class MicroscopeControl:
 
         self.acq.spec.integration_time_micros(expositionTime * 1000)
         if update:
-            self.set_integration_time()
+            self.setIntegrationTime()
 
-    def set_integration_time(self):
+    def setIntegrationTime(self):
         try:
             if self.acq.integrationTime >= self.acq.exposureTime:
                 self.integrationCountAcq = self.acq.integrationTime // self.acq.exposureTime
@@ -73,20 +67,17 @@ class MicroscopeControl:
             self.changeLastExposition = 0
 
     # ACQUISITION
-    def spectrum_pixel_acquisition(self):
-        # self.set_exposure_time()
-        self.acq.isAcquisitionDone = False
+    def spectrumPixelAcquisition(self):
+        self.isAcquisitionDone = False
 
-        self.acq.waves = self.acq.spec.wavelengths()[2:]
-        self.dataLen = len(self.acq.waves)
-        self.dataSep = (max(self.acq.waves) - min(self.acq.waves)) / len(self.acq.waves)
+        while not self.isAcquisitionDone:
+            self.liveAcquisitionData = self.readDataLive().tolist()
+            self.integrateData()
+            liveData = np.mean(np.array(self.movingIntegrationData()), 0)
 
-        while not self.acq.isAcquisitionDone:
-            self.liveAcquisitionData = self.read_data_live().tolist()
-            self.integrate_data()
-            self.acq.dataPixel = np.mean(np.array(self.movingIntegrationData()), 0)
+        return liveData
 
-    def acquire_background(self):  # bypass spectrum pixel acq??? TODO
+    def acquireBackground(self):
         if self.acq.folderPath == "":
             # call self.error_folder_name()
             pass
@@ -94,17 +85,17 @@ class MicroscopeControl:
         else:
             try:
                 # call self.disable_all_buttons()
-                self.set_exposure_time()
-                self.spectrum_pixel_acquisition()
-                self.acq.backgroundData = self.acq.dataPixel
-                self.start_save(data=self.acq.backgroundData)
+                self.setExposureTime()
+                background = self.spectrumPixelAcquisition()
+                # self.startSave(data=self.backgroundData)
                 # call self.enable_all_buttons()
+                return background
 
             except Exception as e:
-                print(f"Error in acquire_background: {e}")
+                print(f"Error in acquireBackground: {e}")
 
-    def integrate_data(self):
-        self.acq.isAcquisitionDone = False
+    def integrateData(self):
+        self.isAcquisitionDone = False
         if self.expositionCounter < self.integrationCountAcq - 2:
             self.movingIntegrationData.append(self.liveAcquisitionData)
             self.expositionCounter += 1
@@ -113,51 +104,26 @@ class MicroscopeControl:
             self.movingIntegrationData.append(self.liveAcquisitionData)
             self.expositionCounter += 1
             if self.changeLastExposition:
-                self.set_exposure_time(self.integrationTimeAcqRemainder_ms, update=False)
+                self.setExposureTime(self.integrationTimeAcqRemainder_ms, update=False)
 
         else:
-            self.set_exposure_time(update=False)
+            self.setExposureTime(update=False)
             self.movingIntegrationData.append(self.liveAcquisitionData)
-            self.acq.isAcquisitionDone = True
+            self.isAcquisitionDone = True
             self.expositionCounter = 0
 
-    def read_data_live(self):
+    def readDataLive(self):
         return self.acq.spec.intensities()[2:]
 
-    def connect_detection(self):
-        if self.acq.laserWavelength == "":
-            # call self.error_laser_wavelength()
-            pass
-        else:
-            try:
-                if self.acq.spectroLink == "MockSpectrometer":
-                    self.acq.spec = Mock.MockSpectrometer()
-                else:
-                    self.acq.spec = sb.Spectrometer(self.acq.spectroLink)
-                self.dataLen = len(self.acq.waves)
-                self.dataSep = (max(self.acq.waves) - min(self.acq.waves)) / self.dataLen
-                # call self.cmb_wave.setEnabled(True)
-                self.set_exposure_time()
-                # call self.set_range_to_wave()
-                # call self.update_slider_status()
-                # call self.cmb_wave.setEnabled(True)
-            except:
-                # call self.error_laser_wavelength()
-                pass
+    def connectDetection(self, index):
+        self.acq.connectSpectro(index)
+        return self.acq.spec.wavelengths()[2:]
 
-    def connect_stage(self):
-        if self.acq.stageIndex == 0:
-            self.acq.stage = sutter.SutterDevice(serialNumber="debug")
-            self.acq.stage.doInitializeDevice()
-        else:
-            # TODO will update with list provided by sepo.SerialPort.matchPorts(idVendor=4930, idProduct=1)...
-            self.acq.stage = sutter.SutterDevice()
-            self.acq.stage.doInitializeDevice()
-        if self.acq.stage is None:
-            raise Exception('The sutter is not connected!')
+    def connectStage(self, index):
+        self.acq.connectStage(index)
         self.positionSutter = self.acq.stage.position()
 
-    def stop_acq(self):
+    def stopAcq(self):
         pass
         # TODO update function
         # if self.isSweepThreadAlive:
@@ -184,8 +150,8 @@ class MicroscopeControl:
                 pass
             else:
                 if self.acq.stage is None or self.acq.spec is None:
-                    self.connect_detection()
-                    self.connect_stage()
+                    self.connectDetection()
+                    self.connectStage()
 
                 self.isSweepThreadAlive = True  # TODO change variable... see earlier TODOS
                 # self.pb_saveData.setEnabled(True)
@@ -194,7 +160,7 @@ class MicroscopeControl:
                 # self.disable_all_buttons()
                 # self.create_plot_rgb()
                 # self.create_plot_spectrum()
-                self.set_exposure_time()
+                self.setExposureTime()
                 # self.create_matrix_raw_data()
                 # self.create_matrix_rgb()
                 self.countSpectrum = 0
@@ -208,7 +174,7 @@ class MicroscopeControl:
     def sweep(self):
         while self.isSweepThreadAlive:  # TODO change variable name
             if self.countSpectrum <= (self.acq.width * self.acq.height):
-                self.spectrum_pixel_acquisition()
+                self.spectrumPixelAcquisition()
                 # self.matrix_raw_data_replace()
                 # self.matrixRGB_replace()
                 # self.update_rgb_plot()
@@ -218,18 +184,18 @@ class MicroscopeControl:
                         if self.countWidth < (self.acq.width - 1):
                             # wait for signal...
                             self.countWidth += 1
-                            self.move_stage()
+                            self.moveStage()
                         elif self.countHeight < (self.acq.height - 1) and self.countWidth == (self.acq.width - 1):
                             # wait for signal...
                             self.countWidth = 0
                             self.countHeight += 1
-                            self.move_stage()
+                            self.moveStage()
                         else:
-                            self.stop_acq()
+                            self.stopAcq()
 
                     except Exception as e:
                         print(f'error in sweep same: {e}')
-                        self.stop_acq()
+                        self.stopAcq()
 
                 elif self.acq.direction == "other":
                     try:
@@ -237,46 +203,46 @@ class MicroscopeControl:
                             if self.countWidth < (self.acq.width - 1):
                                 # wait for signal...
                                 self.countWidth += 1
-                                self.move_stage()
+                                self.moveStage()
                             elif self.countWidth == (self.acq.width - 1) and self.countHeight < (self.acq.height - 1):
                                 # wait for signal...
                                 self.countHeight += 1
-                                self.move_stage()
+                                self.moveStage()
                             else:
-                                self.stop_acq()
+                                self.stopAcq()
                         elif self.countHeight % 2 == 1:
                             if self.countWidth > 0:
                                 # wait for signal...
                                 self.countWidth -= 1
-                                self.move_stage()
+                                self.moveStage()
                             elif self.countWidth == 0 and self.countHeight < (self.acq.height - 1):
                                 # wait for signal...
                                 self.countHeight += 1
-                                self.move_stage()
+                                self.moveStage()
                             else:
-                                self.stop_acq()
+                                self.stopAcq()
                     except Exception as e:
                         print(f'error in sweep other: {e}')
-                        self.stop_acq()
+                        self.stopAcq()
 
                 self.countSpectrum += 1
 
             else:
-                self.stop_acq()
+                self.stopAcq()
 
-    def move_stage(self):
+    def moveStage(self):
         self.acq.stage.moveTo((self.positionSutter[0] + self.countWidth * self.acq.step * self.acq.stepMeasureUnit,
                                self.positionSutter[1] + self.countHeight * self.acq.step * self.acq.stepMeasureUnit,
                                self.positionSutter[2]))
 
     # Save
-    def start_save(self, data=None, countHeight=None, countWidth=None):
+    def startSave(self, data=None, countHeight=None, countWidth=None):
         self.heightId = countHeight
         self.widthId = countWidth
         self.saveData = data
-        self.save_capture_csv()
+        self.saveCaptureCSV()
 
-    def save_capture_csv(self):  # TODO generalize the save function(s)
+    def saveCaptureCSV(self):  # TODO generalize the save function(s)
         if self.saveData is None:
             pass
         else:

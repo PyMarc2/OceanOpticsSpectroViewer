@@ -1,6 +1,6 @@
 import unittest
 import time
-import TestAcquisition as Int
+from test import TestAcquisition as Int
 import numpy as np
 
 
@@ -32,7 +32,7 @@ class TestIntegrationTime(unittest.TestCase):
 
     # def testIntTimeOfBackgroundSecondTime(self):
     #     tic = time.perf_counter()
-    #     data = self.spec.acquire_background()
+    #     data = self.spec.acquireBackground()
     #     toc = time.perf_counter()
     #     temps = round(toc - tic, 2)
     #     print(f'background = {temps}')
