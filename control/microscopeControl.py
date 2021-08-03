@@ -1,15 +1,6 @@
-import hardwarelibrary.communication.serialport as sepo
-import hardwarelibrary.motion.sutterdevice as sutter
 from tools.CircularList import RingBuffer
-
-from gui.modules import mockSpectrometer as Mock
-import seabreeze.spectrometers as sb
 from model.microscopeModel import Model
-
-import matplotlib.pyplot as plt
 import numpy as np
-import copy
-import os
 
 
 class MicroscopeControl:
@@ -29,6 +20,7 @@ class MicroscopeControl:
         self.widthId = None
         self.saveData = None
         self.isAcquisitionDone = False
+        self.isAcquiring = False
 
     # SETTINGS
     def resetMovingIntegrationData(self):
@@ -124,24 +116,21 @@ class MicroscopeControl:
         self.positionSutter = self.acq.stage.position()
 
     def stopAcq(self):
-        pass
-        # TODO update function
-        # if self.isSweepThreadAlive:
-        #     self.sweepThread.quit()
-        #     self.isSweepThreadAlive = False
-        #     self.countHeight = 0
-        #     self.countWidth = 0
-        #     self.countSpectrum = 0
-        #     self.cmb_wave.setEnabled(True)
-        #
-        # else:
-        #     print('Sampling already stopped.')
+        if self.isAcquiring:
+            self.isAcquiring = False
+            self.countHeight = 0
+            self.countWidth = 0
+            self.countSpectrum = 0
+            # self.cmb_wave.setEnabled(True)
+
+        else:
+            print('Sampling already stopped.')
 
         # self.enable_all_buttons()
 
     # Begin loop
     def begin(self):
-        if not self.isSweepThreadAlive:  # TODO change the variable and in controller or model init?
+        if not self.isAcquiring:
             if self.acq.folderPath == "":
                 # call self.error_folder_name()
                 pass
@@ -153,7 +142,7 @@ class MicroscopeControl:
                     self.connectDetection()
                     self.connectStage()
 
-                self.isSweepThreadAlive = True  # TODO change variable... see earlier TODOS
+                self.isAcquiring = True
                 # self.pb_saveData.setEnabled(True)
                 # self.pb_saveImage.setEnabled(True)
                 # self.cmb_wave.setEnabled(False)
@@ -172,7 +161,7 @@ class MicroscopeControl:
             print('Sampling already started.')
 
     def sweep(self):
-        while self.isSweepThreadAlive:  # TODO change variable name
+        while self.isAcquiring:  # TODO change variable name
             if self.countSpectrum <= (self.acq.width * self.acq.height):
                 self.spectrumPixelAcquisition()
                 # self.matrix_raw_data_replace()
@@ -234,30 +223,3 @@ class MicroscopeControl:
         self.acq.stage.moveTo((self.positionSutter[0] + self.countWidth * self.acq.step * self.acq.stepMeasureUnit,
                                self.positionSutter[1] + self.countHeight * self.acq.step * self.acq.stepMeasureUnit,
                                self.positionSutter[2]))
-
-    # Save
-    def startSave(self, data=None, countHeight=None, countWidth=None):
-        self.heightId = countHeight
-        self.widthId = countWidth
-        self.saveData = data
-        self.saveCaptureCSV()
-
-    def saveCaptureCSV(self):  # TODO generalize the save function(s)
-        if self.saveData is None:
-            pass
-        else:
-            spectrum = self.saveData
-            if not self.acq.fileName:
-                self.acq.fileName = "spectrum"
-
-            fixedData = copy.deepcopy(spectrum)
-            newPath = self.acq.folderPath + "/" + "RawData"
-            os.makedirs(newPath, exist_ok=True)
-            if self.heightId is None and self.widthId is None:
-                path = os.path.join(newPath, f"{self.acq.fileName}_background")
-            else:
-                path = os.path.join(newPath, f"{self.acq.fileName}_x{self.widthId}_y{self.heightId}")
-            with open(path + ".csv", "w+") as f:
-                for i, x in enumerate(self.acq.waves):
-                    f.write(f"{x},{fixedData[i]}\n")
-                f.close()
