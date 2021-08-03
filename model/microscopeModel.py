@@ -30,19 +30,22 @@ class Model:
 
     folderPath: str = None
     fileName: str = None
+
     laserWavelength: int = None
+    waves: list = None
+
     width: int = 2
     height: int = 2
     step: int = 1
     stepMeasureUnit: float = 10**3
     exposureTime: int = 500
     integrationTime = 3000
+    direction = "same"  # or "other"
+
+    backgroundData: tuple = None
     isAcquiring: bool = False
     isAcquisitionDone: bool = False  # change by notification?? TODO
-    backgroundData: tuple = None
-    waves: list = None
     dataPixel: list = None
-    direction = "same"  # or "other"
 
     def createDataPixelTuple(self, x: int, y: int, spectrum: list):
         return DataTuple(x, y, spectrum)
