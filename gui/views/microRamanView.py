@@ -139,7 +139,6 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.dSlider_blue.valueChanged.connect(self.set_blue_range)
         self.graph_rgb.scene().sigMouseMoved.connect(self.mouse_moved)
         self.pb_background.clicked.connect(self.acquire_background)
-        self.pb_saveData.clicked.connect(self.save_matrixRGB)
         self.pb_sweepSame.clicked.connect(lambda: setattr(self, 'direction', 'same'))
         self.pb_sweepAlternate.clicked.connect(lambda: setattr(self, 'direction', 'other'))
         self.pb_stop.clicked.connect(self.stop_acq)
@@ -170,9 +169,9 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         self.pb_saveImage.clicked.connect(self.save_image)
         self.cb_colorRangeView.stateChanged.connect(self.colorRangeView_status)
 
-        self.cb_delete_background.stateChanged.connect(self.update_without_background)
+        self.cb_substractBackground.stateChanged.connect(self.update_without_background)
 
-        self.pb_save_without_background.clicked.connect(self.save_matrix_data_without_background)
+        self.pb_saveWithoutBackground.clicked.connect(self.save_matrix_data_without_background)
 
         self.cmb_wave.currentIndexChanged.connect(self.set_wave)
 
