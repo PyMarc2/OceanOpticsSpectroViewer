@@ -17,6 +17,19 @@ class HyperSpectralImage:
     def __init__(self):
         self.data = []
         self.wavelength = []
+        self.background = []
+
+    def dataWithoutBackground(self):
+        dataWithoutBackground = []
+        for item in self.data:
+            x = item.x
+            y = item.y
+            spectrum = item.spectrum - self.background
+            dataWithoutBackground.append(Pixel(x, y, spectrum))
+        return dataWithoutBackground
+
+    def setBackground(self, background):
+        self.background = np.array(background)
 
     def setWavelength(self, wavelength):
         self.wavelength = np.array(wavelength)
@@ -40,7 +53,7 @@ class HyperSpectralImage:
         for item in data:
             if item.x == x:
                 if item.y == y:
-                    spectrum = item.spectrum
+                    spectrum = np.array(item.spectrum)
 
         return spectrum
 
@@ -180,5 +193,15 @@ class HyperSpectralImage:
             #         elem = elem_str.split(",")
             #         xAxis.append(float(elem[1]))
             #         self.setWavelength(xAxis)
+
+
+    def saveImage(self, matrixRGB):
+        pass # à faire
+        # path = self.folderPath + "/"
+        # img = self.matrixRGB.astype(np.uint8)
+        # if self.fileName == "":
+        #     plt.imsave(path + "matrixRGB.png", img)
+        # else:
+        #     plt.imsave(path + self.fileName + "_matrixRGB.png", img)
 
 

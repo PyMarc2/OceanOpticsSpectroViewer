@@ -38,6 +38,7 @@ class WindowControl(QMainWindow, Ui_MainWindow):
         self.appController = None
 
         self.doSliderPositionAreInitialize = False
+        self.visualWithoutBackground = True
         self.colorRangeViewEnable = True
         self.globalMaximum = True
         self.folderpath = ""
@@ -49,18 +50,24 @@ class WindowControl(QMainWindow, Ui_MainWindow):
         self.rangeLen = 1024
         self.minWave = 0
 
+        # get list stage/spectro
+
         self.connectWidgets()
         self.updateSliderStatus()
 
     def connectWidgets(self):
-        self.cmb_wave.currentIndexChanged.connect(self.setRangeToWave)
-        self.cmb_set_maximum.currentIndexChanged.connect(self.setMaximum)
+        self.cb_substractBackground.stateChanged.connect(self.substractBackground)
+        self.cb_colorRangeView.stateChanged.connect(self.colorRangeViewStatus)
 
-        self.graph_rgb.scene().sigMouseMoved.connect(self.mouseMoved)
+        self.cmb_measureUnit.currentTextChanged.connect(self.setMeasureUnit)
+        self.cmb_set_maximum.currentIndexChanged.connect(self.setMaximum)
+        self.cmb_wave.currentIndexChanged.connect(self.setRangeToWave)
 
         self.dSlider_red.valueChanged.connect(self.setColorRange)
         self.dSlider_green.valueChanged.connect(self.setColorRange)
         self.dSlider_blue.valueChanged.connect(self.setColorRange)
+
+        self.graph_rgb.scene().sigMouseMoved.connect(self.mouseMoved)
 
         self.sb_highRed.valueChanged.connect(self.updateSliderStatus)
         self.sb_lowRed.valueChanged.connect(self.updateSliderStatus)
@@ -69,53 +76,24 @@ class WindowControl(QMainWindow, Ui_MainWindow):
         self.sb_highBlue.valueChanged.connect(self.updateSliderStatus)
         self.sb_lowBlue.valueChanged.connect(self.updateSliderStatus)
 
-        self.cb_colorRangeView.stateChanged.connect(self.colorRangeViewStatus)
-
+        self.pb_saveWithoutBackground.clicked.connect(self.saveWithoutBackground)
+        self.pb_sweepAlternate.clicked.connect(self.sweepDirectionOther)
+        self.pb_connectDetection.clicked.connect(self.connectDetection)
+        self.pb_background.clicked.connect(self.acquireBackground)
+        self.pb_sweepSame.clicked.connect(self.sweepDirectionSame)
+        self.pb_connectLight.clicked.connect(self.connectLight)
+        self.pb_connectStage.clicked.connect(self.connectStage)
         self.pb_launch.clicked.connect(self.launchAcquisition)
         self.pb_stop.clicked.connect(self.stopAcquisition)
-        self.pb_background.clicked.connect(self.acquireBackground)
-
-        self.pb_sweepSame.clicked.connect(self.sweepDirectionSame)
-        self.pb_sweepAlternate.clicked.connect(self.sweepDirectionOther)
+        self.pb_saveImage.clicked.connect(self.saveImage)
 
         self.sb_acqTime.valueChanged.connect(self.setAcquisitionTime)
         self.sb_exposure.valueChanged.connect(self.setExposureTime)
+        self.sb_height.textChanged.connect(self.setHeight)
+        self.sb_width.textChanged.connect(self.setWidth)
         self.sb_step.textChanged.connect(self.setStep)
 
-        self.sb_height.textChanged.connect(lambda: setattr(self, 'height', self.sb_height.value()))
-        self.sb_width.textChanged.connect(lambda: setattr(self, 'width', self.sb_width.value()))
-
-        def setHeight(self):
-            height = self.sb_height.value()
-            pass # Call fonction Justine
-
-        def setWidth(self):
-            width = self.sb_width.value()
-            pass # call fonction Justine
-
-
-
-
-
-
-
-
-
-
-
-        self.cb_delete_background.stateChanged.connect(self.update_without_background)
-
-        self.cmb_measureUnit.currentTextChanged.connect(self.setMeasureUnit)
-
-        self.pb_saveData.clicked.connect(self.save_matrixRGB)
-        self.pb_connectLight.clicked.connect(self.connect_light)
-        self.pb_connectStage.clicked.connect(self.connect_stage)
-        self.pb_connectDetection.clicked.connect(self.connect_detection)
-        self.pb_saveImage.clicked.connect(self.save_image)
-        self.pb_save_without_background.clicked.connect(self.save_matrix_data_without_background)
-
-
-        self.tb_folderPath.clicked.connect(self.select_save_folder)
+        self.tb_folderPath.clicked.connect(self.selectSaveFolder)
 
     def enableAllButtons(self):
         self.cb_delete_background.setEnabled(True)
@@ -160,56 +138,97 @@ class WindowControl(QMainWindow, Ui_MainWindow):
         self.le_fileName.setEnabled(False)
 
     # Device Connection
-    def selectSaveFolder(self):
+
+    def connectDetection(self):
         if self.le_laser.text() == "":
             self.errorLaser()
         else:
             try:
-                laser = int(self.le_laser.text())
-                self.folderPath = str(QFileDialog.getExistingDirectory(self, "Select Directory"))
-                self.appController.deleteSpectrum()
-                self.appController.loadData(self.folderPath)
-                matrixRGB = self.appController.matrixRGB(self.globalMaximum)
-                matrixData = self.appController.matrixData()
-                waves = self.appController.waves(int(self.le_laser.text()))
-
-                self.createPlotRGB()
-                self.createPlotSpectrum()
+                self.laser = int(self.le_laser.text())
+                index = self.cmb_selectDetection.currentIndex()
+                # waves = Call fonction Justine -> connectSpectro(index) -> Ouput : wavelength
+                self.appController.setWavelength(waves)
                 self.setRangeToWave()
-                self.updateSpectrumPlot(waves, matrixData)
-                self.updateRGBPlot(matrixRGB)
-            except Exception as e:
-                print(f"error:{e}")
+                self.updateSliderStatus()
+                self.cmb_wave.setEnabled(True)
+            except:
                 self.errorLaser()
+
+    def connectLight(self):
+        pass
+
+    def connectStage(self):
+        index = self.cmb_selectStage.currentIndex()
+        # waves = Call fonction Justine -> connectStage(index)
+
+
     # Capture Controls
+
+    def folderName(self):
+        folderName = self.le_fileName.text()
+        return folderName
+
+    def selectSaveFolder(self):
+        self.folderPath = str(QFileDialog.getExistingDirectory(self, "Select Directory"))
+        if self.folderPath != "":
+            self.le_folderPath.setText(self.folderPath)
+
+    def errorFolderName(self):
+        self.le_folderPath.setStyleSheet("background-color: rgb(255, 0, 0)")
+        QTimer.singleShot(50, lambda: self.le_folderPath.setStyleSheet("background-color: rgb(255,255,255)"))
+
+    def saveImage(self):
+        matrixRGB = self.appController.matrixRGB(self.globalMaximum, self.visualWithoutBackground)
+        self.appController.saveImage(matrixRGB)
+
 
     # Background Controls
 
+    def substractBackground(self):
+        backgroundData = self.appController.backgroundData
+        if backgroundData == []:
+            self.error_background()
+            if self.cb_delete_background.checkState() == 2:
+                QTimer.singleShot(1, lambda: self.cb_delete_background.setCheckState(0))
+        else:
+            if self.cb_delete_background.checkState() == 2:
+                self.visualWithoutBackground = True
+            if self.cb_delete_background.checkState() == 0:
+                self.visualWithoutBackground = False
+            laser = int(self.le_laser.text())
+            matrixRGB = self.appController.matrixRGB(self.globalMaximum, self.visualWithoutBackground)
+            waves = self.appController.waves(laser)
+            self.updateSpectrumPlot(waves)
+            self.updateRGBPlot(matrixRGB)
+
+    def saveWithoutBackground(self):
+        pass # Call fonction save sans background
+
+    def error_background(self):
+        self.pb_background.setStyleSheet("background-color: rgb(255, 0, 0)")
+        QTimer.singleShot(50, lambda: self.pb_background.setStyleSheet("background-color: rgb(244,244,244)"))
+
+
     # Info Laser
 
+    def errorLaser(self):
+        self.le_laser.setStyleSheet("background-color: rgb(255, 0, 0)")
+        QTimer.singleShot(50, lambda: self.le_laser.setStyleSheet("background-color: rgb(200, 200, 200)"))
+
+
     # Acquisition Settings
-    def sweepDirectionSame(self):
-        direction = "same"
-        pass # call le changement de variable Justine
 
-    def sweepDirectionOther(self):
-        direction = "other"
-        pass # call le changement de variable Justine
+    def setWidth(self):
+        width = self.sb_width.value()
+        pass # call fonction Justine
 
-    def setAcquisitionTime(self):
-            acqTime = self.sb_acqTime.value()
-            pass # Call fonction Justine
-            # set 'movingIntegrationData', None
-            # launch setIntegrationTime()
-
-    def setExposureTime(self):
-            exposureTime = self.sb_exposure.value()
-            pass # Call fonction Justine
-            # launch setExposureTime()
+    def setHeight(self):
+        height = self.sb_height.value()
+        pass # Call fonction Justine
 
     def setStep(self):
-            step = self.sb_step.value()
-            pass # Call fonction Justine
+        step = self.sb_step.value()
+        pass # Call fonction Justine
 
     def set_measure_unit(self):
         if self.cmb_measureUnit.currentText() == 'mm':
@@ -220,10 +239,26 @@ class WindowControl(QMainWindow, Ui_MainWindow):
 
         elif self.cmb_measureUnit.currentText() == 'nm':
             stepMeasureUnit = 10**(-3)
-
         pass # Call fonction Justine
 
+    def setExposureTime(self):
+        exposureTime = self.sb_exposure.value()
+        pass # Call fonction Justine
+        # launch setExposureTime()
 
+    def setAcquisitionTime(self):
+        acqTime = self.sb_acqTime.value()
+        pass # Call fonction Justine
+        # set 'movingIntegrationData', None
+        # launch setIntegrationTime()
+
+    def sweepDirectionSame(self):
+        direction = "same"
+        pass # call le changement de variable Justine
+
+    def sweepDirectionOther(self):
+        direction = "other"
+        pass # call le changement de variable Justine
 
 
     # Acquisition Control
@@ -232,6 +267,9 @@ class WindowControl(QMainWindow, Ui_MainWindow):
         pass # Justine s'en occupe
 
     def launchAcquisition(self):
+        self.createPlotRGB()
+        self.createPlotSpectrum()
+        self.appController.deleteSpectrum()
         pass # Justine s'en occupe
 
     def stopAcquisition(self):
@@ -273,9 +311,9 @@ class WindowControl(QMainWindow, Ui_MainWindow):
             else:
                 self.mousePositionX = positionX
                 self.mousePositionY = positionY
-                matrixData = self.appController.matrixData()
-                waves = self.appController.waves(int(self.le_laser.text()))
-                self.updateSpectrumPlot(waves, matrixData)
+                laser = int(self.le_laser.text())
+                waves = self.appController.waves(laser)
+                self.updateSpectrumPlot(waves)
         except Exception:
             pass
 
@@ -285,9 +323,9 @@ class WindowControl(QMainWindow, Ui_MainWindow):
         else:
             self.globalMaximum = False
         self.appController.loadData(self.folderPath)
-        matrixRGB = self.appController.matrixRGB(self.globalMaximum)
-        matrixData = self.appController.matrixData()
-        waves = self.appController.waves(int(self.le_laser.text()))
+        laser = int(self.le_laser.text())
+        matrixRGB = self.appController.matrixRGB(self.globalMaximum, self.visualWithoutBackground)
+        waves = self.appController.waves(laser)
         self.updateRGBPlot(matrixRGB)
 
     def setColorRange(self):
@@ -304,7 +342,8 @@ class WindowControl(QMainWindow, Ui_MainWindow):
             self.waveNumber = True
         else:
             self.waveNumber = False 
-        waves = self.appController.waves(int(self.le_laser.text()))
+        laser = int(self.le_laser.text())
+        waves = self.appController.waves(laser)
 
         self.minWave = round(min(waves))
         self.rangeLen = round(max(waves) - min(waves))
@@ -350,16 +389,11 @@ class WindowControl(QMainWindow, Ui_MainWindow):
         highBlueValue = self.dSlider_blue.get_right_thumb_value() / 1024
         return [lowRedValue, highRedValue, lowGreenValue, highGreenValue, lowBlueValue, highBlueValue]
 
-    def errorLaser(self):
-        self.le_laser.setStyleSheet("background-color: rgb(255, 0, 0)")
-        QTimer.singleShot(50, lambda: self.le_laser.setStyleSheet("background-color: rgb(200, 200, 200)"))
-
     def updateRGBPlot(self, matrixRGB):
         vb = pg.ImageItem(image=matrixRGB)
         self.plotViewBox.addItem(vb)
 
-    def updateSpectrumPlot(self, waves, matrixData):
-        # Set the maximum to see the RGB limits and the spectrum clearly
+    def updateSpectrumPlot(self, waves):
         spectrum = self.appController.spectrum(self.mousePositionX, self.mousePositionY)
         try:
             maximum = max(spectrum)
@@ -372,7 +406,6 @@ class WindowControl(QMainWindow, Ui_MainWindow):
         colorValues = self.currentSliderValues()
 
         if self.colorRangeViewEnable:
-            # Set the position of the RGB limits
             lowRed = int( colorValues[0] * wavesLen )
             highRed = int( colorValues[1] * wavesLen - 1 )
             lowGreen = int( colorValues[2] * wavesLen )
@@ -415,10 +448,10 @@ class WindowControl(QMainWindow, Ui_MainWindow):
 
         if self.doSliderPositionAreInitialize:
             try:
-                matrixRGB = self.appController.matrixRGB(self.globalMaximum)
-                matrixData = self.appController.matrixData()
-                waves = self.appController.waves(int(self.le_laser.text()))
-                self.updateSpectrumPlot(waves, matrixData)
+                laser = int(self.le_laser.text())
+                matrixRGB = self.appController.matrixRGB(self.globalMaximum, self,visualWithoutBackground)
+                waves = self.appController.waves(laser)
+                self.updateSpectrumPlot(waves)
                 self.updateRGBPlot(matrixRGB)
 
             except:
@@ -432,8 +465,8 @@ class WindowControl(QMainWindow, Ui_MainWindow):
         if self.cb_colorRangeView.checkState() == 0:
             self.colorRangeViewEnable = False
         try:
-            matrixData = self.appController.matrixData()
-            waves = self.appController.waves(int(self.le_laser.text()))
-            self.updateSpectrumPlot(waves, matrixData)
+            laser = int(self.le_laser.text())
+            waves = self.appController.waves(laser)
+            self.updateSpectrumPlot(waves)
         except Exception:
             pass
