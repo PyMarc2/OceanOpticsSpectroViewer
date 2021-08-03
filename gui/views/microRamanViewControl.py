@@ -181,6 +181,7 @@ class WindowControl(QMainWindow, Ui_MainWindow):
         matrixRGB = self.appController.matrixRGB(self.globalMaximum, self.visualWithoutBackground)
         self.appController.saveImage(matrixRGB)
 
+
     # Background Controls
 
     def substractBackground(self):
@@ -207,11 +208,13 @@ class WindowControl(QMainWindow, Ui_MainWindow):
         self.pb_background.setStyleSheet("background-color: rgb(255, 0, 0)")
         QTimer.singleShot(50, lambda: self.pb_background.setStyleSheet("background-color: rgb(244,244,244)"))
 
+
     # Info Laser
 
     def errorLaser(self):
         self.le_laser.setStyleSheet("background-color: rgb(255, 0, 0)")
         QTimer.singleShot(50, lambda: self.le_laser.setStyleSheet("background-color: rgb(200, 200, 200)"))
+
 
     # Acquisition Settings
 
@@ -242,7 +245,6 @@ class WindowControl(QMainWindow, Ui_MainWindow):
         exposureTime = self.sb_exposure.value()
         pass # Call fonction Justine
         # launch setExposureTime()
-
 
     def setAcquisitionTime(self):
         acqTime = self.sb_acqTime.value()
@@ -392,7 +394,6 @@ class WindowControl(QMainWindow, Ui_MainWindow):
         self.plotViewBox.addItem(vb)
 
     def updateSpectrumPlot(self, waves):
-        # Set the maximum to see the RGB limits and the spectrum clearly
         spectrum = self.appController.spectrum(self.mousePositionX, self.mousePositionY)
         try:
             maximum = max(spectrum)
@@ -405,7 +406,6 @@ class WindowControl(QMainWindow, Ui_MainWindow):
         colorValues = self.currentSliderValues()
 
         if self.colorRangeViewEnable:
-            # Set the position of the RGB limits
             lowRed = int( colorValues[0] * wavesLen )
             highRed = int( colorValues[1] * wavesLen - 1 )
             lowGreen = int( colorValues[2] * wavesLen )
