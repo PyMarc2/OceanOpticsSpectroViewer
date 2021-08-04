@@ -39,7 +39,7 @@ class AppControl():
             spectrum = spectrum - background
         return spectrum
 
-    def deleteSpectrum(self):
+    def deleteSpectra(self):
         self.HSI.deleteSpectra()
 
     def backgroundData(self):
@@ -63,7 +63,6 @@ class AppControl():
         self.HSI.setFolderPath(folderPath)
 
     def setFileName(self, fileName):
-        fileName = self.windowControl.fileName()
         self.HSI.setFileName(fileName)
 
     def save(self):
