@@ -20,7 +20,9 @@
    <string>Form</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">font: 10pt;</string>
+   <string notr="true">font: 10pt;
+background-color: rgb(75, 75, 75);
+color: rgb(255, 255, 255);</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="1" column="0">
@@ -905,7 +907,8 @@
               </size>
              </property>
              <property name="styleSheet">
-              <string notr="true">background-color: rgb(255, 149, 149);</string>
+              <string notr="true">background-color: rgb(255, 149, 149);
+color: rgb(0, 0, 0);</string>
              </property>
              <property name="alignment">
               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -940,7 +943,8 @@
               </size>
              </property>
              <property name="styleSheet">
-              <string notr="true">background-color: rgb(255, 149, 149);</string>
+              <string notr="true">background-color: rgb(255, 149, 149);
+color: rgb(0, 0, 0);</string>
              </property>
              <property name="maximum">
               <number>255</number>
@@ -1026,7 +1030,8 @@
               </size>
              </property>
              <property name="styleSheet">
-              <string notr="true">background-color: rgb(143, 208, 142);</string>
+              <string notr="true">background-color: rgb(143, 208, 142);
+color: rgb(0, 0, 0);</string>
              </property>
              <property name="alignment">
               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -1067,7 +1072,8 @@
               </size>
              </property>
              <property name="styleSheet">
-              <string notr="true">background-color: rgb(143, 208, 142);</string>
+              <string notr="true">background-color: rgb(143, 208, 142);
+color: rgb(0, 0, 0);</string>
              </property>
              <property name="maximum">
               <number>255</number>
@@ -1096,7 +1102,8 @@
               </size>
              </property>
              <property name="styleSheet">
-              <string notr="true">background-color: rgb(183, 190, 255);</string>
+              <string notr="true">background-color: rgb(183, 190, 255);
+color: rgb(0, 0, 0);</string>
              </property>
              <property name="alignment">
               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -1131,7 +1138,8 @@
               </size>
              </property>
              <property name="styleSheet">
-              <string notr="true">background-color: rgb(183, 190, 255);</string>
+              <string notr="true">background-color: rgb(183, 190, 255);
+color: rgb(0, 0, 0);</string>
              </property>
              <property name="maximum">
               <number>255</number>

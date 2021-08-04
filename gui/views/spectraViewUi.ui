@@ -7,14 +7,16 @@
     <x>0</x>
     <y>0</y>
     <width>801</width>
-    <height>756</height>
+    <height>773</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">font: 10pt;</string>
+   <string notr="true">font: 10pt;
+color: rgb(255, 255, 255);
+background-color: rgb(75, 75, 75);</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="3" column="0">
@@ -268,31 +270,6 @@
                 </property>
                </widget>
               </item>
-              <item row="1" column="2">
-               <widget class="QSpinBox" name="sb_acqTime">
-                <property name="minimumSize">
-                 <size>
-                  <width>0</width>
-                  <height>0</height>
-                 </size>
-                </property>
-                <property name="statusTip">
-                 <string>Sets the integration time on the SpectrumDevice.</string>
-                </property>
-                <property name="minimum">
-                 <number>10</number>
-                </property>
-                <property name="maximum">
-                 <number>999999</number>
-                </property>
-                <property name="singleStep">
-                 <number>100</number>
-                </property>
-                <property name="value">
-                 <number>3000</number>
-                </property>
-               </widget>
-              </item>
               <item row="1" column="3">
                <widget class="QLabel" name="label_3">
                 <property name="text">
@@ -397,6 +374,22 @@
                 </property>
                 <property name="text">
                  <string/>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="2">
+               <widget class="QSpinBox" name="sb_acqTime">
+                <property name="minimum">
+                 <number>10</number>
+                </property>
+                <property name="maximum">
+                 <number>999999</number>
+                </property>
+                <property name="singleStep">
+                 <number>100</number>
+                </property>
+                <property name="value">
+                 <number>3000</number>
                 </property>
                </widget>
               </item>

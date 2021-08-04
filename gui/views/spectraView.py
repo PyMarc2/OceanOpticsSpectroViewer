@@ -369,7 +369,7 @@ class SpectraView(QWidget, Ui_spectraView):
             if self.integrationTimeAcq >= self.exposureTime:
                 self.integrationCountAcq = self.integrationTimeAcq // self.exposureTime
                 self.integrationTimeAcqRemainder_ms = self.integrationTimeAcq - (self.integrationCountAcq * self.exposureTime)
-                self.sb_acqTime.setStyleSheet('color: black')
+                self.sb_acqTime.setStyleSheet('color: white')
             else:
                 self.integrationCountAcq = 1
                 self.sb_acqTime.setStyleSheet('color: red')
