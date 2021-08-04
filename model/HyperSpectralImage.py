@@ -52,7 +52,7 @@ class HyperSpectralImage:
     def addSpectrum(self, x, y, spectrum):
         self.data.append(Pixel(x, y, spectrum))
 
-    def deleteSpectrum(self):
+    def deleteSpectra(self):
         self.data = []
 
     def spectrum(self, x, y, data):
@@ -201,30 +201,26 @@ class HyperSpectralImage:
             #         xAxis.append(float(elem[1]))
             #         self.setWavelength(xAxis)
 
- # Save
+    # Save
     def saveCaptureCSV(self, data=None, countHeight=None, countWidth=None):
-        # TODO
         if data is None:
             pass
         else:
-            spectrum = data
-            self.fileName = self.le_fileName.text()
             if self.fileName == "":
                 self.fileName = "spectrum"
 
-            fixedData = copy.deepcopy(spectrum)
             newPath = self.folderPath + "/" + "RawData"
             os.makedirs(newPath, exist_ok=True)
-            if self.heightId is None and self.widthId is None:
+            if countHeight is None and countWidth is None:
                 path = os.path.join(newPath, f"{self.fileName}_background")
             else:
-                path = os.path.join(newPath, f"{self.fileName}_x{self.widthId}_y{self.heightId}")
+                path = os.path.join(newPath, f"{self.fileName}_x{countWidth}_y{countHeight}")
             with open(path + ".csv", "w+") as f:
-                for i, x in enumerate(self.wavelength):
-                    f.write(f"{x},{fixedData[i]}\n")
+                for i, x in enumerate(self.wavelength):  # TODO maybe more wavenumber?
+                    f.write(f"{x},{data[i]}\n")
                 f.close()
 
-    def save_image(self):  # TODO
+    def save_image(self):
         path = self.folderPath + "/"
         img = self.matrixRGB.astype(np.uint8)
         if self.fileName == "":
@@ -232,29 +228,18 @@ class HyperSpectralImage:
         else:
             plt.imsave(path + self.fileName + "_matrixRGB.png", img)
 
-    def save_matrix_data_without_background(self):
-        if not list(self.background):
-            self.error_background()
-        else:
-            self.disable_all_buttons()
-            self.create_matrix_data_without_background()
-            self.saveThread.start()
-            self.enable_all_buttons()
-
-    def saveDataWithoutBackground(self, *args, **kwargs):
-        matrix = self.matrixDataWithoutBackground
+    def saveDataWithoutBackground(self):
+        matrix = self.dataWithoutBackground()
         newPath = self.folderPath + "/" + "UnrawData"
         os.makedirs(newPath, exist_ok=True)
-        for i in range(self.height):
-            for j in range(self.width):
-                spectrum = matrix[i, j, :]
-                self.fileName = self.le_fileName.text()
-                if self.fileName == "":
-                    self.fileName = "spectrum"
-                path = os.path.join(newPath, f"{self.fileName}_withoutBackground_x{i}_y{j}")
-                with open(path + ".csv", "w+") as f:
-                    for ind, x in enumerate(self.wavelength):
-                        f.write(f"{x},{spectrum[ind]}\n")
-                    f.close()
-
-        # self.enable_all_buttons()
+        for i in matrix:
+            if self.fileName == "":
+                self.fileName = "spectrum"
+            x = i.x
+            y = i.y
+            spectrum = i.spectrum
+            path = os.path.join(newPath, f"{self.fileName}_withoutBackground_x{x}_y{y}")
+            with open(path + ".csv", "w+") as f:
+                for ind, x in enumerate(self.wavelength):
+                    f.write(f"{x},{spectrum[ind]}\n")
+                f.close()

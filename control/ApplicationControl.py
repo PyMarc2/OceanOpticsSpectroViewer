@@ -40,7 +40,7 @@ class AppControl():
         return spectrum
 
     def deleteSpectrum(self):
-        self.HSI.deleteSpectrum()
+        self.HSI.deleteSpectra()
 
     def backgroundData(self):
         background = self.HSI.background

@@ -297,7 +297,7 @@ class WindowControl(QWidget, Ui_MainWindow):
         elif not allConnected:
             print("Ça va mal rip")
         else:
-            self.appControl.deleteSpectrum()
+            self.appControl.deleteSpectra()
             self.pb_saveImage.setEnabled(True)
             self.cmb_wave.setEnabled(False)
             self.createPlotSpectrum()
