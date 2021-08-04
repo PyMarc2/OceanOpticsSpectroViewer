@@ -185,7 +185,7 @@ class WindowControl(QWidget, Ui_MainWindow):
 
     def errorFolderName(self):
         self.le_folderPath.setStyleSheet("background-color: rgb(255, 0, 0)")
-        QTimer.singleShot(50, lambda: self.le_folderPath.setStyleSheet("background-color: rgb(255,255,255)"))
+        QTimer.singleShot(50, lambda: self.le_folderPath.setStyleSheet("background-color: rgb(75, 75, 75)"))
 
     def saveImage(self):
         matrixRGB = self.appController.matrixRGB(self.globalMaximum, self.visualWithoutBackground)
@@ -216,14 +216,14 @@ class WindowControl(QWidget, Ui_MainWindow):
 
     def errorBackground(self):
         self.pb_background.setStyleSheet("background-color: rgb(255, 0, 0)")
-        QTimer.singleShot(50, lambda: self.pb_background.setStyleSheet("background-color: rgb(244,244,244)"))
+        QTimer.singleShot(50, lambda: self.pb_background.setStyleSheet("background-color: rgb(75, 75, 75)"))
 
 
     # Info Laser
 
     def errorLaser(self):
         self.le_laser.setStyleSheet("background-color: rgb(255, 0, 0)")
-        QTimer.singleShot(50, lambda: self.le_laser.setStyleSheet("background-color: rgb(200, 200, 200)"))
+        QTimer.singleShot(50, lambda: self.le_laser.setStyleSheet("background-color: rgb(75, 75, 75)"))
 
 
     # Acquisition Settings
