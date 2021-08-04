@@ -62,10 +62,13 @@ class AppControl():
     def setFolderPath(self, folderPath):
         self.HSI.setFolderPath(folderPath)
 
-    def save(self):
-        #pas fini
+    def setFileName(self, fileName):
         fileName = self.windowControl.fileName()
         self.HSI.setFileName(fileName)
+
+    def save(self):
+        pass
+        #pas fini
 
     def saveWithoutBackground(self):
         self.HSI.saveDataWithoutBackground()
@@ -134,6 +137,10 @@ class AppControl():
     def getSpectroList(self):
         spectroList = self.microControl.getSpecList()
         return spectroList
+
+    def getFileName(self):
+        fileName = self.windowControl.fileName()
+        return fileName
 
 
 

@@ -103,6 +103,7 @@ class WindowControl(QWidget, Ui_MainWindow):
         self.sb_width.textChanged.connect(self.setWidth)
         self.sb_step.textChanged.connect(self.setStep)
 
+        self.le_fileName.editingFinished.connect(self.selectFileName)
         self.tb_folderPath.clicked.connect(self.selectSaveFolder)
 
     def enableAllButtons(self):
@@ -147,7 +148,7 @@ class WindowControl(QWidget, Ui_MainWindow):
         self.tb_folderPath.setEnabled(False)
         self.le_fileName.setEnabled(False)
 
-    def initializeButtons(self):  # GUI
+    def initializeButtons(self):
         self.pb_sweepSame.setIcons(QPixmap("./gui/misc/icons/sweep_same.png").scaled(50, 50, Qt.KeepAspectRatio, Qt.SmoothTransformation),
                                    QPixmap("./gui/misc/icons/sweep_same_hover.png").scaled(50, 50, Qt.KeepAspectRatio, Qt.SmoothTransformation),
                                    QPixmap("./gui/misc/icons/sweep_same_clicked.png").scaled(50, 50, Qt.KeepAspectRatio, Qt.SmoothTransformation),
@@ -157,9 +158,6 @@ class WindowControl(QWidget, Ui_MainWindow):
                                         QPixmap("./gui/misc/icons/sweep_alternate_clicked.png").scaled(50, 50, Qt.KeepAspectRatio, Qt.SmoothTransformation),
                                         QPixmap("./gui/misc/icons/sweep_alternate_selected.png").scaled(50, 50, Qt.KeepAspectRatio, Qt.SmoothTransformation))
 
-
-
-    # Device Connection
 
     def connectDetection(self):
         if self.le_laser.text() == "":
@@ -187,9 +185,9 @@ class WindowControl(QWidget, Ui_MainWindow):
 
     # Capture Controls
 
-    def fileName(self):
-        folderName = self.le_fileName.text()
-        return fileName
+    def selectFileName(self):
+        fileName = self.le_fileName.text()
+        self.appControl.setFileName(fileName)
 
     def selectSaveFolder(self):
         self.folderPath = str(QFileDialog.getExistingDirectory(self, "Select Directory"))
@@ -226,7 +224,9 @@ class WindowControl(QWidget, Ui_MainWindow):
             self.updateRGBPlot(matrixRGB)
 
     def saveWithoutBackground(self):
+        self.disableAllButtons()
         self.appControl.saveWithoutBackground()
+        self.enableAllButtons()
 
     def errorBackground(self):
         self.pb_background.setStyleSheet("background-color: rgb(255, 0, 0)")
