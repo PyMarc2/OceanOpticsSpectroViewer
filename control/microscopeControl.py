@@ -132,32 +132,32 @@ class MicroscopeControl:
 
     # Begin loop
     def begin(self):
-        if not self.isAcquiring:
-            if self.acq.folderPath == "":
-                # call self.error_folder_name()
-                pass
-            elif self.acq.laserWavelength == "":
-                # call self.error_laser_wavelength()
-                pass
-            else:
-                if self.acq.stage is None or self.acq.spec is None:
-                    self.connectDetection()
-                    self.connectStage()
+        # if self.acq.folderPath == "":
+        #     call self.error_folder_name()
+        #     pass
+        # elif self.acq.laserWavelength == "":
+        #     self.error_laser_wavelength()
+        #     pass
+        # else:
+        #     if self.acq.stage is None or self.acq.spec is None:
+        #         self.connectDetection()
+        #         self.connectStage()
 
-                self.isAcquiring = True
-                # self.pb_saveData.setEnabled(True)
-                # self.pb_saveImage.setEnabled(True)
-                # self.cmb_wave.setEnabled(False)
-                # self.disable_all_buttons()
-                # self.create_plot_rgb()
-                # self.create_plot_spectrum()
-                self.setExposureTime()
-                # self.create_matrix_raw_data()
-                # self.create_matrix_rgb()
-                self.countSpectrum = 0
-                self.countHeight = 0
-                self.countWidth = 0
-                self.sweep()
+        # self.pb_saveData.setEnabled(True)
+        # self.pb_saveImage.setEnabled(True)
+        # self.cmb_wave.setEnabled(False)
+        # self.disable_all_buttons()
+        # self.create_plot_rgb()
+        # self.create_plot_spectrum()
+        # self.create_matrix_raw_data()
+        # self.create_matrix_rgb()
+        if not self.isAcquiring:
+            self.isAcquiring = True
+            self.setExposureTime()
+            self.countSpectrum = 0
+            self.countHeight = 0
+            self.countWidth = 0
+            self.sweep()
 
         else:
             print('Sampling already started.')
@@ -169,15 +169,14 @@ class MicroscopeControl:
                 # self.matrix_raw_data_replace()
                 # self.matrixRGB_replace()
                 # self.update_rgb_plot()
+                # save function from AppControl()
 
                 if self.acq.direction == "same":
                     try:
                         if self.countWidth < (self.acq.width - 1):
-                            # wait for signal...
                             self.countWidth += 1
                             self.moveStage()
                         elif self.countHeight < (self.acq.height - 1) and self.countWidth == (self.acq.width - 1):
-                            # wait for signal...
                             self.countWidth = 0
                             self.countHeight += 1
                             self.moveStage()
@@ -192,22 +191,18 @@ class MicroscopeControl:
                     try:
                         if self.countHeight % 2 == 0:
                             if self.countWidth < (self.acq.width - 1):
-                                # wait for signal...
                                 self.countWidth += 1
                                 self.moveStage()
                             elif self.countWidth == (self.acq.width - 1) and self.countHeight < (self.acq.height - 1):
-                                # wait for signal...
                                 self.countHeight += 1
                                 self.moveStage()
                             else:
                                 self.stopAcq()
                         elif self.countHeight % 2 == 1:
                             if self.countWidth > 0:
-                                # wait for signal...
                                 self.countWidth -= 1
                                 self.moveStage()
                             elif self.countWidth == 0 and self.countHeight < (self.acq.height - 1):
-                                # wait for signal...
                                 self.countHeight += 1
                                 self.moveStage()
                             else:

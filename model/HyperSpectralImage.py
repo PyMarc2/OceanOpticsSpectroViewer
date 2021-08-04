@@ -4,20 +4,22 @@ from typing import NamedTuple
 import pandas as pd
 import numpy as np
 import fnmatch
-import csv
+import copy
 import os
 import re
 
 class Pixel(NamedTuple):
-    x: int=None
-    y: int=None
-    spectrum: object=None
+    x: int = None
+    y: int = None
+    spectrum: object = None
 
 class HyperSpectralImage:
     def __init__(self):
         self.data = []
         self.wavelength = []
         self.background = []
+        self.folderPath = ""
+        self.fileName = ""
 
     def dataWithoutBackground(self):
         dataWithoutBackground = []
@@ -42,8 +44,7 @@ class HyperSpectralImage:
         return waveNumber.round(0)
 
     def addSpectrum(self, x, y, spectrum):
-        self.data.append(Pixel(x, y, spectrum)) 
-
+        self.data.append(Pixel(x, y, spectrum))
 
     def deleteSpectrum(self):
         self.data = []
@@ -194,14 +195,101 @@ class HyperSpectralImage:
             #         xAxis.append(float(elem[1]))
             #         self.setWavelength(xAxis)
 
+ # Save
+    def start_save(self, data=None, countHeight=None, countWidth=None):
+        self.heightId = countHeight
+        self.widthId = countWidth
+        self.data = data
+        self.save_capture_csv()
 
-    def saveImage(self, matrixRGB):
-        pass # à faire
-        # path = self.folderPath + "/"
-        # img = self.matrixRGB.astype(np.uint8)
-        # if self.fileName == "":
-        #     plt.imsave(path + "matrixRGB.png", img)
-        # else:
-        #     plt.imsave(path + self.fileName + "_matrixRGB.png", img)
+    def select_save_folder(self):  # TODO
+        self.folderPath = str(QFileDialog.getExistingDirectory(self, "Select Directory"))
+        if self.folderPath != "":
+            self.le_folderPath.setText(self.folderPath)
 
+    def save_capture_csv(self):
+        if self.data is None:
+            pass
+        else:
+            spectrum = self.data
+            self.fileName = self.le_fileName.text()
+            if self.fileName == "":
+                self.fileName = "spectrum"
 
+            fixedData = copy.deepcopy(spectrum)
+            newPath = self.folderPath + "/" + "RawData"
+            os.makedirs(newPath, exist_ok=True)
+            if self.heightId is None and self.widthId is None:
+                path = os.path.join(newPath, f"{self.fileName}_background")
+            else:
+                path = os.path.join(newPath, f"{self.fileName}_x{self.widthId}_y{self.heightId}")
+            with open(path + ".csv", "w+") as f:
+                for i, x in enumerate(self.wavelength):
+                    f.write(f"{x},{fixedData[i]}\n")
+                f.close()
+
+    def save_image(self):  # TODO
+        path = self.folderPath + "/"
+        img = self.matrixRGB.astype(np.uint8)
+        if self.fileName == "":
+            plt.imsave(path + "matrixRGB.png", img)
+        else:
+            plt.imsave(path + self.fileName + "_matrixRGB.png", img)
+
+    def save_matrix_data_without_background(self):
+        if not list(self.background):
+            self.error_background()
+        else:
+            self.disable_all_buttons()
+            self.create_matrix_data_without_background()
+            self.saveThread.start()
+            self.enable_all_buttons()
+
+    def save_data_without_background(self, *args, **kwargs):
+        matrix = self.matrixDataWithoutBackground
+        newPath = self.folderPath + "/" + "UnrawData"
+        os.makedirs(newPath, exist_ok=True)
+        for i in range(self.height):
+            for j in range(self.width):
+                spectrum = matrix[i, j, :]
+                self.fileName = self.le_fileName.text()
+                if self.fileName == "":
+                    self.fileName = "spectrum"
+                path = os.path.join(newPath, f"{self.fileName}_withoutBackground_x{i}_y{j}")
+                with open(path + ".csv", "w+") as f:
+                    for ind, x in enumerate(self.wavelength):
+                        f.write(f"{x},{spectrum[ind]}\n")
+                    f.close()
+
+        # self.enable_all_buttons()
+
+    # def save_matrixRGB(self):
+    #     path = self.folderPath + "/"
+    #     fixedData = copy.deepcopy(self.matrixRGB)
+    #     if self.fileName == "":
+    #         file = "matrixRGB.csv"
+    #     else:
+    #         file = self.fileName + "_matrixRGB.csv"
+    #
+    #     with open(path + file, "w+") as f:
+    #         f.write("[")
+    #         for i, x in enumerate(fixedData):
+    #             if i == 0:
+    #                 f.write("[")
+    #             else:
+    #                 f.write("\n\n[")
+    #             for ii, y in enumerate(x):
+    #                 if ii == 0:
+    #                     f.write("[")
+    #                 else:
+    #                     f.write("\n[")
+    #                 for iii, z, in enumerate(y):
+    #                     if iii != len(y) - 1:
+    #                         f.write(f"{z}, ")
+    #                     else:
+    #                         f.write(f"{z}")
+    #                 f.write("]")
+    #             f.write("]")
+    #         f.write("]")
+    #
+    #         f.close()
