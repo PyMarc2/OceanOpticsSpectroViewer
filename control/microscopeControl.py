@@ -37,21 +37,34 @@ class MicroscopeControl:
     def setStepMeasureUnit(self, unit):
         self.acq.setStepMeasureUnit(unit)
 
+    def setDirectionToDefault(self):
+        self.acq.setDirectionToDefault()
+
+    def setDirectionToZigzag(self):
+        self.acq.setDirectionToZigzag()
+
     def resetMovingIntegrationData(self):
         self.movingIntegrationData = None
 
-    def setExposureTime(self, time_in_ms=None, update=True):
+    def setExposureTime(self, exposition):
+        self.acq.setExposureTime(exposition)
+
+    def setIntegrationTime(self, integration):
+        self.acq.setIntegrationTime(integration)
+
+    def startExposureTime(self, time_in_ms=None, update=True):
         if time_in_ms is not None:
             expositionTime = time_in_ms
 
         else:
+            self.acq.setExposureTime()
             expositionTime = self.acq.exposureTime
 
         self.acq.spec.integration_time_micros(expositionTime * 1000)
         if update:
-            self.setIntegrationTime()
+            self.startIntegrationTime()
 
-    def setIntegrationTime(self):
+    def startIntegrationTime(self):
         try:
             if self.acq.integrationTime >= self.acq.exposureTime:
                 self.integrationCountAcq = self.acq.integrationTime // self.acq.exposureTime
@@ -91,7 +104,7 @@ class MicroscopeControl:
         else:
             try:
                 # call self.disable_all_buttons()
-                self.setExposureTime()
+                self.startExposureTime()
                 background = self.spectrumPixelAcquisition()
                 # self.startSave(data=self.backgroundData)
                 # call self.enable_all_buttons()
@@ -110,10 +123,10 @@ class MicroscopeControl:
             self.movingIntegrationData.append(self.liveAcquisitionData)
             self.expositionCounter += 1
             if self.changeLastExposition:
-                self.setExposureTime(self.integrationTimeAcqRemainder_ms, update=False)
+                self.startExposureTime(self.integrationTimeAcqRemainder_ms, update=False)
 
         else:
-            self.setExposureTime(update=False)
+            self.startExposureTime(update=False)
             self.movingIntegrationData.append(self.liveAcquisitionData)
             self.isAcquisitionDone = True
             self.expositionCounter = 0
@@ -165,7 +178,7 @@ class MicroscopeControl:
         # self.create_matrix_rgb()
         if not self.isAcquiring:
             self.isAcquiring = True
-            self.setExposureTime()
+            self.startExposureTime()
             self.countSpectrum = 0
             self.countHeight = 0
             self.countWidth = 0
