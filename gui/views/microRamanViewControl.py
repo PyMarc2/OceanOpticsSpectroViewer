@@ -203,9 +203,7 @@ class WindowControl(QWidget, Ui_MainWindow):
         matrixRGB = self.appControl.matrixRGB(self.globalMaximum, self.visualWithoutBackground)
         self.appControl.saveImage(matrixRGB)
 
-
     # Background Controls
-
     def substractBackground(self):
         backgroundData = self.appControl.backgroundData
         if backgroundData == []:
@@ -232,16 +230,12 @@ class WindowControl(QWidget, Ui_MainWindow):
         self.pb_background.setStyleSheet("background-color: rgb(255, 0, 0)")
         QTimer.singleShot(50, lambda: self.pb_background.setStyleSheet("background-color: rgb(75, 75, 75)"))
 
-
     # Info Laser
-
     def errorLaser(self):
         self.le_laser.setStyleSheet("background-color: rgb(255, 0, 0)")
         QTimer.singleShot(50, lambda: self.le_laser.setStyleSheet("background-color: rgb(75, 75, 75)"))
 
-
     # Acquisition Settings
-
     def setWidth(self):
         width = self.sb_width.value()
         self.appControl.setWidth(width)
@@ -257,7 +251,6 @@ class WindowControl(QWidget, Ui_MainWindow):
     def setMeasureUnit(self):
         measureUnit = self.cmb_measureUnit.currentText()
         self.appControl.setMeasureUnit(measureUnit)
-       
 
     def setExposureTime(self):
         exposureTime = self.sb_exposure.value()
@@ -273,12 +266,18 @@ class WindowControl(QWidget, Ui_MainWindow):
     def sweepDirectionOther(self):
         self.appControl.sweepDirectionOther()
 
-
     # Acquisition Control
-
     def acquireBackground(self):
+        indexStage = self.cmb_selectStage.currentIndex()
+        indexSpectro = self.cmb_selectDetection.currentIndex()
+        allConnected = self.appControl.allConnected(indexStage, indexSpectro)
+
         if self.folderPath == "":
-                self.errorFolderName()
+            self.errorFolderName()
+        elif self.le_laser.text() == "":
+            self.errorLaser()
+        elif not allConnected:
+            print("Ça va mal rip")
         else:
             self.disableAllButtons()
             self.appControl.acquireBackground()

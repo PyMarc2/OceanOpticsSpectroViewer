@@ -1,5 +1,5 @@
 from tkinter.filedialog import askopenfile
-import matplotlib.pyplot as mpl
+import matplotlib.pyplot as plt
 from typing import NamedTuple
 import pandas as pd
 import numpy as np
@@ -31,7 +31,7 @@ class HyperSpectralImage:
         return dataWithoutBackground
 
     def setFolderPath(self, folderPath):
-        self.folderpath = folderPath
+        self.folderPath = folderPath
 
     def setFileName(self, fileName):
         self.fileName = fileName
@@ -202,7 +202,7 @@ class HyperSpectralImage:
             #         self.setWavelength(xAxis)
 
     # Save
-    def saveCaptureCSV(self, data=None, countHeight=None, countWidth=None):
+    def saveCaptureCSV(self, data=None, countHeight=None, countWidth=None, *args):
         if data is None:
             pass
         else:

@@ -102,7 +102,7 @@ class AppControl():
         self.HSI.setBackground(background)
 
     def saveBackground(self):
-        self.HSI.saveCaptureCSV(self.HSI.background)
+        self.HSI.saveCaptureCSV(data=self.HSI.background)
 
     def launchAcquisition(self):
         self.microControl.begin()
