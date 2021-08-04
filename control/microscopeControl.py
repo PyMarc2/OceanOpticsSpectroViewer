@@ -22,6 +22,8 @@ class MicroscopeControl:
         self.isAcquisitionDone = False
         self.isAcquiring = False
 
+        self.appControl = None
+
     # SETTINGS
     def resetMovingIntegrationData(self):
         self.movingIntegrationData = None

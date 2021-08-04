@@ -7,7 +7,8 @@ from model.HyperSpectralImage import HyperSpectralImage
 class AppControl():
     def __init__(self):
         self.HSI = HyperSpectralImage()
-        self.windowController = None
+        self.windowControl = None
+        self.microControl = None
 
     def matrixRGB(self, globalMaximum=True, VWB=True):
         colorValues = self.windowController.currentSliderValues()

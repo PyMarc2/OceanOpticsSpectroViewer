@@ -7,6 +7,9 @@ import logging
 import os
 from PyQt5 import uic
 
+from control.ApplicationControl import AppControl
+from control.microscopeControl import MicroscopeControl
+
 log = logging.getLogger(__name__)
 
 
@@ -48,6 +51,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.helpDialog = HelpDialog()
         self.spectraView = SpectraView(model=self.model)
         self.microRamanView = MicroRamanView(model=self.model)
+
+        # Def pointeurs
+        self.microRamanAppControl = AppControl()
+        self.microRamanMicroscopeControl = MicroscopeControl()
+
+        self.microRamanAppControl.windowControl = self.microRamanView
+        self.microRamanAppControl.microControl = self.microRamanMicroscopeControl
+        self.microRamanMicroscopeControl.appControl = self.microRamanAppControl
+        self.microRamanView.appControl = self.microRamanAppControl
 
     def connect_buttons(self):
         self.helpAction.triggered.connect(self.show_helpDialog)

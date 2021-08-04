@@ -31,7 +31,6 @@ class WindowControl(QWidget, Ui_MainWindow):
         super(WindowControl, self).__init__()
         self.setupUi(self)
         self.model = model
-        self.appController = None
 
         self.doSliderPositionAreInitialize = False
         self.visualWithoutBackground = True
@@ -45,6 +44,8 @@ class WindowControl(QWidget, Ui_MainWindow):
 
         self.rangeLen = 1024
         self.minWave = 0
+
+        self.appControl = None
 
         # get list stage/spectro
 
@@ -273,6 +274,7 @@ class WindowControl(QWidget, Ui_MainWindow):
     # Acquisition Control
 
     def acquireBackground(self):
+        self.appControl.printYo()
         pass # Justine s'en occupe
 
     def launchAcquisition(self):
