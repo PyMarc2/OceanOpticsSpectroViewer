@@ -188,7 +188,7 @@ class WindowControl(QWidget, Ui_MainWindow):
     # Capture Controls
 
     def fileName(self):
-        folderName = self.le_fileName.text()
+        fileName = self.le_fileName.text()
         return fileName
 
     def selectSaveFolder(self):
