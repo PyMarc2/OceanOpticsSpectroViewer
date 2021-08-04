@@ -224,7 +224,9 @@ class WindowControl(QWidget, Ui_MainWindow):
             self.updateRGBPlot(matrixRGB)
 
     def saveWithoutBackground(self):
+        self.disableAllButtons()
         self.appControl.saveWithoutBackground()
+        self.enableAllButtons()
 
     def errorBackground(self):
         self.pb_background.setStyleSheet("background-color: rgb(255, 0, 0)")
