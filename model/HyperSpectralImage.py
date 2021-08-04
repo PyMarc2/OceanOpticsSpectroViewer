@@ -262,34 +262,3 @@ class HyperSpectralImage:
                     f.close()
 
         # self.enable_all_buttons()
-
-    # def save_matrixRGB(self):
-    #     path = self.folderPath + "/"
-    #     fixedData = copy.deepcopy(self.matrixRGB)
-    #     if self.fileName == "":
-    #         file = "matrixRGB.csv"
-    #     else:
-    #         file = self.fileName + "_matrixRGB.csv"
-    #
-    #     with open(path + file, "w+") as f:
-    #         f.write("[")
-    #         for i, x in enumerate(fixedData):
-    #             if i == 0:
-    #                 f.write("[")
-    #             else:
-    #                 f.write("\n\n[")
-    #             for ii, y in enumerate(x):
-    #                 if ii == 0:
-    #                     f.write("[")
-    #                 else:
-    #                     f.write("\n[")
-    #                 for iii, z, in enumerate(y):
-    #                     if iii != len(y) - 1:
-    #                         f.write(f"{z}, ")
-    #                     else:
-    #                         f.write(f"{z}")
-    #                 f.write("]")
-    #             f.write("]")
-    #         f.write("]")
-    #
-    #         f.close()

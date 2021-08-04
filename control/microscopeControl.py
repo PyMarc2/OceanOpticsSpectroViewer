@@ -43,6 +43,26 @@ class MicroscopeControl:
     def setDirectionToZigzag(self):
         self.acq.setDirectionToZigzag()
 
+    def getStage(self, index):
+        if self.acq.stage is None:
+            try:
+                self.acq.connectStage(index)
+                return True
+            except:
+                return False
+
+        return True
+
+    def getSpectro(self, index):
+        if self.acq.spec is None:
+            try:
+                self.acq.connectSpectro(index)
+                return True
+            except:
+                return False
+
+        return True
+
     def resetMovingIntegrationData(self):
         self.movingIntegrationData = None
 
@@ -57,7 +77,6 @@ class MicroscopeControl:
             expositionTime = time_in_ms
 
         else:
-            self.acq.setExposureTime()
             expositionTime = self.acq.exposureTime
 
         self.acq.spec.integration_time_micros(expositionTime * 1000)
@@ -97,21 +116,9 @@ class MicroscopeControl:
         return liveData
 
     def acquireBackground(self):
-        if self.acq.folderPath == "":
-            # call self.error_folder_name()
-            pass
-
-        else:
-            try:
-                # call self.disable_all_buttons()
-                self.startExposureTime()
-                background = self.spectrumPixelAcquisition()
-                # self.startSave(data=self.backgroundData)
-                # call self.enable_all_buttons()
-                return background
-
-            except Exception as e:
-                print(f"Error in acquireBackground: {e}")
+        self.startExposureTime()
+        background = self.spectrumPixelAcquisition()
+        return background
 
     def integrateData(self):
         self.isAcquisitionDone = False
@@ -148,34 +155,11 @@ class MicroscopeControl:
             self.countHeight = 0
             self.countWidth = 0
             self.countSpectrum = 0
-            # self.cmb_wave.setEnabled(True)
-
         else:
             print('Sampling already stopped.')
 
-        # self.enable_all_buttons()
-
     # Begin loop
     def begin(self):
-        # if self.acq.folderPath == "":
-        #     call self.error_folder_name()
-        #     pass
-        # elif self.acq.laserWavelength == "":
-        #     self.error_laser_wavelength()
-        #     pass
-        # else:
-        #     if self.acq.stage is None or self.acq.spec is None:
-        #         self.connectDetection()
-        #         self.connectStage()
-
-        # self.pb_saveData.setEnabled(True)
-        # self.pb_saveImage.setEnabled(True)
-        # self.cmb_wave.setEnabled(False)
-        # self.disable_all_buttons()
-        # self.create_plot_rgb()
-        # self.create_plot_spectrum()
-        # self.create_matrix_raw_data()
-        # self.create_matrix_rgb()
         if not self.isAcquiring:
             self.isAcquiring = True
             self.startExposureTime()
@@ -183,18 +167,16 @@ class MicroscopeControl:
             self.countHeight = 0
             self.countWidth = 0
             self.sweep()
-
         else:
             print('Sampling already started.')
 
     def sweep(self):
         while self.isAcquiring:  # TODO change variable name
             if self.countSpectrum <= (self.acq.width * self.acq.height):
-                self.spectrumPixelAcquisition()
-                # self.matrix_raw_data_replace()
-                # self.matrixRGB_replace()
-                # self.update_rgb_plot()
-                # save function from AppControl()
+                pixel = self.spectrumPixelAcquisition()
+                self.appControl.addSpectrum(self.countWidth, self.countHeight, pixel)
+                self.appControl.matrixRGBReplace()
+                self.appControl.savePixel(self.countWidth, self.countHeight, pixel)
 
                 if self.acq.direction == "same":
                     try:
