@@ -50,7 +50,7 @@ class WindowControl(QWidget, Ui_MainWindow):
 
         self.connectWidgets()
         self.updateSliderStatus()
-        self.initialize_buttons()
+        self.initializeButtons()
 
     def connectWidgets(self):
         self.cb_substractBackground.stateChanged.connect(self.substractBackground)
@@ -134,7 +134,7 @@ class WindowControl(QWidget, Ui_MainWindow):
         self.tb_folderPath.setEnabled(False)
         self.le_fileName.setEnabled(False)
 
-    def initialize_buttons(self):  # GUI
+    def initializeButtons(self):  # GUI
         self.pb_sweepSame.setIcons(QPixmap("./gui/misc/icons/sweep_same.png").scaled(50, 50, Qt.KeepAspectRatio, Qt.SmoothTransformation),
                                    QPixmap("./gui/misc/icons/sweep_same_hover.png").scaled(50, 50, Qt.KeepAspectRatio, Qt.SmoothTransformation),
                                    QPixmap("./gui/misc/icons/sweep_same_clicked.png").scaled(50, 50, Qt.KeepAspectRatio, Qt.SmoothTransformation),
