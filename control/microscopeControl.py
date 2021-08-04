@@ -37,6 +37,12 @@ class MicroscopeControl:
     def setStepMeasureUnit(self, unit):
         self.acq.setStepMeasureUnit(unit)
 
+    def setDirectionToDefault(self):
+        self.acq.setDirectionToDefault()
+
+    def setDirectionToZigzag(self):
+        self.acq.setDirectionToZigzag()
+
     def resetMovingIntegrationData(self):
         self.movingIntegrationData = None
 
