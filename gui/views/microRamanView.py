@@ -702,7 +702,6 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
                     self.connect_stage()
 
                 self.isSweepThreadAlive = True
-                self.pb_saveData.setEnabled(True)
                 self.pb_saveImage.setEnabled(True)
                 self.cmb_wave.setEnabled(False)
                 self.disable_all_buttons()

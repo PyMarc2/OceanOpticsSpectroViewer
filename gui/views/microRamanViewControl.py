@@ -187,7 +187,7 @@ class WindowControl(QMainWindow, Ui_MainWindow):
     def substractBackground(self):
         backgroundData = self.appController.backgroundData
         if backgroundData == []:
-            self.error_background()
+            self.errorBackground()
             if self.cb_delete_background.checkState() == 2:
                 QTimer.singleShot(1, lambda: self.cb_delete_background.setCheckState(0))
         else:
@@ -204,7 +204,7 @@ class WindowControl(QMainWindow, Ui_MainWindow):
     def saveWithoutBackground(self):
         pass # Call fonction save sans background
 
-    def error_background(self):
+    def errorBackground(self):
         self.pb_background.setStyleSheet("background-color: rgb(255, 0, 0)")
         QTimer.singleShot(50, lambda: self.pb_background.setStyleSheet("background-color: rgb(244,244,244)"))
 
@@ -267,13 +267,24 @@ class WindowControl(QMainWindow, Ui_MainWindow):
         pass # Justine s'en occupe
 
     def launchAcquisition(self):
-        self.createPlotRGB()
-        self.createPlotSpectrum()
-        self.appController.deleteSpectrum()
-        pass # Justine s'en occupe
+        if self.folderPath == "":
+                self.errorFolderName()
+        elif self.le_laser.text() == "":
+            self.errorLaser()
+        else:
+            self.appController.deleteSpectrum()
+            self.pb_saveImage.setEnabled(True)
+            self.cmb_wave.setEnabled(False)
+            self.createPlotSpectrum()
+            self.createPlotRGB()
+            self.disableAllButtons()
+            pass # Justine s'en occupe
 
     def stopAcquisition(self):
+        self.cmb_wave.setEnabled(True)
+        self.enableAllButtons()
         pass # Justine s'en occupe
+
 
     # Image Controls
 
