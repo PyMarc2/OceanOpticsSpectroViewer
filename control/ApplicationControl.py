@@ -11,7 +11,7 @@ class AppControl():
         self.microControl = None
 
     def matrixRGB(self, globalMaximum=True, VWB=True):
-        colorValues = self.windowController.currentSliderValues()
+        colorValues = self.windowControl.currentSliderValues()
         if VWB == True:
             data = self.HSI.data
         else:
@@ -20,7 +20,7 @@ class AppControl():
         return matrixRGB
 
     def waves(self, laser):
-        if self.windowController.waveNumber == True:
+        if self.windowControl.waveNumber == True:
             waves = self.HSI.waveNumber(laser)
         else:
             waves = self.HSI.wavelength
@@ -28,7 +28,7 @@ class AppControl():
 
     def loadData(self, path):
         self.HSI.loadData(path)
-        colorValues = self.windowController.currentSliderValues()
+        colorValues = self.windowControl.currentSliderValues()
 
     def spectrum(self, x, y, VWB=True):
         if VWB == True:
@@ -105,8 +105,8 @@ class AppControl():
         self.microControl.begin()
 
     def allConnected(self, indexStage, indexSpectro):
-        stage = self.microControl.getStage()
-        spectro = self.microControl.getSpectro()
+        stage = self.microControl.getStage(indexStage)
+        spectro = self.microControl.getSpectro(indexSpectro)
         if stage and spectro:
             return True
         else:
@@ -126,6 +126,14 @@ class AppControl():
 
     def stopAcquisition(self):
         self.microControl.stopAcq()
+
+    def getStageList(self):
+        stageList = self.microControl.getStageList()
+        return stageList
+
+    def getSpectroList(self):
+        spectroList = self.microControl.getSpecList()
+        return spectroList
 
 
 

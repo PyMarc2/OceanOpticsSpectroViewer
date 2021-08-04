@@ -52,6 +52,18 @@ class WindowControl(QWidget, Ui_MainWindow):
         self.updateSliderStatus()
         self.initializeButtons()
 
+    def findDevices(self):
+        self.lightDevices = ["None"]
+        self.listStageDevices = self.appControl.getStageList()
+        self.listSpecDevices = self.appControl.getSpectroList()
+        self.cmb_selectDetection.clear()
+        self.cmb_selectDetection.addItems(self.listSpecDevices)
+        self.cmb_selectLight.clear()
+        self.cmb_selectLight.addItems(self.lightDevices)
+        self.cmb_selectStage.clear()
+        self.cmb_selectStage.addItems(self.listStageDevices)
+
+
     def connectWidgets(self):
         self.cb_substractBackground.stateChanged.connect(self.substractBackground)
         self.cb_colorRangeView.stateChanged.connect(self.colorRangeViewStatus)
@@ -81,6 +93,7 @@ class WindowControl(QWidget, Ui_MainWindow):
         self.pb_connectLight.clicked.connect(self.connectLight)
         self.pb_connectStage.clicked.connect(self.connectStage)
         self.pb_launch.clicked.connect(self.launchAcquisition)
+        self.pb_findDevices.clicked.connect(self.findDevices)
         self.pb_stop.clicked.connect(self.stopAcquisition)
         self.pb_saveImage.clicked.connect(self.saveImage)
 
@@ -93,12 +106,12 @@ class WindowControl(QWidget, Ui_MainWindow):
         self.tb_folderPath.clicked.connect(self.selectSaveFolder)
 
     def enableAllButtons(self):
-        self.cb_delete_background.setEnabled(True)
+        self.cb_substractBackground.setEnabled(True)
         self.cmb_selectDetection.setEnabled(True)
         self.cmb_selectLight.setEnabled(True)
         self.cmb_selectStage.setEnabled(True)
-        self.cmb_magnitude.setEnabled(True)
-        self.pb_save_without_background.setEnabled(True)
+        self.cmb_measureUnit.setEnabled(True)
+        self.pb_saveWithoutBackground.setEnabled(True)
         self.pb_connectDetection.setEnabled(True)
         self.pb_sweepAlternate.setEnabled(True)
         self.pb_connectLight.setEnabled(True)
@@ -114,12 +127,12 @@ class WindowControl(QWidget, Ui_MainWindow):
         self.le_fileName.setEnabled(True)
 
     def disableAllButtons(self):
-        self.cb_delete_background.setEnabled(False)
+        self.cb_substractBackground.setEnabled(False)
         self.cmb_selectDetection.setEnabled(False)
         self.cmb_selectLight.setEnabled(False)
         self.cmb_selectStage.setEnabled(False)
-        self.cmb_magnitude.setEnabled(False)
-        self.pb_save_without_background.setEnabled(False)
+        self.cmb_measureUnit.setEnabled(False)
+        self.pb_saveWithoutBackground.setEnabled(False)
         self.pb_connectDetection.setEnabled(False)
         self.pb_sweepAlternate.setEnabled(False)
         self.pb_connectLight.setEnabled(False)
@@ -156,11 +169,12 @@ class WindowControl(QWidget, Ui_MainWindow):
                 self.laser = int(self.le_laser.text())
                 index = self.cmb_selectDetection.currentIndex()
                 waves = self.appControl.connectDetection(index)
-                self.appController.setWavelength(waves)
+                self.appControl.setWavelength(waves)
                 self.setRangeToWave()
                 self.updateSliderStatus()
                 self.cmb_wave.setEnabled(True)
-            except:
+            except Exception as e:
+                print(e)
                 self.errorLaser()
 
     def connectLight(self):
@@ -188,14 +202,14 @@ class WindowControl(QWidget, Ui_MainWindow):
         QTimer.singleShot(50, lambda: self.le_folderPath.setStyleSheet("background-color: rgb(75, 75, 75)"))
 
     def saveImage(self):
-        matrixRGB = self.appController.matrixRGB(self.globalMaximum, self.visualWithoutBackground)
-        self.appController.saveImage(matrixRGB)
+        matrixRGB = self.appControl.matrixRGB(self.globalMaximum, self.visualWithoutBackground)
+        self.appControl.saveImage(matrixRGB)
 
 
     # Background Controls
 
     def substractBackground(self):
-        backgroundData = self.appController.backgroundData
+        backgroundData = self.appControl.backgroundData
         if backgroundData == []:
             self.errorBackground()
             if self.cb_delete_background.checkState() == 2:
@@ -206,8 +220,8 @@ class WindowControl(QWidget, Ui_MainWindow):
             if self.cb_delete_background.checkState() == 0:
                 self.visualWithoutBackground = False
             laser = int(self.le_laser.text())
-            matrixRGB = self.appController.matrixRGB(self.globalMaximum, self.visualWithoutBackground)
-            waves = self.appController.waves(laser)
+            matrixRGB = self.appControl.matrixRGB(self.globalMaximum, self.visualWithoutBackground)
+            waves = self.appControl.waves(laser)
             self.updateSpectrumPlot(waves)
             self.updateRGBPlot(matrixRGB)
 
@@ -283,7 +297,7 @@ class WindowControl(QWidget, Ui_MainWindow):
         elif not allConnected:
             print("Ça va mal rip")
         else:
-            self.appController.deleteSpectrum()
+            self.appControl.deleteSpectrum()
             self.pb_saveImage.setEnabled(True)
             self.cmb_wave.setEnabled(False)
             self.createPlotSpectrum()
@@ -334,7 +348,7 @@ class WindowControl(QWidget, Ui_MainWindow):
                 self.mousePositionX = positionX
                 self.mousePositionY = positionY
                 laser = int(self.le_laser.text())
-                waves = self.appController.waves(laser)
+                waves = self.appControl.waves(laser)
                 self.updateSpectrumPlot(waves)
         except Exception:
             pass
@@ -344,10 +358,9 @@ class WindowControl(QWidget, Ui_MainWindow):
             self.globalMaximum = True
         else:
             self.globalMaximum = False
-        self.appController.loadData(self.folderPath)
         laser = int(self.le_laser.text())
-        matrixRGB = self.appController.matrixRGB(self.globalMaximum, self.visualWithoutBackground)
-        waves = self.appController.waves(laser)
+        matrixRGB = self.appControl.matrixRGB(self.globalMaximum, self.visualWithoutBackground)
+        waves = self.appControl.waves(laser)
         self.updateRGBPlot(matrixRGB)
 
     def setColorRange(self):
@@ -365,7 +378,7 @@ class WindowControl(QWidget, Ui_MainWindow):
         else:
             self.waveNumber = False 
         laser = int(self.le_laser.text())
-        waves = self.appController.waves(laser)
+        waves = self.appControl.waves(laser)
 
         self.minWave = round(min(waves))
         self.rangeLen = round(max(waves) - min(waves))
@@ -416,7 +429,7 @@ class WindowControl(QWidget, Ui_MainWindow):
         self.plotViewBox.addItem(vb)
 
     def updateSpectrumPlot(self, waves):
-        spectrum = self.appController.spectrum(self.mousePositionX, self.mousePositionY)
+        spectrum = self.appControl.spectrum(self.mousePositionX, self.mousePositionY)
         try:
             maximum = max(spectrum)
             minimum = min(spectrum) - 1
@@ -471,8 +484,8 @@ class WindowControl(QWidget, Ui_MainWindow):
         if self.doSliderPositionAreInitialize:
             try:
                 laser = int(self.le_laser.text())
-                matrixRGB = self.appController.matrixRGB(self.globalMaximum, self,visualWithoutBackground)
-                waves = self.appController.waves(laser)
+                matrixRGB = self.appControl.matrixRGB(self.globalMaximum, self,visualWithoutBackground)
+                waves = self.appControl.waves(laser)
                 self.updateSpectrumPlot(waves)
                 self.updateRGBPlot(matrixRGB)
 
@@ -488,7 +501,7 @@ class WindowControl(QWidget, Ui_MainWindow):
             self.colorRangeViewEnable = False
         try:
             laser = int(self.le_laser.text())
-            waves = self.appController.waves(laser)
+            waves = self.appControl.waves(laser)
             self.updateSpectrumPlot(waves)
         except Exception:
             pass
