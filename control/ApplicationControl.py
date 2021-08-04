@@ -62,10 +62,13 @@ class AppControl():
     def setFolderPath(self, folderPath):
         self.HSI.setFolderPath(folderPath)
 
-    def save(self):
-        #pas fini
+    def setFileName(self, fileName):
         fileName = self.windowControl.fileName()
         self.HSI.setFileName(fileName)
+
+    def save(self):
+        pass
+        #pas fini
 
     def saveWithoutBackground(self):
         self.HSI.saveDataWithoutBackground()
@@ -99,10 +102,7 @@ class AppControl():
         self.HSI.setBackground(background)
 
     def saveBackground(self):
-        fileName = self.windowControl.fileName()
-        if fileName == "":
-            fileName = "spectrum"
-        self.HSI.saveCaptureCSV(self.HSI.background, fileName=fileName)
+        self.HSI.saveCaptureCSV(self.HSI.background)
 
     def launchAcquisition(self):
         self.microControl.begin()
@@ -125,10 +125,7 @@ class AppControl():
         self.HSI.addSpectrum(x, y, spectrum)
 
     def savePixel(self, x, y, spectrum):
-        fileName = self.windowControl.fileName()
-        if fileName == "":
-            fileName = "spectrum"
-        self.HSI.saveCaptureCSV(data=spectrum, countHeight=y, countWidth=x, fileName=fileName)
+        self.HSI.saveCaptureCSV(data=spectrum, countHeight=y, countWidth=x)
 
     def stopAcquisition(self):
         self.microControl.stopAcq()
