@@ -812,36 +812,36 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
                     f.write(f"{x},{fixedData[i]}\n")
                 f.close()
 
-        if self.countSpectrum == self.width*self.height-1 and self.isSweepThreadAlive:
-            spectra = self.matrixRawData
-            self.fileName = self.le_fileName.text()
-            if self.fileName == "":
-                self.fileName = "acquisitions"
-
-            fixedData = copy.deepcopy(spectra)
-            path = os.path.join(newPath, f"{self.fileName}_matrixRawData")
-            with open(path + ".csv", "w+") as f:
-                f.write("[")
-                for i, x in enumerate(fixedData):
-                    if i == 0:
-                        f.write("[")
-                    else:
-                        f.write("\n\n[")
-                    for ii, y in enumerate(x):
-                        if ii == 0:
-                            f.write("[")
-                        else:
-                            f.write("\n[")
-                        for iii, z, in enumerate(y):
-                            if iii != len(y)-1:
-                                f.write(f"{z}, ")
-                            else:
-                                f.write(f"{z}")
-                        f.write("]")
-                    f.write("]")
-                f.write("]")
-
-                f.close()
+        # if self.countSpectrum == self.width*self.height-1 and self.isSweepThreadAlive:
+        #     spectra = self.matrixRawData
+        #     self.fileName = self.le_fileName.text()
+        #     if self.fileName == "":
+        #         self.fileName = "acquisitions"
+        #
+        #     fixedData = copy.deepcopy(spectra)
+        #     path = os.path.join(newPath, f"{self.fileName}_matrixRawData")
+        #     with open(path + ".csv", "w+") as f:
+        #         f.write("[")
+        #         for i, x in enumerate(fixedData):
+        #             if i == 0:
+        #                 f.write("[")
+        #             else:
+        #                 f.write("\n\n[")
+        #             for ii, y in enumerate(x):
+        #                 if ii == 0:
+        #                     f.write("[")
+        #                 else:
+        #                     f.write("\n[")
+        #                 for iii, z, in enumerate(y):
+        #                     if iii != len(y)-1:
+        #                         f.write(f"{z}, ")
+        #                     else:
+        #                         f.write(f"{z}")
+        #                 f.write("]")
+        #             f.write("]")
+        #         f.write("]")
+        #
+        #         f.close()
 
     def save_image(self):  # Controller? GUI? TODO
         path = self.folderPath + "/"
