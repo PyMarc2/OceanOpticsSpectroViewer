@@ -1,6 +1,6 @@
 from gui.dialog.helpDialog import HelpDialog
 from gui.views.spectraView import SpectraView
-from gui.views.microRamanView import MicroRamanView
+from gui.views.microRamanViewControl import WindowControl as MicroRamanView
 from PyQt5.QtWidgets import QMainWindow, QWidget, QLabel, QVBoxLayout, QTabWidget, QAction, QApplication
 from PyQt5.QtCore import Qt, pyqtSlot, QFile, QTextStream
 import logging

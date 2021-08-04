@@ -6,6 +6,7 @@ from PyQt5.QtGui import QIcon
 from PyQt5 import uic
 
 import pyqtgraph as pg
+from PyQt5.Qt import QPixmap
 
 from tkinter.filedialog import askopenfile
 import matplotlib.pyplot as plt
@@ -21,27 +22,22 @@ import os
 
 application_path = os.path.abspath("")
 
-if sys.platform == "win32":
-    myappid = u"mycompany.myproduct.subproduct.version" # arbitrary string
-    ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
-else:
-    pass
 
-UiPath = os.path.dirname(os.path.realpath(__file__)) + '{0}WindowUI.ui'.format(os.sep)
+UiPath = os.path.dirname(os.path.realpath(__file__)) + '{0}microRamanViewUi.ui'.format(os.sep)
 Ui_MainWindow, QtBaseClass = uic.loadUiType(UiPath)
 
-class WindowControl(QMainWindow, Ui_MainWindow):
-    def __init__(self, parent=None):
-        super().__init__(parent)
+class WindowControl(QWidget, Ui_MainWindow):
+    def __init__(self, model=None):
+        super(WindowControl, self).__init__()
         self.setupUi(self)
-        self.setWindowIcon(QIcon(application_path + "{0}gui{0}misc{0}logo{0}logo.ico".format(os.sep)))
+        self.model = model
         self.appController = None
 
         self.doSliderPositionAreInitialize = False
         self.visualWithoutBackground = True
         self.colorRangeViewEnable = True
         self.globalMaximum = True
-        self.folderpath = ""
+        self.folderPath = ""
         self.waveNumber = True
 
         self.mousePositionX = 0
@@ -54,6 +50,7 @@ class WindowControl(QMainWindow, Ui_MainWindow):
 
         self.connectWidgets()
         self.updateSliderStatus()
+        self.initialize_buttons()
 
     def connectWidgets(self):
         self.cb_substractBackground.stateChanged.connect(self.substractBackground)
@@ -136,6 +133,18 @@ class WindowControl(QMainWindow, Ui_MainWindow):
         self.sb_step.setEnabled(False)
         self.tb_folderPath.setEnabled(False)
         self.le_fileName.setEnabled(False)
+
+    def initialize_buttons(self):  # GUI
+        self.pb_sweepSame.setIcons(QPixmap("./gui/misc/icons/sweep_same.png").scaled(50, 50, Qt.KeepAspectRatio, Qt.SmoothTransformation),
+                                   QPixmap("./gui/misc/icons/sweep_same_hover.png").scaled(50, 50, Qt.KeepAspectRatio, Qt.SmoothTransformation),
+                                   QPixmap("./gui/misc/icons/sweep_same_clicked.png").scaled(50, 50, Qt.KeepAspectRatio, Qt.SmoothTransformation),
+                                   QPixmap("./gui/misc/icons/sweep_same_selected.png").scaled(50, 50, Qt.KeepAspectRatio, Qt.SmoothTransformation))
+        self.pb_sweepAlternate.setIcons(QPixmap("./gui/misc/icons/sweep_alternate.png").scaled(50, 50, Qt.KeepAspectRatio, Qt.SmoothTransformation),
+                                        QPixmap("./gui/misc/icons/sweep_alternate_hover.png").scaled(50, 50, Qt.KeepAspectRatio, Qt.SmoothTransformation),
+                                        QPixmap("./gui/misc/icons/sweep_alternate_clicked.png").scaled(50, 50, Qt.KeepAspectRatio, Qt.SmoothTransformation),
+                                        QPixmap("./gui/misc/icons/sweep_alternate_selected.png").scaled(50, 50, Qt.KeepAspectRatio, Qt.SmoothTransformation))
+
+
 
     # Device Connection
 
@@ -230,7 +239,7 @@ class WindowControl(QMainWindow, Ui_MainWindow):
         step = self.sb_step.value()
         pass # Call fonction Justine
 
-    def set_measure_unit(self):
+    def setMeasureUnit(self):
         if self.cmb_measureUnit.currentText() == 'mm':
             stepMeasureUnit = 10**3
 
