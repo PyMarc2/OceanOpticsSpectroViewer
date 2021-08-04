@@ -149,7 +149,10 @@ class MicroscopeControl:
 
     def connectDetection(self, index):
         self.acq.connectSpectro(index)
-        return self.acq.spec.wavelengths()[2:]
+        waves = self.acq.spec.wavelengths()[2:]
+        print(max(waves))
+        print(min(waves))
+        return waves
 
     def connectStage(self, index):
         self.acq.connectStage(index)
