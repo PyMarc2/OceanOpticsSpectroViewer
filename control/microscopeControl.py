@@ -63,6 +63,12 @@ class MicroscopeControl:
 
         return True
 
+    def getStageList(self):
+        return self.acq.listStageDevices()
+
+    def getSpecList(self):
+        return self.acq.listSpecDevices()
+
     def resetMovingIntegrationData(self):
         self.movingIntegrationData = None
 
