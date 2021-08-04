@@ -88,12 +88,6 @@ class Model:
         if self.spec is None:
             raise Exception('The spectrometer is not connected!')
 
-    def setFolderPath(self, folderPath):
-        self.folderPath = folderPath
-
-    def setFileName(self, fileName):
-        self.fileName = fileName
-
     def setWidth(self, width):
         self.width = width
 

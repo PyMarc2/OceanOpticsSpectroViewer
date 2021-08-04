@@ -25,6 +25,18 @@ class MicroscopeControl:
         self.appControl = None
 
     # SETTINGS
+    def setWidth(self, width):
+        self.acq.setWidth(width)
+
+    def setHeight(self, height):
+        self.acq.setHeight(height)
+
+    def setStep(self, step):
+        self.acq.setStep(step)
+
+    def setStepMeasureUnit(self, unit):
+        self.acq.setStepMeasureUnit(unit)
+
     def resetMovingIntegrationData(self):
         self.movingIntegrationData = None
 
