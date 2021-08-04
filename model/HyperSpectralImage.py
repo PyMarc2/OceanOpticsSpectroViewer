@@ -30,6 +30,12 @@ class HyperSpectralImage:
             dataWithoutBackground.append(Pixel(x, y, spectrum))
         return dataWithoutBackground
 
+    def setFolderPath(self, folderPath):
+        self.folderpath = folderPath
+
+    def setFileName(self, fileName):
+        self.fileName = fileName
+
     def setBackground(self, background):
         self.background = np.array(background)
 
@@ -196,22 +202,12 @@ class HyperSpectralImage:
             #         self.setWavelength(xAxis)
 
  # Save
-    def start_save(self, data=None, countHeight=None, countWidth=None):
-        self.heightId = countHeight
-        self.widthId = countWidth
-        self.data = data
-        self.save_capture_csv()
-
-    def select_save_folder(self):  # TODO
-        self.folderPath = str(QFileDialog.getExistingDirectory(self, "Select Directory"))
-        if self.folderPath != "":
-            self.le_folderPath.setText(self.folderPath)
-
-    def save_capture_csv(self):
-        if self.data is None:
+    def saveCaptureCSV(self, data=None, countHeight=None, countWidth=None):
+        # TODO
+        if data is None:
             pass
         else:
-            spectrum = self.data
+            spectrum = data
             self.fileName = self.le_fileName.text()
             if self.fileName == "":
                 self.fileName = "spectrum"
@@ -245,7 +241,7 @@ class HyperSpectralImage:
             self.saveThread.start()
             self.enable_all_buttons()
 
-    def save_data_without_background(self, *args, **kwargs):
+    def saveDataWithoutBackground(self, *args, **kwargs):
         matrix = self.matrixDataWithoutBackground
         newPath = self.folderPath + "/" + "UnrawData"
         os.makedirs(newPath, exist_ok=True)

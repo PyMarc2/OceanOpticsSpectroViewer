@@ -52,6 +52,84 @@ class AppControl():
     def saveImage(self, matrixRGB):
         self.HSI.saveImage(matrixRGB)
 
+    def connectDetection(self, index):
+        waves = self.microControl.connectDetection(index)
+        return waves
+
+    def connectStage(self, index):
+        self.microControl.connectStage(index)
+
+    def setFolderPath(self, folderPath):
+        self.HSI.setFolderPath(folderPath)
+
+    def save(self):
+        #pas fini
+        fileName = self.windowControl.fileName()
+        self.HSI.setFileName(fileName)
+
+    def saveWithoutBackground(self):
+        self.HSI.saveDataWithoutBackground()
+
+    def setWidth(self, width):
+        self.microControl.setWidth(width)
+
+    def setHeight(self, height):
+        self.microControl.setHeight(height)
+
+    def setStep(self, step):
+        self.microControl.setStep(step)
+
+    def setMeasureUnit(self, measureUnit):
+        self.microControl.setStepMeasureUnit(measureUnit)
+
+    def setExposureTime(self, exposureTime):
+        self.microControl.setExposureTime(exposureTime)
+
+    def setIntegrationTime(self, acqTime):
+        self.microControl.setIntegrationTime(acqTime)
+
+    def sweepDirectionSame(self):
+        self.microControl.setDirectionToDefault()
+
+    def sweepDirectionOther(self):
+        self.microControl.setDirectionToZigzag()
+
+    def acquireBackground(self):
+        background = self.microControl.acquireBackground()
+        self.HSI.setBackground(background)
+
+    def saveBackground(self):
+        self.HSI.saveCaptureCSV(self.HSI.background)
+
+    def launchAcquisition(self):
+        self.microControl.begin()
+
+    def allConnected(self, indexStage, indexSpectro):
+        stage = self.microControl.getStage()
+        spectro = self.microControl.getSpectro()
+        if stage and spectro:
+            return True
+        else:
+            return False
+
+    def matrixRGBReplace(self):
+        globalMaximum = self.windowControl.globalMaximum
+        VWB = self.windowControl.visualWithoutBackground
+        matrixRGB = self.matrixRGB(globalMaximum, VWB)
+        self.windowControl.updateRGBPlot(matrixRGB)
+
+    def addSpectrum(self, x, y, spectrum):
+        self.HSI.addSpectrum(x, y, spectrum)
+
+    def savePixel(self, x, y, spectrum):
+        self.HSI.saveCaptureCSV(data=spectrum, countHeight=y, countWidth=x)
+
+    def stopAcquisition(self):
+        self.microControl.stopAcq()
+
+
+
+
 
 
 

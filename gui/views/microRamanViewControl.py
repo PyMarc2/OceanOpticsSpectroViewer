@@ -9,7 +9,6 @@ import pyqtgraph as pg
 from PyQt5.Qt import QPixmap
 
 from tkinter.filedialog import askopenfile
-import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
 import fnmatch
@@ -85,7 +84,7 @@ class WindowControl(QWidget, Ui_MainWindow):
         self.pb_stop.clicked.connect(self.stopAcquisition)
         self.pb_saveImage.clicked.connect(self.saveImage)
 
-        self.sb_acqTime.valueChanged.connect(self.setAcquisitionTime)
+        self.sb_acqTime.valueChanged.connect(self.setIntegrationTime)
         self.sb_exposure.valueChanged.connect(self.setExposureTime)
         self.sb_height.textChanged.connect(self.setHeight)
         self.sb_width.textChanged.connect(self.setWidth)
@@ -156,7 +155,7 @@ class WindowControl(QWidget, Ui_MainWindow):
             try:
                 self.laser = int(self.le_laser.text())
                 index = self.cmb_selectDetection.currentIndex()
-                # waves = Call fonction Justine -> connectSpectro(index) -> Ouput : wavelength
+                waves = self.appControl.connectDetection(index)
                 self.appController.setWavelength(waves)
                 self.setRangeToWave()
                 self.updateSliderStatus()
@@ -169,19 +168,20 @@ class WindowControl(QWidget, Ui_MainWindow):
 
     def connectStage(self):
         index = self.cmb_selectStage.currentIndex()
-        # waves = Call fonction Justine -> connectStage(index)
+        self.appControl.connectStage(index)
 
 
     # Capture Controls
 
-    def folderName(self):
+    def fileName(self):
         folderName = self.le_fileName.text()
-        return folderName
+        return fileName
 
     def selectSaveFolder(self):
         self.folderPath = str(QFileDialog.getExistingDirectory(self, "Select Directory"))
         if self.folderPath != "":
             self.le_folderPath.setText(self.folderPath)
+        self.appControl.setFolderPath(self.folderPath)
 
     def errorFolderName(self):
         self.le_folderPath.setStyleSheet("background-color: rgb(255, 0, 0)")
@@ -212,7 +212,7 @@ class WindowControl(QWidget, Ui_MainWindow):
             self.updateRGBPlot(matrixRGB)
 
     def saveWithoutBackground(self):
-        pass # Call fonction save sans background
+        self.appControl.saveWithoutBackground()
 
     def errorBackground(self):
         self.pb_background.setStyleSheet("background-color: rgb(255, 0, 0)")
@@ -230,58 +230,58 @@ class WindowControl(QWidget, Ui_MainWindow):
 
     def setWidth(self):
         width = self.sb_width.value()
-        pass # call fonction Justine
+        self.appControl.setWidth(width)
 
     def setHeight(self):
         height = self.sb_height.value()
-        pass # Call fonction Justine
+        self.appControl.setHeight(height)
 
     def setStep(self):
         step = self.sb_step.value()
-        pass # Call fonction Justine
+        self.appControl.setStep(step)
 
     def setMeasureUnit(self):
-        if self.cmb_measureUnit.currentText() == 'mm':
-            stepMeasureUnit = 10**3
-
-        elif self.cmb_measureUnit.currentText() == 'um':
-            stepMeasureUnit = 1
-
-        elif self.cmb_measureUnit.currentText() == 'nm':
-            stepMeasureUnit = 10**(-3)
-        pass # Call fonction Justine
+        measureUnit = self.cmb_measureUnit.currentText()
+        self.appControl.setMeasureUnit(measureUnit)
+       
 
     def setExposureTime(self):
         exposureTime = self.sb_exposure.value()
-        pass # Call fonction Justine
-        # launch setExposureTime()
+        self.appControl.setExposureTime(exposureTime)
 
-    def setAcquisitionTime(self):
+    def setIntegrationTime(self):
         acqTime = self.sb_acqTime.value()
-        pass # Call fonction Justine
-        # set 'movingIntegrationData', None
-        # launch setIntegrationTime()
+        self.appControl.setIntegrationTime(acqTime)
 
     def sweepDirectionSame(self):
-        direction = "same"
-        pass # call le changement de variable Justine
+        self.appControl.sweepDirectionSame()
 
     def sweepDirectionOther(self):
-        direction = "other"
-        pass # call le changement de variable Justine
+        self.appControl.sweepDirectionOther()
 
 
     # Acquisition Control
 
     def acquireBackground(self):
-        self.appControl.printYo()
-        pass # Justine s'en occupe
+        if self.folderPath == "":
+                self.errorFolderName()
+        else:
+            self.disableAllButtons()
+            self.appControl.acquireBackground()
+            self.appControl.saveBackground()
+            self.enableAllButtons()
 
     def launchAcquisition(self):
+        indexStage = self.cmb_selectStage.currentIndex()
+        indexSpectro = self.cmb_selectDetection.currentIndex()
+
+        allConnected = self.appControl.allConnected(indexStage, indexSpectro)
         if self.folderPath == "":
                 self.errorFolderName()
         elif self.le_laser.text() == "":
             self.errorLaser()
+        elif not allConnected:
+            print("Ça va mal rip")
         else:
             self.appController.deleteSpectrum()
             self.pb_saveImage.setEnabled(True)
@@ -289,12 +289,12 @@ class WindowControl(QWidget, Ui_MainWindow):
             self.createPlotSpectrum()
             self.createPlotRGB()
             self.disableAllButtons()
-            pass # Justine s'en occupe
+            self.appControl.launchAcquisition()
 
     def stopAcquisition(self):
         self.cmb_wave.setEnabled(True)
         self.enableAllButtons()
-        pass # Justine s'en occupe
+        self.appControl.stopAcquisition()
 
 
     # Image Controls
