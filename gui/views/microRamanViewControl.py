@@ -208,12 +208,12 @@ class WindowControl(QWidget, Ui_MainWindow):
         backgroundData = self.appControl.backgroundData
         if backgroundData == []:
             self.errorBackground()
-            if self.cb_delete_background.checkState() == 2:
-                QTimer.singleShot(1, lambda: self.cb_delete_background.setCheckState(0))
+            if self.cb_substractBackground.checkState() == 2:
+                QTimer.singleShot(1, lambda: self.cb_substractBackground.setCheckState(0))
         else:
-            if self.cb_delete_background.checkState() == 2:
+            if self.cb_substractBackground.checkState() == 2:
                 self.visualWithoutBackground = True
-            if self.cb_delete_background.checkState() == 0:
+            if self.cb_substractBackground.checkState() == 0:
                 self.visualWithoutBackground = False
             laser = int(self.le_laser.text())
             matrixRGB = self.appControl.matrixRGB(self.globalMaximum, self.visualWithoutBackground)
