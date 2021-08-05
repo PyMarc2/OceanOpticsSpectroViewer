@@ -183,9 +183,7 @@ class WindowControl(QWidget, Ui_MainWindow):
         index = self.cmb_selectStage.currentIndex()
         self.appControl.connectStage(index)
 
-
     # Capture Controls
-
     def selectFileName(self):
         fileName = self.le_fileName.text()
         self.appControl.setFileName(fileName)
@@ -304,6 +302,8 @@ class WindowControl(QWidget, Ui_MainWindow):
             self.createPlotRGB()
             self.disableAllButtons()
             self.appControl.launchAcquisition()
+            # TODO see if with thread okay... probably will connect with signal?
+            self.stopAcquisition()
 
     def stopAcquisition(self):
         self.cmb_wave.setEnabled(True)
