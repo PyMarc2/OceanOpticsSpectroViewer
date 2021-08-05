@@ -715,7 +715,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
         else:
             print('Sampling already started.')
 
-    def sweep(self, *args, **kwargs):  # TODO Controller?
+    def map(self, *args, **kwargs):  # TODO Controller?
         while self.isSweepThreadAlive:
             if self.countSpectrum <= (self.width*self.height):
                 self.spectrum_pixel_acquisition()
@@ -738,7 +738,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
                             self.stop_acq()
 
                     except Exception as e:
-                        print(f'error in sweep same: {e}')
+                        print(f'error in map same: {e}')
                         self.stop_acq()
 
                 elif self.direction == "other":
@@ -766,7 +766,7 @@ class MicroRamanView(QWidget, Ui_microRamanView):  # type: QWidget
                             else:
                                 self.stop_acq()
                     except Exception as e:
-                        print(f'error in sweep other: {e}')
+                        print(f'error in map other: {e}')
                         self.stop_acq()
 
                 self.countSpectrum += 1
