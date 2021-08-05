@@ -267,9 +267,7 @@ class WindowControl(QWidget, Ui_MainWindow):
 
     # Acquisition Control
     def acquireBackground(self):
-        indexStage = self.cmb_selectStage.currentIndex()
-        indexSpectro = self.cmb_selectDetection.currentIndex()
-        allConnected = self.appControl.allConnected(indexStage, indexSpectro)
+        allConnected = self.appControl.allConnected()
 
         if self.folderPath == "":
             self.errorFolderName()
@@ -284,10 +282,7 @@ class WindowControl(QWidget, Ui_MainWindow):
             self.enableAllButtons()
 
     def launchAcquisition(self):
-        indexStage = self.cmb_selectStage.currentIndex()
-        indexSpectro = self.cmb_selectDetection.currentIndex()
-
-        allConnected = self.appControl.allConnected(indexStage, indexSpectro)
+        allConnected = self.appControl.allConnected()
         if self.folderPath == "":
                 self.errorFolderName()
         elif self.le_laser.text() == "":
@@ -310,9 +305,7 @@ class WindowControl(QWidget, Ui_MainWindow):
         self.enableAllButtons()
         self.appControl.stopAcquisition()
 
-
     # Image Controls
-
     def createPlotRGB(self):
         self.graph_rgb.clear()
         self.plotViewBox = self.graph_rgb.addViewBox()

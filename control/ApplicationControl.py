@@ -109,9 +109,9 @@ class AppControl():
     def launchAcquisition(self):
         self.microControl.begin()
 
-    def allConnected(self, indexStage, indexSpectro):
-        stage = self.microControl.getStage(indexStage)
-        spectro = self.microControl.getSpectro(indexSpectro)
+    def allConnected(self):
+        stage = self.microControl.getStage()
+        spectro = self.microControl.getSpectro()
         if stage and spectro:
             return True
         else:
