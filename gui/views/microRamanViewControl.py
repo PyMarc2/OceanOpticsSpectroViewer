@@ -216,7 +216,7 @@ class WindowControl(QWidget, Ui_MainWindow):
                 self.visualWithoutBackground = True
             if self.cb_substractBackground.checkState() == 0:
                 self.visualWithoutBackground = False
-            laser = int(self.le_laser.text())
+            laser = self.appControl.getLaser()
             matrixRGB = self.appControl.matrixRGB(self.globalMaximum, self.visualWithoutBackground)
             waves = self.appControl.waves(laser)
             self.updateSpectrumPlot(waves)
@@ -347,7 +347,7 @@ class WindowControl(QWidget, Ui_MainWindow):
             else:
                 self.mousePositionX = positionX
                 self.mousePositionY = positionY
-                laser = int(self.le_laser.text())
+                laser = self.appControl.getLaser()
                 waves = self.appControl.waves(laser)
                 self.updateSpectrumPlot(waves)
         except Exception:
@@ -358,7 +358,7 @@ class WindowControl(QWidget, Ui_MainWindow):
             self.globalMaximum = True
         else:
             self.globalMaximum = False
-        laser = int(self.le_laser.text())
+        laser = self.appControl.getLaser()
         matrixRGB = self.appControl.matrixRGB(self.globalMaximum, self.visualWithoutBackground)
         waves = self.appControl.waves(laser)
         self.updateRGBPlot(matrixRGB)
@@ -377,7 +377,7 @@ class WindowControl(QWidget, Ui_MainWindow):
             self.waveNumber = True
         else:
             self.waveNumber = False 
-        laser = int(self.le_laser.text())
+        laser = self.appControl.getLaser()
         waves = self.appControl.waves(laser)
 
         self.minWave = round(min(waves))
@@ -483,8 +483,8 @@ class WindowControl(QWidget, Ui_MainWindow):
 
         if self.doSliderPositionAreInitialize:
             try:
-                laser = int(self.le_laser.text())
-                matrixRGB = self.appControl.matrixRGB(self.globalMaximum, self,visualWithoutBackground)
+                laser = self.appControl.getLaser()
+                matrixRGB = self.appControl.matrixRGB(self.globalMaximum, self.visualWithoutBackground)
                 waves = self.appControl.waves(laser)
                 self.updateSpectrumPlot(waves)
                 self.updateRGBPlot(matrixRGB)
@@ -500,7 +500,7 @@ class WindowControl(QWidget, Ui_MainWindow):
         if self.cb_colorRangeView.checkState() == 0:
             self.colorRangeViewEnable = False
         try:
-            laser = int(self.le_laser.text())
+            laser = self.appControl.getLaser()
             waves = self.appControl.waves(laser)
             self.updateSpectrumPlot(waves)
         except Exception:

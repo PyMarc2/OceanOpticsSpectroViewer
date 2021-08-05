@@ -144,6 +144,10 @@ class AppControl():
         fileName = self.windowControl.fileName()
         return fileName
 
+    def getLaser(self):
+        laser = self.HSI.laser
+        return laser
+
 
 
 
