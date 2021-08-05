@@ -78,13 +78,6 @@ class WindowControl(QWidget, Ui_MainWindow):
 
         self.graph_rgb.scene().sigMouseMoved.connect(self.mouseMoved)
 
-        self.sb_highRed.valueChanged.connect(self.updateSliderStatus)
-        self.sb_lowRed.valueChanged.connect(self.updateSliderStatus)
-        self.sb_highGreen.valueChanged.connect(self.updateSliderStatus)
-        self.sb_lowGreen.valueChanged.connect(self.updateSliderStatus)
-        self.sb_highBlue.valueChanged.connect(self.updateSliderStatus)
-        self.sb_lowBlue.valueChanged.connect(self.updateSliderStatus)
-
         self.pb_saveWithoutBackground.clicked.connect(self.saveWithoutBackground)
         self.pb_sweepAlternate.clicked.connect(self.sweepDirectionOther)
         self.pb_connectDetection.clicked.connect(self.connectDetection)
@@ -97,6 +90,12 @@ class WindowControl(QWidget, Ui_MainWindow):
         self.pb_stop.clicked.connect(self.stopAcquisition)
         self.pb_saveImage.clicked.connect(self.saveImage)
 
+        self.sb_highRed.valueChanged.connect(self.updateSliderStatus)
+        self.sb_lowRed.valueChanged.connect(self.updateSliderStatus)
+        self.sb_highGreen.valueChanged.connect(self.updateSliderStatus)
+        self.sb_lowGreen.valueChanged.connect(self.updateSliderStatus)
+        self.sb_highBlue.valueChanged.connect(self.updateSliderStatus)
+        self.sb_lowBlue.valueChanged.connect(self.updateSliderStatus)
         self.sb_acqTime.valueChanged.connect(self.setIntegrationTime)
         self.sb_exposure.valueChanged.connect(self.setExposureTime)
         self.sb_height.textChanged.connect(self.setHeight)
@@ -344,13 +343,19 @@ class WindowControl(QWidget, Ui_MainWindow):
             if positionX <= -1 or positionY <= -1:
                 pass
 
+            elif positionX >= self.sb_width.value():
+                pass
+
+            elif positionY >= self.sb_height.value():
+                pass
+
             else:
                 self.mousePositionX = positionX
                 self.mousePositionY = positionY
                 laser = self.appControl.getLaser()
                 waves = self.appControl.waves(laser)
                 self.updateSpectrumPlot(waves)
-        except Exception:
+        except Exception as e:
             pass
 
     def setMaximum(self):
@@ -384,14 +389,7 @@ class WindowControl(QWidget, Ui_MainWindow):
         self.rangeLen = round(max(waves) - min(waves))
         self.maxWave = int(max(waves))
 
-        print("windowControl")
-        print("minWave :", self.minWave)
-        print("maxWave :", self.maxWave)
-        print("rangeLen :", self.rangeLen)
-
         colorValues = self.currentSliderValues()
-
-        print(colorValues)
 
         self.sb_highRed.setMaximum(self.maxWave)
         self.sb_lowRed.setMaximum(self.maxWave-1)
@@ -436,7 +434,15 @@ class WindowControl(QWidget, Ui_MainWindow):
         self.plotViewBox.addItem(vb)
 
     def updateSpectrumPlot(self, waves):
-        spectrum = self.appControl.spectrum(self.mousePositionX, self.mousePositionY)
+        posX = self.mousePositionX
+        posY = self.mousePositionY
+
+        if posX == None:
+            posX = 0
+        if posY == None:
+            posY = 0
+
+        spectrum = self.appControl.spectrum(posX, posY, self.visualWithoutBackground)
         try:
             maximum = max(spectrum)
             minimum = min(spectrum) - 1
@@ -470,7 +476,7 @@ class WindowControl(QWidget, Ui_MainWindow):
             self.plotRedRange.setData(waves, redRange, pen=(255, 0, 0))
             self.plotGreenRange.setData(waves, greenRange, pen=(0, 255, 0))
             self.plotBlueRange.setData(waves, blueRange, pen=(0, 0, 255))
-            self.plotBlack.setData(waves, np.full(self.dataLen, minimum), pen=(0, 0, 0))
+            self.plotBlack.setData(waves, np.full(wavesLen, minimum), pen=(0, 0, 0))
 
         if not self.colorRangeViewEnable:
             self.plotRedRange.setData(waves, np.full(wavesLen, minimum), pen=(0, 0, 0))
