@@ -53,7 +53,7 @@ class QRangeSlider(QWidget):
     valueMoving = pyqtSignal(list)
     sliderReleased = pyqtSignal()
 
-    def __init__(self, parent=None, left_value=0, right_value=255, left_thumb_value=0, right_thumb_value=255):
+    def __init__(self, parent=None, left_value=0, right_value=1024, left_thumb_value=0, right_thumb_value=1024):
         super(QRangeSlider, self).__init__(parent)
 
         self.setSizePolicy(

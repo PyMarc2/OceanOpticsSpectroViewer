@@ -391,6 +391,8 @@ class WindowControl(QWidget, Ui_MainWindow):
 
         colorValues = self.currentSliderValues()
 
+        print(colorValues)
+
         self.sb_highRed.setMaximum(self.maxWave)
         self.sb_lowRed.setMaximum(self.maxWave-1)
         self.sb_highGreen.setMaximum(self.maxWave)
