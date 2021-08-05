@@ -163,33 +163,34 @@ class MicroscopeControl:
             self.countSpectrum = 0
             self.countHeight = 0
             self.countWidth = 0
-            self.sweep()
+            self.map()
         else:
             print('Sampling already started.')
 
-    def sweep(self):
+    def map(self):
         while self.isAcquiring:  # TODO change variable name
             if self.countSpectrum <= (self.acq.width * self.acq.height):
                 pixel = self.spectrumPixelAcquisition()
+                # TODO will need to use notifications instead of pointer, in order to include the controller and model in pyhardware
                 self.appControl.addSpectrum(self.countWidth, self.countHeight, pixel)
                 self.appControl.matrixRGBReplace()
                 self.appControl.savePixel(self.countWidth, self.countHeight, pixel)
 
                 if self.acq.direction == "same":
-                    # try:
-                    if self.countWidth < (self.acq.width - 1):
-                        self.countWidth += 1
-                        self.moveStage()
-                    elif self.countHeight < (self.acq.height - 1) and self.countWidth == (self.acq.width - 1):
-                        self.countWidth = 0
-                        self.countHeight += 1
-                        self.moveStage()
-                    else:
-                        self.stopAcq()
+                    try:
+                        if self.countWidth < (self.acq.width - 1):
+                            self.countWidth += 1
+                            self.moveStage()
+                        elif self.countHeight < (self.acq.height - 1) and self.countWidth == (self.acq.width - 1):
+                            self.countWidth = 0
+                            self.countHeight += 1
+                            self.moveStage()
+                        else:
+                            self.stopAcq()
 
-                    # except Exception as e:
-                        # print(f'error in sweep same: {e}')
-                        # self.stopAcq()
+                    except Exception as e:
+                        print(f'error in map same: {e}')
+                        self.stopAcq()
 
                 elif self.acq.direction == "other":
                     try:
@@ -212,7 +213,7 @@ class MicroscopeControl:
                             else:
                                 self.stopAcq()
                     except Exception as e:
-                        print(f'error in sweep other: {e}')
+                        print(f'error in map other: {e}')
                         self.stopAcq()
 
                 self.countSpectrum += 1
