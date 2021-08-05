@@ -152,6 +152,7 @@ class MicroscopeControl:
         waves = self.acq.spec.wavelengths()[2:]
         print(max(waves))
         print(min(waves))
+        print(len(waves))
         return waves
 
     def connectStage(self, index):

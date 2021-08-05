@@ -384,6 +384,11 @@ class WindowControl(QWidget, Ui_MainWindow):
         self.rangeLen = round(max(waves) - min(waves))
         self.maxWave = int(max(waves))
 
+        print("windowControl")
+        print("minWave :", self.minWave)
+        print("maxWave :", self.maxWave)
+        print("rangeLen :", self.rangeLen)
+
         colorValues = self.currentSliderValues()
 
         self.sb_highRed.setMaximum(self.maxWave)
@@ -466,12 +471,15 @@ class WindowControl(QWidget, Ui_MainWindow):
             self.plotBlack.setData(waves, np.full(self.dataLen, minimum), pen=(0, 0, 0))
 
         if not self.colorRangeViewEnable:
-            self.plotRedRange.setData(self.waves, np.full(self.dataLen, minimum), pen=(0, 0, 0))
-            self.plotGreenRange.setData(self.waves, np.full(self.dataLen, minimum), pen=(0, 0, 0))
-            self.plotBlueRange.setData(self.waves, np.full(self.dataLen, minimum), pen=(0, 0, 0))
-            self.plotBlack.setData(self.waves, np.full(self.dataLen, minimum), pen=(0, 0, 0))
+            self.plotRedRange.setData(waves, np.full(wavesLen, minimum), pen=(0, 0, 0))
+            self.plotGreenRange.setData(waves, np.full(wavesLen, minimum), pen=(0, 0, 0))
+            self.plotBlueRange.setData(waves, np.full(wavesLen, minimum), pen=(0, 0, 0))
+            self.plotBlack.setData(waves, np.full(wavesLen, minimum), pen=(0, 0, 0))
 
         self.plotSpectrum.setData(waves, spectrum)
+
+
+
 
     def updateSliderStatus(self):
         self.dSlider_red.set_left_thumb_value(self.mappingOnSlider(self.sb_lowRed.value()))
