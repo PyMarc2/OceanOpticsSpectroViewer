@@ -1,6 +1,7 @@
 from gui.dialog.helpDialog import HelpDialog
 from gui.views.spectraView import SpectraView
 from gui.views.microRamanViewControl import WindowControl as MicroRamanView
+from gui.views.AffichageRGBWindowControl import WindowControl
 from PyQt5.QtWidgets import QMainWindow, QWidget, QLabel, QVBoxLayout, QTabWidget, QAction, QApplication
 from PyQt5.QtCore import Qt, pyqtSlot, QFile, QTextStream
 import logging
@@ -9,6 +10,7 @@ from PyQt5 import uic
 
 from control.ApplicationControl import AppControl
 from control.microscopeControl import MicroscopeControl
+from control.AffichageRGBControl import AppliControl
 
 log = logging.getLogger(__name__)
 
@@ -37,6 +39,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.setCentralWidget(self.tabWidget)
         self.tabWidget.addTab(self.spectraView, "SpectraView")
         self.tabWidget.addTab(self.microRamanView, "MicroRaman")
+        self.tabWidget.addTab(self.affichageRGB, "AffichageRGB")
 
     def setup_menuBar(self):
         self.helpAction = QAction(self)
@@ -51,15 +54,20 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.helpDialog = HelpDialog()
         self.spectraView = SpectraView(model=self.model)
         self.microRamanView = MicroRamanView(model=self.model)
+        self.affichageRGB = WindowControl(model=self.model)
 
         # Def pointeurs
         self.microRamanAppControl = AppControl()
         self.microRamanMicroscopeControl = MicroscopeControl()
+        self.AppliControl = AppliControl()
 
         self.microRamanAppControl.windowControl = self.microRamanView
         self.microRamanAppControl.microControl = self.microRamanMicroscopeControl
         self.microRamanMicroscopeControl.appControl = self.microRamanAppControl
         self.microRamanView.appControl = self.microRamanAppControl
+
+        self.AppliControl.windowControl = self.affichageRGB
+        self.affichageRGB.appControl = self.AppliControl
 
     def connect_buttons(self):
         self.helpAction.triggered.connect(self.show_helpDialog)
