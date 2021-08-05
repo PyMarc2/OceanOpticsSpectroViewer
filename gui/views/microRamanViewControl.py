@@ -356,10 +356,13 @@ class WindowControl(QWidget, Ui_MainWindow):
             self.globalMaximum = True
         else:
             self.globalMaximum = False
-        laser = self.appControl.getLaser()
-        matrixRGB = self.appControl.matrixRGB(self.globalMaximum, self.visualWithoutBackground)
-        waves = self.appControl.waves(laser)
-        self.updateRGBPlot(matrixRGB)
+        try:
+            laser = self.appControl.getLaser()
+            matrixRGB = self.appControl.matrixRGB(self.globalMaximum, self.visualWithoutBackground)
+            waves = self.appControl.waves(laser)
+            self.updateRGBPlot(matrixRGB)
+        except:
+            pass
 
     def setColorRange(self):
         colorValues = self.currentSliderValues()
@@ -427,15 +430,7 @@ class WindowControl(QWidget, Ui_MainWindow):
         self.plotViewBox.addItem(vb)
 
     def updateSpectrumPlot(self, waves):
-        posX = self.mousePositionX
-        posY = self.mousePositionY
-
-        if posX == None:
-            posX = 0
-        if posY == None:
-            posY = 0
-
-        spectrum = self.appControl.spectrum(posX, posY, self.visualWithoutBackground)
+        spectrum = self.appControl.spectrum(self.mousePositionX, self.mousePositionY, self.visualWithoutBackground)
         try:
             maximum = max(spectrum)
             minimum = min(spectrum) - 1
