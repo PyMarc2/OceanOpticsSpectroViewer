@@ -43,24 +43,14 @@ class MicroscopeControl:
     def setDirectionToZigzag(self):
         self.acq.setDirectionToZigzag()
 
-    def getStage(self, index):
+    def getStage(self):
         if self.acq.stage is None:
-            try:
-                self.acq.connectStage(index)
-                return True
-            except:
-                return False
-
+            return False
         return True
 
-    def getSpectro(self, index):
+    def getSpectro(self):
         if self.acq.spec is None:
-            try:
-                self.acq.connectSpectro(index)
-                return True
-            except:
-                return False
-
+            return False
         return True
 
     def getStageList(self):
@@ -186,20 +176,20 @@ class MicroscopeControl:
                 self.appControl.savePixel(self.countWidth, self.countHeight, pixel)
 
                 if self.acq.direction == "same":
-                    try:
-                        if self.countWidth < (self.acq.width - 1):
-                            self.countWidth += 1
-                            self.moveStage()
-                        elif self.countHeight < (self.acq.height - 1) and self.countWidth == (self.acq.width - 1):
-                            self.countWidth = 0
-                            self.countHeight += 1
-                            self.moveStage()
-                        else:
-                            self.stopAcq()
-
-                    except Exception as e:
-                        print(f'error in sweep same: {e}')
+                    # try:
+                    if self.countWidth < (self.acq.width - 1):
+                        self.countWidth += 1
+                        self.moveStage()
+                    elif self.countHeight < (self.acq.height - 1) and self.countWidth == (self.acq.width - 1):
+                        self.countWidth = 0
+                        self.countHeight += 1
+                        self.moveStage()
+                    else:
                         self.stopAcq()
+
+                    # except Exception as e:
+                        # print(f'error in sweep same: {e}')
+                        # self.stopAcq()
 
                 elif self.acq.direction == "other":
                     try:
