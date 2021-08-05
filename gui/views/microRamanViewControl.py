@@ -165,6 +165,7 @@ class WindowControl(QWidget, Ui_MainWindow):
         else:
             try:
                 self.laser = int(self.le_laser.text())
+                self.appControl.setLaserWavelength(laser)
                 index = self.cmb_selectDetection.currentIndex()
                 waves = self.appControl.connectDetection(index)
                 self.appControl.setWavelength(waves)

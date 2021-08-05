@@ -72,6 +72,9 @@ class AppControl():
     def saveWithoutBackground(self):
         self.HSI.saveDataWithoutBackground()
 
+    def setLaserWavelength(self, laser):
+        self.HSI.setLaserWavelength(laser)
+
     def setWidth(self, width):
         self.microControl.setWidth(width)
 

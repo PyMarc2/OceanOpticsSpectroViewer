@@ -20,6 +20,7 @@ class HyperSpectralImage:
         self.background = []
         self.folderPath = ""
         self.fileName = ""
+        self.laser = None
 
     def dataWithoutBackground(self):
         dataWithoutBackground = []
@@ -29,6 +30,9 @@ class HyperSpectralImage:
             spectrum = item.spectrum - self.background
             dataWithoutBackground.append(Pixel(x, y, spectrum))
         return dataWithoutBackground
+
+    def setLaserWavelength(self, laser):
+        self.laser = laser
 
     def setFolderPath(self, folderPath):
         self.folderPath = folderPath
@@ -45,7 +49,10 @@ class HyperSpectralImage:
     def deleteWavelength(self):
         self.wavelength = []
 
-    def waveNumber(self, laser):
+    def waveNumber(self, laser=None):
+        if laser is None:
+            laser = self.laser
+
         waveNumber = ((1 / laser) - (1 / self.wavelength)) * 10 ** 7
         return waveNumber.round(0)
 
@@ -216,7 +223,7 @@ class HyperSpectralImage:
             else:
                 path = os.path.join(newPath, f"{self.fileName}_x{countWidth}_y{countHeight}")
             with open(path + ".csv", "w+") as f:
-                for i, x in enumerate(self.wavelength):  # TODO maybe more wavenumber?
+                for i, x in enumerate(self.waveNumber()):
                     f.write(f"{x},{data[i]}\n")
                 f.close()
 
