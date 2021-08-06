@@ -1,5 +1,5 @@
 from tools.CircularList import RingBuffer
-from model.microscopeModel import Model
+from model.microscopeDevice import Model
 import numpy as np
 
 
