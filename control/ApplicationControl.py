@@ -109,13 +109,14 @@ class AppControl():
     def launchAcquisition(self):
         self.microControl.begin()
 
-    def allConnected(self):
+    def stageConnected(self):
         stage = self.microControl.getStage()
+        return stage
+
+    def spectroConnected(self):
         spectro = self.microControl.getSpectro()
-        if stage and spectro:
-            return True
-        else:
-            return False
+        return spectro
+
 
     def matrixRGBReplace(self):
         globalMaximum = self.windowControl.globalMaximum

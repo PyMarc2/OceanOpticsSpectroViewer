@@ -34,6 +34,7 @@ class WindowControl(QWidget, Ui_MainWindow):
         self.doSliderPositionAreInitialize = False
         self.visualWithoutBackground = True
         self.colorRangeViewEnable = True
+        self.deviceConnected = False
         self.globalMaximum = True
         self.folderPath = ""
         self.waveNumber = True
@@ -46,22 +47,9 @@ class WindowControl(QWidget, Ui_MainWindow):
 
         self.appControl = None
 
-        # get list stage/spectro
-
         self.connectWidgets()
         self.updateSliderStatus()
         self.initializeButtons()
-
-    def findDevices(self):
-        self.lightDevices = ["None"]
-        self.listStageDevices = self.appControl.getStageList()
-        self.listSpecDevices = self.appControl.getSpectroList()
-        self.cmb_selectDetection.clear()
-        self.cmb_selectDetection.addItems(self.listSpecDevices)
-        self.cmb_selectLight.clear()
-        self.cmb_selectLight.addItems(self.lightDevices)
-        self.cmb_selectStage.clear()
-        self.cmb_selectStage.addItems(self.listStageDevices)
 
 
     def connectWidgets(self):
@@ -157,6 +145,19 @@ class WindowControl(QWidget, Ui_MainWindow):
                                         QPixmap("./gui/misc/icons/sweep_alternate_clicked.png").scaled(50, 50, Qt.KeepAspectRatio, Qt.SmoothTransformation),
                                         QPixmap("./gui/misc/icons/sweep_alternate_selected.png").scaled(50, 50, Qt.KeepAspectRatio, Qt.SmoothTransformation))
 
+    # Device Connection
+
+    def findDevices(self):
+        self.lightDevices = ["None"]
+        self.listStageDevices = self.appControl.getStageList()
+        self.listSpecDevices = self.appControl.getSpectroList()
+        self.cmb_selectDetection.clear()
+        self.cmb_selectDetection.addItems(self.listSpecDevices)
+        self.cmb_selectLight.clear()
+        self.cmb_selectLight.addItems(self.lightDevices)
+        self.cmb_selectStage.clear()
+        self.cmb_selectStage.addItems(self.listStageDevices)
+        self.deviceConnected = True
 
     def connectDetection(self):
         if self.le_laser.text() == "":
@@ -182,7 +183,25 @@ class WindowControl(QWidget, Ui_MainWindow):
         index = self.cmb_selectStage.currentIndex()
         self.appControl.connectStage(index)
 
+    def errorDetection(self):
+        self.pb_connectDetection.setStyleSheet("background-color: rgb(255, 0, 0)")
+        QTimer.singleShot(50, lambda: self.pb_connectDetection.setStyleSheet("background-color: rgb(75, 75, 75)"))
+
+    def errorLight(self):
+        self.pb_connectLight.setStyleSheet("background-color: rgb(255, 0, 0)")
+        QTimer.singleShot(50, lambda: self.pb_connectLight.setStyleSheet("background-color: rgb(75, 75, 75)"))
+
+    def errorStage(self):
+        self.pb_connectStage.setStyleSheet("background-color: rgb(255, 0, 0)")
+        QTimer.singleShot(50, lambda: self.pb_connectStage.setStyleSheet("background-color: rgb(75, 75, 75)"))
+
+    def errorFindDevice(self):
+        self.pb_findDevices.setStyleSheet("background-color: rgb(255, 0, 0)")
+        QTimer.singleShot(50, lambda: self.pb_findDevices.setStyleSheet("background-color: rgb(75, 75, 75)"))
+
+
     # Capture Controls
+
     def selectFileName(self):
         fileName = self.le_fileName.text()
         self.appControl.setFileName(fileName)
@@ -202,6 +221,7 @@ class WindowControl(QWidget, Ui_MainWindow):
         self.appControl.saveImage(matrixRGB)
 
     # Background Controls
+
     def substractBackground(self):
         backgroundData = self.appControl.backgroundData
         if backgroundData == []:
@@ -229,11 +249,13 @@ class WindowControl(QWidget, Ui_MainWindow):
         QTimer.singleShot(50, lambda: self.pb_background.setStyleSheet("background-color: rgb(75, 75, 75)"))
 
     # Info Laser
+
     def errorLaser(self):
         self.le_laser.setStyleSheet("background-color: rgb(255, 0, 0)")
         QTimer.singleShot(50, lambda: self.le_laser.setStyleSheet("background-color: rgb(75, 75, 75)"))
 
     # Acquisition Settings
+
     def setWidth(self):
         width = self.sb_width.value()
         self.appControl.setWidth(width)
@@ -265,6 +287,7 @@ class WindowControl(QWidget, Ui_MainWindow):
         self.appControl.sweepDirectionOther()
 
     # Acquisition Control
+
     def acquireBackground(self):
         allConnected = self.appControl.allConnected()
 
@@ -281,13 +304,19 @@ class WindowControl(QWidget, Ui_MainWindow):
             self.enableAllButtons()
 
     def launchAcquisition(self):
-        allConnected = self.appControl.allConnected()
+        stageState = self.appControl.stageConnected()
+        spectroState = self.appControl.spectroConnected()
         if self.folderPath == "":
                 self.errorFolderName()
         elif self.le_laser.text() == "":
             self.errorLaser()
-        elif not allConnected:
-            print("Ça va mal rip")
+        elif not self.deviceConnected:
+            self.errorFindDevice()
+        elif not spectroState:
+            self.errorDetection()
+        elif not stageState:
+            self.errorStage()
+            
         else:
             self.appControl.deleteSpectra()
             self.pb_saveImage.setEnabled(True)
@@ -305,6 +334,7 @@ class WindowControl(QWidget, Ui_MainWindow):
         self.appControl.stopAcquisition()
 
     # Image Controls
+
     def createPlotRGB(self):
         self.graph_rgb.clear()
         self.plotViewBox = self.graph_rgb.addViewBox()
