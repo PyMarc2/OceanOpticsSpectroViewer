@@ -21,7 +21,7 @@ class Model:
         self.spec = detection
         self.stage = stage
         self._stagePosition = None
-        self.resetStagePosition()
+        # self.resetStagePosition()
 
         self._width: int = 2
         self._height: int = 2

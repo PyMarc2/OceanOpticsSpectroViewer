@@ -5,7 +5,7 @@ import numpy as np
 
 class MicroscopeControl:
     def __init__(self):
-        self.acq = Model()
+        self.acq = Model("thisWillBeStage", "thisWillBeSpec")
         self.expositionCounter = 0
         self.integrationCountAcq = 0
         self.liveAcquisitionData = []
