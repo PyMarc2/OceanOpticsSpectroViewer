@@ -32,7 +32,6 @@ class WindowControl(QWidget, Ui_MainWindow):
         self.doSliderPositionAreInitialize = False
         self.globalMaximum = True
         self.folderpath = ""
-        self.waveNumber = True
 
         self.mousePositionX = 0
         self.mousePositionY = 0
@@ -44,7 +43,6 @@ class WindowControl(QWidget, Ui_MainWindow):
         self.updateSliderStatus()
 
     def connectWidgets(self):
-        self.cmb_wave.currentIndexChanged.connect(self.setRangeToWave)
         self.cmb_set_maximum.currentIndexChanged.connect(self.setMaximum)
 
         self.graph_rgb.scene().sigMouseMoved.connect(self.mouseMoved)
@@ -104,12 +102,10 @@ class WindowControl(QWidget, Ui_MainWindow):
             else:
                 self.mousePositionX = positionX
                 self.mousePositionY = positionY
-                laser = 785
-                waves = self.appControl.waves(laser)
+                waves = self.appControl.waves()
                 matrixData = self.appControl.matrixData()
                 self.updateSpectrumPlot(waves, matrixData)
         except Exception as e:
-            print(e)
             pass
 
     def setMaximum(self):
@@ -120,7 +116,7 @@ class WindowControl(QWidget, Ui_MainWindow):
         self.appControl.loadData(self.folderPath)
         matrixRGB = self.appControl.matrixRGB(self.globalMaximum)
         matrixData = self.appControl.matrixData()
-        waves = self.appControl.waves(int(self.le_laser.text()))
+        waves = self.appControl.waves()
         self.updateRGBPlot(matrixRGB)
     def setColorRange(self):
         colorValues = self.currentSliderValues()
@@ -132,11 +128,7 @@ class WindowControl(QWidget, Ui_MainWindow):
         self.sb_highBlue.setValue(self.mappingOnSpinBox(colorValues[5]))
 
     def setRangeToWave(self):
-        if self.cmb_wave.currentIndex() == 0: 
-            self.waveNumber = True
-        else:
-            self.waveNumber = False 
-        waves = self.appControl.waves(int(self.le_laser.text()))
+        waves = self.appControl.waves()
 
         self.minWave = round(min(waves))
         self.rangeLen = round(max(waves) - min(waves))
@@ -183,31 +175,23 @@ class WindowControl(QWidget, Ui_MainWindow):
         return [lowRedValue, highRedValue, lowGreenValue, highGreenValue, lowBlueValue, highBlueValue]
 
     def selectSaveFolder(self):
-        if self.le_laser.text() == "":
-            self.errorLaser()
-        else:
-            try:
-                laser = int(self.le_laser.text())
-                self.folderPath = str(QFileDialog.getExistingDirectory(self, "Select Directory"))
-                self.appControl.deleteSpectrum()
-                self.appControl.loadData(self.folderPath)
-                matrixRGB = self.appControl.matrixRGB(self.globalMaximum)
-                matrixData = self.appControl.matrixData()
-                waves = self.appControl.waves(int(self.le_laser.text()))
+        try:
+            self.folderPath = str(QFileDialog.getExistingDirectory(self, "Select Directory"))
+            self.appControl.deleteSpectra()
+            self.appControl.loadData(self.folderPath)
+            matrixRGB = self.appControl.matrixRGB(self.globalMaximum)
+            matrixData = self.appControl.matrixData()
+            waves = self.appControl.waves()
 
-                self.createPlotRGB()
-                self.createPlotSpectrum()
-                self.setRangeToWave()
-                self.updateSpectrumPlot(waves, matrixData)
-                self.updateRGBPlot(matrixRGB)
-            except Exception as e:
-                print(f"error:{e}")
-                self.errorLaser()
-            
+            self.createPlotRGB()
+            self.createPlotSpectrum()
+            self.setRangeToWave()
+            self.updateSpectrumPlot(waves, matrixData)
+            self.updateRGBPlot(matrixRGB)
+        except:
+            pass
 
-    def errorLaser(self):
-        self.le_laser.setStyleSheet("background-color: rgb(255, 0, 0)")
-        QTimer.singleShot(50, lambda: self.le_laser.setStyleSheet("background-color: rgb(200, 200, 200)"))
+    
 
     def updateRGBPlot(self, matrixRGB):
         vb = pg.ImageItem(image=matrixRGB)
@@ -267,7 +251,7 @@ class WindowControl(QWidget, Ui_MainWindow):
             try:
                 matrixRGB = self.appControl.matrixRGB(self.globalMaximum)
                 matrixData = self.appControl.matrixData()
-                waves = self.appControl.waves(int(self.le_laser.text()))
+                waves = self.appControl.waves()
                 self.updateSpectrumPlot(waves, matrixData)
                 self.updateRGBPlot(matrixRGB)
 
