@@ -18,14 +18,7 @@ class Background(NamedTuple):
 
 class Model:
     def __init__(self):
-        self.stageDevices = []  # find list from hardware...  # TODO
-        self.setStageDevicesList()
-        self.stageLink = self.stageDevices[0]
         self.stage = None
-
-        self.specDevices = []
-        self.setSpecDevicesList()
-        self.spectroLink = self.specDevices[0]
         self.spec = None
 
         self.width: int = 2
@@ -43,50 +36,6 @@ class Model:
 
     def createBackgroundTuple(self, spectrum):
         BackgroundTuple(spectrum=spectrum)
-
-    def listStageDevices(self) -> list:
-        self.setStageDevicesList()
-        devices = []
-        for stage in self.stageDevices:
-            devices.append(str(stage))
-        return devices
-
-    def setStageDevicesList(self):
-        self.stageDevices = []  # find list from hardware... # TODO
-        self.stageDevices.insert(0, "Debug")
-        self.stageDevices.append("real Sutter")
-
-    def connectStage(self, index):
-        self.stageLink = self.stageDevices[index]
-        if self.stageLink == "Debug":
-            self.stage = sutter.SutterDevice(serialNumber="debug")
-            self.stage.initializeDevice()
-        else:
-            # TODO will update with list provided by sepo.SerialPort.matchPorts(idVendor=4930, idProduct=1)...
-            self.stage = sutter.SutterDevice()
-            self.stage.initializeDevice()
-        if self.stage is None:
-            raise Exception('The sutter is not connected!')
-
-    def listSpecDevices(self) -> list:
-        self.setSpecDevicesList()
-        devices = []
-        for spec in self.specDevices:
-            devices.append(str(spec))
-        return devices
-
-    def setSpecDevicesList(self):
-        self.specDevices = sb.list_devices()
-        self.specDevices.insert(0, "MockSpectrometer")
-
-    def connectSpectro(self, index):
-        self.spectroLink = self.specDevices[index]
-        if self.spectroLink == "MockSpectrometer":
-            self.spec = Mock.MockSpectrometer()
-        else:
-            self.spec = sb.Spectrometer(self.spectroLink)
-        if self.spec is None:
-            raise Exception('The spectrometer is not connected!')
 
     def setWidth(self, width):
         self.width = width
