@@ -5,13 +5,13 @@ import hardwarelibrary.motion.sutterdevice as sutter
 from gui.modules import mockSpectrometer as Mock
 
 
-class DataTuple(NamedTuple):
+class DataPoint(NamedTuple):
     x: int = None
     y: int = None
     spectrum: list = None
 
 
-class BackgroundTuple(NamedTuple):
+class Background(NamedTuple):
     title: str = 'background'
     spectrum: list = None
 
@@ -60,11 +60,11 @@ class Model:
         self.stageLink = self.stageDevices[index]
         if self.stageLink == "Debug":
             self.stage = sutter.SutterDevice(serialNumber="debug")
-            self.stage.doInitializeDevice()
+            self.stage.initializeDevice()
         else:
             # TODO will update with list provided by sepo.SerialPort.matchPorts(idVendor=4930, idProduct=1)...
             self.stage = sutter.SutterDevice()
-            self.stage.doInitializeDevice()
+            self.stage.initializeDevice()
         if self.stage is None:
             raise Exception('The sutter is not connected!')
 
