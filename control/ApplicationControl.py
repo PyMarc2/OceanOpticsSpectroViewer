@@ -3,12 +3,24 @@ import sys
 import os
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from model.HyperSpectralImage import HyperSpectralImage
+import seabreeze.spectrometers as sb
+from threading import *
+import time
 
 class AppControl():
     def __init__(self):
         self.HSI = HyperSpectralImage()
         self.windowControl = None
         self.microControl = None
+
+        self.stageDevices = []  # find list from hardware...  # TODO
+        self.listStageDevices()
+        self.stageLink = self.stageDevices[0]
+
+        self.specDevices = []
+        self.listSpecDevices()
+        self.spectroLink = self.specDevices[0]
+        self.lock = Lock()
 
     def matrixRGB(self, globalMaximum=True, VWB=True):
         colorValues = self.windowControl.currentSliderValues()
@@ -64,10 +76,6 @@ class AppControl():
 
     def setFileName(self, fileName):
         self.HSI.setFileName(fileName)
-
-    def save(self):
-        pass
-        #pas fini
 
     def saveWithoutBackground(self):
         self.HSI.saveDataWithoutBackground()
@@ -133,14 +141,6 @@ class AppControl():
     def stopAcquisition(self):
         self.microControl.stopAcq()
 
-    def getStageList(self):
-        stageList = self.microControl.getStageList()
-        return stageList
-
-    def getSpectroList(self):
-        spectroList = self.microControl.getSpecList()
-        return spectroList
-
     def getFileName(self):
         fileName = self.windowControl.fileName()
         return fileName
@@ -149,60 +149,66 @@ class AppControl():
         laser = self.HSI.laser
         return laser
 
+    # thread
+
+    def startRefreshRGBLoop(self):
+        with self.lock:
+            if not self.isMonitoring:
+                self.quitMonitoring = False
+                self.loopRGB = Thread(target=self.refreshRGBLoop, name="refreshRGBLoop")
+                self.loopRGB.start()
+            else:
+                raise RuntimeError("RefreshRGBLoop is already running")
+
+    def refreshRGBLoop(self):
+        while self.quitMonitoring == False:
+            with self.lock:
+                self.matrixRGBReplace()
+            time.sleep(3)
+            if self.quitMonitoring == True:
+                break
+
+
 
     # à faire
 
-    # self.stageDevices = []  # find list from hardware...  # TODO
-    # self.setStageDevicesList()
-    # self.stageLink = self.stageDevices[0]
+    def listStageDevices(self) -> list: # connecté
+        self.stageDevices = []  # find list from hardware... # TODO
+        self.stageDevices.insert(0, "Debug")
+        self.stageDevices.append("real Sutter")
+        devices = []
+        for stage in self.stageDevices:
+            devices.append(str(stage))
+        return devices
 
-    # self.specDevices = []
-    # self.setSpecDevicesList()
-    # self.spectroLink = self.specDevices[0]
+    def listSpecDevices(self) -> list: # connecté
+        self.specDevices = sb.list_devices()
+        self.specDevices.insert(0, "MockSpectrometer")
+        devices = []
+        for spec in self.specDevices:
+            devices.append(str(spec))
+        return devices
 
-    # def listStageDevices(self) -> list:
-    #     self.setStageDevicesList()
-    #     devices = []
-    #     for stage in self.stageDevices:
-    #         devices.append(str(stage))
-    #     return devices
+    def connectStage(self, index): # à vérifier DANGER
+        self.stageLink = self.stageDevices[index]
+        if self.stageLink == "Debug":
+            self.stage = sutter.SutterDevice(serialNumber="debug")
+            self.stage.initializeDevice()
+        else:
+            # TODO will update with list provided by sepo.SerialPort.matchPorts(idVendor=4930, idProduct=1)...
+            self.stage = sutter.SutterDevice()
+            self.stage.initializeDevice()
+        if self.stage is None:
+            raise Exception('The sutter is not connected!')
 
-    # def setStageDevicesList(self):
-    #     self.stageDevices = []  # find list from hardware... # TODO
-    #     self.stageDevices.insert(0, "Debug")
-    #     self.stageDevices.append("real Sutter")
-
-    # def connectStage(self, index):
-    #     self.stageLink = self.stageDevices[index]
-    #     if self.stageLink == "Debug":
-    #         self.stage = sutter.SutterDevice(serialNumber="debug")
-    #         self.stage.initializeDevice()
-    #     else:
-    #         # TODO will update with list provided by sepo.SerialPort.matchPorts(idVendor=4930, idProduct=1)...
-    #         self.stage = sutter.SutterDevice()
-    #         self.stage.initializeDevice()
-    #     if self.stage is None:
-    #         raise Exception('The sutter is not connected!')
-
-    # def listSpecDevices(self) -> list:
-    #     self.setSpecDevicesList()
-    #     devices = []
-    #     for spec in self.specDevices:
-    #         devices.append(str(spec))
-    #     return devices
-
-    # def setSpecDevicesList(self):
-    #     self.specDevices = sb.list_devices()
-    #     self.specDevices.insert(0, "MockSpectrometer")
-
-    # def connectSpectro(self, index):
-    #     self.spectroLink = self.specDevices[index]
-    #     if self.spectroLink == "MockSpectrometer":
-    #         self.spec = Mock.MockSpectrometer()
-    #     else:
-    #         self.spec = sb.Spectrometer(self.spectroLink)
-    #     if self.spec is None:
-    #         raise Exception('The spectrometer is not connected!')
+    def connectDetection(self, index): # à vérifier DANGER
+        self.spectroLink = self.specDevices[index]
+        if self.spectroLink == "MockSpectrometer":
+            self.spec = Mock.MockSpectrometer()
+        else:
+            self.spec = sb.Spectrometer(self.spectroLink)
+        if self.spec is None:
+            raise Exception('The spectrometer is not connected!')
 
 
 

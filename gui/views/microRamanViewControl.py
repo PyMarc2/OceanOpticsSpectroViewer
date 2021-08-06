@@ -149,8 +149,8 @@ class WindowControl(QWidget, Ui_MainWindow):
 
     def findDevices(self):
         self.lightDevices = ["None"]
-        self.listStageDevices = self.appControl.getStageList()
-        self.listSpecDevices = self.appControl.getSpectroList()
+        self.listStageDevices = self.appControl.listStageDevices()
+        self.listSpecDevices = self.appControl.listSpecDevices()
         self.cmb_selectDetection.clear()
         self.cmb_selectDetection.addItems(self.listSpecDevices)
         self.cmb_selectLight.clear()
