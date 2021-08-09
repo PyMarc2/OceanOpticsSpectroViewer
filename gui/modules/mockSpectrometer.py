@@ -48,10 +48,10 @@ def gaussian(x, mu, sig):
 
 def halogen_spectrum():
     x = np.linspace(784.48, 1029.63, 1042)
-    return gaussian(x, mu=900, sig=30) * 0.7 + gaussian(x, mu=1000, sig=20) * 0.3
+    return gaussian(x, mu=900, sig=20) * 0.7 + gaussian(x, mu=930, sig=5) * 0.3
 
 
 def background_spectrum():
     x = np.linspace(784.48, 1029.63, 1042)
-    return gaussian(x, mu=850, sig=5) * 1 + gaussian(x, mu=910, sig=8) * 0.7 + \
+    return gaussian(x, mu=870, sig=1) * 1 + gaussian(x, mu=960, sig=60) * 0.7 + \
            gaussian(x, mu=780, sig=15) * 0.2 + gaussian(x, mu=850, sig=200) * 0.1

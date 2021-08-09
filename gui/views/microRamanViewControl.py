@@ -167,13 +167,19 @@ class WindowControl(QWidget, Ui_MainWindow):
                 laser = int(self.le_laser.text())
                 self.appControl.setLaserWavelength(laser)
                 index = self.cmb_selectDetection.currentIndex()
+                print("1")
                 waves = self.appControl.connectDetection(index)
+                print("2")
                 self.appControl.setWavelength(waves)
+                print("3")
                 self.setRangeToWave()
+                print("4")
                 self.updateSliderStatus()
+                print("5")
                 self.cmb_wave.setEnabled(True)
+                print("6")
             except Exception as e:
-                print(e)
+                print("yo",e)
                 self.errorLaser()
 
     def connectLight(self):
