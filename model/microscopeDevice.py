@@ -17,11 +17,12 @@ class Background(NamedTuple):
 
 
 class Model:
-    def __init__(self, stage, detection):
-        self.spec = detection
-        self.stage = stage
+    def __init__(self, stage=None, detection=None):
+        self._spec = detection
+        self._stage = stage
         self._stagePosition = None
-        # self.resetStagePosition()
+        if self._stage is not None:
+            self.resetStagePosition()
 
         self._width: int = 2
         self._height: int = 2
@@ -36,12 +37,36 @@ class Model:
         self.dataMap: list = []
         self.background: list = []
 
+        self.expositionCounter = 0
+        self.integrationCountAcq = 0
+        self.liveAcquisitionData = []
+        self.integrationTimeAcqRemainder_ms = 0
+        self.changeLastExposition = 0
+        self.movingIntegrationData = None
+        self.positionSutter = None
+        self.countSpectrum = 0
+        self.countHeight = 0
+        self.countWidth = 0
+        self.isAcquisitionDone = False
+        self.isAcquiring = False
+
+    def connectStage(self, stage):
+        self._stage = stage
+        self.resetStagePosition()
+
+    def connectSpec(self, spec):
+        self._spec = spec
+        if self._spec is not None:
+            self.waves = self._spec.wavelengths()[2:]
+
     @property
     def stagePosition(self):
         return self._stagePosition
 
     def resetStagePosition(self):
-        self._stagePosition = self.stage.position()
+        if self._stage is None:
+            raise ConnectionRefusedError("The stage does not seem to be correctly connected.")
+        self._stagePosition = self._stage.position()
 
     def createDataPoint(self, x: int, y: int, spectrum: list):
         return DataPoint(x, y, spectrum)
@@ -49,16 +74,28 @@ class Model:
     def createBackground(self, spectrum):
         Background(spectrum=spectrum)
 
+    def conditions(self, width=None, height=None, step=None, measureUnit=None):
+        if step is None:
+            step = self._step
+        if measureUnit is None:
+            measureUnit = self._stepMeasureUnit
+        if width is None:
+            width = self._width
+        if height is None:
+            height = self._height
+        if width * step * measureUnit + self._stagePosition[0] > self._stage.xMaxLimit:  # TODO is it in native steps or in microns??
+            raise ValueError("The stage does not allow such an important range of motion in width.")
+        if height * step * measureUnit + self._stagePosition[1] > self._stage.xMaxLimit:  # TODO is it in native steps or in microns??
+            raise ValueError("The stage does not allow such an important range of motion in height.")
+        return True
+
     @property
     def width(self):
         return self._width
 
     @width.setter
     def width(self, width):
-        # TODO maybe create function with those conditions to make sure they are still being uphold at the start map
-        # they are basically the same for every setup sooo... they just have to be called before
-        if width * self._step * self._stepMeasureUnit + self._stagePosition[0] > self.stage.xMaxLimit:  # TODO is it in native steps or in microns??
-            raise ValueError("The stage does not allow such an important range of motion.")
+        self.conditions(width=width)
         if width <= 0:
             raise ValueError("Images will be mapped strictly with positive coordinates.")
         self._width = width
@@ -69,6 +106,9 @@ class Model:
 
     @height.setter
     def height(self, height):
+        self.conditions(height=height)
+        if height <= 0:
+            raise ValueError("Images will be mapped strictly with positive coordinates.")
         self._height = height
 
     @property
@@ -77,6 +117,9 @@ class Model:
 
     @step.setter
     def step(self, step):
+        self.conditions(step=step)
+        if step <= 0:
+            raise ValueError("Images will be mapped strictly with positive coordinates.")
         self._step = step
 
     @property
@@ -86,12 +129,15 @@ class Model:
     @stepMeasureUnit.setter
     def stepMeasureUnit(self, unit):
         if unit == 'mm':
+            self.conditions(measureUnit=10**3)
             self._stepMeasureUnit = 10**3
 
         elif unit == 'um':
+            self.conditions(measureUnit=1)
             self._stepMeasureUnit = 1
 
         elif unit == 'nm':
+            self.conditions(measureUnit=10**(-3))
             self._stepMeasureUnit = 10**(-3)
 
     @property
@@ -100,6 +146,8 @@ class Model:
 
     @exposureTime.setter
     def exposureTime(self, exposition):
+        if exposition <= 0:
+            raise ValueError("The exposition time cannot be a negative or null value.")
         self._exposureTime = exposition
 
     @property
@@ -108,10 +156,166 @@ class Model:
 
     @integrationTime.setter
     def integrationTime(self, integration):
+        if integration <= 0:
+            raise ValueError("The integration time cannot be a negative or null value.")
+        if integration < self._exposureTime:
+            raise ValueError("The integration time is necessarily greater or equal to the exposition time.")
         self._integrationTime = integration
 
-    def setDirectionToDefault(self):
-        self.direction = "same"
+    def setDirectionToDefault(self):  # TODO update those functions to only one??
+        self._direction = "same"
 
     def setDirectionToZigzag(self):
-        self.direction = "other"
+        self._direction = "other"
+
+    def resetMovingIntegrationData(self):
+        self.movingIntegrationData = None
+
+    def startExposureTime(self, time_in_ms=None, update=True):
+        if time_in_ms is not None:
+            expositionTime = time_in_ms
+
+        else:
+            expositionTime = self._exposureTime
+
+        self._spec.integration_time_micros(expositionTime * 1000)
+        if update:
+            self.startIntegrationTime()
+
+    def startIntegrationTime(self):
+        try:
+            if self._integrationTime >= self._exposureTime:
+                self.integrationCountAcq = self._integrationTime // self._exposureTime
+                self.integrationTimeAcqRemainder_ms = self._integrationTime - (
+                        self.integrationCountAcq * self._exposureTime)
+
+            else:
+                self.integrationCountAcq = 1
+
+        except ValueError:
+            print('nope, wrong value of integration:D')
+
+        if self.integrationTimeAcqRemainder_ms > 3:
+            self.movingIntegrationData = RingBuffer(size_max=self.integrationCountAcq + 1)
+            self.changeLastExposition = 1
+
+        else:
+            self.movingIntegrationData = RingBuffer(size_max=self.integrationCountAcq)
+            self.changeLastExposition = 0
+
+    # ACQUISITION
+    def spectrumPixelAcquisition(self):
+        self.isAcquisitionDone = False
+
+        while not self.isAcquisitionDone:
+            self.liveAcquisitionData = self.readDataLive().tolist()
+            self.integrateData()
+            liveData = np.mean(np.array(self.movingIntegrationData()), 0)
+
+        return liveData
+
+    def acquireBackground(self):
+        self.startExposureTime()
+        background = self.spectrumPixelAcquisition()
+        return background
+
+    def integrateData(self):
+        self.isAcquisitionDone = False
+        if self.expositionCounter < self.integrationCountAcq - 2:
+            self.movingIntegrationData.append(self.liveAcquisitionData)
+            self.expositionCounter += 1
+
+        elif self.expositionCounter == self.integrationCountAcq - 2:
+            self.movingIntegrationData.append(self.liveAcquisitionData)
+            self.expositionCounter += 1
+            if self.changeLastExposition:
+                self.startExposureTime(self.integrationTimeAcqRemainder_ms, update=False)
+
+        else:
+            self.startExposureTime(update=False)
+            self.movingIntegrationData.append(self.liveAcquisitionData)
+            self.isAcquisitionDone = True
+            self.expositionCounter = 0
+
+    def readDataLive(self):
+        return self._spec.intensities()[2:]
+
+    def stopAcq(self):
+        if self.isAcquiring:
+            self.isAcquiring = False
+            self.countHeight = 0
+            self.countWidth = 0
+            self.countSpectrum = 0
+        else:
+            print('Sampling already stopped.')
+
+    # Begin loop
+    def begin(self):
+        if not self.isAcquiring:
+            self.isAcquiring = True
+            self.startExposureTime()
+            self.countSpectrum = 0
+            self.countHeight = 0
+            self.countWidth = 0
+            self.map()
+        else:
+            print('Sampling already started.')
+
+    def map(self):
+        while self.isAcquiring:  # TODO change variable name
+            if self.countSpectrum <= (self._width * self._height):
+                pixel = self.spectrumPixelAcquisition()
+                # TODO will need to use notifications instead of pointer, in order to include the controller and model in pyhardware
+                # self.appControl.addSpectrum(self.countWidth, self.countHeight, pixel)
+                # self.appControl.matrixRGBReplace()
+                # self.appControl.savePixel(self.countWidth, self.countHeight, pixel)
+
+                if self._direction == "same":
+                    try:
+                        if self.countWidth < (self._width - 1):
+                            self.countWidth += 1
+                            self.moveStage()
+                        elif self.countHeight < (self._height - 1) and self.countWidth == (self._width - 1):
+                            self.countWidth = 0
+                            self.countHeight += 1
+                            self.moveStage()
+                        else:
+                            self.stopAcq()
+
+                    except Exception as e:
+                        print(f'error in map same: {e}')
+                        self.stopAcq()
+
+                elif self._direction == "other":
+                    try:
+                        if self.countHeight % 2 == 0:
+                            if self.countWidth < (self._width - 1):
+                                self.countWidth += 1
+                                self.moveStage()
+                            elif self.countWidth == (self._width - 1) and self.countHeight < (self._height - 1):
+                                self.countHeight += 1
+                                self.moveStage()
+                            else:
+                                self.stopAcq()
+                        elif self.countHeight % 2 == 1:
+                            if self.countWidth > 0:
+                                self.countWidth -= 1
+                                self.moveStage()
+                            elif self.countWidth == 0 and self.countHeight < (self._height - 1):
+                                self.countHeight += 1
+                                self.moveStage()
+                            else:
+                                self.stopAcq()
+                    except Exception as e:
+                        print(f'error in map other: {e}')
+                        self.stopAcq()
+
+                self.countSpectrum += 1
+
+            else:
+                self.stopAcq()
+
+    def moveStage(self):
+        self.stage.moveTo((self.positionSutter[0] + self.countWidth * self.step * self.stepMeasureUnit,
+                               self.positionSutter[1] + self.countHeight * self.step * self.stepMeasureUnit,
+                               self.positionSutter[2]))
