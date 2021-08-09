@@ -26,6 +26,8 @@ class AppControl():
         self.listSpecDevices()
         self.spectroLink = self.specDevices[0]
         self.lock = Lock()
+        self.stage = False
+        self.spec = False
 
     def matrixRGB(self, globalMaximum=True, VWB=True):
         colorValues = self.windowControl.currentSliderValues()
@@ -119,16 +121,10 @@ class AppControl():
         self.Model.begin()
 
     def stageConnected(self):
-        stage = self.Model._stage
-        if stage is None:
-            return False
-        return True
+        return self.stage
 
     def spectroConnected(self):
-        spectro = self.Model._spec
-        if spectro is None:
-            return False
-        return True
+        return self.spec
 
 
     def matrixRGBReplace(self):
@@ -205,7 +201,9 @@ class AppControl():
             stage.initializeDevice()
         if stage is None:
             raise Exception('The sutter is not connected!')
+            self.stage = False
         self.Model.connectStage(stage)
+        self.stage = True
 
     def connectDetection(self, index): # à vérifier DANGER
         self.spectroLink = self.specDevices[index]
@@ -215,7 +213,9 @@ class AppControl():
             spec = sb.Spectrometer(self.spectroLink)
         if spec is None:
             raise Exception('The spectrometer is not connected!')
+            self.spec = False
         self.Model.connectSpec(spec)
+        self.spec = True
         wave = self.Model.wavelengths()
         return wave
 
