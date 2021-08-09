@@ -1,8 +1,7 @@
 from typing import NamedTuple
-import seabreeze.spectrometers as sb
-import hardwarelibrary
-import hardwarelibrary.motion.sutterdevice as sutter
-from gui.modules import mockSpectrometer as Mock
+from hardwarelibrary.notificationcenter import NotificationCenter as notif
+from tools.CircularList import RingBuffer
+import numpy as np
 
 
 class DataPoint(NamedTuple):
@@ -33,7 +32,7 @@ class Model:
         self._direction = "same"
 
         self.waves: list = []
-        self.dataPoint: list = []
+        # self.dataPoint: list = []
         self.dataMap: list = []
         self.background: list = []
 
@@ -59,6 +58,10 @@ class Model:
             self.waves = self._spec.wavelengths()[2:]
 
     @property
+    def waves(self):
+        return self.waves
+
+    @property
     def stagePosition(self):
         return self._stagePosition
 
@@ -70,7 +73,7 @@ class Model:
     def createDataPoint(self, x: int, y: int, spectrum: list):
         return DataPoint(x, y, spectrum)
 
-    def createBackground(self, spectrum):
+    def createBackgroundTuple(self, spectrum):
         Background(spectrum=spectrum)
 
     def conditions(self, width=None, height=None, step=None, measureUnit=None):
@@ -216,7 +219,8 @@ class Model:
     def acquireBackground(self):
         self.startExposureTime()
         background = self.spectrumPixelAcquisition()
-        return background
+        self.background = background
+        return self.background
 
     def integrateData(self):
         self.isAcquisitionDone = False
@@ -263,8 +267,12 @@ class Model:
     def map(self):
         while self.isAcquiring:  # TODO change variable name
             if self.countSpectrum <= (self._width * self._height):
-                pixel = self.spectrumPixelAcquisition()
-                # TODO will need to use notifications instead of pointer, in order to include the controller and model in pyhardware
+                dataPoint = self.spectrumPixelAcquisition()
+                self.dataMap.append(self.createDataPoint(self.countWidth, self.countHeight, dataPoint))
+                notif().postNotification("Single acquisition done", self, userInfo={"point_x" : self.countWidth,
+                                                                                    "point_y" : self.countHeight,
+                                                                                    "spectrum" : dataPoint,
+                                                                                    "spectra" : self.dataMap})
                 # self.appControl.addSpectrum(self.countWidth, self.countHeight, pixel)
                 # self.appControl.matrixRGBReplace()
                 # self.appControl.savePixel(self.countWidth, self.countHeight, pixel)

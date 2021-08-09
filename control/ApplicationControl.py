@@ -202,7 +202,7 @@ class AppControl():
         if self.stage is None:
             raise Exception('The sutter is not connected!')
 
-    def connectDetection(self, index): # à vérifier DANGER
+    def connectDetection(self, index):  # à vérifier DANGER
         self.spectroLink = self.specDevices[index]
         if self.spectroLink == "MockSpectrometer":
             self.spec = Mock.MockSpectrometer()
