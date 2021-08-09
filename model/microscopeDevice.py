@@ -253,6 +253,7 @@ class Model:
 
     # Begin loop
     def begin(self):
+        self.conditions()
         if not self.isAcquiring:
             self.isAcquiring = True
             self.startExposureTime()
