@@ -40,6 +40,7 @@ class AppControl():
         # self.appControl.addSpectrum(point_x, point_y, spectrum)
         # self.appControl.matrixRGBReplace()
         # self.appControl.savePixel(point_x, point_y, spectrum)
+        pass
 
     def matrixRGB(self, globalMaximum=True, VWB=True):
         colorValues = self.windowControl.currentSliderValues()
@@ -145,14 +146,18 @@ class AppControl():
         self.HSI.saveCaptureCSV(data=self.HSI.background)
 
     def launchAcquisition(self):
-        self.Model.begin()
+        with self.lock:
+            if not self.Model.isAcquiring:
+                self.acqLoop = Thread(target=self.Model.begin, name="acquisitionThread")
+            else:
+                self.windowControl.createErrorDialogs("Acquisition has already started.")
+        self.acqLoop.start()
 
     def stageConnected(self):
         return self.stage
 
     def spectroConnected(self):
         return self.spec
-
 
     def matrixRGBReplace(self):
         globalMaximum = self.windowControl.globalMaximum
@@ -167,7 +172,9 @@ class AppControl():
         self.HSI.saveCaptureCSV(data=spectrum, countHeight=y, countWidth=x)
 
     def stopAcquisition(self):
-        self.Model.stopAcq()
+        with self.lock:
+            self.Model.stopAcq()
+            self.acqLoop.quit()
 
     def getFileName(self):
         fileName = self.windowControl.fileName()
@@ -198,10 +205,7 @@ class AppControl():
                 break
         self.loopRGB.quit()
 
-
-
     # à faire
-
     def listStageDevices(self) -> list: # connecté
         self.stageDevices = []  # find list from hardware... # TODO
         self.stageDevices.insert(0, "Debug")
@@ -247,11 +251,3 @@ class AppControl():
         self.spec = True
         wave = self.Model.wavelengths()
         return wave
-
-
-
-
-
-
-
-
