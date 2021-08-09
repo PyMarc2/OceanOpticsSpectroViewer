@@ -343,7 +343,6 @@ class WindowControl(QWidget, Ui_MainWindow):
             self.disableAllButtons()
             self.appControl.launchAcquisition()
             # TODO see if with thread okay... probably will connect with signal?
-            self.stopAcquisition()
 
     def stopAcquisition(self):
         self.cmb_wave.setEnabled(True)

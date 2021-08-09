@@ -2,6 +2,7 @@ from typing import NamedTuple
 from hardwarelibrary.notificationcenter import NotificationCenter as notif
 from tools.CircularList import RingBuffer
 import numpy as np
+from threading import Lock
 
 
 class DataPoint(NamedTuple):
@@ -17,6 +18,9 @@ class Background(NamedTuple):
 
 class Model:
     def __init__(self, stage=None, detection=None):
+        notif().addObserver(self, self.stopAcq, "Interrupt acquisition")
+        self.lock = Lock()
+
         self._spec = detection
         self._stage = stage
         self._stagePosition = None
@@ -243,29 +247,35 @@ class Model:
         return self._spec.intensities()[2:]
 
     def stopAcq(self):
-        if self.isAcquiring:
-            self.isAcquiring = False
-            self.countHeight = 0
-            self.countWidth = 0
-            self.countSpectrum = 0
-        else:
-            print('Sampling already stopped.')
+        with self.lock:
+            if self.isAcquiring:
+                self.isAcquiring = False
+                # self.countHeight = 0
+                # self.countWidth = 0
+                # self.countSpectrum = 0
+            else:
+                pass
+                # raise AssertionError('Sampling already stopped.')
+        notif().postNotification("Map acquisition done or interrupted.", self, userInfo={"spectra": self.dataMap})
 
     # Begin loop
     def begin(self):
         self.conditions()
-        if not self.isAcquiring:
-            self.isAcquiring = True
-            self.startExposureTime()
-            self.countSpectrum = 0
-            self.countHeight = 0
-            self.countWidth = 0
-            self.map()
-        else:
-            print('Sampling already started.')
+        with self.lock:
+            if not self.isAcquiring:
+                self.isAcquiring = True
+                self.countSpectrum = 0
+                self.countHeight = 0
+                self.countWidth = 0
+            else:
+                return False
+        self.startExposureTime()
+        self.map()
 
     def map(self):
-        while self.isAcquiring:  # TODO change variable name
+        with self.lock:
+            inProgress = self.isAcquiring
+        while inProgress:
             if self.countSpectrum <= (self._width * self._height):
                 dataPoint = self.spectrumPixelAcquisition()
                 self.dataMap.append(self.createDataPoint(self.countWidth, self.countHeight, dataPoint))
@@ -315,8 +325,11 @@ class Model:
                         self.stopAcq()
 
                 self.countSpectrum += 1
+                with self.lock:
+                    inProgress = self.isAcquiring
 
             else:
+                inProgress = False
                 self.stopAcq()
 
     def moveStage(self):

@@ -31,6 +31,7 @@ class AppControl():
         self.spec = False
 
         notif().addObserver(self, self.react, "Single acquisition done", Model)  # TODO add userInfo received
+        notif().addObserver(self, self.stopAcquisition, "Map acquisition done", Model)
 
     def react(self, *args):
         # TODO change function name
@@ -168,8 +169,11 @@ class AppControl():
 
     def stopAcquisition(self):
         with self.lock:
-            self.Model.stopAcq()
-            self.acqLoop.quit()
+            try:
+                notif().postNotification("Interrupt acquisition", self)
+                self.Model.stopAcq()
+            except:
+                pass  # TODO catch error in stopAcq in Model...
 
     def getFileName(self):
         fileName = self.windowControl.fileName()
