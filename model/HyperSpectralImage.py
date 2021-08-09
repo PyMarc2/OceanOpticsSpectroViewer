@@ -157,13 +157,6 @@ class HyperSpectralImage:
         except:
             return None
 
-    def listNameOfFiles(directory, extension="csv") -> list:
-        foundFiles = []
-        for file in os.listdir(directory):
-            if fnmatch.fnmatch(file, f'*.{extension}'):
-                foundFiles.append(file)
-        return foundFiles
-
     def loadData(self, path):
         DoGetWaveLength = False
         foundFiles = []
