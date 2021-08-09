@@ -9,7 +9,6 @@ import os
 from PyQt5 import uic
 
 from control.ApplicationControl import AppControl
-from control.microscopeControl import MicroscopeControl
 from control.AffichageRGBControl import AppliControl
 
 log = logging.getLogger(__name__)
@@ -58,12 +57,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         # Def pointeurs
         self.microRamanAppControl = AppControl()
-        self.microRamanMicroscopeControl = MicroscopeControl()
         self.AppliControl = AppliControl()
 
         self.microRamanAppControl.windowControl = self.microRamanView
-        self.microRamanAppControl.microControl = self.microRamanMicroscopeControl
-        self.microRamanMicroscopeControl.appControl = self.microRamanAppControl
         self.microRamanView.appControl = self.microRamanAppControl
 
         self.AppliControl.windowControl = self.affichageRGB

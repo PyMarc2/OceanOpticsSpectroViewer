@@ -9,6 +9,7 @@ import time
 from gui.modules import mockSpectrometer as Mock
 from tools.CircularList import RingBuffer
 from model.microscopeDevice import Model
+import hardwarelibrary.motion.sutterdevice as sutter
 
 class AppControl():
     def __init__(self):
@@ -81,46 +82,53 @@ class AppControl():
         self.HSI.setLaserWavelength(laser)
 
     def setWidth(self, width):
-        self.microControl.setWidth(width)
+        self.Model.width = width
 
     def setHeight(self, height):
-        self.microControl.setHeight(height)
+        self.Model.height = height
 
     def setStep(self, step):
-        self.microControl.setStep(step)
+        self.Model.step = step
 
     def setMeasureUnit(self, measureUnit):
-        self.microControl.setStepMeasureUnit(measureUnit)
+        self.Model.stepMeasureUnit = measureUnit
 
     def setExposureTime(self, exposureTime):
-        self.microControl.setExposureTime(exposureTime)
+        self.Model.exposureTime = exposureTime
 
     def setIntegrationTime(self, acqTime):
-        self.microControl.setIntegrationTime(acqTime)
+        try:
+            self.Model.integrationTime = acqTime
+        except: # TODO if integrationTime is greater than exposure time
+            pass
 
     def sweepDirectionSame(self):
-        self.microControl.setDirectionToDefault()
+        self.Model.setDirectionToDefault()
 
     def sweepDirectionOther(self):
-        self.microControl.setDirectionToZigzag()
+        self.Model.setDirectionToZigzag()
 
     def acquireBackground(self):
-        background = self.microControl.acquireBackground()
+        background = self.Model.acquireBackground()
         self.HSI.setBackground(background)
 
     def saveBackground(self):
         self.HSI.saveCaptureCSV(data=self.HSI.background)
 
     def launchAcquisition(self):
-        self.microControl.begin()
+        self.Model.begin()
 
     def stageConnected(self):
-        stage = self.microControl.getStage()
-        return stage
+        stage = self.Model._stage
+        if stage is None:
+            return False
+        return True
 
     def spectroConnected(self):
-        spectro = self.microControl.getSpectro()
-        return spectro
+        spectro = self.Model._spec
+        if spectro is None:
+            return False
+        return True
 
 
     def matrixRGBReplace(self):
@@ -136,7 +144,7 @@ class AppControl():
         self.HSI.saveCaptureCSV(data=spectrum, countHeight=y, countWidth=x)
 
     def stopAcquisition(self):
-        self.microControl.stopAcq()
+        self.Model.stopAcq()
 
     def getFileName(self):
         fileName = self.windowControl.fileName()
@@ -200,27 +208,16 @@ class AppControl():
         self.Model.connectStage(stage)
 
     def connectDetection(self, index): # à vérifier DANGER
-        print("1.1")
         self.spectroLink = self.specDevices[index]
-        print("1.2")
         if self.spectroLink == "MockSpectrometer":
-            print("1.3")
             spec = Mock.MockSpectrometer()
-            print("1.4")
         else:
-            print("1.5")
             spec = sb.Spectrometer(self.spectroLink)
-            print("1.6")
         if spec is None:
-            print("1.7")
             raise Exception('The spectrometer is not connected!')
-        print("1.8")
         self.Model.connectSpec(spec)
-        print("1.9")
-        waves = self.Model.waves()
-        print("1.91")
-        print(waves)
-        return waves
+        wave = self.Model.wavelengths()
+        return wave
 
 
 
