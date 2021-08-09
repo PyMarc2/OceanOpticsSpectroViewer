@@ -43,7 +43,6 @@ class Model:
         self.integrationTimeAcqRemainder_ms = 0
         self.changeLastExposition = 0
         self.movingIntegrationData = None
-        self.positionSutter = None
         self.countSpectrum = 0
         self.countHeight = 0
         self.countWidth = 0
@@ -316,6 +315,6 @@ class Model:
                 self.stopAcq()
 
     def moveStage(self):
-        self.stage.moveTo((self.positionSutter[0] + self.countWidth * self.step * self.stepMeasureUnit,
-                               self.positionSutter[1] + self.countHeight * self.step * self.stepMeasureUnit,
-                               self.positionSutter[2]))
+        self._stage.moveTo((self._stagePosition[0] + self.countWidth * self.step * self.stepMeasureUnit,
+                               self._stagePosition[1] + self.countHeight * self.step * self.stepMeasureUnit,
+                               self._stagePosition[2]))
