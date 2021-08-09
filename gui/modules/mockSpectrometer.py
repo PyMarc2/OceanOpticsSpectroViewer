@@ -25,7 +25,7 @@ class MockSpectrometer:
         background = self._background * self.backgroundIntensity * self.exposureFactor
         source = self._source * self.exposureFactor * self.shutterFactor
         noise = np.random.uniform(0, self.noise, 1042)
-        out = np.clip((background + source + noise) * 4095, 0, 8191)
+        out = np.clip((background + source + noise) * 4095, 0, 4095)
 
         delta = time.time() - t
         sleepTime = self.exposureTime / 1000000 - delta

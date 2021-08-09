@@ -1,6 +1,5 @@
 from PyQt5.QtCore import pyqtSignal, Qt, QThreadPool, QThread, QTimer
-from PyQt5.QtWidgets import QApplication, QMainWindow
-from PyQt5.QtWidgets import QWidget, QFileDialog
+from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox, QWidget, QFileDialog
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtGui import QIcon
 from PyQt5 import uic
@@ -47,9 +46,24 @@ class WindowControl(QWidget, Ui_MainWindow):
 
         self.appControl = None
 
+        self.lastError = None
+
         self.connectWidgets()
         self.updateSliderStatus()
         self.initializeButtons()
+
+    def createErrorDialogs(self, error):
+        error = str(error)
+        if self.lastError == error:
+            pass
+        else:
+            self.lastError = error
+            self.warningDialog = QMessageBox()
+            self.warningDialog.setIcon(QMessageBox.Information)
+            self.warningDialog.setText(f"{error}")
+            self.warningDialog.setWindowTitle("Warning")
+            self.warningDialog.setStandardButtons(QMessageBox.Ok)
+            self.warningDialog.exec_()
 
 
     def connectWidgets(self):
@@ -173,8 +187,8 @@ class WindowControl(QWidget, Ui_MainWindow):
                 self.updateSliderStatus()
                 self.cmb_wave.setEnabled(True)
             except Exception as e:
-                print(e)
                 self.errorLaser()
+                self.createErrorDialogs(e)
 
     def connectLight(self):
         pass
