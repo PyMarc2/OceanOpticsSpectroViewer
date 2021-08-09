@@ -6,6 +6,7 @@ from model.HyperSpectralImage import HyperSpectralImage
 import seabreeze.spectrometers as sb
 from threading import *
 import time
+from gui.modules import mockSpectrometer as Mock
 
 class AppControl():
     def __init__(self):
