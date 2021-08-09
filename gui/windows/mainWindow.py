@@ -57,13 +57,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         # Def pointeurs
         self.microRamanAppControl = AppControl()
-        self.AppliControl = AppliControl()
+        self.affichageRGBAppControl = AppliControl()
 
         self.microRamanAppControl.windowControl = self.microRamanView
         self.microRamanView.appControl = self.microRamanAppControl
 
-        self.AppliControl.windowControl = self.affichageRGB
-        self.affichageRGB.appControl = self.AppliControl
+        self.affichageRGBAppControl.windowControl = self.affichageRGB
+        self.affichageRGB.appControl = self.affichageRGBAppControl
 
     def connect_buttons(self):
         self.helpAction.triggered.connect(self.show_helpDialog)
