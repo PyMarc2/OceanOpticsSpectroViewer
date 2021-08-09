@@ -57,7 +57,6 @@ class Model:
         if self._spec is not None:
             self.waves = self._spec.wavelengths()[2:]
 
-    @property
     def waves(self):
         return self.waves
 
