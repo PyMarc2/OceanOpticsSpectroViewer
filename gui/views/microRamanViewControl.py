@@ -402,7 +402,7 @@ class WindowControl(QWidget, Ui_MainWindow):
                 #self.appControl.startRefreshRGBLoop() # TODO when threads are ok
                 self.appControl.launchAcquisition()
                 # TODO see if with thread okay... probably will connect with signal?
-                self.stopAcquisition()
+
         except Exception as e:
             self.createErrorDialogs(e)
 
