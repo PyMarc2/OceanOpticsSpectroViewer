@@ -32,12 +32,12 @@ class WindowControl(QWidget, Ui_MainWindow):
         self.model = model
 
         self.doSliderPositionAreInitialize = False
+        self.deviceConnected = False
         self.visualWithoutBackground = True
         self.colorRangeViewEnable = True
-        self.deviceConnected = False
         self.globalMaximum = True
-        self.folderPath = ""
         self.waveNumber = True
+        self.folderPath = ""
 
         self.mousePositionX = 0
         self.mousePositionY = 0
@@ -104,8 +104,8 @@ class WindowControl(QWidget, Ui_MainWindow):
         self.pb_sweepAlternate.setEnabled(True)
         self.pb_connectLight.setEnabled(True)
         self.pb_connectStage.setEnabled(True)
-        self.pb_sweepSame.setEnabled(True)
         self.pb_background.setEnabled(True)
+        self.pb_sweepSame.setEnabled(True)
         self.sb_exposure.setEnabled(True)
         self.sb_acqTime.setEnabled(True)
         self.sb_height.setEnabled(True)
@@ -125,8 +125,8 @@ class WindowControl(QWidget, Ui_MainWindow):
         self.pb_sweepAlternate.setEnabled(False)
         self.pb_connectLight.setEnabled(False)
         self.pb_connectStage.setEnabled(False)
-        self.pb_sweepSame.setEnabled(False)
         self.pb_background.setEnabled(False)
+        self.pb_sweepSame.setEnabled(False)
         self.sb_exposure.setEnabled(False)
         self.sb_acqTime.setEnabled(False)
         self.sb_height.setEnabled(False)
