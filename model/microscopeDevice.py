@@ -272,9 +272,6 @@ class Model:
                                                                                     "point_y" : self.countHeight,
                                                                                     "spectrum" : dataPoint,
                                                                                     "spectra" : self.dataMap})
-                # self.appControl.addSpectrum(self.countWidth, self.countHeight, pixel)
-                # self.appControl.matrixRGBReplace()
-                # self.appControl.savePixel(self.countWidth, self.countHeight, pixel)
 
                 if self._direction == "same":
                     try:
