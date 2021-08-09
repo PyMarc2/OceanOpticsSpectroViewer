@@ -914,7 +914,7 @@ color: rgb(255, 255, 255);</string>
               </size>
              </property>
              <property name="styleSheet">
-              <string notr="true">background-color: rgb(255, 149, 149);
+              <string notr="true">background-color: rgb(255, 121, 121);
 color: rgb(0, 0, 0);</string>
              </property>
              <property name="alignment">
@@ -950,7 +950,7 @@ color: rgb(0, 0, 0);</string>
               </size>
              </property>
              <property name="styleSheet">
-              <string notr="true">background-color: rgb(255, 149, 149);
+              <string notr="true">background-color: rgb(255, 121, 121);
 color: rgb(0, 0, 0);</string>
              </property>
              <property name="maximum">
@@ -1037,7 +1037,7 @@ color: rgb(0, 0, 0);</string>
               </size>
              </property>
              <property name="styleSheet">
-              <string notr="true">background-color: rgb(143, 208, 142);
+              <string notr="true">background-color: rgb(125, 231, 106);
 color: rgb(0, 0, 0);</string>
              </property>
              <property name="alignment">
@@ -1079,7 +1079,7 @@ color: rgb(0, 0, 0);</string>
               </size>
              </property>
              <property name="styleSheet">
-              <string notr="true">background-color: rgb(143, 208, 142);
+              <string notr="true">background-color: rgb(125, 231, 106);
 color: rgb(0, 0, 0);</string>
              </property>
              <property name="maximum">
@@ -1109,7 +1109,7 @@ color: rgb(0, 0, 0);</string>
               </size>
              </property>
              <property name="styleSheet">
-              <string notr="true">background-color: rgb(183, 190, 255);
+              <string notr="true">background-color: rgb(138, 173, 255);
 color: rgb(0, 0, 0);</string>
              </property>
              <property name="alignment">
@@ -1145,7 +1145,7 @@ color: rgb(0, 0, 0);</string>
               </size>
              </property>
              <property name="styleSheet">
-              <string notr="true">background-color: rgb(183, 190, 255);
+              <string notr="true">background-color: rgb(138, 173, 255);
 color: rgb(0, 0, 0);</string>
              </property>
              <property name="maximum">
