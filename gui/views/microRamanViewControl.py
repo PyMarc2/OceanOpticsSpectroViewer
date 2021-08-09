@@ -113,6 +113,9 @@ class WindowControl(QWidget, Ui_MainWindow):
         self.cmb_selectLight.setEnabled(True)
         self.cmb_selectStage.setEnabled(True)
         self.cmb_measureUnit.setEnabled(True)
+        self.le_folderPath.setEnabled(True)
+        self.le_laser.setEnabled(True)
+        self.pb_findDevices.setEnabled(True)
         self.pb_saveWithoutBackground.setEnabled(True)
         self.pb_connectDetection.setEnabled(True)
         self.pb_sweepAlternate.setEnabled(True)
@@ -128,12 +131,38 @@ class WindowControl(QWidget, Ui_MainWindow):
         self.tb_folderPath.setEnabled(True)
         self.le_fileName.setEnabled(True)
 
+        self.cb_substractBackground.setStyleSheet("")
+        self.cmb_selectDetection.setStyleSheet("")
+        self.cmb_selectLight.setStyleSheet("")
+        self.cmb_selectStage.setStyleSheet("")
+        self.cmb_measureUnit.setStyleSheet("")
+        self.le_folderPath.setStyleSheet("")
+        self.le_laser.setStyleSheet("")
+        self.pb_findDevices.setStyleSheet("")
+        self.pb_saveWithoutBackground.setStyleSheet("")
+        self.pb_connectDetection.setStyleSheet("")
+        self.pb_sweepAlternate.setStyleSheet("")
+        self.pb_connectLight.setStyleSheet("")
+        self.pb_connectStage.setStyleSheet("")
+        self.pb_background.setStyleSheet("")
+        self.pb_sweepSame.setStyleSheet("")
+        self.sb_exposure.setStyleSheet("")
+        self.sb_acqTime.setStyleSheet("")
+        self.sb_height.setStyleSheet("")
+        self.sb_width.setStyleSheet("")
+        self.sb_step.setStyleSheet("")
+        self.tb_folderPath.setStyleSheet("")
+        self.le_fileName.setStyleSheet("")
+
     def disableAllButtons(self):
         self.cb_substractBackground.setEnabled(False)
         self.cmb_selectDetection.setEnabled(False)
         self.cmb_selectLight.setEnabled(False)
         self.cmb_selectStage.setEnabled(False)
         self.cmb_measureUnit.setEnabled(False)
+        self.le_folderPath.setEnabled(False)
+        self.le_laser.setEnabled(False)
+        self.pb_findDevices.setEnabled(False)
         self.pb_saveWithoutBackground.setEnabled(False)
         self.pb_connectDetection.setEnabled(False)
         self.pb_sweepAlternate.setEnabled(False)
@@ -148,6 +177,29 @@ class WindowControl(QWidget, Ui_MainWindow):
         self.sb_step.setEnabled(False)
         self.tb_folderPath.setEnabled(False)
         self.le_fileName.setEnabled(False)
+
+        self.cb_substractBackground.setStyleSheet("background-color: rgb(40, 40, 40)")
+        self.cmb_selectDetection.setStyleSheet("background-color: rgb(40, 40, 40)")
+        self.cmb_selectLight.setStyleSheet("background-color: rgb(40, 40, 40)")
+        self.cmb_selectStage.setStyleSheet("background-color: rgb(40, 40, 40)")
+        self.cmb_measureUnit.setStyleSheet("background-color: rgb(40, 40, 40)")
+        self.le_folderPath.setStyleSheet("background-color: rgb(40, 40, 40)")
+        self.le_laser.setStyleSheet("background-color: rgb(40, 40, 40)")
+        self.pb_findDevices.setStyleSheet("background-color: rgb(40, 40, 40)")
+        self.pb_saveWithoutBackground.setStyleSheet("background-color: rgb(40, 40, 40)")
+        self.pb_connectDetection.setStyleSheet("background-color: rgb(40, 40, 40)")
+        self.pb_sweepAlternate.setStyleSheet("background-color: rgb(40, 40, 40)")
+        self.pb_connectLight.setStyleSheet("background-color: rgb(40, 40, 40)")
+        self.pb_connectStage.setStyleSheet("background-color: rgb(40, 40, 40)")
+        self.pb_background.setStyleSheet("background-color: rgb(40, 40, 40)")
+        self.pb_sweepSame.setStyleSheet("background-color: rgb(40, 40, 40)")
+        self.sb_exposure.setStyleSheet("background-color: rgb(40, 40, 40)")
+        self.sb_acqTime.setStyleSheet("background-color: rgb(40, 40, 40)")
+        self.sb_height.setStyleSheet("background-color: rgb(40, 40, 40)")
+        self.sb_width.setStyleSheet("background-color: rgb(40, 40, 40)")
+        self.sb_step.setStyleSheet("background-color: rgb(40, 40, 40)")
+        self.tb_folderPath.setStyleSheet("background-color: rgb(40, 40, 40)")
+        self.le_fileName.setStyleSheet("background-color: rgb(40, 40, 40)")
 
     def initializeButtons(self):
         self.pb_sweepSame.setIcons(QPixmap("./gui/misc/icons/sweep_same.png").scaled(50, 50, Qt.KeepAspectRatio, Qt.SmoothTransformation),
@@ -186,9 +238,10 @@ class WindowControl(QWidget, Ui_MainWindow):
                 self.setRangeToWave()
                 self.updateSliderStatus()
                 self.cmb_wave.setEnabled(True)
+                self.cmb_wave.setStyleSheet("")
             except Exception as e:
+                print(e)
                 self.errorLaser()
-                self.createErrorDialogs(e)
 
     def connectLight(self):
         pass
@@ -199,19 +252,19 @@ class WindowControl(QWidget, Ui_MainWindow):
 
     def errorDetection(self):
         self.pb_connectDetection.setStyleSheet("background-color: rgb(255, 0, 0)")
-        QTimer.singleShot(50, lambda: self.pb_connectDetection.setStyleSheet("background-color: rgb(75, 75, 75)"))
+        QTimer.singleShot(50, lambda: self.pb_connectDetection.setStyleSheet(""))
 
     def errorLight(self):
         self.pb_connectLight.setStyleSheet("background-color: rgb(255, 0, 0)")
-        QTimer.singleShot(50, lambda: self.pb_connectLight.setStyleSheet("background-color: rgb(75, 75, 75)"))
+        QTimer.singleShot(50, lambda: self.pb_connectLight.setStyleSheet(""))
 
     def errorStage(self):
         self.pb_connectStage.setStyleSheet("background-color: rgb(255, 0, 0)")
-        QTimer.singleShot(50, lambda: self.pb_connectStage.setStyleSheet("background-color: rgb(75, 75, 75)"))
+        QTimer.singleShot(50, lambda: self.pb_connectStage.setStyleSheet(""))
 
     def errorFindDevice(self):
         self.pb_findDevices.setStyleSheet("background-color: rgb(255, 0, 0)")
-        QTimer.singleShot(50, lambda: self.pb_findDevices.setStyleSheet("background-color: rgb(75, 75, 75)"))
+        QTimer.singleShot(50, lambda: self.pb_findDevices.setStyleSheet(""))
 
 
     # Capture Controls
@@ -228,7 +281,7 @@ class WindowControl(QWidget, Ui_MainWindow):
 
     def errorFolderName(self):
         self.le_folderPath.setStyleSheet("background-color: rgb(255, 0, 0)")
-        QTimer.singleShot(50, lambda: self.le_folderPath.setStyleSheet("background-color: rgb(75, 75, 75)"))
+        QTimer.singleShot(50, lambda: self.le_folderPath.setStyleSheet(""))
 
     def saveImage(self):
         matrixRGB = self.appControl.matrixRGB(self.globalMaximum, self.visualWithoutBackground)
@@ -260,13 +313,13 @@ class WindowControl(QWidget, Ui_MainWindow):
 
     def errorBackground(self):
         self.pb_background.setStyleSheet("background-color: rgb(255, 0, 0)")
-        QTimer.singleShot(50, lambda: self.pb_background.setStyleSheet("background-color: rgb(75, 75, 75)"))
+        QTimer.singleShot(50, lambda: self.pb_background.setStyleSheet(""))
 
     # Info Laser
 
     def errorLaser(self):
         self.le_laser.setStyleSheet("background-color: rgb(255, 0, 0)")
-        QTimer.singleShot(50, lambda: self.le_laser.setStyleSheet("background-color: rgb(75, 75, 75)"))
+        QTimer.singleShot(50, lambda: self.le_laser.setStyleSheet(""))
 
     # Acquisition Settings
 
@@ -303,28 +356,10 @@ class WindowControl(QWidget, Ui_MainWindow):
     # Acquisition Control
 
     def acquireBackground(self):
-        spectroConnected = self.appControl.spectroConnected()
-        stageConnected = self.appControl.stageConnected()
-
-        if self.folderPath == "":
-            self.errorFolderName()
-        elif self.le_laser.text() == "":
-            self.errorLaser()
-        elif not spectroConnected:
-            self.errorDetection()
-        elif not spectroConnected:
-            self.errorStage()
-        else:
-            self.disableAllButtons()
-            self.appControl.acquireBackground()
-            self.appControl.saveBackground()
-            self.enableAllButtons()
-
-    def launchAcquisition(self):
         stageState = self.appControl.stageConnected()
         spectroState = self.appControl.spectroConnected()
         if self.folderPath == "":
-                self.errorFolderName()
+            self.errorFolderName()
         elif self.le_laser.text() == "":
             self.errorLaser()
         elif not self.deviceConnected:
@@ -333,21 +368,50 @@ class WindowControl(QWidget, Ui_MainWindow):
             self.errorDetection()
         elif not stageState:
             self.errorStage()
-            
         else:
-            self.appControl.deleteSpectra()
-            self.pb_saveImage.setEnabled(True)
-            self.cmb_wave.setEnabled(False)
-            self.createPlotSpectrum()
-            self.createPlotRGB()
             self.disableAllButtons()
-            self.appControl.launchAcquisition()
-            # TODO see if with thread okay... probably will connect with signal?
+            self.appControl.acquireBackground()
+            self.appControl.saveBackground()
+            self.enableAllButtons()
+
+    def launchAcquisition(self):
+        self.lastError = None
+        try:
+            stageState = self.appControl.stageConnected()
+            spectroState = self.appControl.spectroConnected()
+            if self.folderPath == "":
+                    self.errorFolderName()
+            elif self.le_laser.text() == "":
+                self.errorLaser()
+            elif not self.deviceConnected:
+                self.errorFindDevice()
+            elif not spectroState:
+                self.errorDetection()
+            elif not stageState:
+                self.errorStage()
+                
+            else:
+                self.appControl.deleteSpectra()
+                self.pb_saveImage.setEnabled(True)
+                self.pb_saveImage.setStyleSheet("")
+                self.cmb_wave.setEnabled(False)
+                self.cmb_wave.setStyleSheet("background-color: rgb(40, 40, 40)")
+                self.createPlotSpectrum()
+                self.createPlotRGB()
+                self.disableAllButtons()
+                #self.appControl.startRefreshRGBLoop() # TODO when threads are ok
+                self.appControl.launchAcquisition()
+                # TODO see if with thread okay... probably will connect with signal?
+                self.stopAcquisition()
+        except Exception as e:
+            self.createErrorDialogs(e)
 
     def stopAcquisition(self):
         self.cmb_wave.setEnabled(True)
+        self.cmb_wave.setStyleSheet("")
         self.enableAllButtons()
         self.appControl.stopAcquisition()
+        #self.appControl.quitLoopRGB = True # TODO when threads are ok
 
     # Image Controls
 

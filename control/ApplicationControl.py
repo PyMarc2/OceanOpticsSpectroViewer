@@ -30,6 +30,8 @@ class AppControl():
         self.stage = False
         self.spec = False
 
+        self.isLoopRGB = False
+        self.quitLoopRGB = True
         notif().addObserver(self, self.react, "Single acquisition done", Model)  # TODO add userInfo received
         notif().addObserver(self, self.stopAcquisition, "Map acquisition done", Model)
 
@@ -96,7 +98,10 @@ class AppControl():
         self.HSI.setLaserWavelength(laser)
 
     def setWidth(self, width):
-        self.Model.width = width
+        try:
+            self.Model.width = width
+        except Exception as e:
+            self.windowControl.createErrorDialogs(e)
 
     def setHeight(self, height):
         try:
@@ -171,7 +176,6 @@ class AppControl():
         with self.lock:
             try:
                 notif().postNotification("Interrupt acquisition", self)
-                self.Model.stopAcq()
             except:
                 pass  # TODO catch error in stopAcq in Model...
 
@@ -187,20 +191,22 @@ class AppControl():
 
     def startRefreshRGBLoop(self):
         with self.lock:
-            if not self.isMonitoring:
-                self.quitMonitoring = False
+            if not self.isLoopRGB:
+                self.quitLoopRGB = False
                 self.loopRGB = Thread(target=self.refreshRGBLoop, name="refreshRGBLoop")
-                self.loopRGB.start()
             else:
                 raise RuntimeError("RefreshRGBLoop is already running")
+        self.loopRGB.start()
 
     def refreshRGBLoop(self):
-        while self.quitMonitoring == False:
+        self.isLoopRGB = True
+        while self.quitLoopRGB == False:
             with self.lock:
                 self.matrixRGBReplace()
             time.sleep(3)
-            if self.quitMonitoring == True:
+            if self.quitLoopRGB == True:
                 break
+        self.loopRGB.quit()
 
     # à faire
     def listStageDevices(self) -> list: # connecté

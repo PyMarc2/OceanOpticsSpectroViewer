@@ -322,6 +322,9 @@ color: rgb(255, 255, 255);</string>
                <property name="enabled">
                 <bool>false</bool>
                </property>
+               <property name="styleSheet">
+                <string notr="true">background-color: rgb(40, 40, 40);</string>
+               </property>
                <property name="text">
                 <string>Save Image</string>
                </property>
@@ -367,6 +370,9 @@ color: rgb(255, 255, 255);</string>
                    <property name="toolTip">
                     <string/>
                    </property>
+                   <property name="styleSheet">
+                    <string notr="true">background-color: rgb(40, 40, 40);</string>
+                   </property>
                    <property name="text">
                     <string>Substract Background</string>
                    </property>
@@ -376,6 +382,9 @@ color: rgb(255, 255, 255);</string>
                   <widget class="QPushButton" name="pb_saveWithoutBackground">
                    <property name="enabled">
                     <bool>false</bool>
+                   </property>
+                   <property name="styleSheet">
+                    <string notr="true">background-color: rgb(40, 40, 40);</string>
                    </property>
                    <property name="text">
                     <string>Save Data Without Background</string>
@@ -914,7 +923,7 @@ color: rgb(255, 255, 255);</string>
               </size>
              </property>
              <property name="styleSheet">
-              <string notr="true">background-color: rgb(255, 149, 149);
+              <string notr="true">background-color: rgb(255, 121, 121);
 color: rgb(0, 0, 0);</string>
              </property>
              <property name="alignment">
@@ -950,7 +959,7 @@ color: rgb(0, 0, 0);</string>
               </size>
              </property>
              <property name="styleSheet">
-              <string notr="true">background-color: rgb(255, 149, 149);
+              <string notr="true">background-color: rgb(255, 121, 121);
 color: rgb(0, 0, 0);</string>
              </property>
              <property name="maximum">
@@ -969,6 +978,10 @@ color: rgb(0, 0, 0);</string>
             <widget class="QComboBox" name="cmb_wave">
              <property name="enabled">
               <bool>false</bool>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">background-color: rgb(40, 40, 40);
+</string>
              </property>
              <item>
               <property name="text">
@@ -1037,7 +1050,7 @@ color: rgb(0, 0, 0);</string>
               </size>
              </property>
              <property name="styleSheet">
-              <string notr="true">background-color: rgb(143, 208, 142);
+              <string notr="true">background-color: rgb(125, 231, 106);
 color: rgb(0, 0, 0);</string>
              </property>
              <property name="alignment">
@@ -1079,7 +1092,7 @@ color: rgb(0, 0, 0);</string>
               </size>
              </property>
              <property name="styleSheet">
-              <string notr="true">background-color: rgb(143, 208, 142);
+              <string notr="true">background-color: rgb(125, 231, 106);
 color: rgb(0, 0, 0);</string>
              </property>
              <property name="maximum">
@@ -1109,7 +1122,7 @@ color: rgb(0, 0, 0);</string>
               </size>
              </property>
              <property name="styleSheet">
-              <string notr="true">background-color: rgb(183, 190, 255);
+              <string notr="true">background-color: rgb(138, 173, 255);
 color: rgb(0, 0, 0);</string>
              </property>
              <property name="alignment">
@@ -1145,7 +1158,7 @@ color: rgb(0, 0, 0);</string>
               </size>
              </property>
              <property name="styleSheet">
-              <string notr="true">background-color: rgb(183, 190, 255);
+              <string notr="true">background-color: rgb(138, 173, 255);
 color: rgb(0, 0, 0);</string>
              </property>
              <property name="maximum">
