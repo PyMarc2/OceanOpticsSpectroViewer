@@ -342,7 +342,7 @@ class SpectraView(QWidget, Ui_spectraView):
             self.liveAcquisitionData = self.read_data_live().tolist()
 
             self.integrate_data()
-            self.displayData = np.mean(np.array(self.movingIntegrationData()), 0)
+            self.displayData = np.sum(np.array(self.movingIntegrationData()), 0)
 
             self.acquire_background()
             self.normalize_data()

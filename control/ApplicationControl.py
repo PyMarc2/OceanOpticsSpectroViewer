@@ -1,3 +1,5 @@
+import threading
+
 import numpy as np
 import sys
 import os
@@ -140,7 +142,11 @@ class AppControl():
         self.Model.setDirectionToZigzag()
 
     def acquireBackground(self):
-        background = self.Model.acquireBackground()
+        with self.lock:
+            self.backgroundLoop = Thread(target=self.Model.acquireBackground, name="acquireBackgroundThread")
+        self.backgroundLoop.start()
+        self.backgroundLoop.join()
+        background = self.Model.backgroundData()
         self.HSI.setBackground(background)
 
     def saveBackground(self):
@@ -188,7 +194,6 @@ class AppControl():
         return laser
 
     # thread
-
     def startRefreshRGBLoop(self):
         with self.lock:
             if not self.isLoopRGB:

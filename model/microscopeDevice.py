@@ -215,7 +215,7 @@ class Model:
         while not self.isAcquisitionDone:
             self.liveAcquisitionData = self.readDataLive().tolist()
             self.integrateData()
-            liveData = np.mean(np.array(self.movingIntegrationData()), 0)
+            liveData = np.sum(np.array(self.movingIntegrationData()), 0)
 
         return liveData
 
@@ -223,6 +223,9 @@ class Model:
         self.startExposureTime()
         background = self.spectrumPixelAcquisition()
         self.background = background
+        notif().postNotification("Background acquired", self, userInfo=background)
+
+    def backgroundData(self):
         return self.background
 
     def integrateData(self):
