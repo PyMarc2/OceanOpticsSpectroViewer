@@ -10,6 +10,7 @@ from gui.modules import mockSpectrometer as Mock
 from tools.CircularList import RingBuffer
 from model.microscopeDevice import Model
 import hardwarelibrary.motion.sutterdevice as sutter
+from hardwarelibrary.notificationcenter import NotificationCenter as notif
 
 class AppControl():
     def __init__(self):
@@ -28,6 +29,14 @@ class AppControl():
         self.lock = Lock()
         self.stage = False
         self.spec = False
+        notif().addObserver(self, self.react, "Single acquisition done", Model)  # TODO add userInfo received
+
+    def react(self, *args):
+        # TODO change function name
+        # TODO call following functions with dict received as userInfo
+        # self.appControl.addSpectrum(point_x, point_y, spectrum)
+        # self.appControl.matrixRGBReplace()
+        # self.appControl.savePixel(point_x, point_y, spectrum)
 
     def matrixRGB(self, globalMaximum=True, VWB=True):
         colorValues = self.windowControl.currentSliderValues()
