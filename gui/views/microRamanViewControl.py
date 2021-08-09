@@ -188,7 +188,6 @@ class WindowControl(QWidget, Ui_MainWindow):
                 self.cmb_wave.setEnabled(True)
             except Exception as e:
                 self.errorLaser()
-                self.createErrorDialogs(e)
 
     def connectLight(self):
         pass
@@ -321,34 +320,38 @@ class WindowControl(QWidget, Ui_MainWindow):
             self.enableAllButtons()
 
     def launchAcquisition(self):
-        stageState = self.appControl.stageConnected()
-        spectroState = self.appControl.spectroConnected()
-        if self.folderPath == "":
-                self.errorFolderName()
-        elif self.le_laser.text() == "":
-            self.errorLaser()
-        elif not self.deviceConnected:
-            self.errorFindDevice()
-        elif not spectroState:
-            self.errorDetection()
-        elif not stageState:
-            self.errorStage()
-            
-        else:
-            self.appControl.deleteSpectra()
-            self.pb_saveImage.setEnabled(True)
-            self.cmb_wave.setEnabled(False)
-            self.createPlotSpectrum()
-            self.createPlotRGB()
-            self.disableAllButtons()
-            self.appControl.launchAcquisition()
-            # TODO see if with thread okay... probably will connect with signal?
-            self.stopAcquisition()
+        try:
+            stageState = self.appControl.stageConnected()
+            spectroState = self.appControl.spectroConnected()
+            if self.folderPath == "":
+                    self.errorFolderName()
+            elif self.le_laser.text() == "":
+                self.errorLaser()
+            elif not self.deviceConnected:
+                self.errorFindDevice()
+            elif not spectroState:
+                self.errorDetection()
+            elif not stageState:
+                self.errorStage()
+                
+            else:
+                self.appControl.deleteSpectra()
+                self.pb_saveImage.setEnabled(True)
+                self.cmb_wave.setEnabled(False)
+                self.createPlotSpectrum()
+                self.createPlotRGB()
+                self.disableAllButtons()
+                self.appControl.launchAcquisition()
+                # TODO see if with thread okay... probably will connect with signal?
+                self.stopAcquisition()
+        except Exception as e:
+            self.createErrorDialogs(e)
 
     def stopAcquisition(self):
         self.cmb_wave.setEnabled(True)
         self.enableAllButtons()
         self.appControl.stopAcquisition()
+        self.appControl.quitLoopRGB = True
 
     # Image Controls
 

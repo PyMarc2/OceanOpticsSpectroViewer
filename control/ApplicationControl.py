@@ -29,6 +29,9 @@ class AppControl():
         self.lock = Lock()
         self.stage = False
         self.spec = False
+
+        self.isLoopRGB = False
+        self.quitLoopRGB = True
         notif().addObserver(self, self.react, "Single acquisition done", Model)  # TODO add userInfo received
 
     def react(self, *args):
@@ -93,7 +96,10 @@ class AppControl():
         self.HSI.setLaserWavelength(laser)
 
     def setWidth(self, width):
-        self.Model.width = width
+        try:
+            self.Model.width = width
+        except Exception as e:
+            self.windowControl.createErrorDialogs(e)
 
     def setHeight(self, height):
         try:
@@ -175,20 +181,22 @@ class AppControl():
 
     def startRefreshRGBLoop(self):
         with self.lock:
-            if not self.isMonitoring:
-                self.quitMonitoring = False
+            if not self.isLoopRGB:
+                self.quitLoopRGB = False
                 self.loopRGB = Thread(target=self.refreshRGBLoop, name="refreshRGBLoop")
-                self.loopRGB.start()
             else:
                 raise RuntimeError("RefreshRGBLoop is already running")
+        self.loopRGB.start()
 
     def refreshRGBLoop(self):
-        while self.quitMonitoring == False:
+        self.isLoopRGB = True
+        while self.quitLoopRGB == False:
             with self.lock:
                 self.matrixRGBReplace()
             time.sleep(3)
-            if self.quitMonitoring == True:
+            if self.quitLoopRGB == True:
                 break
+        self.loopRGB.quit()
 
 
 
