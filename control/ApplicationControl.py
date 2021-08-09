@@ -7,10 +7,13 @@ import seabreeze.spectrometers as sb
 from threading import *
 import time
 from gui.modules import mockSpectrometer as Mock
+from tools.CircularList import RingBuffer
+from model.microscopeDevice import Model
 
 class AppControl():
     def __init__(self):
         self.HSI = HyperSpectralImage()
+        self.Model = Model()
         self.windowControl = None
         self.microControl = None
 
@@ -64,13 +67,6 @@ class AppControl():
 
     def saveImage(self, matrixRGB):
         self.HSI.saveImage(matrixRGB)
-
-    def connectDetection(self, index):
-        waves = self.microControl.connectDetection(index)
-        return waves
-
-    def connectStage(self, index):
-        self.microControl.connectStage(index)
 
     def setFolderPath(self, folderPath):
         self.HSI.setFolderPath(folderPath)
@@ -193,23 +189,38 @@ class AppControl():
     def connectStage(self, index): # à vérifier DANGER
         self.stageLink = self.stageDevices[index]
         if self.stageLink == "Debug":
-            self.stage = sutter.SutterDevice(serialNumber="debug")
-            self.stage.initializeDevice()
+            stage = sutter.SutterDevice(serialNumber="debug")
+            stage.initializeDevice()
         else:
             # TODO will update with list provided by sepo.SerialPort.matchPorts(idVendor=4930, idProduct=1)...
-            self.stage = sutter.SutterDevice()
-            self.stage.initializeDevice()
-        if self.stage is None:
+            stage = sutter.SutterDevice()
+            stage.initializeDevice()
+        if stage is None:
             raise Exception('The sutter is not connected!')
+        self.Model.connectStage(stage)
 
-    def connectDetection(self, index):  # à vérifier DANGER
+    def connectDetection(self, index): # à vérifier DANGER
+        print("1.1")
         self.spectroLink = self.specDevices[index]
+        print("1.2")
         if self.spectroLink == "MockSpectrometer":
-            self.spec = Mock.MockSpectrometer()
+            print("1.3")
+            spec = Mock.MockSpectrometer()
+            print("1.4")
         else:
-            self.spec = sb.Spectrometer(self.spectroLink)
-        if self.spec is None:
+            print("1.5")
+            spec = sb.Spectrometer(self.spectroLink)
+            print("1.6")
+        if spec is None:
+            print("1.7")
             raise Exception('The spectrometer is not connected!')
+        print("1.8")
+        self.Model.connectSpec(spec)
+        print("1.9")
+        waves = self.Model.waves()
+        print("1.91")
+        print(waves)
+        return waves
 
 
 
