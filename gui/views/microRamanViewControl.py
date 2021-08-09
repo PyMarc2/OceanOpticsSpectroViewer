@@ -288,7 +288,6 @@ class WindowControl(QWidget, Ui_MainWindow):
         self.appControl.saveImage(matrixRGB)
 
     # Background Controls
-
     def substractBackground(self):
         backgroundData = self.appControl.backgroundData
         if backgroundData == []:
@@ -371,6 +370,7 @@ class WindowControl(QWidget, Ui_MainWindow):
         else:
             self.disableAllButtons()
             self.appControl.acquireBackground()
+            self.appControl.backgroundLoop.join()
             self.appControl.saveBackground()
             self.enableAllButtons()
 

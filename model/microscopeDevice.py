@@ -223,6 +223,9 @@ class Model:
         self.startExposureTime()
         background = self.spectrumPixelAcquisition()
         self.background = background
+        notif().postNotification("Background acquired", self, userInfo=background)
+
+    def backgroundData(self):
         return self.background
 
     def integrateData(self):
