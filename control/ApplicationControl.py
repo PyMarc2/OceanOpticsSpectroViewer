@@ -98,22 +98,34 @@ class AppControl():
         self.Model.width = width
 
     def setHeight(self, height):
-        self.Model.height = height
+        try:
+            self.Model.height = height
+        except Exception as e:
+            self.windowControl.createErrorDialogs(e)
 
     def setStep(self, step):
-        self.Model.step = step
+        try:
+            self.Model.step = step
+        except Exception as e:
+            self.windowControl.createErrorDialogs(e)
 
     def setMeasureUnit(self, measureUnit):
-        self.Model.stepMeasureUnit = measureUnit
+        try:
+            self.Model.stepMeasureUnit = measureUnit
+        except Exception as e:
+            self.windowControl.createErrorDialogs(e)
 
     def setExposureTime(self, exposureTime):
-        self.Model.exposureTime = exposureTime
+        try:
+            self.Model.exposureTime = exposureTime
+        except Exception as e:
+            self.windowControl.createErrorDialogs(e)
 
     def setIntegrationTime(self, acqTime):
         try:
             self.Model.integrationTime = acqTime
-        except:  # TODO if integrationTime is greater than exposure time
-            pass
+        except Exception as e:
+            self.windowControl.createErrorDialogs(e)
 
     def sweepDirectionSame(self):
         self.Model.setDirectionToDefault()
