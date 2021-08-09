@@ -174,7 +174,7 @@ class AppControl():
     def stopAcquisition(self):
         with self.lock:
             self.Model.stopAcq()
-            self.acqLoop.quit()
+            #self.acqLoop.quit()
 
     def getFileName(self):
         fileName = self.windowControl.fileName()

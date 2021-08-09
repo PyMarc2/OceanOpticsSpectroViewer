@@ -322,6 +322,9 @@ color: rgb(255, 255, 255);</string>
                <property name="enabled">
                 <bool>false</bool>
                </property>
+               <property name="styleSheet">
+                <string notr="true">background-color: rgb(40, 40, 40);</string>
+               </property>
                <property name="text">
                 <string>Save Image</string>
                </property>
@@ -367,6 +370,9 @@ color: rgb(255, 255, 255);</string>
                    <property name="toolTip">
                     <string/>
                    </property>
+                   <property name="styleSheet">
+                    <string notr="true">background-color: rgb(40, 40, 40);</string>
+                   </property>
                    <property name="text">
                     <string>Substract Background</string>
                    </property>
@@ -376,6 +382,9 @@ color: rgb(255, 255, 255);</string>
                   <widget class="QPushButton" name="pb_saveWithoutBackground">
                    <property name="enabled">
                     <bool>false</bool>
+                   </property>
+                   <property name="styleSheet">
+                    <string notr="true">background-color: rgb(40, 40, 40);</string>
                    </property>
                    <property name="text">
                     <string>Save Data Without Background</string>
@@ -969,6 +978,10 @@ color: rgb(0, 0, 0);</string>
             <widget class="QComboBox" name="cmb_wave">
              <property name="enabled">
               <bool>false</bool>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">background-color: rgb(40, 40, 40);
+</string>
              </property>
              <item>
               <property name="text">
