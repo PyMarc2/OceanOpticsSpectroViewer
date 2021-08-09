@@ -321,6 +321,7 @@ class WindowControl(QWidget, Ui_MainWindow):
             self.enableAllButtons()
 
     def launchAcquisition(self):
+        self.lastError = None
         try:
             stageState = self.appControl.stageConnected()
             spectroState = self.appControl.spectroConnected()
