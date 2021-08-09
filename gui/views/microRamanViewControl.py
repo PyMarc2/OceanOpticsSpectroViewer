@@ -341,6 +341,7 @@ class WindowControl(QWidget, Ui_MainWindow):
                 self.createPlotSpectrum()
                 self.createPlotRGB()
                 self.disableAllButtons()
+                #self.appControl.startRefreshRGBLoop() # TODO when threads are ok
                 self.appControl.launchAcquisition()
                 # TODO see if with thread okay... probably will connect with signal?
                 self.stopAcquisition()
@@ -351,7 +352,7 @@ class WindowControl(QWidget, Ui_MainWindow):
         self.cmb_wave.setEnabled(True)
         self.enableAllButtons()
         self.appControl.stopAcquisition()
-        self.appControl.quitLoopRGB = True
+        #self.appControl.quitLoopRGB = True # TODO when threads are ok
 
     # Image Controls
 
