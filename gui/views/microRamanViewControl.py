@@ -302,16 +302,17 @@ class WindowControl(QWidget, Ui_MainWindow):
     # Acquisition Control
 
     def acquireBackground(self):
-        spectroConnected = self.appControl.spectroConnected()
-        stageConnected = self.appControl.stageConnected()
-
+        stageState = self.appControl.stageConnected()
+        spectroState = self.appControl.spectroConnected()
         if self.folderPath == "":
             self.errorFolderName()
         elif self.le_laser.text() == "":
             self.errorLaser()
-        elif not spectroConnected:
+        elif not self.deviceConnected:
+            self.errorFindDevice()
+        elif not spectroState:
             self.errorDetection()
-        elif not spectroConnected:
+        elif not stageState:
             self.errorStage()
         else:
             self.disableAllButtons()
