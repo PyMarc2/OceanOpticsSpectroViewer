@@ -31,10 +31,10 @@ class Model:
         self._integrationTime = 3000
         self._direction = "same"
 
-        self.waves: list = []
+        self.waves = []
         # self.dataPoint: list = []
         self.dataMap: list = []
-        self.background: list = []
+        self.background = []
 
         self.expositionCounter = 0
         self.integrationCountAcq = 0
