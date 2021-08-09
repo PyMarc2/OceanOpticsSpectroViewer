@@ -124,6 +124,9 @@ color: rgb(255, 255, 255);</string>
                  <verstretch>0</verstretch>
                 </sizepolicy>
                </property>
+               <property name="statusTip">
+                <string>Connect the stage device selected.</string>
+               </property>
                <property name="text">
                 <string>Connect</string>
                </property>
@@ -151,6 +154,9 @@ color: rgb(255, 255, 255);</string>
                  <verstretch>0</verstretch>
                 </sizepolicy>
                </property>
+               <property name="statusTip">
+                <string>Connect the detection device selected.</string>
+               </property>
                <property name="text">
                 <string>Connect</string>
                </property>
@@ -174,6 +180,9 @@ color: rgb(255, 255, 255);</string>
                  <verstretch>0</verstretch>
                 </sizepolicy>
                </property>
+               <property name="statusTip">
+                <string>Connect the light device selected.</string>
+               </property>
                <property name="text">
                 <string>Connect</string>
                </property>
@@ -191,6 +200,9 @@ color: rgb(255, 255, 255);</string>
              </item>
              <item row="3" column="2" colspan="2">
               <widget class="QPushButton" name="pb_findDevices">
+               <property name="statusTip">
+                <string>Reload the list of connected devices.</string>
+               </property>
                <property name="text">
                 <string>Find Devices</string>
                </property>
@@ -280,6 +292,12 @@ color: rgb(255, 255, 255);</string>
                    <verstretch>0</verstretch>
                   </sizepolicy>
                  </property>
+                 <property name="toolTip">
+                  <string>Folder path</string>
+                 </property>
+                 <property name="statusTip">
+                  <string>Folder path of saved files.</string>
+                 </property>
                  <property name="readOnly">
                   <bool>true</bool>
                  </property>
@@ -296,13 +314,22 @@ color: rgb(255, 255, 255);</string>
                    <verstretch>0</verstretch>
                   </sizepolicy>
                  </property>
+                 <property name="toolTip">
+                  <string>File name</string>
+                 </property>
                  <property name="statusTip">
-                  <string>Set the name of the file that will be saved.</string>
+                  <string>Set the name of saved files.</string>
                  </property>
                 </widget>
                </item>
                <item row="0" column="3">
                 <widget class="QToolButton" name="tb_folderPath">
+                 <property name="toolTip">
+                  <string>Choose folder path</string>
+                 </property>
+                 <property name="statusTip">
+                  <string>Choose folder path.</string>
+                 </property>
                  <property name="text">
                   <string>...</string>
                  </property>
@@ -321,6 +348,9 @@ color: rgb(255, 255, 255);</string>
               <widget class="QPushButton" name="pb_saveImage">
                <property name="enabled">
                 <bool>false</bool>
+               </property>
+               <property name="statusTip">
+                <string>Save the image in png format.</string>
                </property>
                <property name="styleSheet">
                 <string notr="true">background-color: rgb(40, 40, 40);</string>
@@ -368,7 +398,10 @@ color: rgb(255, 255, 255);</string>
                     <bool>false</bool>
                    </property>
                    <property name="toolTip">
-                    <string/>
+                    <string>(visual only)</string>
+                   </property>
+                   <property name="statusTip">
+                    <string>Substract the background in graphics (visual only).</string>
                    </property>
                    <property name="styleSheet">
                     <string notr="true">background-color: rgb(40, 40, 40);</string>
@@ -382,6 +415,12 @@ color: rgb(255, 255, 255);</string>
                   <widget class="QPushButton" name="pb_saveWithoutBackground">
                    <property name="enabled">
                     <bool>false</bool>
+                   </property>
+                   <property name="toolTip">
+                    <string/>
+                   </property>
+                   <property name="statusTip">
+                    <string>Save the data again but without the background.</string>
                    </property>
                    <property name="styleSheet">
                     <string notr="true">background-color: rgb(40, 40, 40);</string>
@@ -441,7 +480,10 @@ color: rgb(255, 255, 255);</string>
                     </size>
                    </property>
                    <property name="toolTip">
-                    <string>Enter the laser wavelength used in your setup.</string>
+                    <string>Laser wavelength(int)</string>
+                   </property>
+                   <property name="statusTip">
+                    <string>Enter the laser wavelength used in your setup (int).</string>
                    </property>
                   </widget>
                  </item>
@@ -546,6 +588,12 @@ color: rgb(255, 255, 255);</string>
                   <verstretch>0</verstretch>
                  </sizepolicy>
                 </property>
+                <property name="toolTip">
+                 <string>Choose the units of steps</string>
+                </property>
+                <property name="statusTip">
+                 <string>Choose the units of the displacement step of the sutter.</string>
+                </property>
                 <item>
                  <property name="text">
                   <string>mm</string>
@@ -565,6 +613,12 @@ color: rgb(255, 255, 255);</string>
               </item>
               <item row="1" column="1">
                <widget class="QSpinBox" name="sb_step">
+                <property name="toolTip">
+                 <string>Sets the step of the SpectrumDevice</string>
+                </property>
+                <property name="statusTip">
+                 <string>Sets the displacement step of the SpectrumDevice</string>
+                </property>
                 <property name="minimum">
                  <number>1</number>
                 </property>
@@ -598,10 +652,10 @@ color: rgb(255, 255, 255);</string>
                  </size>
                 </property>
                 <property name="toolTip">
-                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The exposure time is the uninterrupted time in which the spectrometer aquires data, or counts photons. After the time has passed, the shutter of the spectrometer blinks and the acquisition starts again from zero.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                 <string>Sets exposure time of the SpectrumDevice</string>
                 </property>
                 <property name="statusTip">
-                 <string>Sets exposure time one the SpectrumDevice.</string>
+                 <string>The exposure time is the uninterrupted time in which the spectrometer acquires data, or counts photons. After the time has passed, the shutter of the spectrometer blinks and the acquisition starts again from zero.</string>
                 </property>
                 <property name="minimum">
                  <number>4</number>
@@ -635,7 +689,10 @@ color: rgb(255, 255, 255);</string>
                  <item>
                   <widget class="QSpinBox" name="sb_width">
                    <property name="toolTip">
-                    <string>Choose the width you want your image to be</string>
+                    <string>Choose the width of the image</string>
+                   </property>
+                   <property name="statusTip">
+                    <string>Choose the value of the xAxis of the image.</string>
                    </property>
                    <property name="minimum">
                     <number>1</number>
@@ -664,7 +721,10 @@ color: rgb(255, 255, 255);</string>
                  <item>
                   <widget class="QSpinBox" name="sb_height">
                    <property name="toolTip">
-                    <string>Choose the height you want your image to be</string>
+                    <string>Choose the height of the image</string>
+                   </property>
+                   <property name="statusTip">
+                    <string>Choose the value of the yAxis of the image.</string>
                    </property>
                    <property name="minimum">
                     <number>1</number>
@@ -696,10 +756,10 @@ color: rgb(255, 255, 255);</string>
                  </size>
                 </property>
                 <property name="toolTip">
-                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The integration time is the complete time lapse before your acquisition is done. It can be the same as the exposure time, or a sum of many exposure sequences. It allows you to get a good signal and a high count, without sarurating the spectrometer.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                 <string>Sets the integration time of the SpectrumDevice.</string>
                 </property>
                 <property name="statusTip">
-                 <string>Sets the integration time on the SpectrumDevice.</string>
+                 <string>The integration time is the complete time lapse before your acquisition is done. It can be the same as the exposure time, or a sum of many exposure sequences. It allows you to get a good signal and a high count, without sarurating the spectrometer.</string>
                 </property>
                 <property name="minimum">
                  <number>10</number>
@@ -732,6 +792,12 @@ color: rgb(255, 255, 255);</string>
                     <height>40</height>
                    </size>
                   </property>
+                  <property name="toolTip">
+                   <string>Always left to right</string>
+                  </property>
+                  <property name="statusTip">
+                   <string>Set the sutter mouvements at left to right</string>
+                  </property>
                   <property name="text">
                    <string/>
                   </property>
@@ -744,6 +810,12 @@ color: rgb(255, 255, 255);</string>
                     <width>40</width>
                     <height>40</height>
                    </size>
+                  </property>
+                  <property name="toolTip">
+                   <string>Zigzag</string>
+                  </property>
+                  <property name="statusTip">
+                   <string>Set the sutter mouvements at zigzag</string>
                   </property>
                   <property name="text">
                    <string/>
@@ -819,6 +891,12 @@ color: rgb(255, 255, 255);</string>
                      <height>16777215</height>
                     </size>
                    </property>
+                   <property name="toolTip">
+                    <string>Start background acquisition</string>
+                   </property>
+                   <property name="statusTip">
+                    <string>Start the acquisition of the background</string>
+                   </property>
                    <property name="text">
                     <string>Acquire Background</string>
                    </property>
@@ -845,7 +923,7 @@ color: rgb(255, 255, 255);</string>
                     </size>
                    </property>
                    <property name="toolTip">
-                    <string extracomment="test1">This button launches the acquisition.</string>
+                    <string extracomment="test1">Launche the acquisition</string>
                    </property>
                    <property name="statusTip">
                     <string>Starts data reading from the SpectrumDevice</string>
@@ -878,8 +956,11 @@ color: rgb(255, 255, 255);</string>
                      <height>16777215</height>
                     </size>
                    </property>
+                   <property name="toolTip">
+                    <string>Stop the current acquisition</string>
+                   </property>
                    <property name="statusTip">
-                    <string>Resets the data and the view to initial parameters.</string>
+                    <string>Stop the current acquisition</string>
                    </property>
                    <property name="text">
                     <string>Stop</string>
@@ -904,7 +985,11 @@ color: rgb(255, 255, 255);</string>
         </property>
         <layout class="QGridLayout" name="gridLayout_8">
          <item row="0" column="0">
-          <widget class="GraphicsLayoutWidget" name="graph_spectre"/>
+          <widget class="GraphicsLayoutWidget" name="graph_spectre">
+           <property name="statusTip">
+            <string>Spectrum plot</string>
+           </property>
+          </widget>
          </item>
          <item row="1" column="0">
           <layout class="QHBoxLayout" name="hlayout_red_slide">
@@ -921,6 +1006,12 @@ color: rgb(255, 255, 255);</string>
                <width>50</width>
                <height>16777215</height>
               </size>
+             </property>
+             <property name="toolTip">
+              <string>Red lower limit</string>
+             </property>
+             <property name="statusTip">
+              <string>Red lower limit</string>
              </property>
              <property name="styleSheet">
               <string notr="true">background-color: rgb(255, 121, 121);
@@ -958,6 +1049,12 @@ color: rgb(0, 0, 0);</string>
                <height>16777215</height>
               </size>
              </property>
+             <property name="toolTip">
+              <string>Red upper limit</string>
+             </property>
+             <property name="statusTip">
+              <string>Red upper limit</string>
+             </property>
              <property name="styleSheet">
               <string notr="true">background-color: rgb(255, 121, 121);
 color: rgb(0, 0, 0);</string>
@@ -978,6 +1075,12 @@ color: rgb(0, 0, 0);</string>
             <widget class="QComboBox" name="cmb_wave">
              <property name="enabled">
               <bool>false</bool>
+             </property>
+             <property name="toolTip">
+              <string>Choose between wavenumber/wavelength</string>
+             </property>
+             <property name="statusTip">
+              <string>Choose between wavenumber/wavelength</string>
              </property>
              <property name="styleSheet">
               <string notr="true">background-color: rgb(40, 40, 40);
@@ -1009,6 +1112,12 @@ color: rgb(0, 0, 0);</string>
                <height>16777215</height>
               </size>
              </property>
+             <property name="toolTip">
+              <string>Global maximum = Considering intensity | Local maximum = don't consider intensity</string>
+             </property>
+             <property name="statusTip">
+              <string>Global maximum = Considering intensity | Local maximum = don't consider intensity</string>
+             </property>
              <item>
               <property name="text">
                <string>Set to Global Maximum</string>
@@ -1023,6 +1132,12 @@ color: rgb(0, 0, 0);</string>
            </item>
            <item>
             <widget class="QCheckBox" name="cb_colorRangeView">
+             <property name="toolTip">
+              <string>Plot the color limits</string>
+             </property>
+             <property name="statusTip">
+              <string>Plot the color limits</string>
+             </property>
              <property name="text">
               <string>Enable ColorRange View</string>
              </property>
@@ -1048,6 +1163,12 @@ color: rgb(0, 0, 0);</string>
                <width>50</width>
                <height>16777215</height>
               </size>
+             </property>
+             <property name="toolTip">
+              <string>Green lower limit</string>
+             </property>
+             <property name="statusTip">
+              <string>Green lower limit</string>
              </property>
              <property name="styleSheet">
               <string notr="true">background-color: rgb(125, 231, 106);
@@ -1090,6 +1211,12 @@ color: rgb(0, 0, 0);</string>
                <width>50</width>
                <height>16777215</height>
               </size>
+             </property>
+             <property name="toolTip">
+              <string>Green upper limit</string>
+             </property>
+             <property name="statusTip">
+              <string>Green upper limit</string>
              </property>
              <property name="styleSheet">
               <string notr="true">background-color: rgb(125, 231, 106);
@@ -1157,6 +1284,12 @@ color: rgb(0, 0, 0);</string>
                <height>16777215</height>
               </size>
              </property>
+             <property name="toolTip">
+              <string>Blue upper limit</string>
+             </property>
+             <property name="statusTip">
+              <string>Blue upper limit</string>
+             </property>
              <property name="styleSheet">
               <string notr="true">background-color: rgb(138, 173, 255);
 color: rgb(0, 0, 0);</string>
@@ -1193,6 +1326,9 @@ color: rgb(0, 0, 0);</string>
      </property>
      <property name="toolTipDuration">
       <number>-1</number>
+     </property>
+     <property name="statusTip">
+      <string>MatrixRGB plot</string>
      </property>
     </widget>
    </item>
