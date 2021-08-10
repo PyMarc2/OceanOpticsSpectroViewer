@@ -8,8 +8,10 @@ class QIconButton(QAbstractButton):
         self.pixmap = pixmap
         self.pixmapHover = pixmapHover
         self.pixmapPressed = pixmapPressed
-        if pixmapSelected is not None:
+        if pixmapSelected is None:
             self.pixmapSelected = pixmap
+        else:
+            self.pixmapSelected = pixmapSelected
 
         self.pressed.connect(self.update)
         self.released.connect(self.update)
@@ -47,8 +49,10 @@ class QIconButton(QAbstractButton):
         self.pixmap = pixmap
         self.pixmapHover = pixmapHover
         self.pixmapPressed = pixmapPressed
-        if pixmapSelected is not None:
+        if pixmapSelected is None:
             self.pixmapSelected = pixmap
+        else:
+            self.pixmapSelected = pixmapSelected
 
     def setInitialSizePolicy(self):
         sizePolicy = QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
