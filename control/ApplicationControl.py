@@ -148,7 +148,6 @@ class AppControl():
         self.backgroundLoop.start()
         self.backgroundLoop.join()
         background = self.Model.backgroundData()
-        print(background)
         self.HSI.setBackground(background)
         self.saveBackground()
 
@@ -156,14 +155,13 @@ class AppControl():
         self.HSI.saveCaptureCSV(data=self.HSI.background)
 
     def launchAcquisition(self):
-        self.quitLoopRGB = True
         with self.lock:
             if not self.Model.isAcquiring:
                 self.acqLoop = Thread(target=self.Model.begin, name="acquisitionThread")
             else:
                 self.windowControl.createErrorDialogs("Acquisition has already started.")
         self.acqLoop.start()
-        # self.startRefreshRGBLoop()
+        self.startRefreshRGBLoop()
 
     def stageConnected(self):
         return self.stage
@@ -190,12 +188,18 @@ class AppControl():
         self.HSI.saveCaptureCSV(data=spec, countHeight=y, countWidth=x)
 
     def stopAcquisition(self):
+        with self.lock:
+            self.quitLoopRGB = True
+            self.isLoopRGB = False
         if self.Model.isAcquiring:
             notif().postNotification("Interrupt acquisition", self)
         else:
             self.windowControl.createErrorDialogs("Mapping already stopped.")
 
     def acquisitionDone(self, notification):
+        with self.lock:
+            self.quitLoopRGB = True
+            self.isLoopRGB = False
         self.windowControl.acquisitionDone()
 
     def getFileName(self):
@@ -218,16 +222,17 @@ class AppControl():
 
     def refreshRGBLoop(self):
         self.isLoopRGB = True
-        while self.quitLoopRGB == False:
+        with self.lock:
+            quit = self.quitLoopRGB
+        while not quit:
             with self.lock:
                 self.matrixRGBReplace()
-            time.sleep(3)
-            if self.quitLoopRGB == True:
-                break
+                quit = self.quitLoopRGB
+            time.sleep(1)
 
     # à faire
-    def listStageDevices(self) -> list: # connecté
-        self.stageDevices = []  # find list from hardware... # TODO
+    def listStageDevices(self) -> list:  # connected
+        self.stageDevices = []  # TODO find list from hardware...
         self.stageDevices.insert(0, "Debug")
         self.stageDevices.append("real Sutter")
         devices = []
@@ -235,7 +240,7 @@ class AppControl():
             devices.append(str(stage))
         return devices
 
-    def listSpecDevices(self) -> list: # connecté
+    def listSpecDevices(self) -> list:  # connected
         self.specDevices = sb.list_devices()
         self.specDevices.insert(0, "MockSpectrometer")
         devices = []
