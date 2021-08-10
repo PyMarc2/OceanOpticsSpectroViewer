@@ -406,7 +406,6 @@ class WindowControl(QWidget, Ui_MainWindow):
             self.disableAllButtons()
             self.appControl.acquireBackground()
             self.appControl.backgroundLoop.join()
-            self.appControl.saveBackground()
             self.enableAllButtons()
 
     def launchAcquisition(self):

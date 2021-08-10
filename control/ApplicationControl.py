@@ -148,7 +148,9 @@ class AppControl():
         self.backgroundLoop.start()
         self.backgroundLoop.join()
         background = self.Model.backgroundData()
+        print(background)
         self.HSI.setBackground(background)
+        self.saveBackground()
 
     def saveBackground(self):
         self.HSI.saveCaptureCSV(data=self.HSI.background)
