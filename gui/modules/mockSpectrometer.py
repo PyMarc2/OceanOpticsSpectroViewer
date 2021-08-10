@@ -11,7 +11,7 @@ class MockSpectrometer:
         self.noise = 0.01
 
         self._background = background_spectrum()
-        self._source = random_spectrum()
+        self._source = "halogen"
         # todo: move bg and source to spectrum object
         # todo: calibration offset?
 
@@ -22,9 +22,14 @@ class MockSpectrometer:
         return np.linspace(784.48, 1029.63, 1042)
 
     def intensities(self) -> np.ndarray:
+        if self._source == "random":
+            source_spectrum = random_spectrum()
+        else:
+            source_spectrum = halogen_spectrum()
+
         t = time.time()
         background = self._background * self.backgroundIntensity * self.exposureFactor
-        source = self._source * self.exposureFactor * self.shutterFactor
+        source = source_spectrum * self.exposureFactor * self.shutterFactor
         noise = np.random.uniform(0, self.noise, 1042)
         out = np.clip((background + source + noise) * 4095, 0, 4095)
 

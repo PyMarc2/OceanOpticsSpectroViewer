@@ -277,10 +277,10 @@ class AppControl():
 
     def connectLight(self, index):
         if index == 0:
-            self.spec._source = Mock.halogen_spectrum()
+            self.spec._source = "halogen"
             print("halo")
         elif index == 1:
-            self.spec._source = Mock.random_spectrum()
+            self.spec._source = "random"
             print("random")
         else:
             print("what's going on???")
