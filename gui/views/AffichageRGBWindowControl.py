@@ -194,6 +194,7 @@ class WindowControl(QWidget, Ui_MainWindow):
     
 
     def updateRGBPlot(self, matrixRGB):
+        matrixRGB = matrixRGB.transpose(1,0,2)
         vb = pg.ImageItem(image=matrixRGB)
         self.plotViewBox.addItem(vb)
 
