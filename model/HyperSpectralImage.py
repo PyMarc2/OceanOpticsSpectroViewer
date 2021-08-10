@@ -23,9 +23,9 @@ class HyperSpectralImage:
         self.fileName = ""
         self.laser = None
 
-    def dataWithoutBackground(self, data):
+    def dataWithoutBackground(self):
         dataWithoutBg = []
-        for item in data:
+        for item in self.data:
             x = item.x
             y = item.y
             spectrum = item.spectrum - self.background
@@ -217,7 +217,7 @@ class HyperSpectralImage:
             else:
                 path = os.path.join(newPath, f"{self.fileName}_x{countWidth}_y{countHeight}")
             with open(path + ".csv", "w+") as f:
-                for i, x in enumerate(self.waveNumber()):
+                for i, x in enumerate(self.waveNumber(self.wavelength)):
                     f.write(f"{x},{data[i]}\n")
                 f.close()
 
@@ -241,6 +241,6 @@ class HyperSpectralImage:
             spectrum = i.spectrum
             path = os.path.join(newPath, f"{self.fileName}_withoutBackground_x{x}_y{y}")
             with open(path + ".csv", "w+") as f:
-                for ind, x in enumerate(self.wavelength):
+                for ind, x in enumerate(self.waveNumber(self.wavelength)):
                     f.write(f"{x},{spectrum[ind]}\n")
                 f.close()

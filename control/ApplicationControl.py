@@ -49,9 +49,10 @@ class AppControl():
     def matrixRGB(self, globalMaximum=True, VWB=True):
         colorValues = self.windowControl.currentSliderValues()
         with self.lock:
-            data = self.HSI.data
-        if not VWB:
-            data = self.HSI.dataWithoutBackground(data)
+            if VWB:
+                data = self.HSI.data
+            else:
+                data = self.HSI.dataWithoutBackground()
         matrixRGB = self.HSI.matrixRGB(data, colorValues, globalMaximum)
         return matrixRGB
 
@@ -70,13 +71,12 @@ class AppControl():
 
     def spectrum(self, x, y, VWB=True):
         with self.lock:
-            data = self.HSI.data
-        if VWB == True:
-            spectrum = self.HSI.spectrum(x, y, data)
-        else:
-            spectrum = self.HSI.spectrum(x, y, data)
-            background = self.HSI.background
-            spectrum = spectrum - background
+            if VWB:
+                spectrum = self.HSI.spectrum(x, y, self.HSI.data)
+            else:
+                spectrum = self.HSI.spectrum(x, y, self.HSI.data)
+                background = self.HSI.background
+                spectrum = spectrum - background
         return spectrum
 
     def deleteSpectra(self):
@@ -277,7 +277,6 @@ class AppControl():
             self.spec = sb.Spectrometer(self.spectroLink)
         if self.spec is None:
             raise Exception('The spectrometer is not connected!')
-        print(self.spec)
         self.Model.connectSpec(self.spec)
         wave = self.Model.wavelengths()
         return wave
@@ -285,10 +284,6 @@ class AppControl():
     def connectLight(self, index):
         if index == 0:
             self.spec._source = "halogen"
-            print("halo")
         elif index == 1:
             self.spec._source = "random"
-            print("random")
-        else:
-            print("what's going on???")
 

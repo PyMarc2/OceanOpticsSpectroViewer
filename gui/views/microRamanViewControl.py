@@ -574,7 +574,8 @@ class WindowControl(QWidget, Ui_MainWindow):
         return [lowRedValue, highRedValue, lowGreenValue, highGreenValue, lowBlueValue, highBlueValue]
 
     def updateRGBPlot(self, matrixRGB):
-        matrixRGB = matrixRGB.transpose(1, 0, 2)
+        if matrixRGB is not None:
+            matrixRGB = matrixRGB.transpose(1, 0, 2)
         vb = pg.ImageItem(image=matrixRGB)
         self.plotViewBox.addItem(vb)
 
