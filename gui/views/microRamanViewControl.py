@@ -17,6 +17,7 @@ import sys
 import csv
 import re
 import os
+# from hardwarelibrary.notificationcenter import NotificationCenter as notif
 
 application_path = os.path.abspath("")
 
@@ -51,6 +52,8 @@ class WindowControl(QWidget, Ui_MainWindow):
         self.updateSliderStatus()
         self.initializeButtons()
 
+        # notif().addObserver(self, self.acquisitionDone, "Map acquisition done or interrupted.")
+
     def createErrorDialogs(self, error):
         error = str(error)
         if self.lastError == error:
@@ -63,7 +66,6 @@ class WindowControl(QWidget, Ui_MainWindow):
             self.warningDialog.setWindowTitle("Warning")
             self.warningDialog.setStandardButtons(QMessageBox.Ok)
             self.warningDialog.exec_()
-
 
     def connectWidgets(self):
         self.cb_substractBackground.stateChanged.connect(self.substractBackground)
@@ -214,7 +216,6 @@ class WindowControl(QWidget, Ui_MainWindow):
                                         QPixmap("./gui/misc/icons/sweep_alternate_selected.png").scaled(50, 50, Qt.KeepAspectRatio, Qt.SmoothTransformation))
 
     # Device Connection
-
     def findDevices(self):
         self.lightDevices = ["None"]
         self.listStageDevices = self.appControl.listStageDevices()
@@ -268,9 +269,7 @@ class WindowControl(QWidget, Ui_MainWindow):
         self.pb_findDevices.setStyleSheet("background-color: rgb(255, 0, 0)")
         QTimer.singleShot(50, lambda: self.pb_findDevices.setStyleSheet(""))
 
-
     # Capture Controls
-
     def selectFileName(self):
         fileName = self.le_fileName.text()
         self.appControl.setFileName(fileName)
@@ -317,13 +316,11 @@ class WindowControl(QWidget, Ui_MainWindow):
         QTimer.singleShot(50, lambda: self.pb_background.setStyleSheet(""))
 
     # Info Laser
-
     def errorLaser(self):
         self.le_laser.setStyleSheet("background-color: rgb(255, 0, 0)")
         QTimer.singleShot(50, lambda: self.le_laser.setStyleSheet(""))
 
     # Acquisition Settings
-
     def setWidth(self):
         width = self.sb_width.value()
         self.appControl.setWidth(width)
@@ -369,7 +366,6 @@ class WindowControl(QWidget, Ui_MainWindow):
         self.appControl.sweepDirectionOther()
 
     # Acquisition Control
-
     def acquireBackground(self):
         stageState = self.appControl.stageConnected()
         spectroState = self.appControl.spectroConnected()
@@ -415,8 +411,8 @@ class WindowControl(QWidget, Ui_MainWindow):
                 self.createPlotSpectrum()
                 self.createPlotRGB()
                 self.disableAllButtons()
-                #self.appControl.startRefreshRGBLoop() # TODO when threads are ok
                 self.appControl.launchAcquisition()
+                # self.appControl.startRefreshRGBLoop()  # TODO when threads are ok
                 # TODO see if with thread okay... probably will connect with signal?
 
         except Exception as e:
@@ -427,10 +423,14 @@ class WindowControl(QWidget, Ui_MainWindow):
         self.cmb_wave.setStyleSheet("")
         self.enableAllButtons()
         self.appControl.stopAcquisition()
-        #self.appControl.quitLoopRGB = True # TODO when threads are ok
+        #self.appControl.quitLoopRGB = True # TODO when threads are ok or not because still updated afterwards...
+
+    def acquisitionDone(self, *args):
+        self.cmb_wave.setEnabled(True)
+        self.cmb_wave.setStyleSheet("")
+        self.enableAllButtons()
 
     # Image Controls
-
     def createPlotRGB(self):
         self.graph_rgb.clear()
         self.plotViewBox = self.graph_rgb.addViewBox()
@@ -599,9 +599,6 @@ class WindowControl(QWidget, Ui_MainWindow):
             self.plotBlack.setData(waves, np.full(wavesLen, minimum), pen=(0, 0, 0))
 
         self.plotSpectrum.setData(waves, spectrum)
-
-
-
 
     def updateSliderStatus(self):
         self.dSlider_red.set_left_thumb_value(self.mappingOnSlider(self.sb_lowRed.value()))

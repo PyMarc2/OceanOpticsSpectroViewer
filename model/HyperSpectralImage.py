@@ -203,7 +203,7 @@ class HyperSpectralImage:
             #         self.setWavelength(xAxis)
 
     # Save
-    def saveCaptureCSV(self, data=None, countHeight=None, countWidth=None, *args):
+    def saveCaptureCSV(self, data=None, countHeight=None, countWidth=None):
         if data is None:
             pass
         else:

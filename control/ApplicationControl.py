@@ -33,8 +33,8 @@ class AppControl():
 
         self.isLoopRGB = False
         self.quitLoopRGB = True
-        notif().addObserver(self, self.react, "Single acquisition done", Model)
-        notif().addObserver(self, self.stopAcquisition, "Map acquisition done", Model)
+        notif().addObserver(self, self.react, "Single acquisition done")
+        notif().addObserver(self, self.acquisitionDone, "Map acquisition done or interrupted.")
 
     def react(self, notification):
         point_x = notification.userInfo["point_x"]
@@ -42,7 +42,9 @@ class AppControl():
         spectrum = notification.userInfo["spectrum"]
 
         self.addSpectrum(point_x, point_y, spectrum)
-        self.savePixel(point_x, point_y, spectrum)
+        self.saveThread = Thread(target=self.savePixel, args=(point_x, point_y, spectrum))
+        self.saveThread.start()
+        # self.savePixel(point_x, point_y, spectrum)
 
     def matrixRGB(self, globalMaximum=True, VWB=True):
         colorValues = self.windowControl.currentSliderValues()
@@ -152,12 +154,14 @@ class AppControl():
         self.HSI.saveCaptureCSV(data=self.HSI.background)
 
     def launchAcquisition(self):
+        self.quitLoopRGB = True
         with self.lock:
             if not self.Model.isAcquiring:
                 self.acqLoop = Thread(target=self.Model.begin, name="acquisitionThread")
             else:
                 self.windowControl.createErrorDialogs("Acquisition has already started.")
         self.acqLoop.start()
+        # self.startRefreshRGBLoop()
 
     def stageConnected(self):
         return self.stage
@@ -177,7 +181,7 @@ class AppControl():
 
     def savePixel(self, x, y, spectrum):
         with self.lock:
-            spec = copy.deepcopy(spectrum)
+            spec = spectrum
         self.HSI.saveCaptureCSV(data=spec, countHeight=y, countWidth=x)
 
     def stopAcquisition(self):
@@ -185,6 +189,9 @@ class AppControl():
             notif().postNotification("Interrupt acquisition", self)
         else:
             self.windowControl.createErrorDialogs("Mapping already stopped.")
+
+    def acquisitionDone(self, notification):
+        self.windowControl.acquisitionDone()
 
     def getFileName(self):
         fileName = self.windowControl.fileName()
@@ -212,7 +219,6 @@ class AppControl():
             time.sleep(3)
             if self.quitLoopRGB == True:
                 break
-        self.loopRGB.quit()
 
     # à faire
     def listStageDevices(self) -> list: # connecté
