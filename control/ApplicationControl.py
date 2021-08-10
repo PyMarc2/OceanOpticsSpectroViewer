@@ -48,35 +48,39 @@ class AppControl():
 
     def matrixRGB(self, globalMaximum=True, VWB=True):
         colorValues = self.windowControl.currentSliderValues()
-        if VWB == True:
-            data = self.HSI.data
-        else:
-            data =self.HSI.dataWithoutBackground()
+        with self.lock:
+            if VWB == True:
+                data = self.HSI.data
+            else:
+                data =self.HSI.dataWithoutBackground()
         matrixRGB = self.HSI.matrixRGB(data, colorValues, globalMaximum)
         return matrixRGB
 
     def waves(self, laser):
-        if self.windowControl.waveNumber == True:
-            waves = self.HSI.waveNumber(laser)
-        else:
-            waves = self.HSI.wavelength
+        with self.lock:
+            if self.windowControl.waveNumber == True:
+                waves = self.HSI.waveNumber(laser)
+            else:
+                waves = self.HSI.wavelength
         return waves
 
     def loadData(self, path):
-        self.HSI.loadData(path)
-        colorValues = self.windowControl.currentSliderValues()
+        with self.lock:
+            self.HSI.loadData(path)
 
     def spectrum(self, x, y, VWB=True):
-        if VWB == True:
-            spectrum = self.HSI.spectrum(x, y, self.HSI.data)
-        else:
-            spectrum = self.HSI.spectrum(x, y, self.HSI.data)
-            background = self.HSI.background
-            spectrum = spectrum - background
+        with self.lock:
+            if VWB == True:
+                spectrum = self.HSI.spectrum(x, y, self.HSI.data)
+            else:
+                spectrum = self.HSI.spectrum(x, y, self.HSI.data)
+                background = self.HSI.background
+                spectrum = spectrum - background
         return spectrum
 
     def deleteSpectra(self):
-        self.HSI.deleteSpectra()
+        with self.lock:
+            self.HSI.deleteSpectra()
 
     def backgroundData(self):
         background = self.HSI.background
