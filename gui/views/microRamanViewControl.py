@@ -405,7 +405,7 @@ class WindowControl(QWidget, Ui_MainWindow):
         else:
             self.disableAllButtons()
             self.appControl.acquireBackground()
-            self.appControl.backgroundLoop.join()
+            # self.appControl.backgroundLoop.join()
             self.enableAllButtons()
 
     def launchAcquisition(self):
@@ -574,7 +574,7 @@ class WindowControl(QWidget, Ui_MainWindow):
         return [lowRedValue, highRedValue, lowGreenValue, highGreenValue, lowBlueValue, highBlueValue]
 
     def updateRGBPlot(self, matrixRGB):
-        matrixRGB = matrixRGB.transpose(1,0,2)
+        matrixRGB = matrixRGB.transpose(1, 0, 2)
         vb = pg.ImageItem(image=matrixRGB)
         self.plotViewBox.addItem(vb)
 

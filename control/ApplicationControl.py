@@ -49,33 +49,34 @@ class AppControl():
     def matrixRGB(self, globalMaximum=True, VWB=True):
         colorValues = self.windowControl.currentSliderValues()
         with self.lock:
-            if VWB == True:
-                data = self.HSI.data
-            else:
-                data =self.HSI.dataWithoutBackground()
+            data = self.HSI.data
+        if not VWB:
+            data = self.HSI.dataWithoutBackground(data)
         matrixRGB = self.HSI.matrixRGB(data, colorValues, globalMaximum)
         return matrixRGB
 
     def waves(self, laser):
         with self.lock:
-            if self.windowControl.waveNumber == True:
-                waves = self.HSI.waveNumber(laser)
-            else:
-                waves = self.HSI.wavelength
+            wavelength = self.HSI.wavelength
+        if self.windowControl.waveNumber:
+            waves = self.HSI.waveNumber(wavelength, laser)
+        else:
+            waves = self.HSI.wavelength
         return waves
 
-    def loadData(self, path):
-        with self.lock:
-            self.HSI.loadData(path)
+    # def loadData(self, path):
+    #     with self.lock:
+    #         self.HSI.loadData(path)
 
     def spectrum(self, x, y, VWB=True):
         with self.lock:
-            if VWB == True:
-                spectrum = self.HSI.spectrum(x, y, self.HSI.data)
-            else:
-                spectrum = self.HSI.spectrum(x, y, self.HSI.data)
-                background = self.HSI.background
-                spectrum = spectrum - background
+            data = self.HSI.data
+        if VWB == True:
+            spectrum = self.HSI.spectrum(x, y, data)
+        else:
+            spectrum = self.HSI.spectrum(x, y, data)
+            background = self.HSI.background
+            spectrum = spectrum - background
         return spectrum
 
     def deleteSpectra(self):
@@ -147,10 +148,11 @@ class AppControl():
         self.Model.setDirectionToZigzag()
 
     def acquireBackground(self):
-        with self.lock:
-            self.backgroundLoop = Thread(target=self.Model.acquireBackground, name="acquireBackgroundThread")
-        self.backgroundLoop.start()
-        self.backgroundLoop.join()
+        # with self.lock:
+        #     self.backgroundLoop = Thread(target=self.Model.acquireBackground, name="acquireBackgroundThread")
+        # self.backgroundLoop.start()
+        # self.backgroundLoop.join()
+        self.Model.acquireBackground()
         background = self.Model.backgroundData()
         self.HSI.setBackground(background)
         self.saveBackground()
@@ -159,11 +161,11 @@ class AppControl():
         self.HSI.saveCaptureCSV(data=self.HSI.background)
 
     def launchAcquisition(self):
-        with self.lock:
-            if not self.Model.isAcquiring:
-                self.acqLoop = Thread(target=self.Model.begin, name="acquisitionThread")
-            else:
-                self.windowControl.createErrorDialogs("Acquisition has already started.")
+        # with self.lock:
+        if not self.Model.isAcquiring:
+            self.acqLoop = Thread(target=self.Model.begin, name="acquisitionThread")
+        else:
+            self.windowControl.createErrorDialogs("Acquisition has already started.")
         self.acqLoop.start()
         self.startRefreshRGBLoop()
 
@@ -219,9 +221,9 @@ class AppControl():
         with self.lock:
             if not self.isLoopRGB:
                 self.quitLoopRGB = False
-                self.loopRGB = Thread(target=self.refreshRGBLoop, name="refreshRGBLoop")
             else:
                 raise RuntimeError("RefreshRGBLoop is already running")
+        self.loopRGB = Thread(target=self.refreshRGBLoop, name="refreshRGBLoop")
         self.loopRGB.start()
 
     def refreshRGBLoop(self):
@@ -230,11 +232,11 @@ class AppControl():
             quit = self.quitLoopRGB
         while not quit:
             with self.lock:
-                self.matrixRGBReplace()
                 quit = self.quitLoopRGB
+            self.matrixRGBReplace()
             time.sleep(1)
 
-    # à faire
+    # TODO
     def listStageDevices(self) -> list:  # connected
         self.stageDevices = []  # TODO find list from hardware...
         self.stageDevices.insert(0, "Debug")

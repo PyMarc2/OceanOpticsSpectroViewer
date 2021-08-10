@@ -23,14 +23,14 @@ class HyperSpectralImage:
         self.fileName = ""
         self.laser = None
 
-    def dataWithoutBackground(self):
-        dataWithoutBackground = []
-        for item in self.data:
+    def dataWithoutBackground(self, data):
+        dataWithoutBg = []
+        for item in data:
             x = item.x
             y = item.y
             spectrum = item.spectrum - self.background
-            dataWithoutBackground.append(Pixel(x, y, spectrum))
-        return dataWithoutBackground
+            dataWithoutBg.append(Pixel(x, y, spectrum))
+        return dataWithoutBg
 
     def setLaserWavelength(self, laser):
         self.laser = laser
@@ -50,11 +50,11 @@ class HyperSpectralImage:
     def deleteWavelength(self):
         self.wavelength = []
 
-    def waveNumber(self, laser=None):
+    def waveNumber(self, waves, laser=None):
         if laser is None:
             laser = self.laser
 
-        waveNumber = ((1 / laser) - (1 / self.wavelength)) * 10 ** 7
+        waveNumber = ((1 / laser) - (1 / waves)) * 10 ** 7
         return waveNumber.round(0)
 
     def addSpectrum(self, x, y, spectrum):
@@ -158,7 +158,7 @@ class HyperSpectralImage:
             return None
 
     def loadData(self, path):
-        DoGetWaveLength = False
+        doGetWaveLength = False
         foundFiles = []
         for file in os.listdir(path):
             if fnmatch.fnmatch(file, f'*.csv'):
@@ -183,12 +183,12 @@ class HyperSpectralImage:
                     elem = elem_str.split(",")
                     spectrum.append(float(elem[1]))
 
-                    if DoGetWaveLength == False:
+                    if doGetWaveLength == False:
                         elem_str = j.replace("\n", "")
                         elem = elem_str.split(",")
                         xAxis.append(float(elem[0]))
                         self.setWavelength(xAxis)
-                DoGetWaveLength = True
+                doGetWaveLength = True
                 self.addSpectrum(posX, posY, spectrum)
             # matchBackground = re.match(".*?(_background)\\D*", name)
             # if matchBackground:

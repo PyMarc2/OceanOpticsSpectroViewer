@@ -282,10 +282,10 @@ class Model:
             if self.countSpectrum <= (self._width * self._height):
                 dataPoint = self.spectrumPixelAcquisition()
                 self.dataMap.append(self.createDataPoint(self.countWidth, self.countHeight, dataPoint))
-                notif().postNotification("Single acquisition done", self, userInfo={"point_x" : self.countWidth,
-                                                                                    "point_y" : self.countHeight,
-                                                                                    "spectrum" : dataPoint,
-                                                                                    "spectra" : self.dataMap})
+                notif().postNotification("Single acquisition done", self, userInfo={"point_x": self.countWidth,
+                                                                                    "point_y": self.countHeight,
+                                                                                    "spectrum": dataPoint,
+                                                                                    "spectra": self.dataMap})
 
                 if self._direction == "same":
                     try:
@@ -334,6 +334,7 @@ class Model:
             else:
                 inProgress = False
                 self.stopAcq()
+        # pass
 
     def moveStage(self):
         self._stage.moveTo((self._stagePosition[0] + self.countWidth * self.step * self.stepMeasureUnit,

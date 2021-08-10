@@ -47,10 +47,8 @@ class MockSpectrometer:
     def shutterFactor(self):
         return self.shutter ** 2 / 0.5
 
-
 def gaussian(x, mu, sig):
     return np.exp(-np.power(x - mu, 2.) / (2 * np.power(sig, 2.)))
-
 
 def halogen_spectrum():
     x = np.linspace(784.48, 1029.63, 1042)
