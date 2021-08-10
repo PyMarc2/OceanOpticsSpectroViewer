@@ -221,7 +221,7 @@ class HyperSpectralImage:
                     f.write(f"{x},{data[i]}\n")
                 f.close()
 
-    def saveImage(self, matrixRGB):  # TODO correct?
+    def saveImage(self, matrixRGB):
         path = self.folderPath + "/"
         img = matrixRGB.astype(np.uint8)
         if self.fileName == "":

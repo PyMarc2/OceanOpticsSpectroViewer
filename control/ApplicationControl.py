@@ -277,7 +277,6 @@ class AppControl():
             self.spec = sb.Spectrometer(self.spectroLink)
         if self.spec is None:
             raise Exception('The spectrometer is not connected!')
-        print(self.spec)
         self.Model.connectSpec(self.spec)
         wave = self.Model.wavelengths()
         return wave
@@ -285,10 +284,8 @@ class AppControl():
     def connectLight(self, index):
         if index == 0:
             self.spec._source = "halogen"
-            print("halo")
         elif index == 1:
             self.spec._source = "random"
-            print("random")
         else:
             print("what's going on???")
 
