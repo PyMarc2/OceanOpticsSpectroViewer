@@ -38,15 +38,14 @@ class WindowControl(QWidget, Ui_MainWindow):
         self.waveNumber = True
         self.folderPath = ""
 
+        self.appControl = None
+        self.lastError = None
+
         self.mousePositionX = 0
         self.mousePositionY = 0
 
         self.rangeLen = 1024
         self.minWave = 0
-
-        self.appControl = None
-
-        self.lastError = None
 
         self.connectWidgets()
         self.updateSliderStatus()
@@ -206,6 +205,9 @@ class WindowControl(QWidget, Ui_MainWindow):
                                    QPixmap("./gui/misc/icons/sweep_same_hover.png").scaled(50, 50, Qt.KeepAspectRatio, Qt.SmoothTransformation),
                                    QPixmap("./gui/misc/icons/sweep_same_clicked.png").scaled(50, 50, Qt.KeepAspectRatio, Qt.SmoothTransformation),
                                    QPixmap("./gui/misc/icons/sweep_same_selected.png").scaled(50, 50, Qt.KeepAspectRatio, Qt.SmoothTransformation))
+        self.pb_sweepSame.status = True
+        self.pb_sweepSame.setEnabled(False)
+
         self.pb_sweepAlternate.setIcons(QPixmap("./gui/misc/icons/sweep_alternate.png").scaled(50, 50, Qt.KeepAspectRatio, Qt.SmoothTransformation),
                                         QPixmap("./gui/misc/icons/sweep_alternate_hover.png").scaled(50, 50, Qt.KeepAspectRatio, Qt.SmoothTransformation),
                                         QPixmap("./gui/misc/icons/sweep_alternate_clicked.png").scaled(50, 50, Qt.KeepAspectRatio, Qt.SmoothTransformation),
@@ -347,9 +349,23 @@ class WindowControl(QWidget, Ui_MainWindow):
         self.appControl.setIntegrationTime(acqTime)
 
     def sweepDirectionSame(self):
+        if self.pb_sweepSame.status == True:
+            self.pb_sweepAlternate.status = False
+        else:
+            self.pb_sweepAlternate.status = True
+        self.pb_sweepAlternate.enterEvent("An Event")
+        self.pb_sweepSame.setEnabled(False)
+        self.pb_sweepAlternate.setEnabled(True)
         self.appControl.sweepDirectionSame()
 
     def sweepDirectionOther(self):
+        if self.pb_sweepAlternate.status == True:
+            self.pb_sweepSame.status = False
+        else:
+            self.pb_sweepSame.status = True
+        self.pb_sweepSame.enterEvent("An Event")
+        self.pb_sweepAlternate.setEnabled(False)
+        self.pb_sweepSame.setEnabled(True)
         self.appControl.sweepDirectionOther()
 
     # Acquisition Control
