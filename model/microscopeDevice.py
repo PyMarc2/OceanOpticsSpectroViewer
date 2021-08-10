@@ -249,7 +249,7 @@ class Model:
     def readDataLive(self):
         return self._spec.intensities()[2:]
 
-    def stopAcq(self):
+    def stopAcq(self, *args):
         with self.lock:
             if self.isAcquiring:
                 self.isAcquiring = False
@@ -257,7 +257,7 @@ class Model:
                 # self.countWidth = 0
                 # self.countSpectrum = 0
             else:
-                pass
+                return False
                 # raise AssertionError('Sampling already stopped.')
         notif().postNotification("Map acquisition done or interrupted.", self, userInfo={"spectra": self.dataMap})
 
