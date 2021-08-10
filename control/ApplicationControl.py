@@ -1,5 +1,4 @@
-import threading
-
+import copy
 import numpy as np
 import sys
 import os
@@ -34,16 +33,16 @@ class AppControl():
 
         self.isLoopRGB = False
         self.quitLoopRGB = True
-        notif().addObserver(self, self.react, "Single acquisition done", Model)  # TODO add userInfo received
+        notif().addObserver(self, self.react, "Single acquisition done", Model)
         notif().addObserver(self, self.stopAcquisition, "Map acquisition done", Model)
 
-    def react(self, *args):
-        # TODO change function name
-        # TODO call following functions with dict received as userInfo
-        # self.appControl.addSpectrum(point_x, point_y, spectrum)
-        # self.appControl.matrixRGBReplace()
-        # self.appControl.savePixel(point_x, point_y, spectrum)
-        pass
+    def react(self, notification):
+        point_x = notification.userInfo["point_x"]
+        point_y = notification.userInfo["point_y"]
+        spectrum = notification.userInfo["spectrum"]
+
+        self.addSpectrum(point_x, point_y, spectrum)
+        self.savePixel(point_x, point_y, spectrum)
 
     def matrixRGB(self, globalMaximum=True, VWB=True):
         colorValues = self.windowControl.currentSliderValues()
@@ -173,17 +172,19 @@ class AppControl():
         self.windowControl.updateRGBPlot(matrixRGB)
 
     def addSpectrum(self, x, y, spectrum):
-        self.HSI.addSpectrum(x, y, spectrum)
+        with self.lock:
+            self.HSI.addSpectrum(x, y, spectrum)
 
     def savePixel(self, x, y, spectrum):
-        self.HSI.saveCaptureCSV(data=spectrum, countHeight=y, countWidth=x)
+        with self.lock:
+            spec = copy.deepcopy(spectrum)
+        self.HSI.saveCaptureCSV(data=spec, countHeight=y, countWidth=x)
 
     def stopAcquisition(self):
-        with self.lock:
-            try:
-                notif().postNotification("Interrupt acquisition", self)
-            except:
-                pass  # TODO catch error in stopAcq in Model...
+        if self.Model.isAcquiring:
+            notif().postNotification("Interrupt acquisition", self)
+        else:
+            self.windowControl.createErrorDialogs("Mapping already stopped.")
 
     def getFileName(self):
         fileName = self.windowControl.fileName()
