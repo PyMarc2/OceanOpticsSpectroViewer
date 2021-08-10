@@ -1248,6 +1248,12 @@ color: rgb(0, 0, 0);</string>
                <height>16777215</height>
               </size>
              </property>
+             <property name="toolTip">
+              <string>Blue lower limit</string>
+             </property>
+             <property name="statusTip">
+              <string>Blue lower limit</string>
+             </property>
              <property name="styleSheet">
               <string notr="true">background-color: rgb(138, 173, 255);
 color: rgb(0, 0, 0);</string>

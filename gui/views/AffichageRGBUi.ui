@@ -13,6 +13,12 @@
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
+  <property name="toolTip">
+   <string>Global maximum = Considering intensity | Local maximum = don't consider intensity</string>
+  </property>
+  <property name="statusTip">
+   <string>Global maximum = Considering intensity | Local maximum = don't consider intensity</string>
+  </property>
   <property name="autoFillBackground">
    <bool>false</bool>
   </property>
@@ -59,6 +65,9 @@
                <property name="toolTip">
                 <string>Lower red limit</string>
                </property>
+               <property name="statusTip">
+                <string>Lower red limit</string>
+               </property>
                <property name="styleSheet">
                 <string notr="true">background-color: rgb(255, 121, 121);
 color: rgb(0, 0, 0);</string>
@@ -94,6 +103,9 @@ color: rgb(0, 0, 0);</string>
                <property name="toolTip">
                 <string>Upper red limit</string>
                </property>
+               <property name="statusTip">
+                <string>Upper red limit</string>
+               </property>
                <property name="styleSheet">
                 <string notr="true">background-color: rgb(255, 121, 121);
 color: rgb(0, 0, 0);</string>
@@ -124,6 +136,9 @@ color: rgb(0, 0, 0);</string>
                 </font>
                </property>
                <property name="toolTip">
+                <string>Lower green limit</string>
+               </property>
+               <property name="statusTip">
                 <string>Lower green limit</string>
                </property>
                <property name="styleSheet">
@@ -164,6 +179,9 @@ color: rgb(0, 0, 0);</string>
                <property name="toolTip">
                 <string>Upper green limit</string>
                </property>
+               <property name="statusTip">
+                <string>Upper green limit</string>
+               </property>
                <property name="styleSheet">
                 <string notr="true">background-color: rgb(125, 231, 106);
 color: rgb(0, 0, 0);</string>
@@ -194,6 +212,9 @@ color: rgb(0, 0, 0);</string>
                 </font>
                </property>
                <property name="toolTip">
+                <string>Lower blue limit</string>
+               </property>
+               <property name="statusTip">
                 <string>Lower blue limit</string>
                </property>
                <property name="styleSheet">
@@ -234,6 +255,9 @@ color: rgb(0, 0, 0);</string>
                <property name="toolTip">
                 <string>Upper blue limit</string>
                </property>
+               <property name="statusTip">
+                <string>Upper blue limit</string>
+               </property>
                <property name="styleSheet">
                 <string notr="true">background-color: rgb(138, 173, 255);
 color: rgb(0, 0, 0);</string>
@@ -264,7 +288,7 @@ color: rgb(0, 0, 0);</string>
                 </font>
                </property>
                <property name="toolTip">
-                <string>Global Max = view intensity | Local Max = intensity doesn't count</string>
+                <string>Global maximum = Considering intensity | Local maximum = don't consider intensity</string>
                </property>
                <property name="styleSheet">
                 <string notr="true">color: rgb(255, 255, 255);</string>
@@ -291,6 +315,9 @@ color: rgb(0, 0, 0);</string>
               </font>
              </property>
              <property name="toolTip">
+              <string>Search the folderpath</string>
+             </property>
+             <property name="statusTip">
               <string>Search the folderpath</string>
              </property>
              <property name="styleSheet">
@@ -346,6 +373,9 @@ color: rgb(0, 0, 0);</string>
                <property name="toolTip">
                 <string>X position</string>
                </property>
+               <property name="statusTip">
+                <string>X position</string>
+               </property>
                <property name="styleSheet">
                 <string notr="true">background-color: rgb(200, 200, 200);
 color: rgb(0, 0, 0);</string>
@@ -369,6 +399,9 @@ color: rgb(0, 0, 0);</string>
                 </font>
                </property>
                <property name="toolTip">
+                <string>Y position</string>
+               </property>
+               <property name="statusTip">
                 <string>Y position</string>
                </property>
                <property name="styleSheet">
