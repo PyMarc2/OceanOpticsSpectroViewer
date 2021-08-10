@@ -57,7 +57,6 @@ def halogen_spectrum():
 def random_spectrum():
     x = np.linspace(784.48, 1029.63, 1042)
     spectrum = random.randint(1, 6)
-    print(spectrum)
     if spectrum == 1:
         y = gaussian(x, mu=900, sig=20) * 0.7 + gaussian(x, mu=950, sig=5) * 0.3 + gaussian(x, mu=820, sig=5) * 0.1
     elif spectrum == 2:

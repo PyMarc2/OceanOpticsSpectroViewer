@@ -47,6 +47,7 @@ class WindowControl(QWidget, Ui_MainWindow):
 
         self.graph_rgb.scene().sigMouseMoved.connect(self.mouseMoved)
         self.pb_search.clicked.connect(self.selectSaveFolder)
+        self.pb_saveImage.clicked.connect(self.saveImage)
 
         self.dSlider_red.valueChanged.connect(self.setColorRange)
         self.dSlider_green.valueChanged.connect(self.setColorRange)
@@ -188,8 +189,14 @@ class WindowControl(QWidget, Ui_MainWindow):
             self.setRangeToWave()
             self.updateSpectrumPlot(waves, matrixData)
             self.updateRGBPlot(matrixRGB)
+            self.pb_saveImage.setEnabled(True)
+            self.pb_saveImage.setStyleSheet("")
         except:
             pass
+
+    def saveImage(self):
+        matrixRGB = self.appControl.matrixRGB(self.globalMaximum)
+        self.appControl.saveImage(matrixRGB)
 
     
 
