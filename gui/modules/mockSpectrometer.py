@@ -1,5 +1,6 @@
 import numpy as np
 import time
+import random
 
 
 class MockSpectrometer:
@@ -10,7 +11,7 @@ class MockSpectrometer:
         self.noise = 0.01
 
         self._background = background_spectrum()
-        self._source = halogen_spectrum()
+        self._source = random_spectrum()
         # todo: move bg and source to spectrum object
         # todo: calibration offset?
 
@@ -50,6 +51,23 @@ def halogen_spectrum():
     x = np.linspace(784.48, 1029.63, 1042)
     return gaussian(x, mu=900, sig=20) * 0.7 + gaussian(x, mu=930, sig=5) * 0.3
 
+def random_spectrum():
+    x = np.linspace(784.48, 1029.63, 1042)
+    spectrum = random.randint(1, 6)
+    print(spectrum)
+    if spectrum == 1:
+        y = gaussian(x, mu=900, sig=20) * 0.7 + gaussian(x, mu=950, sig=5) * 0.3 + gaussian(x, mu=820, sig=5) * 0.1
+    elif spectrum == 2:
+        y = gaussian(x, mu=900, sig=20) * 0.7 + gaussian(x, mu=820, sig=5) * 0.3 + gaussian(x, mu=950, sig=5) * 0.1 
+    elif spectrum == 3:
+        y = gaussian(x, mu=950, sig=20) * 0.7 + gaussian(x, mu=820, sig=5) * 0.3 + gaussian(x, mu=900, sig=5) * 0.1
+    elif spectrum == 4:
+        y = gaussian(x, mu=950, sig=20) * 0.7 + gaussian(x, mu=900, sig=5) * 0.3 + gaussian(x, mu=820, sig=5) * 0.1
+    elif spectrum == 5:
+        y = gaussian(x, mu=820, sig=20) * 0.7 + gaussian(x, mu=900, sig=5) * 0.3 + gaussian(x, mu=950, sig=5) * 0.1
+    elif spectrum == 6:
+        y = gaussian(x, mu=820, sig=20) * 0.7 + gaussian(x, mu=950, sig=5) * 0.3 + gaussian(x, mu=900, sig=5) * 0.1
+    return y
 
 def background_spectrum():
     x = np.linspace(784.48, 1029.63, 1042)

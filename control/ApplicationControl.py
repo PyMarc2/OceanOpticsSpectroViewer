@@ -29,7 +29,7 @@ class AppControl():
         self.spectroLink = self.specDevices[0]
         self.lock = Lock()
         self.stage = False
-        self.spec = False
+        self.spec = None
 
         self.isLoopRGB = False
         self.quitLoopRGB = True
@@ -167,7 +167,10 @@ class AppControl():
         return self.stage
 
     def spectroConnected(self):
-        return self.spec
+        if self.spec == None:
+            return False
+        else:
+            return True
 
     def matrixRGBReplace(self):
         globalMaximum = self.windowControl.globalMaximum
@@ -256,13 +259,23 @@ class AppControl():
     def connectDetection(self, index): # à vérifier DANGER
         self.spectroLink = self.specDevices[index]
         if self.spectroLink == "MockSpectrometer":
-            spec = Mock.MockSpectrometer()
+            self.spec = Mock.MockSpectrometer()
         else:
-            spec = sb.Spectrometer(self.spectroLink)
-        if spec is None:
+            self.spec = sb.Spectrometer(self.spectroLink)
+        if self.spec is None:
             raise Exception('The spectrometer is not connected!')
-            self.spec = False
-        self.Model.connectSpec(spec)
-        self.spec = True
+        print(self.spec)
+        self.Model.connectSpec(self.spec)
         wave = self.Model.wavelengths()
         return wave
+
+    def connectLight(self, index):
+        if index == 0:
+            self.spec._source = Mock.halogen_spectrum()
+            print("halo")
+        elif index == 1:
+            self.spec._source = Mock.random_spectrum()
+            print("random")
+        else:
+            print("what's going on???")
+

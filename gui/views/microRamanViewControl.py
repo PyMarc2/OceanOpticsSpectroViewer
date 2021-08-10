@@ -217,7 +217,7 @@ class WindowControl(QWidget, Ui_MainWindow):
 
     # Device Connection
     def findDevices(self):
-        self.lightDevices = ["None"]
+        self.lightDevices = ["halogenSpectrum", "randomSpectrum"]
         self.listStageDevices = self.appControl.listStageDevices()
         self.listSpecDevices = self.appControl.listSpecDevices()
         self.cmb_selectDetection.clear()
@@ -227,6 +227,19 @@ class WindowControl(QWidget, Ui_MainWindow):
         self.cmb_selectStage.clear()
         self.cmb_selectStage.addItems(self.listStageDevices)
         self.deviceConnected = True
+
+        self.pb_connectLight.setEnabled(True)
+        self.pb_connectLight.setStyleSheet("")
+        self.pb_connectStage.setEnabled(True)
+        self.pb_connectStage.setStyleSheet("")
+        self.pb_connectDetection.setEnabled(True)
+        self.pb_connectDetection.setStyleSheet("")
+        self.cmb_selectDetection.setEnabled(True)
+        self.cmb_selectDetection.setStyleSheet("")
+        self.cmb_selectLight.setEnabled(True)
+        self.cmb_selectLight.setStyleSheet("")
+        self.cmb_selectStage.setEnabled(True)
+        self.cmb_selectStage.setStyleSheet("")
 
     def connectDetection(self):
         if self.le_laser.text() == "":
@@ -242,16 +255,26 @@ class WindowControl(QWidget, Ui_MainWindow):
                 self.updateSliderStatus()
                 self.cmb_wave.setEnabled(True)
                 self.cmb_wave.setStyleSheet("")
+                if index == 0:
+                    self.cb_lightSource.setStyleSheet("QCheckBox::indicator{background-color: rgb(0, 255, 0);}")
+                else:
+                    self.cb_lightSource.setStyleSheet("QCheckBox::indicator{background-color: rgb(80, 80, 80);}")
+                self.cb_detection.setStyleSheet("QCheckBox::indicator{background-color: rgb(0, 255, 0);}")
             except Exception as e:
                 print(e)
                 self.errorLaser()
 
     def connectLight(self):
-        pass
+        if self.cmb_selectDetection.currentIndex() == 0:
+            index = self.cmb_selectLight.currentIndex()
+            self.appControl.connectLight(index)
+        else:
+            pass
 
     def connectStage(self):
         index = self.cmb_selectStage.currentIndex()
         self.appControl.connectStage(index)
+        self.cb_stage.setStyleSheet("QCheckBox::indicator{background-color: rgb(0, 255, 0);}")
 
     def errorDetection(self):
         self.pb_connectDetection.setStyleSheet("background-color: rgb(255, 0, 0)")
