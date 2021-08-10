@@ -221,9 +221,9 @@ class HyperSpectralImage:
                     f.write(f"{x},{data[i]}\n")
                 f.close()
 
-    def saveImage(self):  # TODO correct?
+    def saveImage(self, matrixRGB):  # TODO correct?
         path = self.folderPath + "/"
-        img = self.matrixRGB.astype(np.uint8)
+        img = matrixRGB.astype(np.uint8)
         if self.fileName == "":
             plt.imsave(path + "matrixRGB.png", img)
         else:

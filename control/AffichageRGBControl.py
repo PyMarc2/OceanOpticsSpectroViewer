@@ -24,6 +24,7 @@ class AppliControl():
 
     def loadData(self, path):
         self.hsi.loadData(path)
+        self.hsi.folderPath = path
         colorValues = self.windowControl.currentSliderValues()
 
     def spectrum(self, x, y):
@@ -40,6 +41,9 @@ class AppliControl():
     def height(self):
         height = self.hsi.heightImage(self.hsi.data)
         return height
+
+    def saveImage(self, matrixRGB):
+        self.hsi.saveImage(matrixRGB)
 
 
 

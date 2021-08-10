@@ -311,7 +311,7 @@ color: rgb(0, 0, 0);</string>
             <widget class="QPushButton" name="pb_search">
              <property name="font">
               <font>
-               <pointsize>20</pointsize>
+               <pointsize>16</pointsize>
               </font>
              </property>
              <property name="toolTip">
@@ -325,6 +325,31 @@ color: rgb(0, 0, 0);</string>
              </property>
              <property name="text">
               <string>...</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="pb_saveImage">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>16</pointsize>
+              </font>
+             </property>
+             <property name="toolTip">
+              <string>Save image in png format.</string>
+             </property>
+             <property name="statusTip">
+              <string>Save image in png format.</string>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">color: rgb(255, 255, 255);
+background-color: rgb(42, 42, 42);</string>
+             </property>
+             <property name="text">
+              <string>Save Image</string>
              </property>
             </widget>
            </item>
