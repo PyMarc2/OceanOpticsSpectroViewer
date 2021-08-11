@@ -656,3 +656,8 @@ class WindowControl(QWidget, Ui_MainWindow):
             self.updateSpectrumPlot(waves)
         except Exception:
             pass
+
+    def dimensionImage(self):
+        width = self.sb_width.value()
+        height = self.sb_height.value() 
+        return (width, height)

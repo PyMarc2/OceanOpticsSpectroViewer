@@ -104,10 +104,13 @@ class HyperSpectralImage:
         except:
             return None
 
-    def matrixData(self, data):
+    def matrixData(self, data, width=None, height=None):
         try:
-            width = self.widthImage(data)
-            height = self.heightImage(data)
+            if width == None or height ==None:
+                width = self.widthImage(data)
+                height = self.heightImage(data)
+            else:
+                pass
             spectrumLen = self.spectrumLen(data)
             matrixData = np.zeros((height, width, spectrumLen))
 
@@ -119,12 +122,15 @@ class HyperSpectralImage:
         except:
             return None
 
-    def matrixRGB(self, data, colorValues, globalMaximum=True):
+    def matrixRGB(self, data, colorValues, globalMaximum=True, width=None, height=None):
         try:
-            width = self.widthImage(data)
-            height = self.heightImage(data)
-            spectrumLen = self.spectrumLen(data)
+            if width == None or height ==None:
+                width = self.widthImage(data)
+                height = self.heightImage(data)
+            else:
+                pass
 
+            spectrumLen = self.spectrumLen(data)
 
             lowRed = round(colorValues[0] * spectrumLen)
             highRed = round(colorValues[1] * spectrumLen)
@@ -135,7 +141,7 @@ class HyperSpectralImage:
 
 
             matrixRGB = np.zeros((height, width, 3))
-            matrix = self.matrixData(data)
+            matrix = self.matrixData(data, width, height)
 
             matrixRGB[:, :, 0] = matrix[:, :, lowRed:highRed].sum(axis=2)
             matrixRGB[:, :, 1] = matrix[:, :, lowGreen:highGreen].sum(axis=2)

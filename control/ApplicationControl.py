@@ -47,13 +47,14 @@ class AppControl():
         # self.savePixel(point_x, point_y, spectrum)
 
     def matrixRGB(self, globalMaximum=True, VWB=True):
+        width, height = self.windowControl.dimensionImage()
         colorValues = self.windowControl.currentSliderValues()
         with self.lock:
             if VWB:
                 data = self.HSI.data
             else:
                 data = self.HSI.dataWithoutBackground()
-        matrixRGB = self.HSI.matrixRGB(data, colorValues, globalMaximum)
+        matrixRGB = self.HSI.matrixRGB(data, colorValues, globalMaximum, width, height)
         return matrixRGB
 
     def waves(self, laser):
