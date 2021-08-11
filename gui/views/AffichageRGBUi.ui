@@ -324,7 +324,7 @@ color: rgb(0, 0, 0);</string>
               <string notr="true">color: rgb(255, 255, 255);</string>
              </property>
              <property name="text">
-              <string>...</string>
+              <string>Choose folder path</string>
              </property>
             </widget>
            </item>
@@ -447,6 +447,13 @@ color: rgb(0, 0, 0);</string>
                 </size>
                </property>
               </spacer>
+             </item>
+             <item>
+              <widget class="QCheckBox" name="cb_subtractbg">
+               <property name="text">
+                <string>Subtract Background</string>
+               </property>
+              </widget>
              </item>
             </layout>
            </item>

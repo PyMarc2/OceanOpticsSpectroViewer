@@ -485,7 +485,7 @@ background-color: rgb(80, 80, 80);</string>
                     <string notr="true">background-color: rgb(40, 40, 40);</string>
                    </property>
                    <property name="text">
-                    <string>Substract Background</string>
+                    <string>Subtract Background</string>
                    </property>
                   </widget>
                  </item>

@@ -173,10 +173,10 @@ class HyperSpectralImage:
         sortedPaths = foundFiles
         for name in sortedPaths:
             # Find the position
-            matchCoords = re.match("\\D*?(\\d+)\\D*?(\\d+)\\D*?", name)
+            matchCoords = re.match("([A-Za-z_]*)_x(\\d+)_y(\\d+).*", name)
             if matchCoords:
-                posX = int(matchCoords.group(1))
-                posY = int(matchCoords.group(2))
+                posX = int(matchCoords.group(2))
+                posY = int(matchCoords.group(3))
 
                 # Open file and put in the data
                 fich = open(path + '/' + name, "r")
@@ -196,7 +196,7 @@ class HyperSpectralImage:
                         self.setWavelength(xAxis)
                 doGetWaveLength = True
                 self.addSpectrum(posX, posY, spectrum)
-            # matchBackground = re.match(".*?(_background)\\D*", name)
+            # matchBackground = re.match(".*?(_background).*", name)
             # if matchBackground:
             #     fich = open(path + '/' + name, "r")
             #     test_str = list(fich)[14:]
