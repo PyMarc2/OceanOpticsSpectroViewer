@@ -196,7 +196,6 @@ class WindowControl(QWidget, Ui_MainWindow):
             self.createPlotRGB()
             self.createPlotSpectrum()
             self.setRangeToWave()
-            self.appControl.printLen()
             self.updateSpectrumPlot(waves, matrixData)
             self.updateRGBPlot(matrixRGB)
             self.pb_saveImage.setEnabled(True)

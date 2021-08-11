@@ -17,10 +17,6 @@ class AppliControl():
             matrixData = self.hsi.matrixData(wBackground)
         return matrixData
 
-    def printLen(self):
-        print(len(self.hsi.data))
-
-
     def matrixRGB(self, globalMaximum=True, VWB=True):
         colorValues = self.windowControl.currentSliderValues()
         if VWB:
