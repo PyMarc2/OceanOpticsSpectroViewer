@@ -288,6 +288,9 @@ color: rgb(0, 0, 0);</string>
                 </font>
                </property>
                <property name="toolTip">
+                <string/>
+               </property>
+               <property name="statusTip">
                 <string>Global maximum = Considering intensity | Local maximum = don't consider intensity</string>
                </property>
                <property name="styleSheet">
@@ -448,26 +451,40 @@ color: rgb(0, 0, 0);</string>
                </property>
               </spacer>
              </item>
-             <item>
-              <widget class="QCheckBox" name="cb_subtractbg">
-               <property name="font">
-                <font>
-                 <pointsize>18</pointsize>
-                </font>
-               </property>
-               <property name="styleSheet">
-                <string notr="true">color: rgb(255, 255, 255);</string>
-               </property>
-               <property name="text">
-                <string>Subtract Background</string>
-               </property>
-              </widget>
-             </item>
             </layout>
            </item>
           </layout>
          </item>
         </layout>
+       </item>
+       <item row="2" column="0">
+        <widget class="QCheckBox" name="cb_subtractbg">
+         <property name="enabled">
+          <bool>true</bool>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>14</pointsize>
+          </font>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">color: rgb(255, 255, 255);
+QCheckBox::indicator {
+     width: 100px;
+     height: 40px;
+}
+</string>
+         </property>
+         <property name="text">
+          <string>Subtract Background</string>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>20</width>
+           <height>20</height>
+          </size>
+         </property>
+        </widget>
        </item>
       </layout>
      </item>

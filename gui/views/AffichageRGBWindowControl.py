@@ -32,7 +32,7 @@ class WindowControl(QWidget, Ui_MainWindow):
         self.doSliderPositionAreInitialize = False
         self.globalMaximum = True
         self.folderpath = ""
-        self.VWB = 0
+        self.VWB = True
 
         self.mousePositionX = 0
         self.mousePositionY = 0
@@ -272,8 +272,11 @@ class WindowControl(QWidget, Ui_MainWindow):
 
     def subtractBackground(self):
         if self.cb_subtractbg.checkState() == 2:
-            self.VWB = 1
+            self.VWB = False
         if self.cb_subtractbg.checkState() == 0:
-            self.VWB = 0
-        # self.updateSpectrumPlot()
-        # self.updateRGBPlot()
+            self.VWB = True
+        matrixRGB = self.appControl.matrixRGB(self.globalMaximum, self.VWB)
+        matrixData = self.appControl.matrixData(self.VWB)
+        waves = self.appControl.waves()
+        self.updateSpectrumPlot(waves, matrixData)
+        self.updateRGBPlot(matrixRGB)

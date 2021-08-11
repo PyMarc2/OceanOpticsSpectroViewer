@@ -9,17 +9,17 @@ class AppliControl():
         self.hsi = HyperSpectralImage()
         self.windowControl = None
 
-    def matrixData(self, VWB=0):
-        if not VWB:
+    def matrixData(self, VWB=True):
+        if VWB:
             matrixData = self.hsi.matrixData(self.hsi.data)
         else:
             wBackground = self.hsi.dataWithoutBackground()
             matrixData = self.hsi.matrixData(wBackground)
         return matrixData
 
-    def matrixRGB(self, globalMaximum=True, VWB=0):
+    def matrixRGB(self, globalMaximum=True, VWB=True):
         colorValues = self.windowControl.currentSliderValues()
-        if not VWB:
+        if VWB:
             matrixRGB = self.hsi.matrixRGB(self.hsi.data, colorValues, globalMaximum)
         else:
             wBackground = self.hsi.dataWithoutBackground()
