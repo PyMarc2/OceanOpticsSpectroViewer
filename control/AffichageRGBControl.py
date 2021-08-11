@@ -17,6 +17,10 @@ class AppliControl():
             matrixData = self.hsi.matrixData(wBackground)
         return matrixData
 
+    def printLen(self):
+        print(len(self.hsi.data))
+
+
     def matrixRGB(self, globalMaximum=True, VWB=True):
         colorValues = self.windowControl.currentSliderValues()
         if VWB:
@@ -31,9 +35,9 @@ class AppliControl():
         return waves
 
     def loadData(self, path):
-        self.hsi.loadData(path)
+        foundBackground = self.hsi.loadData(path)
         self.hsi.folderPath = path
-        colorValues = self.windowControl.currentSliderValues()
+        return foundBackground
 
     def spectrum(self, x, y):
         spectrum = self.hsi.spectrum(x, y, self.hsi.data)
@@ -41,6 +45,12 @@ class AppliControl():
 
     def deleteSpectra(self):
         self.hsi.deleteSpectra()
+
+    def deleteBackground(self):
+        self.hsi.deleteBackground()
+
+    def deleteWaves(self):
+        self.hsi.deleteWavelength()
 
     def width(self):
         width = self.hsi.widthImage(self.hsi.data)
@@ -55,8 +65,3 @@ class AppliControl():
 
     def subtractBackground(self):
         self.hsi.dataWithoutBackground()
-
-
-
-
-

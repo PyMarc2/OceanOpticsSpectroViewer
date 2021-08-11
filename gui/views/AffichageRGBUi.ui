@@ -460,7 +460,7 @@ color: rgb(0, 0, 0);</string>
        <item row="2" column="0">
         <widget class="QCheckBox" name="cb_subtractbg">
          <property name="enabled">
-          <bool>true</bool>
+          <bool>false</bool>
          </property>
          <property name="font">
           <font>

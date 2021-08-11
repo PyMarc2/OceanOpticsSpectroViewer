@@ -50,6 +50,12 @@ class HyperSpectralImage:
     def deleteWavelength(self):
         self.wavelength = []
 
+    def deleteWavelength(self):
+        self.wavelength = []
+
+    def deleteBackground(self):
+        self.background = []
+
     def waveNumber(self, waves, laser=None):
         if laser is None:
             laser = self.laser
@@ -119,7 +125,8 @@ class HyperSpectralImage:
 
 
             return matrixData
-        except:
+        except Exception as e:
+            print(e)
             return None
 
     def matrixRGB(self, data, colorValues, globalMaximum=True, width=None, height=None):
@@ -164,6 +171,7 @@ class HyperSpectralImage:
             return None
 
     def loadData(self, path):
+        foundBackground = False
         doGetWaveLength = False
         foundFiles = []
         for file in os.listdir(path):
@@ -199,6 +207,7 @@ class HyperSpectralImage:
 
             matchBackground = re.match(".*?(_background).*", name)
             if matchBackground:
+                foundBackground = True
                 fich = open(path + '/' + name, "r")
                 test_str = list(fich)
                 fich.close()
@@ -208,6 +217,8 @@ class HyperSpectralImage:
                     elem = elem_str.split(",")
                     spectrum.append(float(elem[1]))
                 self.background = spectrum
+
+        return foundBackground
 
     # Save
     def saveCaptureCSV(self, data=None, countHeight=None, countWidth=None):

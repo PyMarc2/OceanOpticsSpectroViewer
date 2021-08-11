@@ -183,19 +183,30 @@ class WindowControl(QWidget, Ui_MainWindow):
         try:
             self.folderPath = str(QFileDialog.getExistingDirectory(self, "Select Directory"))
             self.appControl.deleteSpectra()
-            self.appControl.loadData(self.folderPath)
+            self.appControl.deleteBackground()
+            self.appControl.deleteWaves()
+            foundBackground = self.appControl.loadData(self.folderPath)
+            self.VWB = True
             matrixRGB = self.appControl.matrixRGB(self.globalMaximum, self.VWB)
-            matrixData = self.appControl.matrixData(self.VWB)
+            matrixData = self.appControl.matrixData()
             waves = self.appControl.waves()
 
+            self.mousePositionY = 0
+            self.mousePositionX = 0
             self.createPlotRGB()
             self.createPlotSpectrum()
             self.setRangeToWave()
+            self.appControl.printLen()
             self.updateSpectrumPlot(waves, matrixData)
             self.updateRGBPlot(matrixRGB)
             self.pb_saveImage.setEnabled(True)
             self.pb_saveImage.setStyleSheet("")
-        except:
+            if foundBackground:
+                self.cb_subtractbg.setEnabled(True)
+            elif not foundBackground:
+                self.cb_subtractbg.setCheckState(False)
+                self.cb_subtractbg.setEnabled(False)
+        except Exception as e:
             pass
 
     def saveImage(self):
@@ -239,13 +250,11 @@ class WindowControl(QWidget, Ui_MainWindow):
         blueRange = np.full(wavesLen, minimum)
         blueRange[lowBlue] = maximum
         blueRange[highBlue] = maximum
-
         self.plotRedRange.setData(waves, redRange, pen=(255, 0, 0))
         self.plotGreenRange.setData(waves, greenRange, pen=(0, 255, 0))
         self.plotBlueRange.setData(waves, blueRange, pen=(0, 0, 255))
         self.plotBlack.setData(waves, np.full(wavesLen, minimum), pen=(0, 0, 0))
         self.plotSpectrum.setData(waves, spectrum)
-
         self.le_x.setText(str(self.mousePositionX))
         self.le_y.setText(str(self.mousePositionY))
 
