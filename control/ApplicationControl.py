@@ -110,12 +110,18 @@ class AppControl():
         try:
             self.Model.width = width
         except Exception as e:
+            e = str(e)
+            if e == "'NoneType' object is not subscriptable":
+                e = "No sutter connected"
             self.windowControl.createErrorDialogs(e)
 
     def setHeight(self, height):
         try:
             self.Model.height = height
         except Exception as e:
+            e = str(e)
+            if e == "'NoneType' object is not subscriptable":
+                e = "No sutter connected"
             self.windowControl.createErrorDialogs(e)
 
     def setStep(self, step):

@@ -345,12 +345,18 @@ class WindowControl(QWidget, Ui_MainWindow):
 
     # Acquisition Settings
     def setWidth(self):
-        width = self.sb_width.value()
-        self.appControl.setWidth(width)
+        try:
+            width = self.sb_width.value()
+            self.appControl.setWidth(width)
+        except:
+            pass
 
     def setHeight(self):
-        height = self.sb_height.value()
-        self.appControl.setHeight(height)
+        try:
+            height = self.sb_height.value()
+            self.appControl.setHeight(height)
+        except:
+            pass
 
     def setStep(self):
         step = self.sb_step.value()
