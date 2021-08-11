@@ -365,7 +365,7 @@ background-color: rgb(42, 42, 42);</string>
                </property>
                <property name="font">
                 <font>
-                 <pointsize>22</pointsize>
+                 <pointsize>18</pointsize>
                 </font>
                </property>
                <property name="styleSheet">
@@ -392,7 +392,7 @@ background-color: rgb(42, 42, 42);</string>
                </property>
                <property name="font">
                 <font>
-                 <pointsize>22</pointsize>
+                 <pointsize>18</pointsize>
                 </font>
                </property>
                <property name="toolTip">
@@ -420,7 +420,7 @@ color: rgb(0, 0, 0);</string>
                </property>
                <property name="font">
                 <font>
-                 <pointsize>22</pointsize>
+                 <pointsize>18</pointsize>
                 </font>
                </property>
                <property name="toolTip">
