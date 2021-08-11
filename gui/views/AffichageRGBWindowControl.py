@@ -32,7 +32,7 @@ class WindowControl(QWidget, Ui_MainWindow):
         self.doSliderPositionAreInitialize = False
         self.globalMaximum = True
         self.folderpath = ""
-        self.doNotSubtractBg = True
+        self.VWB = True
 
         self.mousePositionX = 0
         self.mousePositionY = 0
@@ -107,7 +107,7 @@ class WindowControl(QWidget, Ui_MainWindow):
                 self.mousePositionX = positionX
                 self.mousePositionY = positionY
                 waves = self.appControl.waves()
-                matrixData = self.appControl.matrixData(self.doNotSubtractBg)
+                matrixData = self.appControl.matrixData(self.VWB)
                 self.updateSpectrumPlot(waves, matrixData)
         except Exception as e:
             pass
@@ -118,8 +118,8 @@ class WindowControl(QWidget, Ui_MainWindow):
         else:
             self.globalMaximum = False
         self.appControl.loadData(self.folderPath)
-        matrixRGB = self.appControl.matrixRGB(self.globalMaximum, self.doNotSubtractBg)
-        matrixData = self.appControl.matrixData(self.doNotSubtractBg)
+        matrixRGB = self.appControl.matrixRGB(self.globalMaximum, self.VWB)
+        matrixData = self.appControl.matrixData(self.VWB)
         waves = self.appControl.waves()
         self.updateRGBPlot(matrixRGB)
 
@@ -207,10 +207,11 @@ class WindowControl(QWidget, Ui_MainWindow):
                 self.cb_subtractbg.setCheckState(False)
                 self.cb_subtractbg.setEnabled(False)
         except Exception as e:
+            print(e)
             pass
 
     def saveImage(self):
-        matrixRGB = self.appControl.matrixRGB(self.globalMaximum, self.doNotSubtractBg)
+        matrixRGB = self.appControl.matrixRGB(self.globalMaximum, self.VWB)
         self.appControl.saveImage(matrixRGB)
 
     def updateRGBPlot(self, matrixRGB):
@@ -268,8 +269,8 @@ class WindowControl(QWidget, Ui_MainWindow):
 
         if self.doSliderPositionAreInitialize:
             try:
-                matrixRGB = self.appControl.matrixRGB(self.globalMaximum, self.doNotSubtractBg)
-                matrixData = self.appControl.matrixData(self.doNotSubtractBg)
+                matrixRGB = self.appControl.matrixRGB(self.globalMaximum, self.VWB)
+                matrixData = self.appControl.matrixData(self.VWB)
                 waves = self.appControl.waves()
                 self.updateSpectrumPlot(waves, matrixData)
                 self.updateRGBPlot(matrixRGB)
@@ -281,11 +282,11 @@ class WindowControl(QWidget, Ui_MainWindow):
 
     def subtractBackground(self):
         if self.cb_subtractbg.checkState() == 2:
-            self.doNotSubtractBg = False
+            self.VWB = False
         if self.cb_subtractbg.checkState() == 0:
-            self.doNotSubtractBg = True
-        matrixRGB = self.appControl.matrixRGB(self.globalMaximum, self.doNotSubtractBg)
-        matrixData = self.appControl.matrixData(self.doNotSubtractBg)
+            self.VWB = True
+        matrixRGB = self.appControl.matrixRGB(self.globalMaximum, self.VWB)
+        matrixData = self.appControl.matrixData(self.VWB)
         waves = self.appControl.waves()
         self.updateSpectrumPlot(waves, matrixData)
         self.updateRGBPlot(matrixRGB)
