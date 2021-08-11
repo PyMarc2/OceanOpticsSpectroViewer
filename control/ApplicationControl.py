@@ -46,11 +46,11 @@ class AppControl():
         self.saveThread.start()
         # self.savePixel(point_x, point_y, spectrum)
 
-    def matrixRGB(self, globalMaximum=True, VWB=True):
+    def matrixRGB(self, globalMaximum=True, doNotSubtractBg=True):
         width, height = self.windowControl.dimensionImage()
         colorValues = self.windowControl.currentSliderValues()
         with self.lock:
-            if VWB:
+            if doNotSubtractBg:
                 data = self.HSI.data
             else:
                 data = self.HSI.dataWithoutBackground()
@@ -70,9 +70,9 @@ class AppControl():
     #     with self.lock:
     #         self.HSI.loadData(path)
 
-    def spectrum(self, x, y, VWB=True):
+    def spectrum(self, x, y, doNotSubtractBg=True):
         with self.lock:
-            if VWB:
+            if doNotSubtractBg:
                 spectrum = self.HSI.spectrum(x, y, self.HSI.data)
             else:
                 spectrum = self.HSI.spectrum(x, y, self.HSI.data)
@@ -187,8 +187,8 @@ class AppControl():
 
     def matrixRGBReplace(self):
         globalMaximum = self.windowControl.globalMaximum
-        VWB = self.windowControl.visualWithoutBackground
-        matrixRGB = self.matrixRGB(globalMaximum, VWB)
+        doNotSubtractBg = self.windowControl.doNotSubtractBg
+        matrixRGB = self.matrixRGB(globalMaximum, doNotSubtractBg)
         self.windowControl.updateRGBPlot(matrixRGB)
 
     def addSpectrum(self, x, y, spectrum):
