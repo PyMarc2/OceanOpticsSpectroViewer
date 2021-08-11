@@ -33,7 +33,7 @@ class WindowControl(QWidget, Ui_MainWindow):
 
         self.doSliderPositionAreInitialize = False
         self.deviceConnected = False
-        self.visualWithoutBackground = True
+        self.doNotSubtractBg = True
         self.colorRangeViewEnable = True
         self.globalMaximum = True
         self.waveNumber = True
@@ -308,7 +308,7 @@ class WindowControl(QWidget, Ui_MainWindow):
         QTimer.singleShot(50, lambda: self.le_folderPath.setStyleSheet(""))
 
     def saveImage(self):
-        matrixRGB = self.appControl.matrixRGB(self.globalMaximum, self.visualWithoutBackground)
+        matrixRGB = self.appControl.matrixRGB(self.globalMaximum, self.doNotSubtractBg)
         self.appControl.saveImage(matrixRGB)
 
     # Background Controls
@@ -320,11 +320,11 @@ class WindowControl(QWidget, Ui_MainWindow):
                 QTimer.singleShot(1, lambda: self.cb_subtractBackground.setCheckState(0))
         else:
             if self.cb_subtractBackground.checkState() == 2:
-                self.visualWithoutBackground = True
+                self.doNotSubtractBg = True
             if self.cb_subtractBackground.checkState() == 0:
-                self.visualWithoutBackground = False
+                self.doNotSubtractBg = False
             laser = self.appControl.getLaser()
-            matrixRGB = self.appControl.matrixRGB(self.globalMaximum, self.visualWithoutBackground)
+            matrixRGB = self.appControl.matrixRGB(self.globalMaximum, self.doNotSubtractBg)
             waves = self.appControl.waves(laser)
             self.updateSpectrumPlot(waves)
             self.updateRGBPlot(matrixRGB)
@@ -512,7 +512,7 @@ class WindowControl(QWidget, Ui_MainWindow):
             self.globalMaximum = False
         try:
             laser = self.appControl.getLaser()
-            matrixRGB = self.appControl.matrixRGB(self.globalMaximum, self.visualWithoutBackground)
+            matrixRGB = self.appControl.matrixRGB(self.globalMaximum, self.doNotSubtractBg)
             waves = self.appControl.waves(laser)
             self.updateRGBPlot(matrixRGB)
         except:
@@ -586,7 +586,7 @@ class WindowControl(QWidget, Ui_MainWindow):
         self.plotViewBox.addItem(vb)
 
     def updateSpectrumPlot(self, waves):
-        spectrum = self.appControl.spectrum(self.mousePositionX, self.mousePositionY, self.visualWithoutBackground)
+        spectrum = self.appControl.spectrum(self.mousePositionX, self.mousePositionY, self.doNotSubtractBg)
         try:
             maximum = max(spectrum)
             minimum = min(spectrum) - 1
@@ -641,7 +641,7 @@ class WindowControl(QWidget, Ui_MainWindow):
         if self.doSliderPositionAreInitialize:
             try:
                 laser = self.appControl.getLaser()
-                matrixRGB = self.appControl.matrixRGB(self.globalMaximum, self.visualWithoutBackground)
+                matrixRGB = self.appControl.matrixRGB(self.globalMaximum, self.doNotSubtractBg)
                 waves = self.appControl.waves(laser)
                 self.updateSpectrumPlot(waves)
                 self.updateRGBPlot(matrixRGB)

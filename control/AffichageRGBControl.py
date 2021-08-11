@@ -17,9 +17,9 @@ class AppliControl():
             matrixData = self.hsi.matrixData(wBackground)
         return matrixData
 
-    def matrixRGB(self, globalMaximum=True, VWB=True):
+    def matrixRGB(self, globalMaximum=True, doNotSubtractBg=True):
         colorValues = self.windowControl.currentSliderValues()
-        if VWB:
+        if doNotSubtractBg:
             matrixRGB = self.hsi.matrixRGB(self.hsi.data, colorValues, globalMaximum)
         else:
             wBackground = self.hsi.dataWithoutBackground()
