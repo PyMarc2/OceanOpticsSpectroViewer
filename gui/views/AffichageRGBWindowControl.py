@@ -32,6 +32,7 @@ class WindowControl(QWidget, Ui_MainWindow):
         self.doSliderPositionAreInitialize = False
         self.globalMaximum = True
         self.folderpath = ""
+        self.VWB = 0
 
         self.mousePositionX = 0
         self.mousePositionY = 0
@@ -44,6 +45,8 @@ class WindowControl(QWidget, Ui_MainWindow):
 
     def connectWidgets(self):
         self.cmb_set_maximum.currentIndexChanged.connect(self.setMaximum)
+
+        self.cb_subtractbg.stateChanged.connect(self.subtractBackground)
 
         self.graph_rgb.scene().sigMouseMoved.connect(self.mouseMoved)
         self.pb_search.clicked.connect(self.selectSaveFolder)
@@ -104,7 +107,7 @@ class WindowControl(QWidget, Ui_MainWindow):
                 self.mousePositionX = positionX
                 self.mousePositionY = positionY
                 waves = self.appControl.waves()
-                matrixData = self.appControl.matrixData()
+                matrixData = self.appControl.matrixData(self.VWB)
                 self.updateSpectrumPlot(waves, matrixData)
         except Exception as e:
             pass
@@ -115,10 +118,11 @@ class WindowControl(QWidget, Ui_MainWindow):
         else:
             self.globalMaximum = False
         self.appControl.loadData(self.folderPath)
-        matrixRGB = self.appControl.matrixRGB(self.globalMaximum)
-        matrixData = self.appControl.matrixData()
+        matrixRGB = self.appControl.matrixRGB(self.globalMaximum, self.VWB)
+        matrixData = self.appControl.matrixData(self.VWB)
         waves = self.appControl.waves()
         self.updateRGBPlot(matrixRGB)
+
     def setColorRange(self):
         colorValues = self.currentSliderValues()
         self.sb_lowRed.setValue(self.mappingOnSpinBox(colorValues[0]))
@@ -180,8 +184,8 @@ class WindowControl(QWidget, Ui_MainWindow):
             self.folderPath = str(QFileDialog.getExistingDirectory(self, "Select Directory"))
             self.appControl.deleteSpectra()
             self.appControl.loadData(self.folderPath)
-            matrixRGB = self.appControl.matrixRGB(self.globalMaximum)
-            matrixData = self.appControl.matrixData()
+            matrixRGB = self.appControl.matrixRGB(self.globalMaximum, self.VWB)
+            matrixData = self.appControl.matrixData(self.VWB)
             waves = self.appControl.waves()
 
             self.createPlotRGB()
@@ -195,13 +199,11 @@ class WindowControl(QWidget, Ui_MainWindow):
             pass
 
     def saveImage(self):
-        matrixRGB = self.appControl.matrixRGB(self.globalMaximum)
+        matrixRGB = self.appControl.matrixRGB(self.globalMaximum, self.VWB)
         self.appControl.saveImage(matrixRGB)
 
-    
-
     def updateRGBPlot(self, matrixRGB):
-        matrixRGB = matrixRGB.transpose(1,0,2)
+        matrixRGB = matrixRGB.transpose(1, 0, 2)
         vb = pg.ImageItem(image=matrixRGB)
         self.plotViewBox.addItem(vb)
 
@@ -257,8 +259,8 @@ class WindowControl(QWidget, Ui_MainWindow):
 
         if self.doSliderPositionAreInitialize:
             try:
-                matrixRGB = self.appControl.matrixRGB(self.globalMaximum)
-                matrixData = self.appControl.matrixData()
+                matrixRGB = self.appControl.matrixRGB(self.globalMaximum, self.VWB)
+                matrixData = self.appControl.matrixData(self.VWB)
                 waves = self.appControl.waves()
                 self.updateSpectrumPlot(waves, matrixData)
                 self.updateRGBPlot(matrixRGB)
@@ -267,3 +269,11 @@ class WindowControl(QWidget, Ui_MainWindow):
                 pass
         else:
             self.doSliderPositionAreInitialize = True
+
+    def subtractBackground(self):
+        if self.cb_subtractbg.checkState() == 2:
+            self.VWB = 1
+        if self.cb_subtractbg.checkState() == 0:
+            self.VWB = 0
+        # self.updateSpectrumPlot()
+        # self.updateRGBPlot()

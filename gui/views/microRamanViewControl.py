@@ -68,7 +68,7 @@ class WindowControl(QWidget, Ui_MainWindow):
             self.warningDialog.exec_()
 
     def connectWidgets(self):
-        self.cb_substractBackground.stateChanged.connect(self.substractBackground)
+        self.cb_subtractBackground.stateChanged.connect(self.subtractBackground)
         self.cb_colorRangeView.stateChanged.connect(self.colorRangeViewStatus)
 
         self.cmb_measureUnit.currentTextChanged.connect(self.setMeasureUnit)
@@ -109,7 +109,7 @@ class WindowControl(QWidget, Ui_MainWindow):
         self.tb_folderPath.clicked.connect(self.selectSaveFolder)
 
     def enableAllButtons(self):
-        self.cb_substractBackground.setEnabled(True)
+        self.cb_subtractBackground.setEnabled(True)
         self.cmb_selectDetection.setEnabled(True)
         self.cmb_selectLight.setEnabled(True)
         self.cmb_selectStage.setEnabled(True)
@@ -132,7 +132,7 @@ class WindowControl(QWidget, Ui_MainWindow):
         self.tb_folderPath.setEnabled(True)
         self.le_fileName.setEnabled(True)
 
-        self.cb_substractBackground.setStyleSheet("")
+        self.cb_subtractBackground.setStyleSheet("")
         self.cmb_selectDetection.setStyleSheet("")
         self.cmb_selectLight.setStyleSheet("")
         self.cmb_selectStage.setStyleSheet("")
@@ -156,7 +156,7 @@ class WindowControl(QWidget, Ui_MainWindow):
         self.le_fileName.setStyleSheet("")
 
     def disableAllButtons(self):
-        self.cb_substractBackground.setEnabled(False)
+        self.cb_subtractBackground.setEnabled(False)
         self.cmb_selectDetection.setEnabled(False)
         self.cmb_selectLight.setEnabled(False)
         self.cmb_selectStage.setEnabled(False)
@@ -179,7 +179,7 @@ class WindowControl(QWidget, Ui_MainWindow):
         self.tb_folderPath.setEnabled(False)
         self.le_fileName.setEnabled(False)
 
-        self.cb_substractBackground.setStyleSheet("background-color: rgb(40, 40, 40)")
+        self.cb_subtractBackground.setStyleSheet("background-color: rgb(40, 40, 40)")
         self.cmb_selectDetection.setStyleSheet("background-color: rgb(40, 40, 40)")
         self.cmb_selectLight.setStyleSheet("background-color: rgb(40, 40, 40)")
         self.cmb_selectStage.setStyleSheet("background-color: rgb(40, 40, 40)")
@@ -312,16 +312,16 @@ class WindowControl(QWidget, Ui_MainWindow):
         self.appControl.saveImage(matrixRGB)
 
     # Background Controls
-    def substractBackground(self):
+    def subtractBackground(self):
         backgroundData = self.appControl.backgroundData
         if backgroundData == []:
             self.errorBackground()
-            if self.cb_substractBackground.checkState() == 2:
-                QTimer.singleShot(1, lambda: self.cb_substractBackground.setCheckState(0))
+            if self.cb_subtractBackground.checkState() == 2:
+                QTimer.singleShot(1, lambda: self.cb_subtractBackground.setCheckState(0))
         else:
-            if self.cb_substractBackground.checkState() == 2:
+            if self.cb_subtractBackground.checkState() == 2:
                 self.visualWithoutBackground = True
-            if self.cb_substractBackground.checkState() == 0:
+            if self.cb_subtractBackground.checkState() == 0:
                 self.visualWithoutBackground = False
             laser = self.appControl.getLaser()
             matrixRGB = self.appControl.matrixRGB(self.globalMaximum, self.visualWithoutBackground)

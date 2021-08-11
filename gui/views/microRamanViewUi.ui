@@ -465,7 +465,7 @@ background-color: rgb(80, 80, 80);</string>
                <item row="1" column="0">
                 <layout class="QVBoxLayout" name="g_pb_and_cb_background">
                  <item>
-                  <widget class="QCheckBox" name="cb_substractBackground">
+                  <widget class="QCheckBox" name="cb_subtractBackground">
                    <property name="enabled">
                     <bool>false</bool>
                    </property>

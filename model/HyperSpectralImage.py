@@ -28,7 +28,7 @@ class HyperSpectralImage:
         for item in self.data:
             x = item.x
             y = item.y
-            spectrum = item.spectrum - self.background
+            spectrum = np.array(item.spectrum) - np.array(self.background)
             dataWithoutBg.append(Pixel(x, y, spectrum))
         return dataWithoutBg
 
@@ -172,7 +172,7 @@ class HyperSpectralImage:
 
         sortedPaths = foundFiles
         for name in sortedPaths:
-            # Find the position
+            # Find the positions
             matchCoords = re.match("([A-Za-z_]*)_x(\\d+)_y(\\d+).*", name)
             if matchCoords:
                 posX = int(matchCoords.group(2))
@@ -196,17 +196,18 @@ class HyperSpectralImage:
                         self.setWavelength(xAxis)
                 doGetWaveLength = True
                 self.addSpectrum(posX, posY, spectrum)
-            # matchBackground = re.match(".*?(_background).*", name)
-            # if matchBackground:
-            #     fich = open(path + '/' + name, "r")
-            #     test_str = list(fich)[14:]
-            #     fich.close()
-            #     xAxis = []
-            #     for j in test_str:
-            #         elem_str = j.replace("\n", "")
-            #         elem = elem_str.split(",")
-            #         xAxis.append(float(elem[1]))
-            #         self.setWavelength(xAxis)
+
+            matchBackground = re.match(".*?(_background).*", name)
+            if matchBackground:
+                fich = open(path + '/' + name, "r")
+                test_str = list(fich)
+                fich.close()
+                spectrum = []
+                for j in test_str:
+                    elem_str = j.replace("\n", "")
+                    elem = elem_str.split(",")
+                    spectrum.append(float(elem[1]))
+                self.background = spectrum
 
     # Save
     def saveCaptureCSV(self, data=None, countHeight=None, countWidth=None):
