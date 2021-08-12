@@ -1205,10 +1205,10 @@ color: rgb(0, 0, 0);</string>
               </size>
              </property>
              <property name="toolTip">
-              <string>Global maximum = Considering intensity | Local maximum = don't consider intensity</string>
+              <string/>
              </property>
              <property name="statusTip">
-              <string>Global maximum = Considering intensity | Local maximum = don't consider intensity</string>
+              <string/>
              </property>
              <item>
               <property name="text">
