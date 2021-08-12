@@ -14,10 +14,10 @@
    <string>MainWindow</string>
   </property>
   <property name="toolTip">
-   <string>Global maximum = Considering intensity | Local maximum = don't consider intensity</string>
+   <string/>
   </property>
   <property name="statusTip">
-   <string>Global maximum = Considering intensity | Local maximum = don't consider intensity</string>
+   <string/>
   </property>
   <property name="autoFillBackground">
    <bool>false</bool>
@@ -43,7 +43,14 @@
        <item row="1" column="0">
         <layout class="QHBoxLayout" name="horizontalLayout">
          <item>
-          <widget class="GraphicsLayoutWidget" name="graph_rgb"/>
+          <widget class="GraphicsLayoutWidget" name="graph_rgb">
+           <property name="toolTip">
+            <string/>
+           </property>
+           <property name="statusTip">
+            <string>Sample overview</string>
+           </property>
+          </widget>
          </item>
          <item>
           <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -291,7 +298,7 @@ color: rgb(0, 0, 0);</string>
                 <string/>
                </property>
                <property name="statusTip">
-                <string>Global maximum = Considering intensity | Local maximum = don't consider intensity</string>
+                <string/>
                </property>
                <property name="styleSheet">
                 <string notr="true">color: rgb(255, 255, 255);</string>
@@ -332,29 +339,52 @@ color: rgb(0, 0, 0);</string>
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="pb_saveImage">
-             <property name="enabled">
-              <bool>false</bool>
-             </property>
-             <property name="font">
-              <font>
-               <pointsize>16</pointsize>
-              </font>
-             </property>
-             <property name="toolTip">
-              <string>Save image in png format.</string>
-             </property>
-             <property name="statusTip">
-              <string>Save image in png format.</string>
-             </property>
-             <property name="styleSheet">
-              <string notr="true">color: rgb(255, 255, 255);
+            <layout class="QHBoxLayout" name="horizontalLayout_8">
+             <item>
+              <widget class="QPushButton" name="pb_saveImage">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="font">
+                <font>
+                 <pointsize>16</pointsize>
+                </font>
+               </property>
+               <property name="toolTip">
+                <string>Save image in png format.</string>
+               </property>
+               <property name="statusTip">
+                <string>Save image in png format.</string>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">color: rgb(255, 255, 255);
 background-color: rgb(42, 42, 42);</string>
-             </property>
-             <property name="text">
-              <string>Save Image</string>
-             </property>
-            </widget>
+               </property>
+               <property name="text">
+                <string>Save Image</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="pb_saveWithoutBg">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="font">
+                <font>
+                 <pointsize>16</pointsize>
+                </font>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">color: rgb(255, 255, 255);
+background-color: rgb(42, 42, 42);</string>
+               </property>
+               <property name="text">
+                <string>Save Without Background</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
            </item>
            <item>
             <layout class="QHBoxLayout" name="horizontalLayout_7">

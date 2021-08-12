@@ -35,8 +35,13 @@ class AppliControl():
         self.hsi.folderPath = path
         return foundBackground
 
-    def spectrum(self, x, y):
-        spectrum = self.hsi.spectrum(x, y, self.hsi.data)
+    def spectrum(self, x, y, VWB=True):
+        if VWB:
+            spectrum = self.hsi.spectrum(x, y, self.hsi.data)
+        else:
+            spectrum = self.hsi.spectrum(x, y, self.hsi.data)
+            background = self.hsi.background
+            spectrum = spectrum - background
         return spectrum
 
     def deleteSpectra(self):
@@ -58,6 +63,9 @@ class AppliControl():
 
     def saveImage(self, matrixRGB):
         self.hsi.saveImage(matrixRGB)
+
+    def saveWithoutBackground(self):
+        self.hsi.saveDataWithoutBackground(alreadyWaveNumber=True)
 
     def subtractBackground(self):
         self.hsi.dataWithoutBackground()

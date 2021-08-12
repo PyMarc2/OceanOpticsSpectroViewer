@@ -49,8 +49,10 @@ class WindowControl(QWidget, Ui_MainWindow):
         self.cb_subtractbg.stateChanged.connect(self.subtractBackground)
 
         self.graph_rgb.scene().sigMouseMoved.connect(self.mouseMoved)
+
         self.pb_search.clicked.connect(self.selectSaveFolder)
         self.pb_saveImage.clicked.connect(self.saveImage)
+        self.pb_saveWithoutBg.clicked.connect(self.saveWithoutBackground)
 
         self.dSlider_red.valueChanged.connect(self.setColorRange)
         self.dSlider_green.valueChanged.connect(self.setColorRange)
@@ -201,8 +203,12 @@ class WindowControl(QWidget, Ui_MainWindow):
             self.pb_saveImage.setEnabled(True)
             self.pb_saveImage.setStyleSheet("")
             if foundBackground:
+                self.pb_saveWithoutBg.setEnabled(True)
+                self.pb_saveWithoutBg.setStyleSheet("")
                 self.cb_subtractbg.setEnabled(True)
             elif not foundBackground:
+                self.pb_saveWithoutBg.setEnabled(False)
+                self.pb_saveWithoutBg.setStyleSheet("background-color: rgb(42, 42, 42);")
                 self.cb_subtractbg.setCheckState(False)
                 self.cb_subtractbg.setEnabled(False)
         except Exception as e:
@@ -213,6 +219,9 @@ class WindowControl(QWidget, Ui_MainWindow):
         matrixRGB = self.appControl.matrixRGB(self.globalMaximum, self.VWB)
         self.appControl.saveImage(matrixRGB)
 
+    def saveWithoutBackground(self):
+        self.appControl.saveWithoutBackground()
+
     def updateRGBPlot(self, matrixRGB):
         matrixRGB = matrixRGB.transpose(1, 0, 2)
         vb = pg.ImageItem(image=matrixRGB)
@@ -220,7 +229,7 @@ class WindowControl(QWidget, Ui_MainWindow):
 
     def updateSpectrumPlot(self, waves, matrixData):
         # Set the maximum to see the RGB limits and the spectrum clearly
-        spectrum = self.appControl.spectrum(self.mousePositionX, self.mousePositionY)
+        spectrum = self.appControl.spectrum(self.mousePositionX, self.mousePositionY, self.VWB)
         try:
             maximum = max(spectrum)
             minimum = min(spectrum) - 1

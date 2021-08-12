@@ -56,6 +56,9 @@ class HyperSpectralImage:
     def deleteBackground(self):
         self.background = []
 
+    def deleteSpectra(self):
+        self.data = []
+
     def waveNumber(self, waves, laser=None):
         if laser is None:
             laser = self.laser
@@ -65,9 +68,6 @@ class HyperSpectralImage:
 
     def addSpectrum(self, x, y, spectrum):
         self.data.append(Pixel(x, y, spectrum))
-
-    def deleteSpectra(self):
-        self.data = []
 
     def spectrum(self, x, y, data):
         spectrum = None
@@ -247,7 +247,7 @@ class HyperSpectralImage:
         else:
             plt.imsave(path + self.fileName + "_matrixRGB.png", img)
 
-    def saveDataWithoutBackground(self):
+    def saveDataWithoutBackground(self, alreadyWaveNumber=False):
         matrix = self.dataWithoutBackground()
         newPath = self.folderPath + "/" + "UnrawData"
         os.makedirs(newPath, exist_ok=True)
@@ -259,6 +259,10 @@ class HyperSpectralImage:
             spectrum = i.spectrum
             path = os.path.join(newPath, f"{self.fileName}_withoutBackground_x{x}_y{y}")
             with open(path + ".csv", "w+") as f:
-                for ind, x in enumerate(self.waveNumber(self.wavelength)):
-                    f.write(f"{x},{spectrum[ind]}\n")
+                if alreadyWaveNumber == True:
+                    for ind, x in enumerate(self.wavelength):
+                        f.write(f"{x},{spectrum[ind]}\n")
+                else:
+                    for ind, x in enumerate(self.waveNumber(self.wavelength)):
+                        f.write(f"{x},{spectrum[ind]}\n")
                 f.close()
