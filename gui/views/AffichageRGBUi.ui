@@ -305,12 +305,12 @@ color: rgb(0, 0, 0);</string>
                </property>
                <item>
                 <property name="text">
-                 <string>Set to Global Maximum</string>
+                 <string>Show Raw Spectra</string>
                 </property>
                </item>
                <item>
                 <property name="text">
-                 <string>Set to Local Maximum</string>
+                 <string>Show Normalized Spectra</string>
                 </property>
                </item>
               </widget>

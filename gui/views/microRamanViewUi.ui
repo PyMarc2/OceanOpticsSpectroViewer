@@ -1212,12 +1212,12 @@ color: rgb(0, 0, 0);</string>
              </property>
              <item>
               <property name="text">
-               <string>Set to Global Maximum</string>
+               <string>Show Raw Spectra</string>
               </property>
              </item>
              <item>
               <property name="text">
-               <string>Set to Local Maximum</string>
+               <string>Show Normalized Spectra</string>
               </property>
              </item>
             </widget>
@@ -1231,7 +1231,7 @@ color: rgb(0, 0, 0);</string>
               <string>Plot the color limits</string>
              </property>
              <property name="text">
-              <string>Enable ColorRange View</string>
+              <string>Show Color Range</string>
              </property>
              <property name="checked">
               <bool>true</bool>
@@ -1440,6 +1440,11 @@ color: rgb(0, 0, 0);</string>
    <container>1</container>
   </customwidget>
   <customwidget>
+   <class>QRangeSlider</class>
+   <extends>QSlider</extends>
+   <header>/gui/widgets/QRangeSlider.h</header>
+  </customwidget>
+  <customwidget>
    <class>QFlashButton</class>
    <extends>QPushButton</extends>
    <header>/gui/widgets/QFlashButton.h</header>
@@ -1448,11 +1453,6 @@ color: rgb(0, 0, 0);</string>
    <class>QIconButton</class>
    <extends>QPushButton</extends>
    <header location="global">/gui/widgets/QIconButton.h</header>
-  </customwidget>
-  <customwidget>
-   <class>QRangeSlider</class>
-   <extends>QSlider</extends>
-   <header>/gui/widgets/QRangeSlider.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

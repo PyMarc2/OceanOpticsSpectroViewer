@@ -9,21 +9,21 @@ class AppliControl():
         self.hsi = HyperSpectralImage()
         self.windowControl = None
 
-    def matrixData(self, VWB=True):
-        if VWB:
-            matrixData = self.hsi.matrixData(self.hsi.data)
+    def matrixData(self, subtractBackground=False):
+        if subtractBackground:
+            data = self.hsi.dataWithoutBackground()
         else:
-            wBackground = self.hsi.dataWithoutBackground()
-            matrixData = self.hsi.matrixData(wBackground)
+            data = self.hsi.data
+        matrixData = self.hsi.matrixData(data)
         return matrixData
 
-    def matrixRGB(self, globalMaximum=True, VWB=True):
+    def matrixRGB(self, globalMaximum=True, subtractBackground=False):
         colorValues = self.windowControl.currentSliderValues()
-        if VWB:
-            matrixRGB = self.hsi.matrixRGB(self.hsi.data, colorValues, globalMaximum)
+        if subtractBackground:
+            data = self.hsi.dataWithoutBackground()
         else:
-            wBackground = self.hsi.dataWithoutBackground()
-            matrixRGB = self.hsi.matrixRGB(wBackground, colorValues, globalMaximum)
+            data = self.hsi.data
+        matrixRGB = self.hsi.matrixRGB(data, colorValues, globalMaximum)
         return matrixRGB
 
     def waves(self):
@@ -35,13 +35,13 @@ class AppliControl():
         self.hsi.folderPath = path
         return foundBackground
 
-    def spectrum(self, x, y, VWB=True):
-        if VWB:
-            spectrum = self.hsi.spectrum(x, y, self.hsi.data)
-        else:
+    def spectrum(self, x, y, subtractBackground=False):
+        if subtractBackground:
             spectrum = self.hsi.spectrum(x, y, self.hsi.data)
             background = self.hsi.background
             spectrum = spectrum - background
+        else:
+            spectrum = self.hsi.spectrum(x, y, self.hsi.data)
         return spectrum
 
     def deleteSpectra(self):

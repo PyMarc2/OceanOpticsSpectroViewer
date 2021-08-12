@@ -29,9 +29,9 @@ class AppControl():
         self.spectroLink = self.specDevices[0]
         self.lock = Lock()
         self.stage = False
-        self.spec = None
+        self.spectro = None
 
-        self.isLoopRGB = False
+        self.isLoopRGBRunning = False
         self.quitLoopRGB = True
         notif().addObserver(self, self.react, "Single acquisition done")
         notif().addObserver(self, self.acquisitionDone, "Map acquisition done or interrupted.")
@@ -46,14 +46,14 @@ class AppControl():
         self.saveThread.start()
         # self.savePixel(point_x, point_y, spectrum)
 
-    def matrixRGB(self, globalMaximum=True, doNotSubtractBg=True):
+    def matrixRGB(self, globalMaximum=True, subtractBackground=False):
         width, height = self.windowControl.dimensionImage()
         colorValues = self.windowControl.currentSliderValues()
         with self.lock:
-            if doNotSubtractBg:
-                data = self.HSI.data
-            else:
+            if subtractBackground:
                 data = self.HSI.dataWithoutBackground()
+            else:
+                data = self.HSI.data
         matrixRGB = self.HSI.matrixRGB(data, colorValues, globalMaximum, width, height)
         return matrixRGB
 
@@ -70,14 +70,14 @@ class AppControl():
     #     with self.lock:
     #         self.HSI.loadData(path)
 
-    def spectrum(self, x, y, doNotSubtractBg=True):
+    def spectrum(self, x, y, subtractBackground=False):
         with self.lock:
-            if doNotSubtractBg:
-                spectrum = self.HSI.spectrum(x, y, self.HSI.data)
-            else:
+            if subtractBackground:
                 spectrum = self.HSI.spectrum(x, y, self.HSI.data)
                 background = self.HSI.background
                 spectrum = spectrum - background
+            else:
+                spectrum = self.HSI.spectrum(x, y, self.HSI.data)
         return spectrum
 
     def deleteSpectra(self):
@@ -180,15 +180,15 @@ class AppControl():
         return self.stage
 
     def spectroConnected(self):
-        if self.spec == None:
+        if self.spectro == None:
             return False
         else:
             return True
 
     def matrixRGBReplace(self):
         globalMaximum = self.windowControl.globalMaximum
-        doNotSubtractBg = self.windowControl.doNotSubtractBg
-        matrixRGB = self.matrixRGB(globalMaximum, doNotSubtractBg)
+        subtractBackground = self.windowControl.subtractBackground
+        matrixRGB = self.matrixRGB(globalMaximum, subtractBackground)
         self.windowControl.updateRGBPlot(matrixRGB)
 
     def addSpectrum(self, x, y, spectrum):
@@ -197,13 +197,13 @@ class AppControl():
 
     def savePixel(self, x, y, spectrum):
         with self.lock:
-            spec = spectrum
-        self.HSI.saveCaptureCSV(data=spec, countHeight=y, countWidth=x)
+            spectro = spectrum
+        self.HSI.saveCaptureCSV(data=spectro, countHeight=y, countWidth=x)
 
     def stopAcquisition(self):
         with self.lock:
             self.quitLoopRGB = True
-            self.isLoopRGB = False
+            self.isLoopRGBRunning = False
         if self.Model.isAcquiring:
             notif().postNotification("Interrupt acquisition", self)
         else:
@@ -212,7 +212,7 @@ class AppControl():
     def acquisitionDone(self, notification):
         with self.lock:
             self.quitLoopRGB = True
-            self.isLoopRGB = False
+            self.isLoopRGBRunning = False
         self.windowControl.acquisitionDone()
 
     def getFileName(self):
@@ -226,7 +226,7 @@ class AppControl():
     # thread
     def startRefreshRGBLoop(self):
         with self.lock:
-            if not self.isLoopRGB:
+            if not self.isLoopRGBRunning:
                 self.quitLoopRGB = False
             else:
                 raise RuntimeError("RefreshRGBLoop is already running")
@@ -234,7 +234,7 @@ class AppControl():
         self.loopRGB.start()
 
     def refreshRGBLoop(self):
-        self.isLoopRGB = True
+        self.isLoopRGBRunning = True
         with self.lock:
             quit = self.quitLoopRGB
         while not quit:
@@ -257,8 +257,8 @@ class AppControl():
         self.specDevices = sb.list_devices()
         self.specDevices.insert(0, "MockSpectrometer")
         devices = []
-        for spec in self.specDevices:
-            devices.append(str(spec))
+        for spectro in self.specDevices:
+            devices.append(str(spectro))
         return devices
 
     def connectStage(self, index): # à vérifier DANGER
@@ -279,18 +279,18 @@ class AppControl():
     def connectDetection(self, index): # à vérifier DANGER
         self.spectroLink = self.specDevices[index]
         if self.spectroLink == "MockSpectrometer":
-            self.spec = Mock.MockSpectrometer()
+            self.spectro = Mock.MockSpectrometer()
         else:
-            self.spec = sb.Spectrometer(self.spectroLink)
-        if self.spec is None:
+            self.spectro = sb.Spectrometer(self.spectroLink)
+        if self.spectro is None:
             raise Exception('The spectrometer is not connected!')
-        self.Model.connectSpec(self.spec)
+        self.Model.connectSpec(self.spectro)
         wave = self.Model.wavelengths()
         return wave
 
     def connectLight(self, index):
         if index == 0:
-            self.spec._source = "halogen"
+            self.spectro._source = "halogen"
         elif index == 1:
-            self.spec._source = "random"
+            self.spectro._source = "random"
 
