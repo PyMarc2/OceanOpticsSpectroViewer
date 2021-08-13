@@ -1,11 +1,15 @@
 from gui.dialog.helpDialog import HelpDialog
-from gui.views.filterView import FilterView
-from gui.views.lensView import LensView
+from gui.views.spectraView import SpectraView
+from gui.views.microRamanViewControl import WindowControl as MicroRamanView
+from gui.views.AffichageRGBWindowControl import WindowControl
 from PyQt5.QtWidgets import QMainWindow, QWidget, QLabel, QVBoxLayout, QTabWidget, QAction, QApplication
 from PyQt5.QtCore import Qt, pyqtSlot, QFile, QTextStream
 import logging
 import os
 from PyQt5 import uic
+
+from control.ApplicationControl import AppControl
+from control.AffichageRGBControl import AppliControl
 
 log = logging.getLogger(__name__)
 
@@ -32,8 +36,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def setup_window_tabs(self):
         self.tabWidget = QTabWidget()
         self.setCentralWidget(self.tabWidget)
-        self.tabWidget.addTab(self.filterView, "Filter ID")
-        self.tabWidget.addTab(self.lensView, "Lens ID")
+        self.tabWidget.addTab(self.spectraView, "SpectraView")
+        self.tabWidget.addTab(self.microRamanView, "MicroRaman")
+        self.tabWidget.addTab(self.affichageRGB, "AffichageRGB")
 
     def setup_menuBar(self):
         self.helpAction = QAction(self)
@@ -46,8 +51,19 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def create_views_and_dialogs(self):
         self.helpDialog = HelpDialog()
-        self.filterView = FilterView(model=self.model)
-        self.lensView = LensView(model=self.model)
+        self.spectraView = SpectraView(model=self.model)
+        self.microRamanView = MicroRamanView(model=self.model)
+        self.affichageRGB = WindowControl(model=self.model)
+
+        # Def pointeurs
+        self.microRamanAppControl = AppControl()
+        self.affichageRGBAppControl = AppliControl()
+
+        self.microRamanAppControl.windowControl = self.microRamanView
+        self.microRamanView.appControl = self.microRamanAppControl
+
+        self.affichageRGBAppControl.windowControl = self.affichageRGB
+        self.affichageRGB.appControl = self.affichageRGBAppControl
 
     def connect_buttons(self):
         self.helpAction.triggered.connect(self.show_helpDialog)
