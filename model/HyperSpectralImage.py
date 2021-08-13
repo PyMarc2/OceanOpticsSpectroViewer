@@ -50,9 +50,6 @@ class HyperSpectralImage:
     def deleteWavelength(self):
         self.wavelength = []
 
-    def deleteWavelength(self):
-        self.wavelength = []
-
     def deleteBackground(self):
         self.background = []
 
@@ -122,7 +119,6 @@ class HyperSpectralImage:
 
             for item in data:
                 matrixData[item.y, item.x, :] = np.array(item.spectrum)
-
 
             return matrixData
         except Exception as e:
