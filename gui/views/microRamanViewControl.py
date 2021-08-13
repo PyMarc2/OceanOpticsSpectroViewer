@@ -8,6 +8,7 @@ import pyqtgraph as pg
 from PyQt5.Qt import QPixmap
 
 from tkinter.filedialog import askopenfile
+from typing import NamedTuple
 import pandas as pd
 import numpy as np
 import fnmatch
@@ -24,6 +25,14 @@ application_path = os.path.abspath("")
 
 UiPath = os.path.dirname(os.path.realpath(__file__)) + '{0}microRamanViewUi.ui'.format(os.sep)
 Ui_MainWindow, QtBaseClass = uic.loadUiType(UiPath)
+
+class ColorValues(NamedTuple):
+    lowRed: int = None
+    highRed: int = None
+    lowGreen: int = None
+    highGreen: int = None
+    lowBlue: int = None
+    highBlue: int = None
 
 class WindowControl(QWidget, Ui_MainWindow):
     def __init__(self, model=None):
@@ -520,12 +529,12 @@ class WindowControl(QWidget, Ui_MainWindow):
 
     def setColorRange(self):
         colorValues = self.currentSliderValues()
-        self.sb_lowRed.setValue(self.mappingOnSpinBox(colorValues[0]))
-        self.sb_highRed.setValue(self.mappingOnSpinBox(colorValues[1]))
-        self.sb_lowGreen.setValue(self.mappingOnSpinBox(colorValues[2]))
-        self.sb_highGreen.setValue(self.mappingOnSpinBox(colorValues[3]))
-        self.sb_lowBlue.setValue(self.mappingOnSpinBox(colorValues[4]))
-        self.sb_highBlue.setValue(self.mappingOnSpinBox(colorValues[5]))
+        self.sb_lowRed.setValue(self.mappingOnSpinBox(colorValues.lowRed))
+        self.sb_highRed.setValue(self.mappingOnSpinBox(colorValues.highRed))
+        self.sb_lowGreen.setValue(self.mappingOnSpinBox(colorValues.lowGreen))
+        self.sb_highGreen.setValue(self.mappingOnSpinBox(colorValues.highGreen))
+        self.sb_lowBlue.setValue(self.mappingOnSpinBox(colorValues.lowBlue))
+        self.sb_highBlue.setValue(self.mappingOnSpinBox(colorValues.highBlue))
 
     def setRangeToWave(self):
         if self.cmb_wave.currentIndex() == 0: 
@@ -555,12 +564,12 @@ class WindowControl(QWidget, Ui_MainWindow):
         self.sb_highBlue.setMinimum(self.minWave)
         self.sb_lowBlue.setMinimum(self.minWave)
 
-        self.sb_lowRed.setValue(self.mappingOnSpinBox(colorValues[0]))
-        self.sb_highRed.setValue(self.mappingOnSpinBox(colorValues[1]))
-        self.sb_lowGreen.setValue(self.mappingOnSpinBox(colorValues[2]))
-        self.sb_highGreen.setValue(self.mappingOnSpinBox(colorValues[3]))
-        self.sb_lowBlue.setValue(self.mappingOnSpinBox(colorValues[4]))
-        self.sb_highBlue.setValue(self.mappingOnSpinBox(colorValues[5]))
+        self.sb_lowRed.setValue(self.mappingOnSpinBox(colorValues.lowRed))
+        self.sb_highRed.setValue(self.mappingOnSpinBox(colorValues.highRed))
+        self.sb_lowGreen.setValue(self.mappingOnSpinBox(colorValues.lowGreen))
+        self.sb_highGreen.setValue(self.mappingOnSpinBox(colorValues.highGreen))
+        self.sb_lowBlue.setValue(self.mappingOnSpinBox(colorValues.lowBlue))
+        self.sb_highBlue.setValue(self.mappingOnSpinBox(colorValues.highBlue))
 
         self.updateSliderStatus()
 
@@ -577,7 +586,7 @@ class WindowControl(QWidget, Ui_MainWindow):
         highGreenValue = self.dSlider_green.get_right_thumb_value() / 1024
         lowBlueValue = self.dSlider_blue.get_left_thumb_value() / 1024
         highBlueValue = self.dSlider_blue.get_right_thumb_value() / 1024
-        return [lowRedValue, highRedValue, lowGreenValue, highGreenValue, lowBlueValue, highBlueValue]
+        return ColorValues(lowRedValue, highRedValue, lowGreenValue, highGreenValue, lowBlueValue, highBlueValue)
 
     def updateRGBPlot(self, matrixRGB):
         if matrixRGB is not None:
@@ -598,12 +607,12 @@ class WindowControl(QWidget, Ui_MainWindow):
         colorValues = self.currentSliderValues()
 
         if self.showColorRange:
-            lowRed = int( colorValues[0] * wavesLen )
-            highRed = int( colorValues[1] * wavesLen - 1 )
-            lowGreen = int( colorValues[2] * wavesLen )
-            highGreen = int( colorValues[3] * wavesLen - 1 )
-            lowBlue = int( colorValues[4] * wavesLen )
-            highBlue = int( colorValues[5] * wavesLen - 1 )
+            lowRed = int( colorValues.lowRed * wavesLen )
+            highRed = int( colorValues.highRed * wavesLen - 1 )
+            lowGreen = int( colorValues.lowGreen * wavesLen )
+            highGreen = int( colorValues.highGreen * wavesLen - 1 )
+            lowBlue = int( colorValues.lowBlue * wavesLen )
+            highBlue = int( colorValues.highBlue * wavesLen - 1 )
 
             redRange = np.full(wavesLen, minimum)
             redRange[lowRed] = maximum
