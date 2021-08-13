@@ -31,6 +31,8 @@ if getattr(sys, 'frozen', False):
 else:
     application_path = os.path.dirname(os.path.abspath(__file__))
 
+# Because: Attribute Qt::AA_EnableHighDpiScaling must be set before QCoreApplication is created.
+QApplication.setAttribute(Qt.AA_EnableHighDpiScaling)
 
 class App(QApplication):
     def __init__(self, sys_argv):
@@ -40,7 +42,6 @@ class App(QApplication):
         self.init_logging()
         log.debug("This is the MAIN THREAD")
 
-        self.setAttribute(Qt.AA_EnableHighDpiScaling)
         self.setStyle("Fusion")
 
         self.mainModel = MainModel()

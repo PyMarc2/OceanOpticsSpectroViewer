@@ -16,18 +16,18 @@ import logging
 
 log = logging.getLogger(__name__)
 
-filterViewUiPath = os.path.dirname(os.path.realpath(__file__)) + "{0}filterViewUiDark.ui".format(os.sep)
-Ui_filterView, QtBaseClass = uic.loadUiType(filterViewUiPath)
+spectraViewUiPath = os.path.dirname(os.path.realpath(__file__)) + "{0}spectraViewUi.ui".format(os.sep)
+Ui_spectraView, QtBaseClass = uic.loadUiType(spectraViewUiPath)
 
 
-class FilterView(QWidget, Ui_filterView):
+class SpectraView(QWidget, Ui_spectraView):
     s_data_changed = pyqtSignal(dict)
     s_data_acquisition_done = pyqtSignal()
 
     # Initializing Functions
 
     def __init__(self, model=None):
-        super(FilterView, self).__init__()
+        super(SpectraView, self).__init__()
         self.model = model
         self.setupUi(self)
 
@@ -342,7 +342,7 @@ class FilterView(QWidget, Ui_filterView):
             self.liveAcquisitionData = self.read_data_live().tolist()
 
             self.integrate_data()
-            self.displayData = np.mean(np.array(self.movingIntegrationData()), 0)
+            self.displayData = np.sum(np.array(self.movingIntegrationData()), 0)
 
             self.acquire_background()
             self.normalize_data()
@@ -369,7 +369,7 @@ class FilterView(QWidget, Ui_filterView):
             if self.integrationTimeAcq >= self.exposureTime:
                 self.integrationCountAcq = self.integrationTimeAcq // self.exposureTime
                 self.integrationTimeAcqRemainder_ms = self.integrationTimeAcq - (self.integrationCountAcq * self.exposureTime)
-                self.sb_acqTime.setStyleSheet('color: black')
+                self.sb_acqTime.setStyleSheet('color: white')
             else:
                 self.integrationCountAcq = 1
                 self.sb_acqTime.setStyleSheet('color: red')
@@ -387,11 +387,11 @@ class FilterView(QWidget, Ui_filterView):
 
     def integrate_data(self):
         self.isAcquisitionDone = False
-        if self.expositionCounter < self.integrationCountAcq - 1:
+        if self.expositionCounter < self.integrationCountAcq - 2:
             self.movingIntegrationData.append(self.liveAcquisitionData)
             self.expositionCounter += 1
 
-        elif self.expositionCounter == self.integrationCountAcq - 1:
+        elif self.expositionCounter == self.integrationCountAcq - 2:
             self.movingIntegrationData.append(self.liveAcquisitionData)
             self.expositionCounter += 1
             if self.changeLastExposition:

@@ -77,7 +77,7 @@ class RingBuffer:
         def __call__(self):
             return self.data
 
-    def append(self,x):
+    def append(self, x):
         """append an element at the end of the buffer"""
         self.data.append(x)
         if len(self.data) == self.max:
