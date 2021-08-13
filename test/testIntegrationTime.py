@@ -1,6 +1,6 @@
 import unittest
 import time
-from test import TestAcquisition as Int
+import acquisition as Int
 import numpy as np
 
 
