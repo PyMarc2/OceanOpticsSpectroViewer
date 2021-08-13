@@ -1,11 +1,11 @@
 import unittest
 import time
-from test import TestAcquisition as Int
+import acquisition as acq
 import numpy as np
 
 
 class TestIntegrationTime(unittest.TestCase):
-    spec = Int.Integration()
+    spec = acq.Integration()
 
     def testIntTimeOfBackground(self):
         tic = time.perf_counter()
