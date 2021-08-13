@@ -139,12 +139,12 @@ class HyperSpectralImage:
 
             spectrumLen = self.spectrumLen(data)
 
-            lowRed = round(colorValues[0] * spectrumLen)
-            highRed = round(colorValues[1] * spectrumLen)
-            lowGreen = round(colorValues[2] * spectrumLen)
-            highGreen = round(colorValues[3] * spectrumLen)
-            lowBlue = round(colorValues[4] * spectrumLen)
-            highBlue = round(colorValues[5] * spectrumLen)
+            lowRed = round(colorValues.lowRed * spectrumLen)
+            highRed = round(colorValues.highRed * spectrumLen)
+            lowGreen = round(colorValues.lowGreen * spectrumLen)
+            highGreen = round(colorValues.highGreen * spectrumLen)
+            lowBlue = round(colorValues.lowBlue * spectrumLen)
+            highBlue = round(colorValues.highBlue * spectrumLen)
 
 
             matrixRGB = np.zeros((height, width, 3))

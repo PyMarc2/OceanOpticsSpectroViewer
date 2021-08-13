@@ -9,6 +9,7 @@ import pyqtgraph as pg
 
 from tkinter.filedialog import askopenfile
 import matplotlib.pyplot as plt
+from typing import NamedTuple 
 import pandas as pd
 import numpy as np
 import fnmatch
@@ -21,6 +22,14 @@ import os
 
 UiPath = os.path.dirname(os.path.realpath(__file__)) + '{0}AffichageRGBUi.ui'.format(os.sep)
 Ui_MainWindow, QtBaseClass = uic.loadUiType(UiPath)
+
+class ColorValues(NamedTuple):
+    lowRed: int = None
+    highRed: int = None
+    lowGreen: int = None
+    highGreen: int = None
+    lowBlue: int = None
+    highBlue: int = None
 
 class WindowControl(QWidget, Ui_MainWindow):
     def __init__(self, model=None):
@@ -82,6 +91,21 @@ class WindowControl(QWidget, Ui_MainWindow):
         self.plotBlack = self.plotItem.plot()
         self.plotItem.enableAutoRange()
 
+    def currentSliderValues(self):
+        lowRedValue = self.dSlider_red.get_left_thumb_value() / 1024
+        highRedValue = self.dSlider_red.get_right_thumb_value() / 1024
+        lowGreenValue = self.dSlider_green.get_left_thumb_value() / 1024
+        highGreenValue = self.dSlider_green.get_right_thumb_value() / 1024
+        lowBlueValue = self.dSlider_blue.get_left_thumb_value() / 1024
+        highBlueValue = self.dSlider_blue.get_right_thumb_value() / 1024
+        return ColorValues(lowRedValue, highRedValue, lowGreenValue, highGreenValue, lowBlueValue, highBlueValue)
+
+    def mappingOnSlider(self, value):
+        return round(((value - self.minWave)/self.rangeLen) * 1024)
+
+    def mappingOnSpinBox(self, value):
+        return round((value * self.rangeLen) + self.minWave)
+
     def mouseMoved(self, pos):
         try:
             value = self.plotViewBox.mapSceneToView(pos)
@@ -114,6 +138,13 @@ class WindowControl(QWidget, Ui_MainWindow):
         except Exception as e:
             pass
 
+    def saveImage(self):
+        matrixRGB = self.appControl.matrixRGB(self.globalMaximum, self.subtractBackground)
+        self.appControl.saveImage(matrixRGB)
+
+    def saveWithoutBackground(self):
+        self.appControl.saveWithoutBackground()
+
     def setMaximum(self):
         if self.cmb_set_maximum.currentIndex() == 0:
             self.globalMaximum = True
@@ -127,12 +158,12 @@ class WindowControl(QWidget, Ui_MainWindow):
 
     def setColorRange(self):
         colorValues = self.currentSliderValues()
-        self.sb_lowRed.setValue(self.mappingOnSpinBox(colorValues[0]))
-        self.sb_highRed.setValue(self.mappingOnSpinBox(colorValues[1]))
-        self.sb_lowGreen.setValue(self.mappingOnSpinBox(colorValues[2]))
-        self.sb_highGreen.setValue(self.mappingOnSpinBox(colorValues[3]))
-        self.sb_lowBlue.setValue(self.mappingOnSpinBox(colorValues[4]))
-        self.sb_highBlue.setValue(self.mappingOnSpinBox(colorValues[5]))
+        self.sb_lowRed.setValue(self.mappingOnSpinBox(colorValues.lowRed))
+        self.sb_highRed.setValue(self.mappingOnSpinBox(colorValues.highRed))
+        self.sb_lowGreen.setValue(self.mappingOnSpinBox(colorValues.lowGreen))
+        self.sb_highGreen.setValue(self.mappingOnSpinBox(colorValues.highGreen))
+        self.sb_lowBlue.setValue(self.mappingOnSpinBox(colorValues.lowBlue))
+        self.sb_highBlue.setValue(self.mappingOnSpinBox(colorValues.highBlue))
 
     def setRangeToWave(self):
         waves = self.appControl.waves()
@@ -157,29 +188,14 @@ class WindowControl(QWidget, Ui_MainWindow):
         self.sb_highBlue.setMinimum(self.minWave)
         self.sb_lowBlue.setMinimum(self.minWave)
 
-        self.sb_lowRed.setValue(self.mappingOnSpinBox(colorValues[0]))
-        self.sb_highRed.setValue(self.mappingOnSpinBox(colorValues[1]))
-        self.sb_lowGreen.setValue(self.mappingOnSpinBox(colorValues[2]))
-        self.sb_highGreen.setValue(self.mappingOnSpinBox(colorValues[3]))
-        self.sb_lowBlue.setValue(self.mappingOnSpinBox(colorValues[4]))
-        self.sb_highBlue.setValue(self.mappingOnSpinBox(colorValues[5]))
+        self.sb_lowRed.setValue(self.mappingOnSpinBox(colorValues.lowRed))
+        self.sb_highRed.setValue(self.mappingOnSpinBox(colorValues.highRed))
+        self.sb_lowGreen.setValue(self.mappingOnSpinBox(colorValues.lowGreen))
+        self.sb_highGreen.setValue(self.mappingOnSpinBox(colorValues.highGreen))
+        self.sb_lowBlue.setValue(self.mappingOnSpinBox(colorValues.lowBlue))
+        self.sb_highBlue.setValue(self.mappingOnSpinBox(colorValues.highBlue))
 
         self.updateSliderStatus()
-
-    def mappingOnSlider(self, value):
-        return round(((value - self.minWave)/self.rangeLen) * 1024)
-
-    def mappingOnSpinBox(self, value):
-        return round((value * self.rangeLen) + self.minWave)
-
-    def currentSliderValues(self):
-        lowRedValue = self.dSlider_red.get_left_thumb_value() / 1024
-        highRedValue = self.dSlider_red.get_right_thumb_value() / 1024
-        lowGreenValue = self.dSlider_green.get_left_thumb_value() / 1024
-        highGreenValue = self.dSlider_green.get_right_thumb_value() / 1024
-        lowBlueValue = self.dSlider_blue.get_left_thumb_value() / 1024
-        highBlueValue = self.dSlider_blue.get_right_thumb_value() / 1024
-        return [lowRedValue, highRedValue, lowGreenValue, highGreenValue, lowBlueValue, highBlueValue]
 
     def selectSaveFolder(self):
         try:
@@ -215,12 +231,16 @@ class WindowControl(QWidget, Ui_MainWindow):
             print(e)
             pass
 
-    def saveImage(self):
+    def subtractBg(self):
+        if self.cb_subtractbg.checkState() == 2:
+            self.subtractBackground = True
+        if self.cb_subtractbg.checkState() == 0:
+            self.subtractBackground = False
         matrixRGB = self.appControl.matrixRGB(self.globalMaximum, self.subtractBackground)
-        self.appControl.saveImage(matrixRGB)
-
-    def saveWithoutBackground(self):
-        self.appControl.saveWithoutBackground()
+        matrixData = self.appControl.matrixData(self.subtractBackground)
+        waves = self.appControl.waves()
+        self.updateSpectrumPlot(waves, matrixData)
+        self.updateRGBPlot(matrixRGB)
 
     def updateRGBPlot(self, matrixRGB):
         matrixRGB = matrixRGB.transpose(1, 0, 2)
@@ -228,7 +248,6 @@ class WindowControl(QWidget, Ui_MainWindow):
         self.plotViewBox.addItem(vb)
 
     def updateSpectrumPlot(self, waves, matrixData):
-        # Set the maximum to see the RGB limits and the spectrum clearly
         spectrum = self.appControl.spectrum(self.mousePositionX, self.mousePositionY, self.subtractBackground)
         try:
             maximum = max(spectrum)
@@ -241,12 +260,12 @@ class WindowControl(QWidget, Ui_MainWindow):
         colorValues = self.currentSliderValues()
 
         # Set the position of the RGB limits
-        lowRed = int( colorValues[0] * wavesLen )
-        highRed = int( colorValues[1] * wavesLen - 1 )
-        lowGreen = int( colorValues[2] * wavesLen )
-        highGreen = int( colorValues[3] * wavesLen - 1 )
-        lowBlue = int( colorValues[4] * wavesLen )
-        highBlue = int( colorValues[5] * wavesLen - 1 )
+        lowRed = int( colorValues.lowRed * wavesLen )
+        highRed = int( colorValues.highRed * wavesLen - 1 )
+        lowGreen = int( colorValues.lowGreen * wavesLen )
+        highGreen = int( colorValues.highGreen * wavesLen - 1 )
+        lowBlue = int( colorValues.lowBlue * wavesLen )
+        highBlue = int( colorValues.highBlue * wavesLen - 1 )
 
         redRange = np.full(wavesLen, minimum)
         redRange[lowRed] = maximum
@@ -287,14 +306,3 @@ class WindowControl(QWidget, Ui_MainWindow):
                 pass
         else:
             self.sliderPositionIsSet = True
-
-    def subtractBg(self):
-        if self.cb_subtractbg.checkState() == 2:
-            self.subtractBackground = True
-        if self.cb_subtractbg.checkState() == 0:
-            self.subtractBackground = False
-        matrixRGB = self.appControl.matrixRGB(self.globalMaximum, self.subtractBackground)
-        matrixData = self.appControl.matrixData(self.subtractBackground)
-        waves = self.appControl.waves()
-        self.updateSpectrumPlot(waves, matrixData)
-        self.updateRGBPlot(matrixRGB)
