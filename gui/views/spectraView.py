@@ -106,24 +106,24 @@ class SpectraView(QWidget, Ui_spectraView):
         self.connect_checkbox()
         self.create_threads()
         self.create_plots()
-        self.initialize_device()
+        #self.initialize_device()
         self.update_indicators()
         self.define_colors()
 
-    def initialize_device(self):
-        log.debug("Initializing devices...")
-        try:
-            devices = sb.list_devices()
-            self.spec = sb.Spectrometer(devices[0])
-            log.info("Devices:{}".format(devices))
-            self.deviceConnected = True
-        except IndexError as e:
-            log.warning("No SpectrumDevice was found. Try connecting manually.")
-            self.deviceConnected = False
-            self.spec = mock.MockSpectrometer()
-            log.info("No device found; Mocking Spectrometer Enabled.")
+    # def initialize_device(self):
+    #     log.debug("Initializing devices...")
+    #     try:
+    #         devices = sb.list_devices()
+    #         self.spec = sb.Spectrometer(devices[0])
+    #         log.info("Devices:{}".format(devices))
+    #         self.deviceConnected = True
+    #     except IndexError as e:
+    #         log.warning("No SpectrumDevice was found. Try connecting manually.")
+    #         self.deviceConnected = False
+    #         self.spec = mock.MockSpectrometer()
+    #         log.info("No device found; Mocking Spectrometer Enabled.")
 
-        self.set_exposure_time()
+    #     self.set_exposure_time()
 
     def connect_buttons(self):
         self.pb_liveView.clicked.connect(self.toggle_live_view)
@@ -136,6 +136,10 @@ class SpectraView(QWidget, Ui_spectraView):
 
         self.pb_normalize.clicked.connect(lambda: setattr(self, 'isAcquiringNormalization', True))
         self.pb_normalize.clicked.connect(lambda: self.update_indicators())
+
+        self.pb_connectDevice.clicked.connect(self.connectDevice)
+
+        self.pb_findDevices.clicked.connect(self.findDevices)
 
         self.sb_exposure.valueChanged.connect(lambda: setattr(self, 'exposureTime', self.sb_exposure.value()))
         self.sb_exposure.valueChanged.connect(self.set_exposure_time)
@@ -206,6 +210,39 @@ class SpectraView(QWidget, Ui_spectraView):
 
     def define_colors(self):
         pass
+
+    # Devices connection functions
+
+    def findDevices(self):
+        self.listSpecDevices = self.listSpecDevices()
+        self.cmb_selectDevice.clear()
+        self.cmb_selectDevice.addItems(self.listSpecDevices)
+
+        self.pb_connectDevice.setEnabled(True)
+
+    def listSpecDevices(self) -> list:
+        self.Devices = sb.list_devices()
+        self.Devices.insert(0, "MockSpectrometer")
+        devices = []
+        for spectro in self.Devices:
+            devices.append(str(spectro))
+        return devices
+
+    def connectDevice(self):
+        index = self.cmb_selectDevice.currentIndex()
+        self.spectroLink = self.Devices[index]
+        if self.spectroLink == "MockSpectrometer":
+            self.spec = mock.MockSpectrometer()
+            self.deviceConnected = False
+        else:
+            self.spec = sb.Spectrometer(self.spectroLink)
+            self.deviceConnected = True
+        if self.spec is None:
+            raise Exception('The spectrometer is not connected!')
+        self.set_exposure_time()
+        self.ind_connect.setStyleSheet("QCheckBox::indicator{background-color: rgb(0, 255, 0);}")
+ 
+
 
     # General Cursor-Graph Interaction Functions
 
