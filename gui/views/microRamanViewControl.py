@@ -440,6 +440,13 @@ class WindowControl(QWidget, Ui_MainWindow):
                 self.errorStage()
                 
             else:
+                self.setHeight()
+                self.setWidth()
+                self.setMeasureUnit()
+                self.setStep()
+                self.setExposureTime()
+                self.setIntegrationTime()
+
                 self.appControl.deleteSpectra()
                 self.pb_saveImage.setEnabled(True)
                 self.pb_saveImage.setStyleSheet("")
