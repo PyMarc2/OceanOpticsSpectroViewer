@@ -55,11 +55,10 @@ class AppControl():
 
     def waves(self):
         with self.lock:
-            wavelength = self.HSI.wavelength
-        if self.windowControl.waveNumber:
-            waves = self.HSI.waveNumber(wavelength)
-        else:
-            waves = self.HSI.wavelength
+            if self.windowControl.waveNumber:
+                waves = self.HSI.waveNumber()
+            else:
+                waves = self.HSI.wavelength
         return waves
 
     # def loadData(self, path):

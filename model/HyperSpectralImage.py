@@ -24,6 +24,7 @@ class HyperSpectralImage:
         self.laser = None
         self.data
 
+    # Publics functions
 
     def addSpectrum(self, x, y, spectrum):
         """Add a spectrum to the data.
@@ -43,7 +44,7 @@ class HyperSpectralImage:
         Args:
             x(int): Position on the x-axis.
             y(int): Position on the y-axis.
-            subtractBackground(bool): Return the spectrum without background.
+            [Optional]subtractBackground(bool): Return the spectrum without background.
         Returns:
             spectrum(numpy.ndarray): Spectrum at the specific coordinates.
         """
@@ -84,18 +85,89 @@ class HyperSpectralImage:
         """Delete the wavelength."""
         self.wavelength = []
 
-    def waveNumber(self, waves):
-        waveNumber = ((1 / self.laser) - (1 / waves)) * 10 ** 7
+    def waveNumber(self):
+        """Return the waveNumber.
+        Returns:
+            waveNumber(numpy.ndarray): The waveNumber.
+        """
+        waveNumber = ((1 / self.laser) - (1 / self.wavelength)) * 10 ** 7
         return waveNumber.round(0)
 
-
-
-
-
-
-
     def setLaserWavelength(self, laser):
+        """Set the laser wavelength to data.
+        Args:
+            laser(int): The wavelength of the laser.
+        """
         self.laser = laser
+
+
+    def matrixRGB(self, colorValues, globalMaximum=True, width=None, height=None, subtractBackground=False):
+        """Return a matrixRGB.
+        Args:
+            colorValues(namedTuple): Contained 6 values of RGB limits.
+                lowRed = ColorValues[0] | highRed = ColorValues[1] | lowGreen = ColorValues[2]
+                highGreen = ColorValues[3] | lowBlue = ColorValues[4] | highBlue = ColorValues[5]
+            [Optional]globalMaximum(bool): Normalized with the maximum of each pixel if False.
+            [Optional]width(int): The width of the matrix.
+            [Optional]height(int): the height of the matrix.
+            [Optional]subtractBackground(bool): Use the data without background if True.
+        Returns:
+            matrixRGB(numpy.ndarray): The matrixRGB.
+        """
+        try:
+            if width == None or height ==None:
+                width = self.widthImage()
+                height = self.heightImage()
+            else:
+                pass
+
+            spectrumLen = self.spectrumLen()
+
+            lowRed = round(colorValues.lowRed * spectrumLen)
+            highRed = round(colorValues.highRed * spectrumLen)
+            lowGreen = round(colorValues.lowGreen * spectrumLen)
+            highGreen = round(colorValues.highGreen * spectrumLen)
+            lowBlue = round(colorValues.lowBlue * spectrumLen)
+            highBlue = round(colorValues.highBlue * spectrumLen)
+
+
+            matrixRGB = np.zeros((height, width, 3))
+            matrix = self.matrixData(width, height, subtractBackground=subtractBackground)
+
+            matrixRGB[:, :, 0] = matrix[:, :, lowRed:highRed].sum(axis=2)
+            matrixRGB[:, :, 1] = matrix[:, :, lowGreen:highGreen].sum(axis=2)
+            matrixRGB[:, :, 2] = matrix[:, :, lowBlue:highBlue].sum(axis=2)
+
+            if globalMaximum:
+                matrixRGB = (matrixRGB / np.max(matrixRGB)) * 255
+
+            else:
+                maxima = matrixRGB.max(axis=2)
+                maxima = np.dstack((maxima,) * 3)
+                np.seterr(divide='ignore', invalid='ignore')
+                matrixRGB /= maxima
+                matrixRGB[np.isnan(matrixRGB)] = 0
+                matrixRGB *= 255
+
+            matrixRGB = matrixRGB.round(0)
+            thresholdIndices = matrixRGB < 0
+            matrixRGB[thresholdIndices] = 0
+            return matrixRGB
+        except:
+            return None
+
+    def saveImage(self, matrixRGB):
+        """i think it will need a change/update."""
+        path = self.folderPath + "/"
+        img = matrixRGB.astype(np.uint8)
+        if self.fileName == "":
+            plt.imsave(path + "matrixRGB.png", img)
+        else:
+            plt.imsave(path + self.fileName + "_matrixRGB.png", img)
+
+
+
+    # idk yet if publics or not
 
     def setFolderPath(self, folderPath):
         self.folderPath = folderPath
@@ -103,11 +175,102 @@ class HyperSpectralImage:
     def setFileName(self, fileName):
         self.fileName = fileName
 
+    def loadData(self, path):
+        foundBackground = False
+        doGetWaveLength = False
+        foundFiles = []
+        for file in os.listdir(path):
+            if fnmatch.fnmatch(file, f'*.csv'):
+                foundFiles.append(file)
+
+        sortedPaths = foundFiles
+        for name in sortedPaths:
+            # Find the positions
+            matchCoords = re.match("([A-Za-z_]*)_x(\\d+)_y(\\d+).*", name)
+            if matchCoords:
+                posX = int(matchCoords.group(2))
+                posY = int(matchCoords.group(3))
+
+                # Open file and put in the data
+                fich = open(path + '/' + name, "r")
+                test_str = list(fich)
+                fich.close()
+                xAxis = []
+                spectrum = []
+                for j in test_str:
+                    elem_str = j.replace("\n", "")
+                    elem = elem_str.split(",")
+                    spectrum.append(float(elem[1]))
+
+                    if doGetWaveLength == False:
+                        elem_str = j.replace("\n", "")
+                        elem = elem_str.split(",")
+                        xAxis.append(float(elem[0]))
+                        self.setWavelength(xAxis)
+                doGetWaveLength = True
+                self.addSpectrum(posX, posY, spectrum)
+
+            matchBackground = re.match(".*?(_background).*", name)
+            if matchBackground:
+                foundBackground = True
+                fich = open(path + '/' + name, "r")
+                test_str = list(fich)
+                fich.close()
+                spectrum = []
+                for j in test_str:
+                    elem_str = j.replace("\n", "")
+                    elem = elem_str.split(",")
+                    spectrum.append(float(elem[1]))
+                self.background = spectrum
+
+        return foundBackground
+
+    def saveCaptureCSV(self, countHeight=None, countWidth=None):
+        if self.data == []:
+            pass
+        else:
+            if self.fileName == "":
+                self.fileName = "spectrum"
+
+            newPath = self.folderPath + "/" + "RawData"
+            os.makedirs(newPath, exist_ok=True)
+            if countHeight is None and countWidth is None:
+                path = os.path.join(newPath, f"{self.fileName}_background")
+                with open(path + ".csv", "w+") as f:
+                    for i, x in enumerate(self.waveNumber(self.wavelength)):
+                        f.write(f"{x},{self.background[i]}\n")
+                    f.close()
+            else:
+                path = os.path.join(newPath, f"{self.fileName}_x{countWidth}_y{countHeight}")
+                with open(path + ".csv", "w+") as f:
+                    for i, x in enumerate(self.waveNumber(self.wavelength)):
+                        spectrum = self.spectrum(countWidth, countHeight)
+                        f.write(f"{x},{spectrum[i]}\n")
+                    f.close()
+
+    def saveDataWithoutBackground(self, alreadyWaveNumber=False):
+        matrix = self.dataWithoutBackground()
+        newPath = self.folderPath + "/" + "UnrawData"
+        os.makedirs(newPath, exist_ok=True)
+        for i in matrix:
+            if self.fileName == "":
+                self.fileName = "spectrum"
+            x = i.x
+            y = i.y
+            spectrum = i.spectrum
+            path = os.path.join(newPath, f"{self.fileName}_withoutBackground_x{x}_y{y}")
+            with open(path + ".csv", "w+") as f:
+                if alreadyWaveNumber == True:
+                    for ind, x in enumerate(self.wavelength):
+                        f.write(f"{x},{spectrum[ind]}\n")
+                else:
+                    for ind, x in enumerate(self.waveNumber(self.wavelength)):
+                        f.write(f"{x},{spectrum[ind]}\n")
+                f.close()
 
 
 
-
-
+    # Non-Publics functions
 
     def dataWithoutBackground(self):
         dataWithoutBg = []
@@ -174,148 +337,3 @@ class HyperSpectralImage:
         except Exception as e:
             print(e)
             return None
-
-    def matrixRGB(self, colorValues, globalMaximum=True, width=None, height=None, subtractBackground=False):
-        try:
-            if width == None or height ==None:
-                width = self.widthImage()
-                height = self.heightImage()
-            else:
-                pass
-
-            spectrumLen = self.spectrumLen()
-
-            lowRed = round(colorValues.lowRed * spectrumLen)
-            highRed = round(colorValues.highRed * spectrumLen)
-            lowGreen = round(colorValues.lowGreen * spectrumLen)
-            highGreen = round(colorValues.highGreen * spectrumLen)
-            lowBlue = round(colorValues.lowBlue * spectrumLen)
-            highBlue = round(colorValues.highBlue * spectrumLen)
-
-
-            matrixRGB = np.zeros((height, width, 3))
-            matrix = self.matrixData(width, height, subtractBackground=subtractBackground)
-
-            matrixRGB[:, :, 0] = matrix[:, :, lowRed:highRed].sum(axis=2)
-            matrixRGB[:, :, 1] = matrix[:, :, lowGreen:highGreen].sum(axis=2)
-            matrixRGB[:, :, 2] = matrix[:, :, lowBlue:highBlue].sum(axis=2)
-
-            if globalMaximum:
-                matrixRGB = (matrixRGB / np.max(matrixRGB)) * 255
-
-            else:
-                maxima = matrixRGB.max(axis=2)
-                maxima = np.dstack((maxima,) * 3)
-                np.seterr(divide='ignore', invalid='ignore')
-                matrixRGB /= maxima
-                matrixRGB[np.isnan(matrixRGB)] = 0
-                matrixRGB *= 255
-
-            matrixRGB = matrixRGB.round(0)
-            thresholdIndices = matrixRGB < 0
-            matrixRGB[thresholdIndices] = 0
-            return matrixRGB
-        except:
-            return None
-
-    def loadData(self, path):
-        foundBackground = False
-        doGetWaveLength = False
-        foundFiles = []
-        for file in os.listdir(path):
-            if fnmatch.fnmatch(file, f'*.csv'):
-                foundFiles.append(file)
-
-        sortedPaths = foundFiles
-        for name in sortedPaths:
-            # Find the positions
-            matchCoords = re.match("([A-Za-z_]*)_x(\\d+)_y(\\d+).*", name)
-            if matchCoords:
-                posX = int(matchCoords.group(2))
-                posY = int(matchCoords.group(3))
-
-                # Open file and put in the data
-                fich = open(path + '/' + name, "r")
-                test_str = list(fich)
-                fich.close()
-                xAxis = []
-                spectrum = []
-                for j in test_str:
-                    elem_str = j.replace("\n", "")
-                    elem = elem_str.split(",")
-                    spectrum.append(float(elem[1]))
-
-                    if doGetWaveLength == False:
-                        elem_str = j.replace("\n", "")
-                        elem = elem_str.split(",")
-                        xAxis.append(float(elem[0]))
-                        self.setWavelength(xAxis)
-                doGetWaveLength = True
-                self.addSpectrum(posX, posY, spectrum)
-
-            matchBackground = re.match(".*?(_background).*", name)
-            if matchBackground:
-                foundBackground = True
-                fich = open(path + '/' + name, "r")
-                test_str = list(fich)
-                fich.close()
-                spectrum = []
-                for j in test_str:
-                    elem_str = j.replace("\n", "")
-                    elem = elem_str.split(",")
-                    spectrum.append(float(elem[1]))
-                self.background = spectrum
-
-        return foundBackground
-
-    # Save
-    def saveCaptureCSV(self, countHeight=None, countWidth=None):
-        if self.data == []:
-            pass
-        else:
-            if self.fileName == "":
-                self.fileName = "spectrum"
-
-            newPath = self.folderPath + "/" + "RawData"
-            os.makedirs(newPath, exist_ok=True)
-            if countHeight is None and countWidth is None:
-                path = os.path.join(newPath, f"{self.fileName}_background")
-                with open(path + ".csv", "w+") as f:
-                    for i, x in enumerate(self.waveNumber(self.wavelength)):
-                        f.write(f"{x},{self.background[i]}\n")
-                    f.close()
-            else:
-                path = os.path.join(newPath, f"{self.fileName}_x{countWidth}_y{countHeight}")
-                with open(path + ".csv", "w+") as f:
-                    for i, x in enumerate(self.waveNumber(self.wavelength)):
-                        spectrum = self.spectrum(countWidth, countHeight)
-                        f.write(f"{x},{spectrum[i]}\n")
-                    f.close()
-
-    def saveImage(self, matrixRGB):
-        path = self.folderPath + "/"
-        img = matrixRGB.astype(np.uint8)
-        if self.fileName == "":
-            plt.imsave(path + "matrixRGB.png", img)
-        else:
-            plt.imsave(path + self.fileName + "_matrixRGB.png", img)
-
-    def saveDataWithoutBackground(self, alreadyWaveNumber=False):
-        matrix = self.dataWithoutBackground()
-        newPath = self.folderPath + "/" + "UnrawData"
-        os.makedirs(newPath, exist_ok=True)
-        for i in matrix:
-            if self.fileName == "":
-                self.fileName = "spectrum"
-            x = i.x
-            y = i.y
-            spectrum = i.spectrum
-            path = os.path.join(newPath, f"{self.fileName}_withoutBackground_x{x}_y{y}")
-            with open(path + ".csv", "w+") as f:
-                if alreadyWaveNumber == True:
-                    for ind, x in enumerate(self.wavelength):
-                        f.write(f"{x},{spectrum[ind]}\n")
-                else:
-                    for ind, x in enumerate(self.waveNumber(self.wavelength)):
-                        f.write(f"{x},{spectrum[ind]}\n")
-                f.close()
