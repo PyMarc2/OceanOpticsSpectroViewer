@@ -353,35 +353,73 @@ class WindowControl(QWidget, Ui_MainWindow):
         QTimer.singleShot(50, lambda: self.le_laser.setStyleSheet(""))
 
     # Acquisition Settings
-    def setWidth(self):
+    def setWidth(self, value=None, raiseException=False):
         try:
             width = self.sb_width.value()
             self.appControl.setWidth(width)
-        except:
-            pass
+        except Exception as e:
+            e = str(e)
+            if e == "'NoneType' object is not subscriptable":
+                e = "No sutter connected"
+            if not raiseException:
+                self.createErrorDialogs(e)
+            else:
+                raise Exception(e)
 
-    def setHeight(self):
+
+    def setHeight(self, value=None, raiseException=False):
         try:
             height = self.sb_height.value()
             self.appControl.setHeight(height)
-        except:
-            pass
+        except Exception as e:
+            e = str(e)
+            if e == "'NoneType' object is not subscriptable":
+                e = "No sutter connected"
+            if not raiseException:
+                self.createErrorDialogs(e)
+            else:
+                raise Exception(e)
 
-    def setStep(self):
-        step = self.sb_step.value()
-        self.appControl.setStep(step)
+    def setStep(self, value=None, raiseException=False):
+        try:
+            step = self.sb_step.value()
+            self.appControl.setStep(step)
+        except Exception as e:
+            if not raiseException:
+                self.createErrorDialogs(e)
+            else:
+                raise Exception(e)
 
-    def setMeasureUnit(self):
-        measureUnit = self.cmb_measureUnit.currentText()
-        self.appControl.setMeasureUnit(measureUnit)
+    def setMeasureUnit(self, value=None, raiseException=False):
+        try:
+            measureUnit = self.cmb_measureUnit.currentText()
+            self.appControl.setMeasureUnit(measureUnit)
+        except Exception as e:
+            if not raiseException:
+                self.createErrorDialogs(e)
+            else:
+                raise Exception(e)
 
-    def setExposureTime(self):
-        exposureTime = self.sb_exposure.value()
-        self.appControl.setExposureTime(exposureTime)
+    def setExposureTime(self, value=None, raiseException=False):
+        try:
+            exposureTime = self.sb_exposure.value()
+            self.appControl.setExposureTime(exposureTime)
+        except Exception as e:
+            if not raiseException:
+                self.createErrorDialogs(e)
+            else:
+                raise Exception(e)
 
-    def setIntegrationTime(self):
-        acqTime = self.sb_acqTime.value()
-        self.appControl.setIntegrationTime(acqTime)
+    def setIntegrationTime(self, value=None, raiseException=False):
+        # We have to put value because spinbox return the value and we can't have obligatory  
+        try:
+            acqTime = self.sb_acqTime.value()
+            self.appControl.setIntegrationTime(acqTime)
+        except Exception as e:
+            if not raiseException:
+                self.createErrorDialogs(e)
+            else:
+                raise Exception(e)
 
     def sweepDirectionSame(self):
         if self.pb_sweepSame.status == True:
@@ -437,15 +475,14 @@ class WindowControl(QWidget, Ui_MainWindow):
             elif not spectroState:
                 self.errorDetection()
             elif not stageState:
-                self.errorStage()
-                
+                self.errorStage()         
             else:
-                self.setHeight()
-                self.setWidth()
-                self.setMeasureUnit()
-                self.setStep()
-                self.setExposureTime()
-                self.setIntegrationTime()
+                self.setHeight(raiseException=True)
+                self.setWidth(raiseException=True)
+                self.setMeasureUnit(raiseException=True)
+                self.setStep(raiseException=True)
+                self.setExposureTime(raiseException=True)
+                self.setIntegrationTime(raiseException=True)
 
                 self.appControl.deleteSpectra()
                 self.pb_saveImage.setEnabled(True)

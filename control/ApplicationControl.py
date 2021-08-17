@@ -107,46 +107,23 @@ class AppControl():
         self.HSI.setLaserWavelength(laser)
 
     def setWidth(self, width):
-        try:
-            self.Model.width = width
-        except Exception as e:
-            e = str(e)
-            if e == "'NoneType' object is not subscriptable":
-                e = "No sutter connected"
-            self.windowControl.createErrorDialogs(e)
+        self.Model.width = width
 
     def setHeight(self, height):
-        try:
-            self.Model.height = height
-        except Exception as e:
-            e = str(e)
-            if e == "'NoneType' object is not subscriptable":
-                e = "No sutter connected"
-            self.windowControl.createErrorDialogs(e)
+        self.Model.height = height
+        
 
     def setStep(self, step):
-        try:
-            self.Model.step = step
-        except Exception as e:
-            self.windowControl.createErrorDialogs(e)
+        self.Model.step = step
 
     def setMeasureUnit(self, measureUnit):
-        try:
-            self.Model.stepMeasureUnit = measureUnit
-        except Exception as e:
-            self.windowControl.createErrorDialogs(e)
+        self.Model.stepMeasureUnit = measureUnit
 
     def setExposureTime(self, exposureTime):
-        try:
-            self.Model.exposureTime = exposureTime
-        except Exception as e:
-            self.windowControl.createErrorDialogs(e)
+        self.Model.exposureTime = exposureTime
 
     def setIntegrationTime(self, acqTime):
-        try:
-            self.Model.integrationTime = acqTime
-        except Exception as e:
-            self.windowControl.createErrorDialogs(e)
+        self.Model.integrationTime = acqTime
 
     def sweepDirectionSame(self):
         self.Model.setDirectionToDefault()
