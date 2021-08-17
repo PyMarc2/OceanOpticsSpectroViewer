@@ -9,7 +9,7 @@ import pyqtgraph as pg
 
 from tkinter.filedialog import askopenfile
 import matplotlib.pyplot as plt
-from typing import NamedTuple 
+from typing import NamedTuple
 import pandas as pd
 import numpy as np
 import fnmatch
