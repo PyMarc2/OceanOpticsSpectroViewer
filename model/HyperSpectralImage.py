@@ -162,6 +162,8 @@ class HyperSpectralImage:
                 matrixRGB *= 255
 
             matrixRGB = matrixRGB.round(0)
+            thresholdIndices = matrixRGB < 0
+            matrixRGB[thresholdIndices] = 0
             return matrixRGB
         except:
             return None
