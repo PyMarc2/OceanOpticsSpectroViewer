@@ -19,21 +19,13 @@ class AppliControl():
         self.hsi.deleteWavelength()
 
     def height(self):
-        height = self.hsi.heightImage(self.hsi.data)
+        height = self.hsi.heightImage()
         return height
 
     def loadData(self, path):
         foundBackground = self.hsi.loadData(path)
         self.hsi.folderPath = path
         return foundBackground
-
-    def matrixData(self, subtractBackground=False):
-        if subtractBackground:
-            data = self.hsi.dataWithoutBackground()
-        else:
-            data = self.hsi.data
-        matrixData = self.hsi.matrixData(data)
-        return matrixData
 
     def matrixRGB(self, globalMaximum=True, subtractBackground=False):
         colorValues = self.windowControl.currentSliderValues()

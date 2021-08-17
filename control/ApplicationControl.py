@@ -50,18 +50,14 @@ class AppControl():
         width, height = self.windowControl.dimensionImage()
         colorValues = self.windowControl.currentSliderValues()
         with self.lock:
-            if subtractBackground:
-                data = self.HSI.dataWithoutBackground()
-            else:
-                data = self.HSI.data
-        matrixRGB = self.HSI.matrixRGB(data, colorValues, globalMaximum, width, height)
+            matrixRGB = self.HSI.matrixRGB(colorValues, globalMaximum, width, height, subtractBackground)
         return matrixRGB
 
-    def waves(self, laser):
+    def waves(self):
         with self.lock:
             wavelength = self.HSI.wavelength
         if self.windowControl.waveNumber:
-            waves = self.HSI.waveNumber(wavelength, laser)
+            waves = self.HSI.waveNumber(wavelength)
         else:
             waves = self.HSI.wavelength
         return waves
@@ -72,12 +68,7 @@ class AppControl():
 
     def spectrum(self, x, y, subtractBackground=False):
         with self.lock:
-            if subtractBackground:
-                spectrum = self.HSI.spectrum(x, y, self.HSI.data)
-                background = self.HSI.background
-                spectrum = spectrum - background
-            else:
-                spectrum = self.HSI.spectrum(x, y, self.HSI.data)
+            spectrum = self.HSI.spectrum(x, y, subtractBackground)
         return spectrum
 
     def deleteSpectra(self):
@@ -142,7 +133,7 @@ class AppControl():
         self.saveBackground()
 
     def saveBackground(self):
-        self.HSI.saveCaptureCSV(data=self.HSI.background)
+        self.HSI.saveCaptureCSV()
 
     def launchAcquisition(self):
         # with self.lock:
@@ -175,7 +166,7 @@ class AppControl():
     def savePixel(self, x, y, spectrum):
         with self.lock:
             spectro = spectrum
-        self.HSI.saveCaptureCSV(data=spectro, countHeight=y, countWidth=x)
+        self.HSI.saveCaptureCSV(countHeight=y, countWidth=x)
 
     def stopAcquisition(self):
         with self.lock:
