@@ -9,6 +9,14 @@ import csv
 import os
 import re
 
+class ColorValues(NamedTuple): # If you need to use matrixRGB function you need this.
+    lowRed: int = None
+    highRed: int = None
+    lowGreen: int = None
+    highGreen: int = None
+    lowBlue: int = None
+    highBlue: int = None
+
 class DataPoint(NamedTuple):
     x: int = None
     y: int = None
@@ -16,12 +24,12 @@ class DataPoint(NamedTuple):
 
 class HyperSpectralImage:
     def __init__(self):
-        self.data = []
+        self.data = [] # spectralPoints
         self.wavelength = []
         self.background = []
-        self.folderPath = ""
+        self.folderPath = "" # utiliser temp pour répertoire
         self.fileName = ""
-        self.laser = None
+        self.laser = None # excitationWavelength
 
     # Publics functions
 
@@ -59,6 +67,8 @@ class HyperSpectralImage:
             raise TypeError("x argument is not int.")
         if type(y) is not int:
             raise TypeError("y argument is not int.")
+        if type(subtractBackground) is not bool:
+            raise TypeError("subtractBackground argument is not a boolean.")
 
         spectrum = None
         if subtractBackground:
@@ -126,6 +136,10 @@ class HyperSpectralImage:
         if type(laser) is not int:
             raise TypeError("laser argument is not int.")
         self.laser = laser
+
+    def deleteLaserWavelength(self):
+        """delete the laser wavelength"""
+        self.laser = None
 
 
     def matrixRGB(self, colorValues, globalMaximum=True, width=None, height=None, subtractBackground=False):
@@ -255,7 +269,7 @@ class HyperSpectralImage:
         sortedPaths = foundFiles
         for name in sortedPaths:
             # Find the positions
-            matchCoords = re.match("([A-Za-z_]*)_x(\\d+)_y(\\d+).*", name)
+            matchCoords = re.match(r"([A-Za-z_]*)_x(\d+)_y(\d+).*", name)
             if matchCoords:
                 posX = int(matchCoords.group(2))
                 posY = int(matchCoords.group(3))
