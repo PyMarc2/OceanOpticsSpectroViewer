@@ -33,15 +33,9 @@ class HyperSpectralImage:
             spectrum(list or numpy.ndarray): Spectrum to add to data.
         """
         if type(x) is not int:
-            X = int(x)
-            if X != x:
-                raise TypeError("x argument is not int.")
-            x = X
+            raise TypeError("x argument is not int.")
         if type(y) is not int:
-            Y = int(y)
-            if Y != y:
-                raise TypeError("y argument is not int.")
-            y = Y
+            raise TypeError("y argument is not int.")
         if type(spectrum) is list:
             spectrum = np.array(spectrum)
         if type(spectrum) is not np.ndarray:
@@ -62,15 +56,10 @@ class HyperSpectralImage:
             spectrum(numpy.ndarray): Spectrum at the specific coordinates.
         """
         if type(x) is not int:
-            X = int(x)
-            if X != x:
-                raise TypeError("x argument is not int.")
-            x = X
+            raise TypeError("x argument is not int.")
         if type(y) is not int:
-            Y = int(y)
-            if Y != y:
-                raise TypeError("y argument is not int.")
-            y = Y
+            raise TypeError("y argument is not int.")
+
         spectrum = None
         if subtractBackground:
             data = self.dataWithoutBackground()
@@ -155,18 +144,12 @@ class HyperSpectralImage:
             if width == None:
                 pass
             else:
-                WIDTH = int(width)
-                if WIDTH != width:
-                    raise TypeError("countWidth argument is not int.")
-                width = WIDTH
+                raise TypeError("countWidth argument is not int.")
         if type(height) is not int:
             if height == None:
                 pass
             else:
-                HEIGHT = int(height)
-                if HEIGHT != height:
-                    raise TypeError("countHeight argument is not int.")
-                height = HEIGHT
+                raise TypeError("countHeight argument is not int.")
         if type(subtractBackground) is not bool:
             raise TypeError("subtractBackground argument is not a boolean.")
 
@@ -319,18 +302,12 @@ class HyperSpectralImage:
             if countWidth == None:
                 pass
             else:
-                COUNTWIDTH = int(countWidth)
-                if COUNTWIDTH != countWidth:
-                    raise TypeError("width argument is not int.")
-                countWidth = COUNTWIDTH
+                raise TypeError("width argument is not int.")
         if type(countHeight) is not int:
             if countHeight == None:
                 pass
             else:
-                COUNTHEIGHT = int(countHeight)
-                if COUNTHEIGHT != countHeight:
-                    raise TypeError("height argument is not int.")
-                countHeight = COUNTHEIGHT
+                raise TypeError("height argument is not int.")
         if self.data == []:
             pass
         else:
