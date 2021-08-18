@@ -22,7 +22,6 @@ class HyperSpectralImage:
         self.folderPath = ""
         self.fileName = ""
         self.laser = None
-        self.data
 
     # Publics functions
 
@@ -33,6 +32,18 @@ class HyperSpectralImage:
             y(int): Position on the y-axis.
             spectrum(list or numpy.ndarray): Spectrum to add to data.
         """
+        if type(x) is not int:
+            X = int(x)
+            if X != x:
+                raise TypeError("x argument is not int.")
+        if type(y) is not int:
+            Y = int(y)
+            if Y != y:
+                raise TypeError("y argument is not int.")
+        if type(spectrum) is list:
+            spectrum = np.array(spectrum)
+        if type(spectrum) is not np.ndarray:
+            raise TypeError("spectrum argument is not a list or numpy.ndarray.")
         self.data.append(DataPoint(x, y, spectrum))
 
     def deleteSpectra(self):
@@ -48,27 +59,37 @@ class HyperSpectralImage:
         Returns:
             spectrum(numpy.ndarray): Spectrum at the specific coordinates.
         """
+        if type(x) is not int:
+            X = int(x)
+            if X != x:
+                raise TypeError("x argument is not int.")
+        if type(y) is not int:
+            Y = int(y)
+            if Y != y:
+                raise TypeError("y argument is not int.")
         spectrum = None
         if subtractBackground:
             data = self.dataWithoutBackground()
             for item in data:
                 if item.x == x:
                     if item.y == y:
-                        spectrum = np.array(item.spectrum)
+                        spectrum = item.spectrum
         else:
             for item in self.data:
                 if item.x == x:
                     if item.y == y:
-                        spectrum = np.array(item.spectrum)
+                        spectrum = item.spectrum
         return spectrum
-
 
     def setBackground(self, background):
         """Set the background to data.
         Args:
             background(list or numpy.ndarray): The background.
         """
-        self.background = np.array(background)
+        try:
+            self.background = np.array(background)
+        except:
+            RaiseTypeError("Verify the args type")
 
     def deleteBackground(self):
         """Delete the background."""
@@ -113,6 +134,7 @@ class HyperSpectralImage:
             [Optional]subtractBackground(bool): Use the data without background if True.
         Returns:
             matrixRGB(numpy.ndarray): The matrixRGB.
+            None(nonetype): If any problem.
         """
         try:
             if width == None or height ==None:
@@ -156,8 +178,13 @@ class HyperSpectralImage:
         except:
             return None
 
-    def saveImage(self, matrixRGB):
-        """i think it will need a change/update."""
+    def saveImage(self, matrixRGB): # Not finished
+        """Save the matrixRGB as a image in png format.
+        Args:
+            matrixRGB(np.ndarray): The matrixRGB to save as a png.
+        Return:
+            image(.png): Save in RawData in the folderPath.
+        """
         path = self.folderPath + "/"
         img = matrixRGB.astype(np.uint8)
         if self.fileName == "":
@@ -170,12 +197,24 @@ class HyperSpectralImage:
     # idk yet if publics or not
 
     def setFolderPath(self, folderPath):
+        """Set the folder path.
+        Args:
+            folderPath(str): The folder path to add to data.
+        """
         self.folderPath = folderPath
 
     def setFileName(self, fileName):
+        """Set the file name.
+        Args:
+            fileName(str): The file name to add to data.
+        """
         self.fileName = fileName
 
     def loadData(self, path):
+        """Load the data of a specific repository in the data.
+        Args:
+            path(str): The path of the repository.
+        """
         foundBackground = False
         doGetWaveLength = False
         foundFiles = []
@@ -226,6 +265,13 @@ class HyperSpectralImage:
         return foundBackground
 
     def saveCaptureCSV(self, countHeight=None, countWidth=None):
+        """Save the background or one specific spectrum.
+        Args:
+            countHeight(int): If the two count are None save the background. Else save a spectrum.
+            countWidth(int): If the two count are None save the background. Else save a spectrum.
+        Return:
+            CSVFile(.csv): Save the file in RawData at the folder path.
+        """
         if self.data == []:
             pass
         else:
@@ -249,6 +295,12 @@ class HyperSpectralImage:
                     f.close()
 
     def saveDataWithoutBackground(self, alreadyWaveNumber=False):
+        """Save the background or one specific spectrum.
+        Args:
+            alreadyWaveNumber(bool): 
+        Return:
+            CSVFile(.csv): Save the file in RawData at the folder path.
+        """
         matrix = self.dataWithoutBackground()
         newPath = self.folderPath + "/" + "UnrawData"
         os.makedirs(newPath, exist_ok=True)
@@ -273,6 +325,10 @@ class HyperSpectralImage:
     # Non-Publics functions
 
     def dataWithoutBackground(self):
+        """Return the data without the background.
+        Return:
+            dataWithoutBg(list): Contains DataPoint nameTuple. It's a copy of self.data, but without the background.
+        """
         dataWithoutBg = []
         for item in self.data:
             x = item.x
@@ -284,6 +340,10 @@ class HyperSpectralImage:
 
 
     def widthImage(self):
+        """Return the width (max x-axis value + 1) in the data.
+        Return:
+            width(int): Use in the creation of a matrix.
+        """
         width = -1
         for item in self.data:
             if item.x > width:
@@ -292,6 +352,10 @@ class HyperSpectralImage:
         return width + 1
 
     def heightImage(self):
+        """Return the height (max -axis value + 1) in the data.
+        Return:
+            height(int): Use in the creation of a matrix.
+        """
         height = -1
         for item in self.data:
             if item.y > height:
@@ -300,6 +364,11 @@ class HyperSpectralImage:
         return height + 1
 
     def spectrumLen(self):
+        """Return the max len of all spectra in the data.
+        Return:
+            spectrumLen(int): Use in the creation of a matrix.
+            None(nonetype): If spectrumLen = 0.
+        """
         spectrumLen = 0
         for item in self.data:
             if len(item.spectrum) > spectrumLen:
@@ -309,13 +378,28 @@ class HyperSpectralImage:
         else:
             return spectrumLen
 
-    def spectrumRange(self, wavelength):
+    def spectrumRange(self):
+        """Return the max range of all spectra in the data.
+        Return:
+            spectrumRange(int): If spectrumRange is needed.
+            None(nonetype): If self.data is empty.
+        """
         try:
-            return round(abs(max(wavelength) - min(wavelength)))
+            spectrumRange = round(abs(max(self.wavelength) - min(self.wavelength)))
+            return spectrumRange
         except:
             return None
 
     def matrixData(self, width=None, height=None, subtractBackground=False):
+        """Return the data in matrix format.
+        Args:
+            [Optional]width(int): If None it's automatic.
+            [Optional]height(int): If None it's automatic.
+            [Optional]subtractBackground(bool): Use the data without background if True.
+        Return:
+            matrixData(numpy.ndarray): Use in the creation of matrixRGB.
+            None(nonetype): If any problem.
+        """
         try:
             if width == None or height ==None:
                 width = self.widthImage()
@@ -335,5 +419,4 @@ class HyperSpectralImage:
 
             return matrixData
         except Exception as e:
-            print(e)
             return None
