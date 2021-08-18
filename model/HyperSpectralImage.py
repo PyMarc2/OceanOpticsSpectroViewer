@@ -442,18 +442,12 @@ class HyperSpectralImage:
             if width == None:
                 pass
             else:
-                WIDTH = int(width)
-                if WIDTH != width:
-                    raise TypeError("width argument is not int.")
-                width = WIDTH
+                raise TypeError("width argument is not int.")
         if type(height) is not int:
             if height == None:
                 pass
             else:
-                HEIGHT = int(height)
-                if HEIGHT != height:
-                    raise TypeError("height argument is not int.")
-                height = HEIGHT
+                raise TypeError("height argument is not int.")
         if type(subtractBackground) is not bool:
             raise TypeError("subtractBackground argument is not a boolean.")
 
