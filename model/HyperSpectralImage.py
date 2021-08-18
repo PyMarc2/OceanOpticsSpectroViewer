@@ -36,10 +36,12 @@ class HyperSpectralImage:
             X = int(x)
             if X != x:
                 raise TypeError("x argument is not int.")
+            x = X
         if type(y) is not int:
             Y = int(y)
             if Y != y:
                 raise TypeError("y argument is not int.")
+            y = Y
         if type(spectrum) is list:
             spectrum = np.array(spectrum)
         if type(spectrum) is not np.ndarray:
@@ -63,10 +65,12 @@ class HyperSpectralImage:
             X = int(x)
             if X != x:
                 raise TypeError("x argument is not int.")
+            x = X
         if type(y) is not int:
             Y = int(y)
             if Y != y:
                 raise TypeError("y argument is not int.")
+            y = Y
         spectrum = None
         if subtractBackground:
             data = self.dataWithoutBackground()
@@ -86,10 +90,11 @@ class HyperSpectralImage:
         Args:
             background(list or numpy.ndarray): The background.
         """
-        try:
-            self.background = np.array(background)
-        except:
-            RaiseTypeError("Verify the args type")
+        if type(background) is list:
+            background = np.array(background)
+        if type(background) is not np.ndarray:
+            raise TypeError("background argument is not a list or numpy.ndarray.")
+        self.background = background
 
     def deleteBackground(self):
         """Delete the background."""
@@ -100,6 +105,10 @@ class HyperSpectralImage:
         Args:
             wavelength(list or numpy.ndarray): The wavelength.
         """
+        if type(wavelength) is list:
+            wavelength = np.array(wavelength)
+        if type(wavelength) is not np.ndarray:
+            raise TypeError("wavelength argument is not a list or numpy.ndarray.")
         self.wavelength = np.array(wavelength)
 
     def deleteWavelength(self):
@@ -119,6 +128,10 @@ class HyperSpectralImage:
         Args:
             laser(int): The wavelength of the laser.
         """
+        if type(laser) is not int:
+            LASER = int(laser)
+            if LASER != laser:
+                raise TypeError("x argument is not int.")
         self.laser = laser
 
 
@@ -136,6 +149,28 @@ class HyperSpectralImage:
             matrixRGB(numpy.ndarray): The matrixRGB.
             None(nonetype): If any problem.
         """
+        if type(globalMaximum) is not bool:
+            raise TypeError("globalMaximum argument is not a boolean.")
+        if type(width) is not int:
+            if width == None:
+                pass
+            else:
+                WIDTH = int(width)
+                if WIDTH != width:
+                    raise TypeError("countWidth argument is not int.")
+                width = WIDTH
+        if type(height) is not int:
+            if height == None:
+                pass
+            else:
+                HEIGHT = int(height)
+                if HEIGHT != height:
+                    raise TypeError("countHeight argument is not int.")
+                height = HEIGHT
+        if type(subtractBackground) is not bool:
+            raise TypeError("subtractBackground argument is not a boolean.")
+
+
         try:
             if width == None or height ==None:
                 width = self.widthImage()
@@ -175,8 +210,8 @@ class HyperSpectralImage:
             thresholdIndices = matrixRGB < 0
             matrixRGB[thresholdIndices] = 0
             return matrixRGB
-        except:
-            return None
+        except Exception as e:
+            raise e
 
     def saveImage(self, matrixRGB): # Not finished
         """Save the matrixRGB as a image in png format.
@@ -185,6 +220,8 @@ class HyperSpectralImage:
         Return:
             image(.png): Save in RawData in the folderPath.
         """
+        if type(matrixRGB) is not np.ndarray:
+            raise TypeError("matrixRGB argument is not a numpy.ndarray.")
         path = self.folderPath + "/"
         img = matrixRGB.astype(np.uint8)
         if self.fileName == "":
@@ -201,6 +238,8 @@ class HyperSpectralImage:
         Args:
             folderPath(str): The folder path to add to data.
         """
+        if type(folderPath) is not str:
+            raise TypeError("folderpath argument is not a string.")
         self.folderPath = folderPath
 
     def setFileName(self, fileName):
@@ -208,6 +247,8 @@ class HyperSpectralImage:
         Args:
             fileName(str): The file name to add to data.
         """
+        if type(fileName) is not str:
+            raise TypeError("file name argument is not a string.")
         self.fileName = fileName
 
     def loadData(self, path):
@@ -215,6 +256,8 @@ class HyperSpectralImage:
         Args:
             path(str): The path of the repository.
         """
+        if type(path) is not str:
+            raise TypeError("path argument is not a string.")
         foundBackground = False
         doGetWaveLength = False
         foundFiles = []
@@ -272,6 +315,22 @@ class HyperSpectralImage:
         Return:
             CSVFile(.csv): Save the file in RawData at the folder path.
         """
+        if type(countWidth) is not int:
+            if countWidth == None:
+                pass
+            else:
+                COUNTWIDTH = int(countWidth)
+                if COUNTWIDTH != countWidth:
+                    raise TypeError("width argument is not int.")
+                countWidth = COUNTWIDTH
+        if type(countHeight) is not int:
+            if countHeight == None:
+                pass
+            else:
+                COUNTHEIGHT = int(countHeight)
+                if COUNTHEIGHT != countHeight:
+                    raise TypeError("height argument is not int.")
+                countHeight = COUNTHEIGHT
         if self.data == []:
             pass
         else:
@@ -301,6 +360,8 @@ class HyperSpectralImage:
         Return:
             CSVFile(.csv): Save the file in RawData at the folder path.
         """
+        if type(alreadyWaveNumber) is not bool:
+            raise TypeError("alreadyWaveNumber argument is not a boolean.")
         matrix = self.dataWithoutBackground()
         newPath = self.folderPath + "/" + "UnrawData"
         os.makedirs(newPath, exist_ok=True)
@@ -400,6 +461,26 @@ class HyperSpectralImage:
             matrixData(numpy.ndarray): Use in the creation of matrixRGB.
             None(nonetype): If any problem.
         """
+        if type(width) is not int:
+            if width == None:
+                pass
+            else:
+                WIDTH = int(width)
+                if WIDTH != width:
+                    raise TypeError("width argument is not int.")
+                width = WIDTH
+        if type(height) is not int:
+            if height == None:
+                pass
+            else:
+                HEIGHT = int(height)
+                if HEIGHT != height:
+                    raise TypeError("height argument is not int.")
+                height = HEIGHT
+        if type(subtractBackground) is not bool:
+            raise TypeError("subtractBackground argument is not a boolean.")
+
+
         try:
             if width == None or height ==None:
                 width = self.widthImage()
@@ -419,4 +500,4 @@ class HyperSpectralImage:
 
             return matrixData
         except Exception as e:
-            return None
+            raise e
