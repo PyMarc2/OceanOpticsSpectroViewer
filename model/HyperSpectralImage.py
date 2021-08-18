@@ -109,8 +109,14 @@ class HyperSpectralImage:
         Returns:
             waveNumber(numpy.ndarray): The waveNumber.
         """
-        waveNumber = ((1 / self.laser) - (1 / self.wavelength)) * 10 ** 7
-        return waveNumber.round(0)
+        if self.laser == None:
+            raise RuntimeError("self.laser is not defined.")
+        elif type(self.wavelength) is not np.ndarray:
+            raise RuntimeError("self.wavelength is not defined.")
+        else:
+            waveNumber = ((1 / self.laser) - (1 / self.wavelength)) * 10 ** 7
+            return waveNumber.round(0)
+
 
     def setLaserWavelength(self, laser):
         """Set the laser wavelength to data.
@@ -118,9 +124,7 @@ class HyperSpectralImage:
             laser(int): The wavelength of the laser.
         """
         if type(laser) is not int:
-            LASER = int(laser)
-            if LASER != laser:
-                raise TypeError("x argument is not int.")
+            raise TypeError("laser argument is not int.")
         self.laser = laser
 
 
@@ -193,8 +197,8 @@ class HyperSpectralImage:
             thresholdIndices = matrixRGB < 0
             matrixRGB[thresholdIndices] = 0
             return matrixRGB
-        except Exception as e:
-            raise e
+        except:
+            return None
 
     def saveImage(self, matrixRGB): # Not finished
         """Save the matrixRGB as a image in png format.
@@ -439,14 +443,10 @@ class HyperSpectralImage:
             None(nonetype): If any problem.
         """
         if type(width) is not int:
-            if width == None:
-                pass
-            else:
+            if width != None:
                 raise TypeError("width argument is not int.")
         if type(height) is not int:
-            if height == None:
-                pass
-            else:
+            if height != None:
                 raise TypeError("height argument is not int.")
         if type(subtractBackground) is not bool:
             raise TypeError("subtractBackground argument is not a boolean.")
@@ -470,5 +470,5 @@ class HyperSpectralImage:
                     matrixData[item.y, item.x, :] = np.array(item.spectrum)
 
             return matrixData
-        except Exception as e:
-            raise e
+        except:
+            None
