@@ -8,7 +8,6 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')
 from model.HyperSpectralImage import HyperSpectralImage
 
 # HSI = HyperSpectralImage
-
 skipTests = True
 # @unittest.skipIf(skipTests, "")
 
@@ -31,7 +30,7 @@ class TestHyperSpectralImage(unittest.TestCase):
 
 	def testDefaultDataIsEmpty(self):
 		HSI = HyperSpectralImage()
-		self.assertEqual(len(HSI.data), 0)
+		self.assertEqual(len(HSI.spectralPoints), 0)
 
 	def testDefaultWavelenthIsEmpty(self):
 		HSI = HyperSpectralImage()
@@ -41,7 +40,6 @@ class TestHyperSpectralImage(unittest.TestCase):
 		HSI = HyperSpectralImage()
 		self.assertEqual(len(HSI.background), 0)
 
-
 	# Publics functions
 
 	def testAddSpectrum(self): # addSpectrum(self, x, y, spectrum):
@@ -50,11 +48,11 @@ class TestHyperSpectralImage(unittest.TestCase):
 		y = 0
 		spectrum = [1, 2, 3, 4]
 		HSI.addSpectrum(x, y, spectrum)
-		self.assertEqual(len(HSI.data), 1)
-		self.assertEqual(len(HSI.data[0]), 3)
-		self.assertIsInstance(HSI.data[0].x, int)
-		self.assertIsInstance(HSI.data[0].y, int)
-		self.assertEqual(len(HSI.data[0].spectrum), 4)
+		self.assertEqual(len(HSI.spectralPoints), 1)
+		self.assertEqual(len(HSI.spectralPoints[0]), 3)
+		self.assertIsInstance(HSI.spectralPoints[0].x, int)
+		self.assertIsInstance(HSI.spectralPoints[0].y, int)
+		self.assertEqual(len(HSI.spectralPoints[0].spectrum), 4)
 
 	def testAddSpectrumTypeErrorX(self): # addSpectrum(self, x, y, spectrum):
 		HSI = HyperSpectralImage()
@@ -66,7 +64,7 @@ class TestHyperSpectralImage(unittest.TestCase):
 		except Exception as e:
 			e = str(e)
 			self.assertMultiLineEqual(e, "x argument is not int.")
-			self.assertEqual(len(HSI.data), 0)
+			self.assertEqual(len(HSI.spectralPoints), 0)
 
 	def testAddSpectrumTypeErrorY(self): # addSpectrum(self, x, y, spectrum):
 		HSI = HyperSpectralImage()
@@ -78,7 +76,7 @@ class TestHyperSpectralImage(unittest.TestCase):
 		except Exception as e:
 			e = str(e)
 			self.assertMultiLineEqual(e, "y argument is not int.")
-			self.assertEqual(len(HSI.data), 0)
+			self.assertEqual(len(HSI.spectralPoints), 0)
 
 	def testAddSpectrumTypeErrorSpectrum(self): # addSpectrum(self, x, y, spectrum):
 		HSI = HyperSpectralImage()
@@ -90,7 +88,7 @@ class TestHyperSpectralImage(unittest.TestCase):
 		except Exception as e:
 			e = str(e)
 			self.assertMultiLineEqual(e, "spectrum argument is not a list or numpy.ndarray.")
-			self.assertEqual(len(HSI.data), 0)
+			self.assertEqual(len(HSI.spectralPoints), 0)
 
 
 	def testDeleteSpectra(self): # deleteSpectra(self):
@@ -99,9 +97,9 @@ class TestHyperSpectralImage(unittest.TestCase):
 		y = 0
 		spectrum = [1, 2, 3, 4]
 		HSI.addSpectrum(x, y, spectrum)
-		self.assertEqual(len(HSI.data), 1)
+		self.assertEqual(len(HSI.spectralPoints), 1)
 		HSI.deleteSpectra()
-		self.assertEqual(len(HSI.data), 0)
+		self.assertEqual(len(HSI.spectralPoints), 0)
 
 	def testReturnSpectrum(self): # spectrum(self, x, y, subtractBackground=False):
 		HSI = HyperSpectralImage()
@@ -128,7 +126,6 @@ class TestHyperSpectralImage(unittest.TestCase):
 		equality = np.equal(returnSpectrum, spectrumFinal)
 		result = equality.all()
 		self.assertTrue(result)
-
 
 	def testReturnSpectrumNone(self): # spectrum(self, x, y, subtractBackground=False):
 		HSI = HyperSpectralImage()
@@ -203,7 +200,6 @@ class TestHyperSpectralImage(unittest.TestCase):
 		HSI.deleteBackground()
 		self.assertListEqual(HSI.background, [])
 
-
 	def testSetWavelength(self): # setWavelength(self, wavelength):
 		HSI = HyperSpectralImage()
 		wavelength = [785, 786, 788, 789]
@@ -249,7 +245,7 @@ class TestHyperSpectralImage(unittest.TestCase):
 			waveNumber = HSI.waveNumber()
 		except Exception as e:
 			e = str(e)
-			self.assertMultiLineEqual(e, "self.laser is not defined.")
+			self.assertMultiLineEqual(e, "self.excitationWavelength is not defined.")
 
 	def testReturnWaveNumberErrorWavelength(self): # def waveNumber(self):
 		HSI = HyperSpectralImage()
@@ -265,7 +261,7 @@ class TestHyperSpectralImage(unittest.TestCase):
 		HSI = HyperSpectralImage()
 		laserWaveLength = 785
 		HSI.setLaserWavelength(laserWaveLength)
-		self.assertEqual(HSI.laser, 785)
+		self.assertEqual(HSI.excitationWavelength, 785)
 
 	def testSetLaserWavelengthTypeError(self): # setLaserWavelength(self, laser):
 		HSI = HyperSpectralImage()
@@ -274,14 +270,14 @@ class TestHyperSpectralImage(unittest.TestCase):
 			HSI.setLaserWavelength(laserWaveLength)
 		except Exception as e:
 			e = str(e)
-			self.assertMultiLineEqual(e, "laser argument is not int.")
+			self.assertMultiLineEqual(e, "excitationWavelength argument is not int.")
 
 	def testDeleteLaserWaveLength(self): # deleteLaserWaveLength(self):
 		HSI = HyperSpectralImage()
 		laserWaveLength = 785
 		HSI.setLaserWavelength(laserWaveLength)
 		HSI.deleteLaserWavelength()
-		self.assertIsNone(HSI.laser)
+		self.assertIsNone(HSI.excitationWavelength)
 
 	def testMatrixRGB(self): # matrixRGB(self, colorValues, globalMaximum=True, width=None, height=None, subtractBackground=False):
 		HSI = HyperSpectralImage()
@@ -303,7 +299,6 @@ class TestHyperSpectralImage(unittest.TestCase):
 		equality = np.equal(matrix, testMatrix)
 		result = equality.all()
 		self.assertTrue(result)
-
 
 	def testMatrixRGBGlobalMaximumFalse(self): # matrixRGB(self, colorValues, globalMaximum=True, width=None, height=None, subtractBackground=False):
 		HSI = HyperSpectralImage()
@@ -350,7 +345,26 @@ class TestHyperSpectralImage(unittest.TestCase):
 		self.assertTrue(result)
 
 	def testMatrixRGBSubtractBackgroundTrue(self): # matrixRGB(self, colorValues, globalMaximum=True, width=None, height=None, subtractBackground=False):
-		pass
+		HSI = HyperSpectralImage()
+		HSI.addSpectrum(0, 0, [1, 2, 3, 4, 5, 6])
+		HSI.addSpectrum(0, 1, [7, 8, 9, 10, 11, 12])
+		HSI.addSpectrum(1, 0, [13, 14, 15, 16, 17, 18])
+		HSI.addSpectrum(1, 1, [19, 20, 21, 22, 23, 24])
+		HSI.setBackground([1,1,1,1,1,1])
+		colorValues = ColorValues(0, 1/3, 1/3, 2/3, 2/3, 1)
+		matrix = HSI.matrixRGB(colorValues, subtractBackground=True)
+
+		testMatrix = np.zeros((2, 2, 3))
+		testMatrix[0][0] = np.array([1, 5, 9])
+		testMatrix[1][0] = np.array([13, 17, 21])
+		testMatrix[0][1] = np.array([25, 29, 33])
+		testMatrix[1][1] = np.array([37, 41, 45])
+		testMatrix = (testMatrix / np.max(testMatrix)) * 255
+		testMatrix = testMatrix.round(0)
+
+		equality = np.equal(matrix, testMatrix)
+		result = equality.all()
+		self.assertTrue(result)
 
 	def testMatrixRGBWithNoData(self): # matrixRGB(self, colorValues, globalMaximum=True, width=None, height=None, subtractBackground=False):
 		HSI = HyperSpectralImage()
@@ -359,7 +373,15 @@ class TestHyperSpectralImage(unittest.TestCase):
 		self.assertIsNone(matrix)
 
 	def testSaveImage(self): # saveImage(self, matrixRGB):
-		pass
+		HSI = HyperSpectralImage()
+		HSI.addSpectrum(0, 0, [1, 1, 1])
+		HSI.addSpectrum(0, 1, [1, 0, 0])
+		HSI.addSpectrum(1, 0, [0, 1, 0])
+		HSI.addSpectrum(1, 1, [0, 0, 1])
+		colorValues = ColorValues(0, 1/3, 1/3, 2/3, 2/3, 1)
+		matrix = HSI.matrixRGB(colorValues)
+		
+
 
 	# /////////////////////////////////////////////////////////////////////////////////
 	# Non-publics functions

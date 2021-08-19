@@ -24,12 +24,12 @@ class DataPoint(NamedTuple):
 
 class HyperSpectralImage:
     def __init__(self):
-        self.data = [] # spectralPoints
+        self.spectralPoints = []
         self.wavelength = []
         self.background = []
         self.folderPath = "" # utiliser temp pour répertoire
         self.fileName = ""
-        self.laser = None # excitationWavelength
+        self.excitationWavelength = None
 
     # Publics functions
 
@@ -48,11 +48,11 @@ class HyperSpectralImage:
             spectrum = np.array(spectrum)
         if type(spectrum) is not np.ndarray:
             raise TypeError("spectrum argument is not a list or numpy.ndarray.")
-        self.data.append(DataPoint(x, y, spectrum))
+        self.spectralPoints.append(DataPoint(x, y, spectrum))
 
     def deleteSpectra(self):
         """Delete all spectra."""
-        self.data = []
+        self.spectralPoints = []
 
     def spectrum(self, x, y, subtractBackground=False):
         """Return a specific spectrum.
@@ -78,7 +78,7 @@ class HyperSpectralImage:
                     if item.y == y:
                         spectrum = item.spectrum
         else:
-            for item in self.data:
+            for item in self.spectralPoints:
                 if item.x == x:
                     if item.y == y:
                         spectrum = item.spectrum
@@ -119,27 +119,27 @@ class HyperSpectralImage:
         Returns:
             waveNumber(numpy.ndarray): The waveNumber.
         """
-        if self.laser == None:
-            raise RuntimeError("self.laser is not defined.")
+        if self.excitationWavelength == None:
+            raise RuntimeError("self.excitationWavelength is not defined.")
         elif type(self.wavelength) is not np.ndarray:
             raise RuntimeError("self.wavelength is not defined.")
         else:
-            waveNumber = ((1 / self.laser) - (1 / self.wavelength)) * 10 ** 7
+            waveNumber = ((1 / self.excitationWavelength) - (1 / self.wavelength)) * 10 ** 7
             return waveNumber.round(0)
 
 
-    def setLaserWavelength(self, laser):
-        """Set the laser wavelength to data.
+    def setLaserWavelength(self, excitationWavelength):
+        """Set the excitationWavelength wavelength to data.
         Args:
-            laser(int): The wavelength of the laser.
+            excitationWavelength(int): The wavelength of the excitation source.
         """
-        if type(laser) is not int:
-            raise TypeError("laser argument is not int.")
-        self.laser = laser
+        if type(excitationWavelength) is not int:
+            raise TypeError("excitationWavelength argument is not int.")
+        self.excitationWavelength = excitationWavelength
 
     def deleteLaserWavelength(self):
-        """delete the laser wavelength"""
-        self.laser = None
+        """delete the excitation wavelength"""
+        self.excitationWavelength = None
 
 
     def matrixRGB(self, colorValues, globalMaximum=True, width=None, height=None, subtractBackground=False):
@@ -265,6 +265,7 @@ class HyperSpectralImage:
         for file in os.listdir(path):
             if fnmatch.fnmatch(file, f'*.csv'):
                 foundFiles.append(file)
+        print(foundFiles)
 
         sortedPaths = foundFiles
         for name in sortedPaths:
@@ -326,7 +327,7 @@ class HyperSpectralImage:
                 pass
             else:
                 raise TypeError("height argument is not int.")
-        if self.data == []:
+        if self.spectralPoints == []:
             pass
         else:
             if self.fileName == "":
@@ -383,10 +384,10 @@ class HyperSpectralImage:
     def dataWithoutBackground(self):
         """Return the data without the background.
         Return:
-            dataWithoutBg(list): Contains DataPoint nameTuple. It's a copy of self.data, but without the background.
+            dataWithoutBg(list): Contains DataPoint nameTuple. It's a copy of self.spectralPoints, but without the background.
         """
         dataWithoutBg = []
-        for item in self.data:
+        for item in self.spectralPoints:
             x = item.x
             y = item.y
             spectrum = np.array(item.spectrum) - np.array(self.background)
@@ -401,7 +402,7 @@ class HyperSpectralImage:
             width(int): Use in the creation of a matrix.
         """
         width = -1
-        for item in self.data:
+        for item in self.spectralPoints:
             if item.x > width:
                 width = item.x
 
@@ -413,7 +414,7 @@ class HyperSpectralImage:
             height(int): Use in the creation of a matrix.
         """
         height = -1
-        for item in self.data:
+        for item in self.spectralPoints:
             if item.y > height:
                 height = item.y
 
@@ -426,7 +427,7 @@ class HyperSpectralImage:
             None(nonetype): If spectrumLen = 0.
         """
         spectrumLen = 0
-        for item in self.data:
+        for item in self.spectralPoints:
             if len(item.spectrum) > spectrumLen:
                 spectrumLen = len(item.spectrum)
         if spectrumLen == 0:
@@ -438,7 +439,7 @@ class HyperSpectralImage:
         """Return the max range of all spectra in the data.
         Return:
             spectrumRange(int): If spectrumRange is needed.
-            None(nonetype): If self.data is empty.
+            None(nonetype): If self.spectralPoints is empty.
         """
         try:
             spectrumRange = round(abs(max(self.wavelength) - min(self.wavelength)))
@@ -480,7 +481,7 @@ class HyperSpectralImage:
                 for item in data:
                     matrixData[item.y, item.x, :] = np.array(item.spectrum)
             else:
-                for item in self.data:
+                for item in self.spectralPoints:
                     matrixData[item.y, item.x, :] = np.array(item.spectrum)
 
             return matrixData
