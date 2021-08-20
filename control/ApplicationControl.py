@@ -20,7 +20,6 @@ class AppControl():
         self.HSI = HyperSpectralImage()
         self.Model = Model()
         self.windowControl = None
-        self.microControl = None
 
         self.stageDevices = []  # find list from hardware...  # TODO
         self.listStageDevices()
