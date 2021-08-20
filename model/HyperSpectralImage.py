@@ -214,7 +214,7 @@ class HyperSpectralImage:
         except:
             return None
 
-    def saveAsImage(self, matrixRGB, path, fileName): # Not finished
+    def saveAsImage(self, matrixRGB, path, fileName):
         """Save the matrixRGB as a image in png format.
         Args:
             matrixRGB(np.ndarray): The matrixRGB to save as a png.
@@ -243,7 +243,6 @@ class HyperSpectralImage:
         for file in os.listdir(path):
             if fnmatch.fnmatch(file, f'*.csv'):
                 foundFiles.append(file)
-        print(foundFiles)
 
         sortedPaths = foundFiles
         for name in sortedPaths:

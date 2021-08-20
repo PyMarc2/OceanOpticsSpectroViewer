@@ -40,7 +40,6 @@ class WindowControl(QWidget, Ui_MainWindow):
 
         self.sliderPositionIsSet = False
         self.globalMaximum = True
-        self.folderPath = ""
         self.subtractBackground = False
 
         self.mousePositionX = 0
@@ -149,7 +148,6 @@ class WindowControl(QWidget, Ui_MainWindow):
             self.globalMaximum = True
         else:
             self.globalMaximum = False
-        self.appControl.loadData(self.folderPath)
         matrixRGB = self.appControl.matrixRGB(self.globalMaximum, self.subtractBackground)
         waves = self.appControl.waves()
         self.updateRGBPlot(matrixRGB)
@@ -197,11 +195,12 @@ class WindowControl(QWidget, Ui_MainWindow):
 
     def selectSaveFolder(self):
         try:
-            self.folderPath = str(QFileDialog.getExistingDirectory(self, "Select Directory"))
+            folderPath = str(QFileDialog.getExistingDirectory(self, "Select Directory"))
             self.appControl.deleteSpectra()
             self.appControl.deleteBackground()
             self.appControl.deleteWaves()
-            foundBackground = self.appControl.loadData(self.folderPath)
+            self.appControl.setFolderPath(folderPath)
+            foundBackground = self.appControl.loadData()
             self.subtractBackground = False
             matrixRGB = self.appControl.matrixRGB(self.globalMaximum, self.subtractBackground)
             waves = self.appControl.waves()
@@ -225,7 +224,6 @@ class WindowControl(QWidget, Ui_MainWindow):
                 self.cb_subtractbg.setCheckState(False)
                 self.cb_subtractbg.setEnabled(False)
         except Exception as e:
-            print(e)
             pass
 
     def subtractBg(self):

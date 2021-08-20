@@ -34,8 +34,8 @@ class AppControl():
         self.spectro = None
 
         self.tempFolder = self.HSI.tempFolder
-        self.folderPath = "" # Est-ce qu'on va l'utiliser pareil?
-        self.fileName = "" # Est-ce qu'on va l'utiliser pareil?
+        self.folderPath = ""
+        self.fileName = ""
 
         self.isLoopRGBRunning = False
         self.quitLoopRGB = True
