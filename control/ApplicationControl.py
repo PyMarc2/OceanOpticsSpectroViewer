@@ -31,10 +31,35 @@ class AppControl():
         self.stage = False
         self.spectro = None
 
+        self.folderPath = "" # utiliser temp pour répertoire
+        self.fileName = ""
+
+        # saveImage(self, matrixRGB, path, fileName)
+        # saveCaptureCSV(self, path, fileName, countHeight=None, countWidth=None)
+        # saveDataWithoutBackground(self, path, fileName, alreadyWaveNumber=False)
+
         self.isLoopRGBRunning = False
         self.quitLoopRGB = True
         notif().addObserver(self, self.react, "Single acquisition done")
         notif().addObserver(self, self.acquisitionDone, "Map acquisition done or interrupted.")
+
+    def setFolderPath(self, folderPath):
+        """Set the folder path.
+        Args:
+            folderPath(str): The folder path to add to data.
+        """
+        if type(folderPath) is not str:
+            raise TypeError("folderpath argument is not a string.")
+        self.folderPath = folderPath
+
+    def setFileName(self, fileName):
+        """Set the file name.
+        Args:
+            fileName(str): The file name to add to data.
+        """
+        if type(fileName) is not str:
+            raise TypeError("file name argument is not a string.")
+        self.fileName = fileName
 
     def react(self, notification):
         point_x = notification.userInfo["point_x"]
@@ -81,18 +106,6 @@ class AppControl():
     def setWavelength(self, waves):
         self.HSI.setWavelength(waves)
 
-    def saveImage(self, matrixRGB):
-        self.HSI.saveImage(matrixRGB)
-
-    def setFolderPath(self, folderPath):
-        self.HSI.setFolderPath(folderPath)
-
-    def setFileName(self, fileName):
-        self.HSI.setFileName(fileName)
-
-    def saveWithoutBackground(self):
-        self.HSI.saveDataWithoutBackground()
-
     def setLaserWavelength(self, laser):
         self.HSI.setLaserWavelength(laser)
 
@@ -101,7 +114,6 @@ class AppControl():
 
     def setHeight(self, height):
         self.Model.height = height
-        
 
     def setStep(self, step):
         self.Model.step = step
@@ -131,9 +143,6 @@ class AppControl():
         self.HSI.setBackground(background)
         self.saveBackground()
 
-    def saveBackground(self):
-        self.HSI.saveCaptureCSV()
-
     def launchAcquisition(self):
         # with self.lock:
         if not self.Model.isAcquiring:
@@ -161,11 +170,6 @@ class AppControl():
     def addSpectrum(self, x, y, spectrum):
         with self.lock:
             self.HSI.addSpectrum(x, y, spectrum)
-
-    def savePixel(self, x, y, spectrum):
-        with self.lock:
-            spectro = spectrum
-        self.HSI.saveCaptureCSV(countHeight=y, countWidth=x)
 
     def stopAcquisition(self):
         with self.lock:
@@ -260,4 +264,19 @@ class AppControl():
             self.spectro._source = "halogen"
         elif index == 1:
             self.spectro._source = "random"
+
+    def savePixel(self, x, y, spectrum):
+        # copie du tempFile
+        with self.lock:
+            spectro = spectrum
+        self.HSI.saveCaptureCSV(self.folderPath, self.fileName, countHeight=y, countWidth=x)
+
+    def saveBackground(self):
+        self.HSI.saveCaptureCSV(self.folderPath, self.fileName)
+
+    def saveImage(self, matrixRGB):
+        self.HSI.saveImage(matrixRGB, self.folderPath, self.fileName)
+
+    def saveWithoutBackground(self):
+        self.HSI.saveDataWithoutBackground(self.folderPath, self.fileName)
 

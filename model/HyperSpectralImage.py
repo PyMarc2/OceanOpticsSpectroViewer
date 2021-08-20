@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 from typing import NamedTuple
 import pandas as pd
 import numpy as np
+import tempfile
 import fnmatch
 import copy
 import csv
@@ -27,13 +28,12 @@ class HyperSpectralImage:
         self.spectralPoints = []
         self.wavelength = []
         self.background = []
-        self.folderPath = "" # utiliser temp pour répertoire
-        self.fileName = ""
         self.excitationWavelength = None
+        self.tempFolder = ""
 
     # Publics functions
 
-    def addSpectrum(self, x, y, spectrum):
+    def addSpectrum(self, x, y, spectrum, autoSave=True):
         """Add a spectrum to the data.
         Args:
             x(int): Position on the x-axis.
@@ -49,6 +49,11 @@ class HyperSpectralImage:
         if type(spectrum) is not np.ndarray:
             raise TypeError("spectrum argument is not a list or numpy.ndarray.")
         self.spectralPoints.append(DataPoint(x, y, spectrum))
+        if autoSave:
+            if tempFolder == "":
+                self.createTempFolder()
+            spectrum = self.spectrum(x, y)
+            self.saveCaptureCSV(self.tempFolder.name, "autoSave", countWidth=x, countHeight=y)
 
     def deleteSpectra(self):
         """Delete all spectra."""
@@ -127,7 +132,6 @@ class HyperSpectralImage:
             waveNumber = ((1 / self.excitationWavelength) - (1 / self.wavelength)) * 10 ** 7
             return waveNumber.round(0)
 
-
     def setLaserWavelength(self, excitationWavelength):
         """Set the excitationWavelength wavelength to data.
         Args:
@@ -140,7 +144,6 @@ class HyperSpectralImage:
     def deleteLaserWavelength(self):
         """delete the excitation wavelength"""
         self.excitationWavelength = None
-
 
     def matrixRGB(self, colorValues, globalMaximum=True, width=None, height=None, subtractBackground=False):
         """Return a matrixRGB.
@@ -170,7 +173,6 @@ class HyperSpectralImage:
                 raise TypeError("countHeight argument is not int.")
         if type(subtractBackground) is not bool:
             raise TypeError("subtractBackground argument is not a boolean.")
-
 
         try:
             if width == None or height ==None:
@@ -214,7 +216,7 @@ class HyperSpectralImage:
         except:
             return None
 
-    def saveImage(self, matrixRGB): # Not finished
+    def saveImage(self, matrixRGB, path, fileName): # Not finished
         """Save the matrixRGB as a image in png format.
         Args:
             matrixRGB(np.ndarray): The matrixRGB to save as a png.
@@ -223,34 +225,12 @@ class HyperSpectralImage:
         """
         if type(matrixRGB) is not np.ndarray:
             raise TypeError("matrixRGB argument is not a numpy.ndarray.")
-        path = self.folderPath + "/"
+        path = path + "/"
         img = matrixRGB.astype(np.uint8)
-        if self.fileName == "":
+        if fileName == "":
             plt.imsave(path + "matrixRGB.png", img)
         else:
-            plt.imsave(path + self.fileName + "_matrixRGB.png", img)
-
-
-
-    # idk yet if publics or not
-
-    def setFolderPath(self, folderPath):
-        """Set the folder path.
-        Args:
-            folderPath(str): The folder path to add to data.
-        """
-        if type(folderPath) is not str:
-            raise TypeError("folderpath argument is not a string.")
-        self.folderPath = folderPath
-
-    def setFileName(self, fileName):
-        """Set the file name.
-        Args:
-            fileName(str): The file name to add to data.
-        """
-        if type(fileName) is not str:
-            raise TypeError("file name argument is not a string.")
-        self.fileName = fileName
+            plt.imsave(path + fileName + "_matrixRGB.png", img)
 
     def loadData(self, path):
         """Load the data of a specific repository in the data.
@@ -292,7 +272,7 @@ class HyperSpectralImage:
                         xAxis.append(float(elem[0]))
                         self.setWavelength(xAxis)
                 doGetWaveLength = True
-                self.addSpectrum(posX, posY, spectrum)
+                self.addSpectrum(posX, posY, spectrum, autoSave=False)
 
             matchBackground = re.match(".*?(_background).*", name)
             if matchBackground:
@@ -309,7 +289,7 @@ class HyperSpectralImage:
 
         return foundBackground
 
-    def saveCaptureCSV(self, countHeight=None, countWidth=None):
+    def saveCaptureCSV(self, path, fileName, countHeight=None, countWidth=None):
         """Save the background or one specific spectrum.
         Args:
             countHeight(int): If the two count are None save the background. Else save a spectrum.
@@ -330,26 +310,25 @@ class HyperSpectralImage:
         if self.spectralPoints == []:
             pass
         else:
-            if self.fileName == "":
-                self.fileName = "spectrum"
-
-            newPath = self.folderPath + "/" + "RawData"
+            if fileName == "":
+                fileName = "spectrum"
+            newPath = path + "/" + "RawData"
             os.makedirs(newPath, exist_ok=True)
             if countHeight is None and countWidth is None:
-                path = os.path.join(newPath, f"{self.fileName}_background")
+                path = os.path.join(newPath, f"{fileName}_background")
                 with open(path + ".csv", "w+") as f:
                     for i, x in enumerate(self.waveNumber(self.wavelength)):
                         f.write(f"{x},{self.background[i]}\n")
                     f.close()
             else:
-                path = os.path.join(newPath, f"{self.fileName}_x{countWidth}_y{countHeight}")
+                path = os.path.join(newPath, f"{fileName}_x{countWidth}_y{countHeight}")
                 with open(path + ".csv", "w+") as f:
                     for i, x in enumerate(self.waveNumber(self.wavelength)):
                         spectrum = self.spectrum(countWidth, countHeight)
                         f.write(f"{x},{spectrum[i]}\n")
                     f.close()
 
-    def saveDataWithoutBackground(self, alreadyWaveNumber=False):
+    def saveDataWithoutBackground(self, path, fileName, alreadyWaveNumber=False):
         """Save the background or one specific spectrum.
         Args:
             alreadyWaveNumber(bool): 
@@ -359,15 +338,15 @@ class HyperSpectralImage:
         if type(alreadyWaveNumber) is not bool:
             raise TypeError("alreadyWaveNumber argument is not a boolean.")
         matrix = self.dataWithoutBackground()
-        newPath = self.folderPath + "/" + "UnrawData"
+        newPath = path + "/" + "UnrawData"
         os.makedirs(newPath, exist_ok=True)
         for i in matrix:
-            if self.fileName == "":
-                self.fileName = "spectrum"
+            if fileName == "":
+                fileName = "spectrum"
             x = i.x
             y = i.y
             spectrum = i.spectrum
-            path = os.path.join(newPath, f"{self.fileName}_withoutBackground_x{x}_y{y}")
+            path = os.path.join(newPath, f"{fileName}_withoutBackground_x{x}_y{y}")
             with open(path + ".csv", "w+") as f:
                 if alreadyWaveNumber == True:
                     for ind, x in enumerate(self.wavelength):
@@ -376,8 +355,6 @@ class HyperSpectralImage:
                     for ind, x in enumerate(self.waveNumber(self.wavelength)):
                         f.write(f"{x},{spectrum[ind]}\n")
                 f.close()
-
-
 
     # Non-Publics functions
 
@@ -393,8 +370,6 @@ class HyperSpectralImage:
             spectrum = np.array(item.spectrum) - np.array(self.background)
             dataWithoutBg.append(DataPoint(x, y, spectrum))
         return dataWithoutBg
-
-
 
     def widthImage(self):
         """Return the width (max x-axis value + 1) in the data.
@@ -466,7 +441,6 @@ class HyperSpectralImage:
         if type(subtractBackground) is not bool:
             raise TypeError("subtractBackground argument is not a boolean.")
 
-
         try:
             if width == None or height ==None:
                 width = self.widthImage()
@@ -487,3 +461,6 @@ class HyperSpectralImage:
             return matrixData
         except:
             None
+
+    def createTempFolder(self):
+        self.tempFolder = tempfile.TemporaryDirectory()
