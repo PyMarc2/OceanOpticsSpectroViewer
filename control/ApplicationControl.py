@@ -50,7 +50,7 @@ class AppControl():
         if type(folderPath) is not str:
             raise TypeError("folderpath argument is not a string.")
         self.folderPath = folderPath
-        with open(self.folderPath + "/tempDirectoryName.txt", "w+") as f:
+        with open(self.folderPath + "/tempDirectoryPath.txt", "w+") as f:
             f.write(f"{self.tempFolder}")
 
     def setFileName(self, fileName):
@@ -264,12 +264,6 @@ class AppControl():
             self.spectro._source = "halogen"
         elif index == 1:
             self.spectro._source = "random"
-
-    def savePixel(self, x, y, spectrum): # disconnected
-        # autoSave in addSpectrum()
-        with self.lock:
-            spectro = spectrum
-        self.HSI.saveSpectrum(self.folderPath, self.fileName, countHeight=y, countWidth=x)
 
     def saveBackground(self):
         self.HSI.saveSpectrum(self.tempFolder, self.fileName)

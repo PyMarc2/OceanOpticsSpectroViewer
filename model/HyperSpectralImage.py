@@ -51,7 +51,7 @@ class HyperSpectralImage:
         self.spectralPoints.append(DataPoint(x, y, spectrum))
         if autoSave:
             spectrum = self.spectrum(x, y)
-            self.saveSpectrum(self.tempFolder, "autoSave", countWidth=x, countHeight=y)
+            self.saveSpectrum(self.tempFolder, "spectrum", countWidth=x, countHeight=y)
 
     def deleteSpectra(self):
         """Delete all spectra."""
@@ -75,7 +75,7 @@ class HyperSpectralImage:
 
         spectrum = None
         if subtractBackground:
-            data = self.dataWithoutBackground()
+            data = self.spectraWithoutBackground()
             for item in data:
                 if item.x == x:
                     if item.y == y:
@@ -305,26 +305,21 @@ class HyperSpectralImage:
                 pass
             else:
                 raise TypeError("height argument is not int.")
-        if self.spectralPoints == []:
-            pass
+        newPath = path + "/" + "RawData"
+        os.makedirs(newPath, exist_ok=True)
+        if countHeight is None and countWidth is None:
+            path = os.path.join(newPath, f"{fileName}_background")
+            with open(path + ".csv", "w+") as f:
+                for i, x in enumerate(self.waveNumber()):
+                    f.write(f"{x},{self.background[i]}\n")
+                f.close()
         else:
-            if fileName == "":
-                fileName = "spectrum"
-            newPath = path + "/" + "RawData"
-            os.makedirs(newPath, exist_ok=True)
-            if countHeight is None and countWidth is None:
-                path = os.path.join(newPath, f"{fileName}_background")
-                with open(path + ".csv", "w+") as f:
-                    for i, x in enumerate(self.waveNumber()):
-                        f.write(f"{x},{self.background[i]}\n")
-                    f.close()
-            else:
-                path = os.path.join(newPath, f"{fileName}_x{countWidth}_y{countHeight}")
-                with open(path + ".csv", "w+") as f:
-                    for i, x in enumerate(self.waveNumber()):
-                        spectrum = self.spectrum(countWidth, countHeight)
-                        f.write(f"{x},{spectrum[i]}\n")
-                    f.close()
+            path = os.path.join(newPath, f"{fileName}_x{countWidth}_y{countHeight}")
+            with open(path + ".csv", "w+") as f:
+                for i, x in enumerate(self.waveNumber()):
+                    spectrum = self.spectrum(countWidth, countHeight)
+                    f.write(f"{x},{spectrum[i]}\n")
+                f.close()
 
     def saveSpectraWithoutBackground(self, path, fileName, alreadyWaveNumber=False):
         """Save the background or one specific spectrum.
@@ -449,7 +444,7 @@ class HyperSpectralImage:
             matrixData = np.zeros((height, width, spectrumLen))
 
             if subtractBackground:
-                data = self.dataWithoutBackground()
+                data = self.spectraWithoutBackground()
                 for item in data:
                     matrixData[item.y, item.x, :] = np.array(item.spectrum)
             else:
