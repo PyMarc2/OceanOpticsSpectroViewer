@@ -1,4 +1,3 @@
-from tkinter.filedialog import askopenfile
 import matplotlib.pyplot as plt
 from typing import NamedTuple
 import pandas as pd
@@ -29,9 +28,9 @@ class HyperSpectralImage:
         self.wavelength = []
         self.background = []
         self.excitationWavelength = None
-        self.tempFolder = ""
+        self.tempFolder = tempfile.TemporaryDirectory()
 
-    # Publics functions
+    # Public functions
 
     def addSpectrum(self, x, y, spectrum, autoSave=True):
         """Add a spectrum to the data.
@@ -50,8 +49,6 @@ class HyperSpectralImage:
             raise TypeError("spectrum argument is not a list or numpy.ndarray.")
         self.spectralPoints.append(DataPoint(x, y, spectrum))
         if autoSave:
-            if tempFolder == "":
-                self.createTempFolder()
             spectrum = self.spectrum(x, y)
             self.saveCaptureCSV(self.tempFolder.name, "autoSave", countWidth=x, countHeight=y)
 
@@ -462,5 +459,3 @@ class HyperSpectralImage:
         except:
             None
 
-    def createTempFolder(self):
-        self.tempFolder = tempfile.TemporaryDirectory()
