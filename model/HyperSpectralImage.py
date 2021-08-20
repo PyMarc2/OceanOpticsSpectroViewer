@@ -28,7 +28,7 @@ class HyperSpectralImage:
         self.wavelength = []
         self.background = []
         self.excitationWavelength = None
-        self.tempFolder = tempfile.TemporaryDirectory()
+        self.tempFolder = tempfile.mkdtemp(prefix="microRamanTemporaryData_")
 
     # Public functions
 
@@ -50,7 +50,7 @@ class HyperSpectralImage:
         self.spectralPoints.append(DataPoint(x, y, spectrum))
         if autoSave:
             spectrum = self.spectrum(x, y)
-            self.saveCaptureCSV(self.tempFolder.name, "autoSave", countWidth=x, countHeight=y)
+            self.saveCaptureCSV(self.tempFolder, "autoSave", countWidth=x, countHeight=y)
 
     def deleteSpectra(self):
         """Delete all spectra."""
@@ -173,8 +173,8 @@ class HyperSpectralImage:
 
         try:
             if width == None or height ==None:
-                width = self.widthImage()
-                height = self.heightImage()
+                width = self.width()
+                height = self.height()
             else:
                 pass
 
@@ -368,7 +368,7 @@ class HyperSpectralImage:
             dataWithoutBg.append(DataPoint(x, y, spectrum))
         return dataWithoutBg
 
-    def widthImage(self):
+    def width(self):
         """Return the width (max x-axis value + 1) in the data.
         Return:
             width(int): Use in the creation of a matrix.
@@ -380,7 +380,7 @@ class HyperSpectralImage:
 
         return width + 1
 
-    def heightImage(self):
+    def height(self):
         """Return the height (max -axis value + 1) in the data.
         Return:
             height(int): Use in the creation of a matrix.
@@ -440,8 +440,8 @@ class HyperSpectralImage:
 
         try:
             if width == None or height ==None:
-                width = self.widthImage()
-                height = self.heightImage()
+                width = self.width()
+                height = self.height()
             else:
                 pass
             spectrumLen = self.spectrumLen()
