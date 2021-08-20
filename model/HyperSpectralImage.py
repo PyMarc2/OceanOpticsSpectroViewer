@@ -28,6 +28,7 @@ class HyperSpectralImage:
         self.wavelength = []
         self.background = []
         self.excitationWavelength = None
+        self.tempFolder = None
         if createTempFolder:
             self.tempFolder = tempfile.mkdtemp(prefix="microRamanTemporaryData_")
 
