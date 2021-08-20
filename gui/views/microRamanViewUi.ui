@@ -670,6 +670,9 @@ background-color: rgb(80, 80, 80);</string>
               </item>
               <item row="1" column="2">
                <widget class="QComboBox" name="cmb_measureUnit">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                   <horstretch>0</horstretch>
@@ -681,6 +684,9 @@ background-color: rgb(80, 80, 80);</string>
                 </property>
                 <property name="statusTip">
                  <string>Choose the units of the displacement step of the sutter.</string>
+                </property>
+                <property name="styleSheet">
+                 <string notr="true">background-color: rgb(40, 40, 40);</string>
                 </property>
                 <item>
                  <property name="text">
@@ -701,11 +707,17 @@ background-color: rgb(80, 80, 80);</string>
               </item>
               <item row="1" column="1">
                <widget class="QSpinBox" name="sb_step">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
                 <property name="toolTip">
                  <string>Sets the step of the SpectrumDevice</string>
                 </property>
                 <property name="statusTip">
                  <string>Sets the displacement step of the SpectrumDevice</string>
+                </property>
+                <property name="styleSheet">
+                 <string notr="true">background-color: rgb(40, 40, 40);</string>
                 </property>
                 <property name="minimum">
                  <number>1</number>
@@ -727,6 +739,9 @@ background-color: rgb(80, 80, 80);</string>
               </item>
               <item row="2" column="1">
                <widget class="QSpinBox" name="sb_exposure">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                   <horstretch>0</horstretch>
@@ -744,6 +759,9 @@ background-color: rgb(80, 80, 80);</string>
                 </property>
                 <property name="statusTip">
                  <string>The exposure time is the uninterrupted time in which the spectrometer acquires data, or counts photons. After the time has passed, the shutter of the spectrometer blinks and the acquisition starts again from zero.</string>
+                </property>
+                <property name="styleSheet">
+                 <string notr="true">background-color: rgb(40, 40, 40);</string>
                 </property>
                 <property name="minimum">
                  <number>4</number>
@@ -776,11 +794,17 @@ background-color: rgb(80, 80, 80);</string>
                  </property>
                  <item>
                   <widget class="QSpinBox" name="sb_width">
+                   <property name="enabled">
+                    <bool>false</bool>
+                   </property>
                    <property name="toolTip">
                     <string>Choose the width of the image</string>
                    </property>
                    <property name="statusTip">
                     <string>Choose the value of the xAxis of the image.</string>
+                   </property>
+                   <property name="styleSheet">
+                    <string notr="true">background-color: rgb(40, 40, 40);</string>
                    </property>
                    <property name="minimum">
                     <number>1</number>
@@ -808,11 +832,17 @@ background-color: rgb(80, 80, 80);</string>
                  </item>
                  <item>
                   <widget class="QSpinBox" name="sb_height">
+                   <property name="enabled">
+                    <bool>false</bool>
+                   </property>
                    <property name="toolTip">
                     <string>Choose the height of the image</string>
                    </property>
                    <property name="statusTip">
                     <string>Choose the value of the yAxis of the image.</string>
+                   </property>
+                   <property name="styleSheet">
+                    <string notr="true">background-color: rgb(40, 40, 40);</string>
                    </property>
                    <property name="minimum">
                     <number>1</number>
@@ -837,6 +867,9 @@ background-color: rgb(80, 80, 80);</string>
               </item>
               <item row="3" column="1">
                <widget class="QSpinBox" name="sb_acqTime">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
                 <property name="minimumSize">
                  <size>
                   <width>0</width>
@@ -848,6 +881,9 @@ background-color: rgb(80, 80, 80);</string>
                 </property>
                 <property name="statusTip">
                  <string>The integration time is the complete time lapse before your acquisition is done. It can be the same as the exposure time, or a sum of many exposure sequences. It allows you to get a good signal and a high count, without sarurating the spectrometer.</string>
+                </property>
+                <property name="styleSheet">
+                 <string notr="true">background-color: rgb(40, 40, 40);</string>
                 </property>
                 <property name="minimum">
                  <number>10</number>
@@ -968,6 +1004,9 @@ background-color: rgb(80, 80, 80);</string>
                 <layout class="QHBoxLayout" name="lay_main">
                  <item>
                   <widget class="QPushButton" name="pb_background">
+                   <property name="enabled">
+                    <bool>false</bool>
+                   </property>
                    <property name="minimumSize">
                     <size>
                      <width>120</width>
@@ -986,6 +1025,9 @@ background-color: rgb(80, 80, 80);</string>
                    <property name="statusTip">
                     <string>Start the acquisition of the background</string>
                    </property>
+                   <property name="styleSheet">
+                    <string notr="true">background-color: rgb(40, 40, 40);</string>
+                   </property>
                    <property name="text">
                     <string>Acquire Background</string>
                    </property>
@@ -993,6 +1035,9 @@ background-color: rgb(80, 80, 80);</string>
                  </item>
                  <item>
                   <widget class="QFlashButton" name="pb_launch">
+                   <property name="enabled">
+                    <bool>false</bool>
+                   </property>
                    <property name="sizePolicy">
                     <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                      <horstretch>1</horstretch>
@@ -1018,7 +1063,7 @@ background-color: rgb(80, 80, 80);</string>
                     <string>Starts data reading from the SpectrumDevice</string>
                    </property>
                    <property name="styleSheet">
-                    <string notr="true"/>
+                    <string notr="true">background-color: rgb(40, 40, 40);</string>
                    </property>
                    <property name="text">
                     <string>Launch</string>
@@ -1027,6 +1072,9 @@ background-color: rgb(80, 80, 80);</string>
                  </item>
                  <item>
                   <widget class="QPushButton" name="pb_stop">
+                   <property name="enabled">
+                    <bool>false</bool>
+                   </property>
                    <property name="sizePolicy">
                     <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                      <horstretch>1</horstretch>
@@ -1050,6 +1098,9 @@ background-color: rgb(80, 80, 80);</string>
                    </property>
                    <property name="statusTip">
                     <string>Stop the current acquisition</string>
+                   </property>
+                   <property name="styleSheet">
+                    <string notr="true">background-color: rgb(40, 40, 40);</string>
                    </property>
                    <property name="text">
                     <string>Stop</string>
