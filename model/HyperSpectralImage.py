@@ -335,7 +335,7 @@ class HyperSpectralImage:
         """
         if type(alreadyWaveNumber) is not bool:
             raise TypeError("alreadyWaveNumber argument is not a boolean.")
-        matrix = self.dataWithoutBackground()
+        matrix = self.spectraWithoutBackground()
         newPath = path + "/" + "UnrawData"
         os.makedirs(newPath, exist_ok=True)
         for i in matrix:

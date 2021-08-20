@@ -13,6 +13,8 @@ from model.microscopeDevice import Model
 import hardwarelibrary.motion.sutterdevice as sutter
 from hardwarelibrary.notificationcenter import NotificationCenter as notif
 
+from distutils.dir_util import copy_tree
+
 class AppControl():
     def __init__(self):
         self.HSI = HyperSpectralImage()
@@ -182,6 +184,8 @@ class AppControl():
             self.quitLoopRGB = True
             self.isLoopRGBRunning = False
         self.windowControl.acquisitionDone()
+        self.copyDataToFolderPath()
+
 
     def getFileName(self):
         return self.fileName
@@ -269,10 +273,15 @@ class AppControl():
 
     def saveBackground(self):
         self.HSI.saveSpectrum(self.tempFolder, self.fileName)
+        self.copyDataToFolderPath()
 
     def saveImage(self, matrixRGB):
         self.HSI.saveAsImage(matrixRGB, self.tempFolder, self.fileName)
+        self.copyDataToFolderPath()
 
     def saveWithoutBackground(self):
-        self.HSI.saveSpectraWithoutBackground(self.tempFolder, self.fileName)
+        self.HSI.saveSpectraWithoutBackground(self.folderPath, self.fileName)
+
+    def copyDataToFolderPath(self):
+        copy_tree(f"{self.tempFolder}", f"{self.folderPath}")
 
