@@ -213,7 +213,7 @@ class HyperSpectralImage:
         except:
             return None
 
-    def saveImage(self, matrixRGB, path, fileName): # Not finished
+    def saveAsImage(self, matrixRGB, path, fileName): # Not finished
         """Save the matrixRGB as a image in png format.
         Args:
             matrixRGB(np.ndarray): The matrixRGB to save as a png.
@@ -229,7 +229,7 @@ class HyperSpectralImage:
         else:
             plt.imsave(path + fileName + "_matrixRGB.png", img)
 
-    def loadData(self, path):
+    def loadSpectra(self, path):
         """Load the data of a specific repository in the data.
         Args:
             path(str): The path of the repository.
@@ -286,7 +286,7 @@ class HyperSpectralImage:
 
         return foundBackground
 
-    def saveCaptureCSV(self, path, fileName, countHeight=None, countWidth=None):
+    def saveSpectrum(self, path, fileName, countHeight=None, countWidth=None):
         """Save the background or one specific spectrum.
         Args:
             countHeight(int): If the two count are None save the background. Else save a spectrum.
@@ -325,7 +325,7 @@ class HyperSpectralImage:
                         f.write(f"{x},{spectrum[i]}\n")
                     f.close()
 
-    def saveDataWithoutBackground(self, path, fileName, alreadyWaveNumber=False):
+    def saveSpectraWithoutBackground(self, path, fileName, alreadyWaveNumber=False):
         """Save the background or one specific spectrum.
         Args:
             alreadyWaveNumber(bool): 
@@ -355,7 +355,7 @@ class HyperSpectralImage:
 
     # Non-Publics functions
 
-    def dataWithoutBackground(self):
+    def spectraWithoutBackground(self):
         """Return the data without the background.
         Return:
             dataWithoutBg(list): Contains DataPoint nameTuple. It's a copy of self.spectralPoints, but without the background.
