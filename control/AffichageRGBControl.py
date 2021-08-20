@@ -6,7 +6,7 @@ from model.HyperSpectralImage import HyperSpectralImage
 
 class AppliControl():
     def __init__(self):
-        self.hsi = HyperSpectralImage()
+        self.hsi = HyperSpectralImage(createTempFolder=False)
         self.windowControl = None
 
     def deleteBackground(self):

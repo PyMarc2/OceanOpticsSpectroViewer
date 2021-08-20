@@ -31,12 +31,9 @@ class AppControl():
         self.stage = False
         self.spectro = None
 
-        self.folderPath = "" # utiliser temp pour répertoire
-        self.fileName = ""
-
-        # saveImage(self, matrixRGB, path, fileName)
-        # saveCaptureCSV(self, path, fileName, countHeight=None, countWidth=None)
-        # saveDataWithoutBackground(self, path, fileName, alreadyWaveNumber=False)
+        self.tempFolder = self.HSI.tempFolder
+        self.folderPath = "" # Est-ce qu'on va l'utiliser pareil?
+        self.fileName = "" # Est-ce qu'on va l'utiliser pareil?
 
         self.isLoopRGBRunning = False
         self.quitLoopRGB = True
@@ -51,6 +48,8 @@ class AppControl():
         if type(folderPath) is not str:
             raise TypeError("folderpath argument is not a string.")
         self.folderPath = folderPath
+        with open(self.folderPath + "/tempDirectoryName.txt", "w+") as f:
+            f.write(f"{self.tempFolder}")
 
     def setFileName(self, fileName):
         """Set the file name.
@@ -62,14 +61,12 @@ class AppControl():
         self.fileName = fileName
 
     def react(self, notification):
-        point_x = notification.userInfo["point_x"]
-        point_y = notification.userInfo["point_y"]
+        pointX = notification.userInfo["point_x"]
+        pointY = notification.userInfo["point_y"]
         spectrum = notification.userInfo["spectrum"]
 
-        self.addSpectrum(point_x, point_y, spectrum)
-        self.saveThread = Thread(target=self.savePixel, args=(point_x, point_y, spectrum))
+        self.saveThread = Thread(target=self.HSI.addSpectrum, args=(pointX, pointY, spectrum))
         self.saveThread.start()
-        # self.savePixel(point_x, point_y, spectrum)
 
     def matrixRGB(self, globalMaximum=True, subtractBackground=False):
         width, height = self.windowControl.dimensionImage()
@@ -187,8 +184,7 @@ class AppControl():
         self.windowControl.acquisitionDone()
 
     def getFileName(self):
-        fileName = self.windowControl.fileName()
-        return fileName
+        return self.fileName
 
     def getLaser(self):
         laser = self.HSI.laser
@@ -265,18 +261,18 @@ class AppControl():
         elif index == 1:
             self.spectro._source = "random"
 
-    def savePixel(self, x, y, spectrum):
-        # copie du tempFile
+    def savePixel(self, x, y, spectrum): # disconnected
+        # autoSave in addSpectrum()
         with self.lock:
             spectro = spectrum
-        self.HSI.saveCaptureCSV(self.folderPath, self.fileName, countHeight=y, countWidth=x)
+        self.HSI.saveSpectrum(self.folderPath, self.fileName, countHeight=y, countWidth=x)
 
     def saveBackground(self):
-        self.HSI.saveCaptureCSV(self.folderPath, self.fileName)
+        self.HSI.saveSpectrum(self.tempFolder, self.fileName)
 
     def saveImage(self, matrixRGB):
-        self.HSI.saveImage(matrixRGB, self.folderPath, self.fileName)
+        self.HSI.saveAsImage(matrixRGB, self.tempFolder, self.fileName)
 
     def saveWithoutBackground(self):
-        self.HSI.saveDataWithoutBackground(self.folderPath, self.fileName)
+        self.HSI.saveSpectraWithoutBackground(self.tempFolder, self.fileName)
 

@@ -23,12 +23,13 @@ class DataPoint(NamedTuple):
     spectrum: object = None
 
 class HyperSpectralImage:
-    def __init__(self):
+    def __init__(self,createTempFolder=True):
         self.spectralPoints = []
         self.wavelength = []
         self.background = []
         self.excitationWavelength = None
-        self.tempFolder = tempfile.mkdtemp(prefix="microRamanTemporaryData_")
+        if createTempFolder:
+            self.tempFolder = tempfile.mkdtemp(prefix="microRamanTemporaryData_")
 
     # Public functions
 
@@ -50,7 +51,7 @@ class HyperSpectralImage:
         self.spectralPoints.append(DataPoint(x, y, spectrum))
         if autoSave:
             spectrum = self.spectrum(x, y)
-            self.saveCaptureCSV(self.tempFolder, "autoSave", countWidth=x, countHeight=y)
+            self.saveSpectrum(self.tempFolder, "autoSave", countWidth=x, countHeight=y)
 
     def deleteSpectra(self):
         """Delete all spectra."""
@@ -314,13 +315,13 @@ class HyperSpectralImage:
             if countHeight is None and countWidth is None:
                 path = os.path.join(newPath, f"{fileName}_background")
                 with open(path + ".csv", "w+") as f:
-                    for i, x in enumerate(self.waveNumber(self.wavelength)):
+                    for i, x in enumerate(self.waveNumber()):
                         f.write(f"{x},{self.background[i]}\n")
                     f.close()
             else:
                 path = os.path.join(newPath, f"{fileName}_x{countWidth}_y{countHeight}")
                 with open(path + ".csv", "w+") as f:
-                    for i, x in enumerate(self.waveNumber(self.wavelength)):
+                    for i, x in enumerate(self.waveNumber()):
                         spectrum = self.spectrum(countWidth, countHeight)
                         f.write(f"{x},{spectrum[i]}\n")
                     f.close()
@@ -349,7 +350,7 @@ class HyperSpectralImage:
                     for ind, x in enumerate(self.wavelength):
                         f.write(f"{x},{spectrum[ind]}\n")
                 else:
-                    for ind, x in enumerate(self.waveNumber(self.wavelength)):
+                    for ind, x in enumerate(self.waveNumber()):
                         f.write(f"{x},{spectrum[ind]}\n")
                 f.close()
 
@@ -458,4 +459,3 @@ class HyperSpectralImage:
             return matrixData
         except:
             None
-
